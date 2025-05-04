@@ -58,6 +58,14 @@ export function MainNav() {
               Client Side
             </NavigationMenuLink>
           </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavigationMenuLink
+              href="/salesforce"
+              className={navigationMenuTriggerStyle()}
+            >
+              Salesforce
+            </NavigationMenuLink>
+          </NavigationMenuItem>
         </NavigationMenuList>
       </NavigationMenu>
     </div>

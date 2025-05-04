@@ -29,6 +29,12 @@ NextAuth.js is a complete open source authentication solution.
 
 This is an example application that shows how `next-auth` is applied to a basic Next.js app.
 
+It includes:
+- Basic authentication with Auth0 provider
+- Server-side and client-side authentication examples
+- Route protection using middleware
+- OAuth integration with Salesforce (allowing users to connect their Salesforce instance)
+
 The deployed version can be found at [`next-auth-example.vercel.app`](https://next-auth-example.vercel.app)
 
 ### About NextAuth.js
@@ -96,7 +102,71 @@ pnpm run build
 pnpm run start
 ```
 
-### 5. Preparing for Production
+### 5. Salesforce OAuth Integration
+
+This application includes a Salesforce OAuth integration that allows users to connect their Salesforce instance. The integration uses the JSForce library for robust Salesforce API interactions.
+
+#### Configuration
+
+1. Create a Connected App in your Salesforce organization:
+   - Go to Setup > App Manager > New Connected App
+   - Enable OAuth Settings
+   - Set the callback URL to `http://localhost:3000/api/auth/callback/salesforce` (for local development)
+   - Select the required OAuth scopes (at minimum: `api`, `refresh_token`, `offline_access`)
+   - Save the application
+
+2. Add the Salesforce OAuth credentials to your `.env.local` file:
+
+```
+SALESFORCE_CLIENT_ID=your_connected_app_consumer_key
+SALESFORCE_CLIENT_SECRET=your_connected_app_consumer_secret
+```
+
+3. Access the Salesforce integration by navigating to the Salesforce menu item in the application.
+
+#### Features of Salesforce Integration
+
+The Salesforce integration includes the following capabilities:
+
+- OAuth-based authentication with Salesforce
+- User profile information retrieval
+- SOQL query execution
+- CRUD operations for Salesforce objects (create, retrieve, update, delete)
+- Batch operations for multiple records
+- Analytics API access
+- Object metadata access
+
+All Salesforce API interactions are facilitated through the JSForce library, providing a robust and efficient way to communicate with Salesforce.
+
+## Salesforce Integration
+
+This example application includes a fully-functional integration with Salesforce, featuring two authentication methods:
+
+### OAuth-based Authentication
+The standard NextAuth.js Salesforce provider is used to authenticate with Salesforce via the OAuth 2.0 flow. This approach:
+- Redirects users to Salesforce's login page
+- After successful authentication, redirects back with an access token
+- Stores the access token securely in the session
+- Automatically refreshes tokens as needed
+
+### Direct Authentication
+For cases where OAuth isn't suitable (like automated systems or testing), a direct username/password authentication is available:
+- Users provide their Salesforce username, password, and security token
+- Authentication happens directly via JSForce, Salesforce's JavaScript client library
+- Credentials are securely stored in Vercel KV storage (or memory during development)
+- A session reference is stored in the browser
+
+### Features
+The Salesforce integration includes:
+- Dashboard showing user information from the connected Salesforce instance
+- Views for contacts, accounts, and opportunities
+- CRUD operations via JSForce
+- Full TypeScript typings for Salesforce objects
+- Secure session management
+
+> Note: Direct authentication method requires storing sensitive credentials. For production use, ensure your Vercel KV storage is properly secured with encryption at rest.
+
+### 6. Preparing for Production
 
 Follow the [Deployment documentation](https://authjs.dev/getting-started/deployment)
 
