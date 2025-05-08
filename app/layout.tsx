@@ -8,7 +8,6 @@ import { SessionProvider } from "next-auth/react"
 import { Session } from "next-auth"
 import { SnackbarProvider } from "../components/snackbar-provider"
 import { ThemeProvider } from "@/components/theme-provider"
-import { SubscriptionProvider } from "@/hooks/use-subscription"
 
 const inter = Inter({ subsets: ["latin"] })
 
