@@ -2,7 +2,8 @@ import { auth } from "@/auth"
 import { Button } from "@/components/ui/button"
 import CustomLink from "@/components/custom-link"
 import { redirect } from "next/navigation"
-import { getSalesforceClient } from "@/lib/salesforce"
+import { Key, ReactElement, JSXElementConstructor, ReactNode, ReactPortal, AwaitedReactNode } from "react"
+//import { getSalesforceClient } from "@/lib/salesforce"
 
 export default async function SalesforceContacts() {
   const session = await auth()
@@ -13,7 +14,7 @@ export default async function SalesforceContacts() {
   }
   
   // Get Salesforce client
-  const salesforceClient = await getSalesforceClient()
+  const salesforceClient = false;//await getSalesforceClient()
   
   if (!salesforceClient) {
     return (
@@ -34,14 +35,14 @@ export default async function SalesforceContacts() {
   }
   
   // Fetch contacts from Salesforce
-  let contacts = [];
+  let contacts: { Id: Key | null | undefined; Name: string | number | bigint | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<AwaitedReactNode> | null | undefined; Title: any; Email: any; Phone: any }[] = [];
   let error = null;
   
   try {
-    const result = await salesforceClient.query(
-      "SELECT Id, Name, Email, Phone, Title, AccountId FROM Contact LIMIT 10"
-    );
-    contacts = result.records;
+    // const result = await salesforceClient.query(
+    //   "SELECT Id, Name, Email, Phone, Title, AccountId FROM Contact LIMIT 10"
+    // );
+    // contacts = result.records;
   } catch (e) {
     console.error("Failed to fetch Salesforce contacts:", e);
     error = e instanceof Error ? e.message : "Unknown error";
@@ -90,7 +91,7 @@ export default async function SalesforceContacts() {
                 </thead>
                 <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200">
                   {contacts.length > 0 ? (
-                    contacts.map((contact) => (
+                    contacts.map((contact: { Id: Key | null | undefined; Name: string | number | bigint | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<AwaitedReactNode> | null | undefined; Title: any; Email: any; Phone: any }) => (
                       <tr key={contact.Id} className="hover:bg-gray-50 dark:hover:bg-gray-800">
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                           {contact.Name}
