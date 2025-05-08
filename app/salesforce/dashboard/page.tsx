@@ -10,6 +10,7 @@ import { SalesforceClient } from "@/lib/salesforce"
 export default async function SalesforceDashboard() {
   // Check if we have a NextAuth session with Salesforce OAuth data
   const session = await auth()
+
   console.log('Session:', session?.user?.auth0)
   // Check if we have a Salesforce client from either OAuth or direct authentication
   const salesforceCredentials = await getSalesforceCredentialsById()
@@ -17,7 +18,8 @@ export default async function SalesforceDashboard() {
     console.log('No Salesforce credentials found, redirecting to connect page')
     redirect("/salesforce/connect");
   }
-  const salesforceClient = new SalesforceClient(salesforceCredentials.accessToken, salesforceCredentials.instanceUrl);
+  //console.log(salesforceCredentials);
+  const salesforceClient = new SalesforceClient(salesforceCredentials.accessToken, salesforceCredentials.instanceUrl, salesforceCredentials.refreshToken);
   // If no Salesforce client available and no OAuth session, redirect to connect page
   if (!salesforceClient) {
     console.log('No Salesforce client found, redirecting to connect page')

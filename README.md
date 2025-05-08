@@ -166,7 +166,18 @@ The Salesforce integration includes:
 
 > Note: Direct authentication method requires storing sensitive credentials. For production use, ensure your Vercel KV storage is properly secured with encryption at rest.
 
-### 6. Preparing for Production
+### 6. Stripe Integration
+
+The application includes a subscription system integrated with Stripe:
+
+- Subscription management using Stripe Checkout Sessions
+- Webhook handling for subscription events
+- User subscription status display
+- Secure payment processing
+
+For detailed setup instructions and implementation details, see [Stripe Integration Documentation](./docs/STRIPE_INTEGRATION.md).
+
+### 7. Preparing for Production
 
 Follow the [Deployment documentation](https://authjs.dev/getting-started/deployment)
 

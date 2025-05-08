@@ -7,8 +7,10 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "./ui/dropdown-menu"
 import { SignIn, SignOut } from "./auth-components"
+import Link from "next/link"
 
 export default async function UserButton() {
   const session = await auth()
@@ -24,10 +26,10 @@ export default async function UserButton() {
             <Avatar className="h-8 w-8">
               <AvatarImage
                 src={
-                  session.user.image ??
-                  `https://api.dicebear.com/9.x/thumbs/svg?seed=${Math.floor(Math.random() * 100000) + 1}&randomizeIds=true`
+                  session.user.image ||
+                  `https://api.dicebear.com/9.x/thumbs/svg?seed=1`
                 }
-                alt={session.user.name ?? ""}
+                alt={session.user.name ?? "User"}
               />
             </Avatar>
           </Button>
@@ -43,6 +45,13 @@ export default async function UserButton() {
               </p>
             </div>
           </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem asChild>
+            <Link href="/subscription" className="cursor-pointer">
+              Manage Subscription
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
           <DropdownMenuItem>
             <SignOut />
           </DropdownMenuItem>

@@ -1,5 +1,10 @@
 .footer {
   margin-top: 2rem;
+  color: #666;
+}
+
+.dark .footer {
+  color: #aaa;
 }
 
 .navItems {

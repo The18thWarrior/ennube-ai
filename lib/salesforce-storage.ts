@@ -16,6 +16,7 @@ const SF_SESSION_PREFIX = "sf_session:";
 export interface StoredSalesforceCredentials {
   accessToken: string;
   instanceUrl: string;
+  refreshToken?: string;
   userInfo?: {
     id?: string;
     organization_id?: string;
@@ -48,6 +49,7 @@ export async function storeSalesforceCredentials(authResult: SalesforceAuthResul
 
     const credentials: StoredSalesforceCredentials = {
       accessToken: authResult.accessToken,
+      refreshToken: authResult.refreshToken,
       instanceUrl: authResult.instanceUrl,
       userInfo: authResult.userInfo,
       createdAt,
@@ -100,6 +102,34 @@ export async function getSalesforceCredentialsById(): Promise<StoredSalesforceCr
     return null;
   }
 }
+
+/**
+ * Retrieve Salesforce credentials from Upstash Redis by session ID
+ */
+export async function getSalesforceCredentialsBySub(sub: string): Promise<StoredSalesforceCredentials | null> {
+  try {
+    const key = `${SF_CRED_PREFIX}${sub}`;
+    //console.log("Key:", key);
+    const credentials = await redis.get<StoredSalesforceCredentials>(
+      key
+    );
+    
+    if (!credentials) {
+      console.error("No credentials found for key:", key, credentials);
+      return null;
+    }
+    if (Date.now() > credentials.expiresAt) {
+      //return null;
+    }
+
+    return credentials;
+  } catch (error) {
+    console.error("Error retrieving Salesforce credentials:", error);
+    //await removeSalesforceCredentials();
+    return null;
+  }
+}
+
 
 /**
  * Remove Salesforce credentials from Upstash Redis

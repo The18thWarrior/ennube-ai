@@ -15,8 +15,12 @@ import {
 } from "./ui/navigation-menu"
 import React from "react"
 import { Button } from "./ui/button"
+import { SubscribeButton } from "./subscribe-button"
+import { ThemeToggle } from "./theme-toggle"
+import { useStripe } from "@/lib/stripe-context"
 
 export function MainNav() {
+  const { hasSubscription } = useStripe();
   return (
     <div className="flex items-center gap-4">
       <CustomLink href="/">
@@ -32,7 +36,7 @@ export function MainNav() {
       </CustomLink>
       <NavigationMenu>
         <NavigationMenuList>
-          <NavigationMenuItem>
+          {/* <NavigationMenuItem>
             <NavigationMenuTrigger className="px-2">
               Server Side
             </NavigationMenuTrigger>
@@ -49,15 +53,26 @@ export function MainNav() {
                 </ListItem>
               </ul>
             </NavigationMenuContent>
-          </NavigationMenuItem>
-          <NavigationMenuItem>
+          </NavigationMenuItem> */}
+          {/* <NavigationMenuItem>
             <NavigationMenuLink
               href="/client-example"
               className={navigationMenuTriggerStyle()}
             >
               Client Side
             </NavigationMenuLink>
-          </NavigationMenuItem>
+          </NavigationMenuItem> */}
+
+          {hasSubscription && 
+            <NavigationMenuItem>
+              <NavigationMenuLink
+                href="/dashboard"
+                className={navigationMenuTriggerStyle()}
+              >
+                Dashboard
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+          }
           <NavigationMenuItem>
             <NavigationMenuLink
               href="/salesforce"
@@ -65,6 +80,13 @@ export function MainNav() {
             >
               Salesforce
             </NavigationMenuLink>
+          </NavigationMenuItem>
+          
+          <NavigationMenuItem>
+            <SubscribeButton />
+          </NavigationMenuItem>
+          <NavigationMenuItem>
+            <ThemeToggle />
           </NavigationMenuItem>
         </NavigationMenuList>
       </NavigationMenu>

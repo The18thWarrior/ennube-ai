@@ -18,6 +18,11 @@
   transition: all 0.2s ease-in;
 }
 
+.dark .loading,
+.dark .loaded {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
 .loading {
   top: -2rem;
   opacity: 0;
@@ -52,6 +57,10 @@
   background-repeat: no-repeat;
 }
 
+.dark .avatar {
+  background-color: #333;
+}
+
 .button,
 .buttonPrimary {
   float: right;
@@ -68,12 +77,21 @@
   color: #555;
 }
 
+.dark .button {
+  color: #aaa;
+}
+
 .buttonPrimary {
   background-color: #346df1;
   border-color: #346df1;
   color: #fff;
   text-decoration: none;
   padding: 0.7rem 1.4rem;
+}
+
+.dark .buttonPrimary {
+  background-color: #1f4cb7;
+  border-color: #1f4cb7;
 }
 
 .buttonPrimary:hover {

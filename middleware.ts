@@ -5,23 +5,33 @@ import { auth } from "auth"
 // Create a middleware function that wraps NextAuth middleware
 // and adds support for Salesforce direct authentication
 export async function middleware(request: NextRequest) {
-  // // Run the NextAuth middleware first
-  // const authMiddlewareResponse = await auth()(request)
-  
-  // // Get the response to modify, either from auth middleware or create a new one
-  // const response = authMiddlewareResponse || NextResponse.next()
-  
-  // // Check if there's a session ID cookie for Salesforce direct authentication
-  // const sfSessionId = request.cookies.get("sf_session_id")?.value
-  
-  // if (sfSessionId) {
-  //   // Pass the session ID to the server component through headers
-  //   response.headers.set("x-sf-session-id", sfSessionId)
-  // }
-  
-  // return response
+  // Get the pathname from the URL
+  const path = request.nextUrl.pathname
 
-  return NextResponse.next();
+  // Define protected routes that require authentication
+  const protectedPaths = [
+    '/subscription',
+    '/subscription/success',
+  ]
+  
+  // Check if the current path is a protected path
+  const isPathProtected = protectedPaths.some((pp) => 
+    path === pp || path.startsWith(`${pp}/`)
+  )
+
+  // If the path is protected, verify authentication
+  if (isPathProtected) {
+    const session = await auth()
+    
+    // If not authenticated, redirect to signin page
+    if (!session) {
+      const signInUrl = new URL('/api/auth/signin', request.url)
+      signInUrl.searchParams.set('callbackUrl', path)
+      return NextResponse.redirect(signInUrl)
+    }
+  }
+
+  return NextResponse.next()
 }
 
 // Read more: https://nextjs.org/docs/app/building-your-application/routing/middleware#matcher

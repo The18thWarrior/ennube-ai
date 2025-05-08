@@ -1,11 +1,12 @@
 import { auth } from "@/auth"
+import { getSalesforceCredentialsById } from "@/lib/salesforce-storage"
 import { redirect } from "next/navigation"
 
 export default async function SalesforcePage() {
-  const session = await auth()
+  const credential = await getSalesforceCredentialsById()
   
   // Redirect based on connection status
-  if (session?.user?.salesforce) {
+  if (credential && credential.accessToken) {
     redirect("/salesforce/dashboard")
   } else {
     redirect("/salesforce/connect")
