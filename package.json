@@ -33,6 +33,7 @@
     "date-fns": "^4.1.0",
     "jsforce": "^3.8.1",
     "lucide-react": "^0.274.0",
+    "nanoid": "^5.1.5",
     "next": "latest",
     "next-auth": "beta",
     "notistack": "^3.0.2",

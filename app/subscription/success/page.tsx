@@ -2,10 +2,10 @@
 
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 
-export default function SubscriptionSuccessPage() {
+function SubscriptionSuccessPage() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get('session_id');
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
@@ -57,4 +57,12 @@ export default function SubscriptionSuccessPage() {
       </Link>
     </div>
   );
+}
+
+export default function SubscriptionSuccessPageWrapper() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SubscriptionSuccessPage />
+    </Suspense>
+  )
 }

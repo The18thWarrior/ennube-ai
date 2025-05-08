@@ -1,7 +1,7 @@
 'use client';
 
 import { useSession } from 'next-auth/react';
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useStripe } from '@/lib/stripe-context';
@@ -9,7 +9,7 @@ import { useSearchParams } from 'next/navigation';
 import { useSnackbar } from 'notistack';
 //import { useSubscription } from '@/hooks/use-subscription';
 
-export default function SubscriptionPage() {
+function SubscriptionPage() {
   const { data: session } = useSession();
   const { createCheckoutSession, isLoading, subscription, isLoadingSubscription } = useStripe();
   //const { subscription, isLoadingSubscription, refetchSubscription } = useSubscription();
@@ -147,4 +147,12 @@ export default function SubscriptionPage() {
       </div>
     </div>
   );
+}
+
+export default function SubscriptionPageWrapper() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SubscriptionPage />
+    </Suspense>
+  )
 }
