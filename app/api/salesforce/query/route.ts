@@ -11,12 +11,14 @@ import { SalesforceClient, createSalesforceClient, SalesforceAuthResult } from '
 export async function GET(request: NextRequest) {
   try {
     // Get query parameters
+    console.log(request.nextUrl);
     const searchParams = request.nextUrl.searchParams;
     const sub = searchParams.get('sub');
     const soql = searchParams.get('soql');
     
     // Validate required parameters
     if (!sub) {
+      console.error('Missing required parameter: sub');
       return NextResponse.json(
         { error: 'Missing required parameter: sub' },
         { status: 400 }
@@ -24,6 +26,7 @@ export async function GET(request: NextRequest) {
     }
     
     if (!soql) {
+      console.error('Missing required parameter: soql');
       return NextResponse.json(
         { error: 'Missing required parameter: soql' },
         { status: 400 }
@@ -34,6 +37,7 @@ export async function GET(request: NextRequest) {
     const credentials = await getSalesforceCredentialsBySub(sub);
     
     if (!credentials) {
+      console.error(`No Salesforce credentials found for user: ${sub}`);
       return NextResponse.json(
         { error: 'No Salesforce credentials found for this user' },
         { status: 404 }

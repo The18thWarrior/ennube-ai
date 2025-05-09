@@ -81,6 +81,7 @@ async function getSalesforceClientFromSub(request: NextRequest): Promise<{
  */
 async function logUsage(
   sub: string,
+  agent: string,
   operation: 'create' | 'update' | 'delete',
   recordsCreated: number = 0,
   recordsUpdated: number = 0,
@@ -89,13 +90,13 @@ async function logUsage(
   try {
     // Generate a simple signature as timestamp + operation + sobjectType
     const timestamp = Date.now();
-    const signature = `${timestamp}-${operation}-${sobjectType}`;
+    const signature = `${timestamp}-${operation}-${sobjectType}-${agent}`;
     const nonce = Math.floor(Math.random() * 1000000);
     
     // Log based on operation type
     await storeUsageLog(
       sub,
-      `salesforce-${sobjectType}`,
+      `salesforce-${sobjectType}-${agent}`,
       operation === 'update' ? recordsUpdated : 0,
       operation === 'create' ? recordsCreated : 0,
       0, // No meetings booked in this operation
@@ -124,6 +125,7 @@ export async function POST(request: NextRequest) {
     }
     
     if (!client || !sobjectType) {
+      console.log('failed to initialize client:', sobjectType);
       return NextResponse.json(
         { error: 'Failed to initialize Salesforce client' },
         { status: 500 }
@@ -145,7 +147,8 @@ export async function POST(request: NextRequest) {
     
     // Log the successful creation for billing
     const sub = request.nextUrl.searchParams.get('sub') as string;
-    await logUsage(sub, 'create', 1, 0, sobjectType);
+    const agent = request.nextUrl.searchParams.get('agent') as string;
+    await logUsage(sub, agent, 'create', 1, 0, sobjectType);
     
     // Return the ID of the newly created record
     return NextResponse.json({ 
@@ -217,7 +220,8 @@ export async function PUT(request: NextRequest) {
     if (success) {
       console.log('Record updated successfully:', success);
       const sub = request.nextUrl.searchParams.get('sub') as string;
-      await logUsage(sub, 'update', 0, 1, sobjectType);
+      const agent = request.nextUrl.searchParams.get('agent') as string;
+      await logUsage(sub, agent, 'update', 0, 1, sobjectType);
     }
     
     // Return success response
@@ -277,7 +281,8 @@ export async function DELETE(request: NextRequest) {
     // Log the successful deletion for billing
     if (success) {
       const sub = request.nextUrl.searchParams.get('sub') as string;
-      await logUsage(sub, 'delete', 0, 0, sobjectType);
+      const agent = request.nextUrl.searchParams.get('agent') as string;
+      await logUsage(sub, agent, 'delete', 0, 0, sobjectType);
     }
     
     // Return success response

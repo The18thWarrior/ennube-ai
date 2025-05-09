@@ -85,9 +85,9 @@ export function MainNav() {
           <NavigationMenuItem>
             <SubscribeButton />
           </NavigationMenuItem>
-          <NavigationMenuItem>
+          {/* <NavigationMenuItem>
             <ThemeToggle />
-          </NavigationMenuItem>
+          </NavigationMenuItem> */}
         </NavigationMenuList>
       </NavigationMenu>
     </div>
