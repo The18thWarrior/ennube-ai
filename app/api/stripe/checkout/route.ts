@@ -30,8 +30,8 @@ export async function POST(req: NextRequest) {
         },
       ],
       mode: 'subscription',
-      success_url: `${process.env.BASE_URL || process.env.VERCEL_URL || 'http://localhost:3000'}/api/stripe/subscription/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.BASE_URL || process.env.VERCEL_URL || 'http://localhost:3000'}/api/stripe/subscription/cancel`,
+      success_url: `${process.env.BASE_URL || process.env.VERCEL_URL || 'https://app.ennube.ai'}/api/stripe/subscription/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.BASE_URL || process.env.VERCEL_URL || 'https://app.ennube.ai'}/api/stripe/subscription/cancel`,
       customer_email: session.user.email || undefined,
       metadata: {
         userId: session.user.id || session.user.email || 'unknown',
