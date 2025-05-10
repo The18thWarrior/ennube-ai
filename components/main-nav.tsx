@@ -20,7 +20,7 @@ import { ThemeToggle } from "./theme-toggle"
 import { useStripe } from "@/lib/stripe-context"
 
 export function MainNav() {
-  const { hasSubscription } = useStripe();
+  const { hasSubscription, isLoadingSubscription } = useStripe();
   return (
     <div className="flex items-center gap-4">
       <CustomLink href="/">
@@ -32,6 +32,7 @@ export function MainNav() {
             height="32"
             className="min-w-8"
           />
+          Ennube.ai
         </Button>
       </CustomLink>
       <NavigationMenu>
@@ -73,16 +74,27 @@ export function MainNav() {
               </NavigationMenuLink>
             </NavigationMenuItem>
           }
+          {hasSubscription && 
+
+            <NavigationMenuItem>
+              <NavigationMenuLink
+                href="/agents"
+                className={navigationMenuTriggerStyle()}
+              >
+                Agents
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+          }
           <NavigationMenuItem>
             <NavigationMenuLink
-              href="/salesforce"
+              href="/integrations"
               className={navigationMenuTriggerStyle()}
             >
-              Salesforce
+              Integrations
             </NavigationMenuLink>
           </NavigationMenuItem>
           
-          {!hasSubscription && 
+          {!hasSubscription && !isLoadingSubscription && 
             <NavigationMenuItem>
               <SubscribeButton />
             </NavigationMenuItem>

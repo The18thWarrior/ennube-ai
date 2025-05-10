@@ -12,7 +12,7 @@ export default function DashboardLayout({
 
   return (
     <div className="flex flex-col min-h-screen">
-      <div className="bg-white dark:bg-gray-800 shadow">
+      {/*<div className="bg-white dark:bg-gray-800 shadow">
         <div className="container mx-auto py-4">
           <nav className="flex space-x-4">
             <Link 
@@ -35,10 +35,9 @@ export default function DashboardLayout({
             >
               Usage Logs
             </Link>
-            {/* Add more dashboard links here as needed */}
           </nav>
         </div>
-      </div>
+      </div>*/}
       <main className="flex-grow">
         {children}
       </main>
