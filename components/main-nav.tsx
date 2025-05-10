@@ -82,9 +82,12 @@ export function MainNav() {
             </NavigationMenuLink>
           </NavigationMenuItem>
           
-          <NavigationMenuItem>
-            <SubscribeButton />
-          </NavigationMenuItem>
+          {!hasSubscription && 
+            <NavigationMenuItem>
+              <SubscribeButton />
+            </NavigationMenuItem>
+          }
+          
           {/* <NavigationMenuItem>
             <ThemeToggle />
           </NavigationMenuItem> */}
