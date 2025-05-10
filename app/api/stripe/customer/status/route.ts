@@ -55,6 +55,7 @@ async function getCustomer (subId: string) {
         const customer = await stripe.customers.search({
           query: "metadata['sub']:'" + subId + "'"
         });
+        console.log(customer, subId);
         if (customer.data.length > 0) {
           return customer.data[0];
         }

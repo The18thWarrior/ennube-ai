@@ -12,9 +12,9 @@ import { ThemeProvider } from "@/components/theme-provider"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "NextAuth.js Example",
+  title: "Ennube.ai",
   description:
-    "This is an example site to demonstrate how to use NextAuth.js for authentication",
+    "Supercharge your CRM with AI Agents",
 }
 
 export default function RootLayout({ children, session }: React.PropsWithChildren<{ session: Session | null }>) {

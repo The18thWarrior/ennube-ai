@@ -5,6 +5,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 
 interface StripeContextType {
   createCheckoutSession: () => Promise<{ url: string | null; error: string | null }>;
+  createPortalLink: () => Promise<{ url: string | null; error: string | null }>;
   isLoading: boolean;
   subscription: SubscriptionStatus | null;
   isLoadingSubscription: boolean;
@@ -76,12 +77,39 @@ export function StripeProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const createPortalLink = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/stripe/portal', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const data = await response.json();
+      console.log(data);
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to create portal link');
+      }
+
+      return { url: data.url, error: null };
+    } catch (error: any) {
+      console.error('Error creating portal link:', error);
+      return { url: null, error: error.message || 'Something went wrong' };
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+
   useEffect(() => {
     fetchSubscriptionStatus();
   }, [session]);
   const hasSubscription = !!(subscription && (subscription.status === 'active' || subscription.status === 'trialing'));
   const value = {
     createCheckoutSession,
+    createPortalLink,
     isLoading,
     subscription,
     isLoadingSubscription,

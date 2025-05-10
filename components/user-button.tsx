@@ -47,8 +47,14 @@ export default async function UserButton() {
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
+            <Link href="/account" className="cursor-pointer">
+              Account
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />          
+          <DropdownMenuItem asChild>
             <Link href="/subscription" className="cursor-pointer">
-              Manage Subscription
+              Billing
             </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
