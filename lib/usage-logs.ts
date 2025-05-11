@@ -20,6 +20,20 @@ export interface UsageLogEntry {
   meetingsBooked: number;
   signature: string;
   nonce: number;
+  createdAt? : string;
+  updatedAt? : string;
+  status? : string;
+  responseData?: any;
+}
+
+interface Execution {
+  id: number
+  agent_name: string
+  image_url: string
+  status: string
+  execution_time: number | null
+  created_at: string
+  response_data: any
 }
 
 /**
@@ -32,11 +46,42 @@ export async function storeUsageLog(
   recordsCreated: number = 0,
   meetingsBooked: number = 0,
   signature: string = "",
-  nonce: number = 0
+  nonce: number = 0,
+  logId: string = nanoid(),
+  isNew: boolean = false, 
+  status: string = "In Progress",
 ): Promise<string | null> {
   try {
-    const logId = nanoid();
     const timestamp = Date.now();
+    const message = status === "failed" ?
+      'Failed to complete the operation' :
+      status === "in_progress" ?
+      'Operation is in progress' :
+      status === "success" ?
+      `Created ${recordsCreated} records and updated ${recordsUpdated} records` :
+      'Unknown status';
+    if (!isNew) {
+      const existing = await redis.get<UsageLogEntry>(`${USAGE_LOG_PREFIX}${logId}`);
+      if (existing) {
+        // Update existing log entry
+        existing.timestamp = timestamp;
+        existing.recordsUpdated = recordsUpdated;
+        existing.recordsCreated = recordsCreated;
+        existing.meetingsBooked = meetingsBooked;
+        existing.signature = signature;
+        existing.nonce = nonce;
+        existing.updatedAt = new Date(timestamp).toISOString();
+        existing.status = status;
+        existing.responseData = {
+          execution_summary : `${message}`,
+          recordsUpdated,
+          recordsCreated,
+          meetingsBooked
+        };
+        await redis.set(logId, JSON.stringify(existing));
+        return logId;
+      }
+    }
 
     const usageLog: UsageLogEntry = {
       timestamp,
@@ -47,6 +92,15 @@ export async function storeUsageLog(
       meetingsBooked,
       signature,
       nonce,
+      status,
+      createdAt: new Date(timestamp).toISOString(),
+      updatedAt: new Date(timestamp).toISOString(),
+      responseData: {
+        execution_summary : `${message}`,
+        recordsUpdated,
+        recordsCreated,
+        meetingsBooked
+      },
     };
 
     // Store log with unique ID

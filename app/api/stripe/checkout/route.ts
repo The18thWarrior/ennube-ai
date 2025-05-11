@@ -29,6 +29,7 @@ export async function POST(req: NextRequest) {
           quantity: 1,
         },
       ],
+      allow_promotion_codes: true,
       mode: 'subscription',
       success_url: `${process.env.BASE_URL || process.env.VERCEL_URL || 'https://app.ennube.ai'}/api/stripe/subscription/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.BASE_URL || process.env.VERCEL_URL || 'https://app.ennube.ai'}/api/stripe/subscription/cancel`,

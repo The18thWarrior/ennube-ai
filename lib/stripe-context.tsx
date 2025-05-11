@@ -104,7 +104,7 @@ export function StripeProvider({ children }: { children: React.ReactNode }) {
 
 
   useEffect(() => {
-    fetchSubscriptionStatus();
+    if (session) fetchSubscriptionStatus();
   }, [session]);
   const hasSubscription = !!(subscription && (subscription.status === 'active' || subscription.status === 'trialing'));
   const value = {

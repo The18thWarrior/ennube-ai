@@ -148,7 +148,7 @@ export async function POST(request: NextRequest) {
     // Log the successful creation for billing
     const sub = request.nextUrl.searchParams.get('sub') as string;
     const agent = request.nextUrl.searchParams.get('agent') as string;
-    await logUsage(sub, agent, 'create', 1, 0, sobjectType);
+    //await logUsage(sub, agent, 'create', 1, 0, sobjectType);
     
     // Return the ID of the newly created record
     return NextResponse.json({ 
@@ -221,7 +221,7 @@ export async function PUT(request: NextRequest) {
       console.log('Record updated successfully:', success);
       const sub = request.nextUrl.searchParams.get('sub') as string;
       const agent = request.nextUrl.searchParams.get('agent') as string;
-      await logUsage(sub, agent, 'update', 0, 1, sobjectType);
+      //await logUsage(sub, agent, 'update', 0, 1, sobjectType);
     }
     
     // Return success response
@@ -282,7 +282,7 @@ export async function DELETE(request: NextRequest) {
     if (success) {
       const sub = request.nextUrl.searchParams.get('sub') as string;
       const agent = request.nextUrl.searchParams.get('agent') as string;
-      await logUsage(sub, agent, 'delete', 0, 0, sobjectType);
+      //await logUsage(sub, agent, 'delete', 0, 0, sobjectType);
     }
     
     // Return success response

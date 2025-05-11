@@ -20,7 +20,7 @@ import { ThemeToggle } from "./theme-toggle"
 import { useStripe } from "@/lib/stripe-context"
 
 export function MainNav() {
-  const { hasSubscription, isLoadingSubscription } = useStripe();
+  const { hasSubscription, isLoadingSubscription, isLoading } = useStripe();
   return (
     <div className="flex items-center gap-4">
       <CustomLink href="/">
@@ -36,74 +36,77 @@ export function MainNav() {
         </Button>
       </CustomLink>
       <NavigationMenu>
-        <NavigationMenuList>
-          {/* <NavigationMenuItem>
-            <NavigationMenuTrigger className="px-2">
-              Server Side
-            </NavigationMenuTrigger>
-            <NavigationMenuContent>
-              <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
-                <ListItem href="/server-example" title="RSC Example">
-                  Protecting React Server Component.
-                </ListItem>
-                <ListItem href="/middleware-example" title="Middleware Example">
-                  Using Middleware to protect pages & APIs.
-                </ListItem>
-                <ListItem href="/api-example" title="Route Handler Example">
-                  Getting the session inside an API Route.
-                </ListItem>
-              </ul>
-            </NavigationMenuContent>
-          </NavigationMenuItem> */}
-          {/* <NavigationMenuItem>
-            <NavigationMenuLink
-              href="/client-example"
-              className={navigationMenuTriggerStyle()}
-            >
-              Client Side
-            </NavigationMenuLink>
-          </NavigationMenuItem> */}
-
-          {hasSubscription && 
-            <NavigationMenuItem>
+        {!isLoadingSubscription && 
+            <NavigationMenuList>
+            {/* <NavigationMenuItem>
+              <NavigationMenuTrigger className="px-2">
+                Server Side
+              </NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
+                  <ListItem href="/server-example" title="RSC Example">
+                    Protecting React Server Component.
+                  </ListItem>
+                  <ListItem href="/middleware-example" title="Middleware Example">
+                    Using Middleware to protect pages & APIs.
+                  </ListItem>
+                  <ListItem href="/api-example" title="Route Handler Example">
+                    Getting the session inside an API Route.
+                  </ListItem>
+                </ul>
+              </NavigationMenuContent>
+            </NavigationMenuItem> */}
+            {/* <NavigationMenuItem>
               <NavigationMenuLink
-                href="/dashboard"
+                href="/client-example"
                 className={navigationMenuTriggerStyle()}
               >
-                Dashboard
+                Client Side
               </NavigationMenuLink>
-            </NavigationMenuItem>
-          }
-          {hasSubscription && 
+            </NavigationMenuItem> */}
 
+            {hasSubscription && 
+              <NavigationMenuItem>
+                <NavigationMenuLink
+                  href="/dashboard"
+                  className={navigationMenuTriggerStyle()}
+                >
+                  Dashboard
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+            }
+            {hasSubscription && 
+
+              <NavigationMenuItem>
+                <NavigationMenuLink
+                  href="/agents"
+                  className={navigationMenuTriggerStyle()}
+                >
+                  Agents
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+            }
             <NavigationMenuItem>
               <NavigationMenuLink
-                href="/agents"
+                href="/integrations"
                 className={navigationMenuTriggerStyle()}
               >
-                Agents
+                Integrations
               </NavigationMenuLink>
             </NavigationMenuItem>
-          }
-          <NavigationMenuItem>
-            <NavigationMenuLink
-              href="/integrations"
-              className={navigationMenuTriggerStyle()}
-            >
-              Integrations
-            </NavigationMenuLink>
-          </NavigationMenuItem>
-          
-          {!hasSubscription && !isLoadingSubscription && 
-            <NavigationMenuItem>
-              <SubscribeButton />
-            </NavigationMenuItem>
-          }
-          
-          {/* <NavigationMenuItem>
-            <ThemeToggle />
-          </NavigationMenuItem> */}
-        </NavigationMenuList>
+            
+            {!hasSubscription && 
+              <NavigationMenuItem>
+                <SubscribeButton />
+              </NavigationMenuItem>
+            }
+            
+            {/* <NavigationMenuItem>
+              <ThemeToggle />
+            </NavigationMenuItem> */}
+          </NavigationMenuList>
+        }
+        
       </NavigationMenu>
     </div>
   )
