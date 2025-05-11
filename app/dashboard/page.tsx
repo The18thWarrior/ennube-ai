@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import { ExecutionsList } from "@/components/executions/executions-list"
 import { ExecutionDetailsPanel } from "@/components/executions/execution-details-panel"
@@ -97,7 +97,7 @@ const mockExecutions = [
   },
 ]
 
-export default function ExecutionsPage() {
+function ExecutionsPageComponent() {
   const searchParams = useSearchParams()
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
@@ -236,5 +236,13 @@ export default function ExecutionsPage() {
         )}
       </div>
     </div>
+  )
+}
+
+export default function ExecutionsPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center h-screen">Loading...</div>}>
+      <ExecutionsPageComponent />
+    </Suspense>
   )
 }
