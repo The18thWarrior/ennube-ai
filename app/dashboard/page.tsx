@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Filter, Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useUsageLogs } from "@/hooks/useUsageLogs"
 
 // Mock data for executions
 const mockExecutions = [
@@ -105,6 +106,7 @@ function ExecutionsPageComponent() {
   const [selectedExecution, setSelectedExecution] = useState<number | null>(null)
   const [executions, setExecutions] = useState(mockExecutions)
   const [isPanelOpen, setIsPanelOpen] = useState(false)
+  const { logs } = useUsageLogs(50);
 
   // Check if there's an execution ID in the URL params
   useEffect(() => {
@@ -115,6 +117,10 @@ function ExecutionsPageComponent() {
     }
   }, [searchParams])
 
+  useEffect(() => {
+    // Fetch logs from the API
+    console.log("Fetched logs:", logs);
+  }, [logs]);
   // Filter and sort executions based on current state
   const filteredExecutions = executions
     .filter((execution) => {

@@ -1,16 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useSnackbar } from 'notistack';
-
-export interface UsageLogEntry {
-  timestamp: number;
-  userSub: string;
-  agent: string;
-  recordsUpdated: number;
-  recordsCreated: number;
-  meetingsBooked: number;
-  signature: string;
-  nonce: number;
-}
+import { UsageLogEntry } from '@/lib/usage-logs';
 
 interface UseUsageLogsReturn {
   logs: UsageLogEntry[];

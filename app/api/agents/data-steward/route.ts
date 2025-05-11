@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
     // url.searchParams.append('limit', limit);
     // url.searchParams.append('limit', "1");
     // url.searchParams.append('sub', userSub);
-    const url2 = `${webhookUrl}?limit=${1}&subId=${userSub}`;
+    const url2 = `${webhookUrl}?limit=${limit}&subId=${userSub}`;
     console.log(`Data steward webhook URL: ${url2}`);
     // Make the request to the data steward webhook
     const response = await fetch(url2, {
