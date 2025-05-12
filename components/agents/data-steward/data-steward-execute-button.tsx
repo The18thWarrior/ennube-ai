@@ -24,7 +24,7 @@ export default function DataStewardExecuteButton() {
       
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to execute data steward agent');
+        throw new Error(errorData.error || 'Failed to execute dat`a steward agent');
       }
       
       const data = await response.json();
