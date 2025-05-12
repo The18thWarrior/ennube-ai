@@ -11,7 +11,7 @@ import { JsonView } from "../ui/json-view"
 
 
 interface Execution {
-  id: number
+  id: string
   agent_name: string
   image_url: string
   status: string

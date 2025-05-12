@@ -5,9 +5,10 @@ import { formatDistanceToNow } from "date-fns"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { CheckCircle, XCircle, Clock } from "lucide-react"
+import { nanoid } from "nanoid"
 
 interface Execution {
-  id: number
+  id: string
   agent_name: string
   image_url: string
   status: string
@@ -17,8 +18,8 @@ interface Execution {
 
 interface ExecutionsListProps {
   executions: Execution[]
-  onSelectExecution: (id: number) => void
-  selectedExecutionId: number | null
+  onSelectExecution: (id: string) => void
+  selectedExecutionId: string | null
 }
 
 export function ExecutionsList({ executions, onSelectExecution, selectedExecutionId }: ExecutionsListProps) {
@@ -37,7 +38,7 @@ export function ExecutionsList({ executions, onSelectExecution, selectedExecutio
     <div className="space-y-4">
       {executions.map((execution) => (
         <Card
-          key={execution.id}
+          key={nanoid()}
           className={`cursor-pointer transition-all hover:shadow-md ${
             selectedExecutionId === execution.id ? "ring-2 ring-purple-500 shadow-md" : ""
           }`}

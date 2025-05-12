@@ -9,6 +9,8 @@ import { Filter, Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useUsageLogs } from "@/hooks/useUsageLogs"
+import { nanoid } from "nanoid"
+import dayjs from "dayjs";
 
 // Mock data for executions
 const mockExecutions = [
@@ -98,21 +100,49 @@ const mockExecutions = [
   },
 ]
 
+const agentImageMap: Record<string, string> = {
+  "DataSteward": "/data-steward.png",
+  "ProspectFinder": "/prospect-finder.png",
+  "MeetingsBooker": "/meetings-booker.png",
+  "MarketNurturer": "/market-nurturer.png",
+}
+
+const getAgentImage = (agentName: string) => {
+  if (agentName in agentImageMap) {
+    return agentImageMap[agentName]
+  }
+  return "/data-steward.png" // Fallback image
+}
+
 function ExecutionsPageComponent() {
   const searchParams = useSearchParams()
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [sortBy, setSortBy] = useState("newest")
-  const [selectedExecution, setSelectedExecution] = useState<number | null>(null)
-  const [executions, setExecutions] = useState(mockExecutions)
+  const [selectedExecution, setSelectedExecution] = useState<string | null>(null)
+  //const [executions, setExecutions] = useState(mockExecutions)
   const [isPanelOpen, setIsPanelOpen] = useState(false)
   const { logs } = useUsageLogs(50);
-
+  const executions = logs.map((log) => {
+    return {
+      id: log.signature + log.timestamp,
+      agent_name: log.agent,
+      image_url: getAgentImage(log.agent),
+      status: log.status || "unknown",
+      execution_time: 0,
+      created_at: log.createdAt || dayjs(log.timestamp).toISOString(),
+      response_data: log.responseData || {
+        execution_summary: `Created ${log.recordsCreated} records and updated ${log.recordsUpdated} records`,
+        error: null,
+        error_code: null,
+      },
+    }
+  });
   // Check if there's an execution ID in the URL params
   useEffect(() => {
     const executionId = searchParams.get("id")
     if (executionId) {
-      setSelectedExecution(Number.parseInt(executionId))
+      setSelectedExecution(executionId)
       setIsPanelOpen(true)
     }
   }, [searchParams])
@@ -156,7 +186,7 @@ function ExecutionsPageComponent() {
       }
     })
 
-  const handleExecutionSelect = (id: number) => {
+  const handleExecutionSelect = (id: string) => {
     setSelectedExecution(id)
     setIsPanelOpen(true)
   }
