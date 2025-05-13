@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { useStripe } from '@/lib/stripe-context';
 import { useSearchParams } from 'next/navigation';
 import { useSnackbar } from 'notistack';
+import UsageProgressBar from '@/components/billing/usage-progress-bar';
 //import { useSubscription } from '@/hooks/use-subscription';
 
 export default function SubscriptionSummary() {
@@ -110,6 +111,13 @@ export default function SubscriptionSummary() {
                   </span>
                 </div>
               )}
+              
+              {/* Usage Progress Bar */}
+              <div className="mt-4 pt-4 border-t border-border">
+                <Suspense fallback={<div>Loading usage data...</div>}>
+                  <UsageProgressBar />
+                </Suspense>
+              </div>
             </div>
             
             <div className="flex justify-end">
@@ -123,6 +131,13 @@ export default function SubscriptionSummary() {
               <p className="text-muted-foreground mb-4">
                 Subscribe to get full access to all features
               </p>
+              
+              {/* Usage Progress Bar for free tier */}
+              <div className="mb-6 px-2">
+                <Suspense fallback={<div>Loading usage data...</div>}>
+                  <UsageProgressBar />
+                </Suspense>
+              </div>
               
               <div className="bg-card border border-border rounded-md p-4 mb-6">
                 <h3 className="font-semibold text-lg mb-2">Premium Plan</h3>
@@ -144,7 +159,7 @@ export default function SubscriptionSummary() {
                     <svg className="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
-                    No usage limits
+                    <strong>1,000 record operations</strong> per month (10x free tier)
                   </li>
                 </ul>
               </div>

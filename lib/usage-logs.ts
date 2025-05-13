@@ -279,3 +279,59 @@ export async function clearUserUsageLogsBySub(sub: string): Promise<boolean> {
     return false;
   }
 }
+
+/**
+ * Get the total number of record operations (created + updated) for the current user in a given month
+ * @param year - The year to calculate totals for
+ * @param month - The month to calculate totals for (0-11, where 0 is January)
+ * @returns The total number of record operations
+ */
+export async function getMonthlyRecordOperationsTotal(
+  year: number,
+  month: number
+): Promise<number> {
+  try {
+    const session = await auth();
+    if (!session || !session.user || !session.user.auth0) {
+      console.error("No session found");
+      return 0;
+    }
+    
+    const userSub = session.user.auth0.sub;
+    return await getMonthlyRecordOperationsTotalBySub(userSub, year, month);
+  } catch (error) {
+    console.error("Error retrieving monthly record operations total:", error);
+    return 0;
+  }
+}
+
+/**
+ * Get the total number of record operations (created + updated) for a specific user in a given month
+ * @param sub - The user sub ID
+ * @param year - The year to calculate totals for
+ * @param month - The month to calculate totals for (0-11, where 0 is January)
+ * @returns The total number of record operations
+ */
+export async function getMonthlyRecordOperationsTotalBySub(
+  sub: string,
+  year: number,
+  month: number
+): Promise<number> {
+  try {
+    // Calculate start and end timestamps for the month
+    const startDate = new Date(year, month, 1);
+    const endDate = new Date(year, month + 1, 0, 23, 59, 59, 999); // Last day of month
+    
+    const startTime = startDate.getTime();
+    const endTime = endDate.getTime();
+    
+    // Get usage summary for the specified time period
+    const summary = await getUsageSummaryBySub(sub, startTime, endTime);
+    
+    // Return the sum of records created and updated
+    return summary.recordsCreated + summary.recordsUpdated;
+  } catch (error) {
+    console.error("Error retrieving monthly record operations total by sub:", error);
+    return 0;
+  }
+}
