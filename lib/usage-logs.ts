@@ -60,6 +60,12 @@ export async function storeUsageLog(
       status === "success" ?
       `Created ${recordsCreated} records and updated ${recordsUpdated} records` :
       'Unknown status';
+    console.log("message", message);
+    console.log("logId", logId);
+    console.log("userSub", userSub);
+    console.log("agent", agent);
+    console.log("status", status);
+
     if (!isNew) {
       const existing = await redis.get<UsageLogEntry>(`${USAGE_LOG_PREFIX}${logId}`);
       if (existing) {
