@@ -20,7 +20,7 @@ export default function DataStewardExecuteButton() {
       setResult(null);
       
       // Call the data-steward API with a default limit of 100
-      const response = await fetch('/api/agents/data-steward?limit=10');
+      const response = await fetch('/api/agents/data-steward?limit=1');
       
       if (!response.ok) {
         const errorData = await response.json();
