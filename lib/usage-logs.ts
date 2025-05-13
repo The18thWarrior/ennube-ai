@@ -58,33 +58,29 @@ export async function storeUsageLog(
       status === "in_progress" ?
       'Operation is in progress' :
       status === "success" ?
-      `Created ${recordsCreated} records and updated ${recordsUpdated} records` :
+      `Created ${recordsCreated || 0} records and updated ${recordsUpdated || 0} records` :
       'Unknown status';
-    console.log("message", message);
-    console.log("logId", logId);
-    console.log("userSub", userSub);
-    console.log("agent", agent);
-    console.log("status", status);
 
+    const key = `${USAGE_LOG_PREFIX}${logId}`;
     if (!isNew) {
-      const existing = await redis.get<UsageLogEntry>(`${USAGE_LOG_PREFIX}${logId}`);
+      const existing = await redis.get<UsageLogEntry>(key);
       if (existing) {
         // Update existing log entry
         existing.timestamp = timestamp;
-        existing.recordsUpdated = recordsUpdated;
-        existing.recordsCreated = recordsCreated;
-        existing.meetingsBooked = meetingsBooked;
+        existing.recordsUpdated = recordsUpdated || 0;
+        existing.recordsCreated = recordsCreated || 0;
+        existing.meetingsBooked = meetingsBooked || 0;
         existing.signature = signature;
         existing.nonce = nonce;
         existing.updatedAt = new Date(timestamp).toISOString();
         existing.status = status;
         existing.responseData = {
           execution_summary : `${message}`,
-          recordsUpdated,
-          recordsCreated,
-          meetingsBooked
+          recordsUpdated: recordsUpdated || 0,
+          recordsCreated: recordsCreated || 0,
+          meetingsBooked: meetingsBooked || 0
         };
-        await redis.set(logId, JSON.stringify(existing));
+        await redis.set(`${USAGE_LOG_PREFIX}${logId}`, JSON.stringify(existing));
         return logId;
       }
     }
@@ -93,8 +89,8 @@ export async function storeUsageLog(
       timestamp,
       userSub,
       agent,
-      recordsUpdated,
-      recordsCreated,
+      recordsUpdated: recordsUpdated || 0,
+      recordsCreated: recordsCreated || 0,
       meetingsBooked,
       signature,
       nonce,
@@ -110,7 +106,6 @@ export async function storeUsageLog(
     };
 
     // Store log with unique ID
-    const key = `${USAGE_LOG_PREFIX}${logId}`;
     await redis.set(key, JSON.stringify(usageLog));
     
     // Also store in a list of logs for this user for easy retrieval
