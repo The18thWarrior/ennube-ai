@@ -125,7 +125,7 @@ export function ExecutionDetailsPanel({ execution, onClose }: ExecutionDetailsPa
           </div>
         )}
 
-        {execution.status === "completed" && execution.response_data?.execution_summary && (
+        {execution.status === "success" && execution.response_data?.execution_summary && (
           <div className="bg-green-50 border border-green-200 rounded-lg p-4">
             <h3 className="text-sm font-medium text-green-800 flex items-center gap-2">
               <CheckCircle className="h-4 w-4" />
@@ -151,15 +151,15 @@ export function ExecutionDetailsPanel({ execution, onClose }: ExecutionDetailsPa
           </Tabs>
         </div>
 
-        <div className="flex justify-end gap-2">
-          {execution.status === "completed" && <Button variant="outline">Download Results</Button>}
+        {/* <div className="flex justify-end gap-2">
+          {execution.status === "success" && <Button variant="outline">Download Results</Button>}
           {execution.status === "failed" && (
             <Button>
               <RefreshCw className="h-4 w-4 mr-2" />
               Retry
             </Button>
           )}
-        </div>
+        </div> */}
       </CardContent>
     </Card>
   )
@@ -167,28 +167,28 @@ export function ExecutionDetailsPanel({ execution, onClose }: ExecutionDetailsPa
 
 function StatusBadge({ status }: { status: string }) {
   switch (status) {
-    case "completed":
+    case "success":
       return (
-        <Badge variant="success" className="flex items-center gap-1">
+        <Badge variant="success" className="flex items-center gap-1 text-green-700">
           <CheckCircle className="h-3 w-3" />
           <span>Completed</span>
         </Badge>
       )
     case "failed":
       return (
-        <Badge variant="destructive" className="flex items-center gap-1">
+        <Badge variant="destructive" className="flex items-center gap-1 text-red-700">
           <XCircle className="h-3 w-3" />
           <span>Failed</span>
         </Badge>
       )
     case "in_progress":
       return (
-        <Badge variant="outline" className="flex items-center gap-1 bg-amber-50 text-amber-700 border-amber-200">
+        <Badge variant="outline" className="flex items-center gap-1 text-amber-700">
           <Clock className="h-3 w-3" />
           <span>In Progress</span>
         </Badge>
       )
     default:
-      return <Badge variant="outline">{status}</Badge>
+      return <Badge variant="outline" className="text-muted">{status}</Badge>
   }
 }

@@ -129,7 +129,7 @@ function ExecutionsPageComponent() {
       agent_name: log.agent,
       image_url: getAgentImage(log.agent),
       status: log.status || "unknown",
-      execution_time: 0,
+      execution_time: dayjs(log.updatedAt).diff(dayjs(log.createdAt), "seconds"),
       created_at: log.createdAt || dayjs(log.timestamp).toISOString(),
       response_data: log.responseData || {
         execution_summary: `Created ${log.recordsCreated} records and updated ${log.recordsUpdated} records`,

@@ -68,7 +68,7 @@ export function ExecutionsList({ executions, onSelectExecution, selectedExecutio
 
               <div className="text-right">
                 {execution.execution_time ? (
-                  <p className="text-sm font-medium">{(execution.execution_time / 1000).toFixed(2)}s</p>
+                  <p className="text-sm font-medium">{(execution.execution_time).toFixed(2)}s</p>
                 ) : (
                   <p className="text-sm font-medium text-amber-500">Running...</p>
                 )}
@@ -83,16 +83,16 @@ export function ExecutionsList({ executions, onSelectExecution, selectedExecutio
 
 function StatusBadge({ status }: { status: string }) {
   switch (status) {
-    case "completed":
+    case "success":
       return (
-        <Badge variant="success" className="flex items-center gap-1">
+        <Badge variant="success" className="flex items-center gap-1 bg-green-50 text-green-700 border-green-200">
           <CheckCircle className="h-3 w-3" />
           <span>Completed</span>
         </Badge>
       )
     case "failed":
       return (
-        <Badge variant="destructive" className="flex items-center gap-1">
+        <Badge variant="destructive" className="flex items-center gap-1 bg-red-50 text-red-700 border-red-200">
           <XCircle className="h-3 w-3" />
           <span>Failed</span>
         </Badge>
