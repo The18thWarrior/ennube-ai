@@ -1,0 +1,19 @@
+.footer {
+  margin-top: 2rem;
+  color: #666;
+}
+
+.dark .footer {
+  color: #aaa;
+}
+
+.navItems {
+  margin-bottom: 1rem;
+  padding: 0;
+  list-style: none;
+}
+
+.navItem {
+  display: inline-block;
+  margin-right: 1rem;
+}
