@@ -6,6 +6,7 @@ import { useStripe, getSubscriptionLimit } from "@/lib/stripe-context";
 import { Loader2 } from "lucide-react";
 import { useSnackbar } from 'notistack';
 import { useBillingUsage } from "@/hooks/useBillingUsage";
+import { useRouter } from "next/navigation";
 
 export default function ProspectFinderExecuteButton() {
   const { subscription, isLoadingSubscription, hasSubscription } = useStripe();
@@ -16,6 +17,7 @@ export default function ProspectFinderExecuteButton() {
   const limit = getSubscriptionLimit(subscription);
   const { usage } = useBillingUsage();
   const exceededLimit = usage >= limit;
+  const route = useRouter();
 
   const handleExecute = async () => {
     try {
@@ -39,6 +41,7 @@ export default function ProspectFinderExecuteButton() {
         variant: 'success',
         autoHideDuration: 4000
       });
+      route.push('/dashboard');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unexpected error occurred');
       console.error('Error executing prospect finder:', err);

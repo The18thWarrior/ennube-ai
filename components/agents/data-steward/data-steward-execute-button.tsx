@@ -6,6 +6,7 @@ import { useStripe, getSubscriptionLimit } from "@/lib/stripe-context";
 import { Loader2 } from "lucide-react";
 import { useSnackbar } from 'notistack';
 import { useBillingUsage } from "@/hooks/useBillingUsage";
+import { useRouter } from "next/navigation";
 
 export default function DataStewardExecuteButton() {
   const { subscription, isLoadingSubscription, hasSubscription } = useStripe();
@@ -16,7 +17,8 @@ export default function DataStewardExecuteButton() {
   const limit = getSubscriptionLimit(subscription);
   const { usage } = useBillingUsage();
   const exceededLimit = usage >= limit;
-
+  const route = useRouter();
+  
   const handleExecute = async () => {
     try {
       setIsLoading(true);
@@ -39,6 +41,7 @@ export default function DataStewardExecuteButton() {
         variant: 'success',
         autoHideDuration: 4000
       });
+      route.push('/dashboard');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unexpected error occurred');
       console.error('Error executing data steward agent:', err);
