@@ -6,7 +6,7 @@ import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Shield, Users, Heart, Star, X, Clipboard } from "lucide-react"
 
-export default function ProspectFinderHeader() {
+export default function DataStewardHeader() {
   const [isImageModalOpen, setIsImageModalOpen] = useState(false)
 
   return (
@@ -25,8 +25,8 @@ export default function ProspectFinderHeader() {
               <X className="h-8 w-8" />
             </button>
             <Image
-              src="/prospect-finder.png"
-              alt="Prospect Finder Profile"
+              src="/data-steward.png"
+              alt="Data Steward Profile"
               width={800}
               height={800}
               className="object-contain max-h-[90vh]"
@@ -44,8 +44,8 @@ export default function ProspectFinderHeader() {
               onClick={() => setIsImageModalOpen(true)}
             >
               <Image
-                src="/prospect-finder.png"
-                alt="Prospect Finder Profile"
+                src="/data-steward.png"
+                alt="Data Steward Profile"
                 width={400}
                 height={400}
                 className="object-cover"
@@ -58,9 +58,9 @@ export default function ProspectFinderHeader() {
               <div className="inline-block px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm text-sm mb-2">
                 Online Now
               </div>
-              <h1 className="text-4xl font-bold">Prospect Finder</h1>
+              <h1 className="text-4xl font-bold">Data Steward</h1>
               <p className="text-xl opacity-90 mt-1">
-                🌍 Track down high-quality prospects for the world's best tech teams
+                Keep your CRM shredded, lean, and 100% reliable. No flab. No bad data.
               </p>
             </div>
           </div>

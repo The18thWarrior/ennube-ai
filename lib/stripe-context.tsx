@@ -130,3 +130,17 @@ export function useStripe() {
   }
   return context;
 }
+
+export function getSubscriptionLimit(subscription: SubscriptionStatus | null): number {
+  if (!subscription) return 100;
+    const usageLimit = getIsSubscribed(subscription) ? 1000 : 100;
+
+  return usageLimit;
+}
+
+export function getIsSubscribed(subscription: SubscriptionStatus | null): boolean {
+  if (!subscription) return false;
+
+  const status = subscription.status;
+  return status === 'active' || status === 'trialing';
+}

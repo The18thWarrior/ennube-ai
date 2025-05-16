@@ -7,7 +7,7 @@ import { Loader2 } from "lucide-react";
 import { useSnackbar } from 'notistack';
 import { useBillingUsage } from "@/hooks/useBillingUsage";
 
-export default function DataStewardExecuteButton() {
+export default function ProspectFinderExecuteButton() {
   const { subscription, isLoadingSubscription, hasSubscription } = useStripe();
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
@@ -24,7 +24,7 @@ export default function DataStewardExecuteButton() {
       setResult(null);
       
       // Call the data-steward API with a default limit of 100
-      const response = await fetch('/api/agents/data-steward?limit=10');
+      const response = await fetch('/api/agents/prospect-finder?limit=1');
       
       if (!response.ok) {
         const errorData = await response.json();
@@ -35,13 +35,13 @@ export default function DataStewardExecuteButton() {
       setResult(data);
       
       // Display success toast message
-      enqueueSnackbar('Data Steward started', { 
+      enqueueSnackbar('Prospect Finder started', { 
         variant: 'success',
         autoHideDuration: 4000
       });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unexpected error occurred');
-      console.error('Error executing data steward agent:', err);
+      console.error('Error executing prospect finder:', err);
     } finally {
       setIsLoading(false);
     }
@@ -60,7 +60,7 @@ export default function DataStewardExecuteButton() {
             Processing...
           </>
         ) : (
-          'Execute Data Steward'
+          'Execute Prospect Finder'
         )}
       </Button>
       

@@ -33,14 +33,14 @@ export function AgentCard({ agent }: AgentCardProps) {
             className="flex flex-col bg-card text-card-foreground rounded-xl shadow-md hover:shadow-lg transition-shadow p-6 relative border border-border dark:border-border"
         >
             {agent.isNew && (
-            <div className="absolute -top-2 right-4">
+            <div className="absolute top-2 right-4">
                 <span className="inline-flex items-center rounded-full bg-green-100 dark:bg-green-900/20 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:text-green-400">
                 New
                 </span>
             </div>
             )}
             {agent.comingSoon && (
-            <div className="absolute -top-2 right-4">
+            <div className="absolute top-2 right-4">
                 <span className="inline-flex items-center rounded-full bg-yellow-100 dark:bg-amber-900/20 px-2.5 py-0.5 text-xs font-medium text-yellow-800 dark:text-yellow-400">
                 Coming Soon
                 </span>
