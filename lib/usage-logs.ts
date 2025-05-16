@@ -84,13 +84,15 @@ export async function storeUsageLog(
           existing.updatedAt = new Date(timestamp).toISOString();
           if (status === "failed" && (existing.recordsCreated > 0 && existing.recordsUpdated > 0)) {
             //existing.status = "failed";
+            existing.responseData = {...existing.responseData, errors: existing.responseData.errors ? existing.responseData.errors++ : 1};
           } else {
             existing.status = status;
             existing.responseData = {
               execution_summary : `${message}`,
               recordsUpdated: recordsUpdated || 0 + existing.recordsUpdated,
               recordsCreated: recordsCreated || 0 + existing.recordsCreated,
-              meetingsBooked: meetingsBooked || 0 + existing.meetingsBooked
+              meetingsBooked: meetingsBooked || 0 + existing.meetingsBooked,
+              errors: existing.responseData.errors || 0
             };
           }
           
@@ -108,7 +110,8 @@ export async function storeUsageLog(
             execution_summary : `${message}`,
             recordsUpdated: recordsUpdated || 0,
             recordsCreated: recordsCreated || 0,
-            meetingsBooked: meetingsBooked || 0
+            meetingsBooked: meetingsBooked || 0,
+            errors: existing.responseData.errors || 0
           };
         }
         
@@ -133,7 +136,8 @@ export async function storeUsageLog(
         execution_summary : `${message}`,
         recordsUpdated,
         recordsCreated,
-        meetingsBooked
+        meetingsBooked,
+        errors: 0
       },
     };
 
