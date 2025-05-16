@@ -60,13 +60,7 @@ export async function storeUsageLog(
 ): Promise<string | null> {
   try {
     const timestamp = Date.now();
-    const message = status === "failed" ?
-      'Failed to complete the operation' :
-      status === "in_progress" ?
-      'Operation is in progress' :
-      status === "success" ?
-      `Created ${recordsCreated || 0} records and updated ${recordsUpdated || 0} records` :
-      'Unknown status';
+    const message = getMessage(status, agent, recordsCreated, recordsUpdated);
 
     const key = `${USAGE_LOG_PREFIX}${logId}`;
     if (!isNew) {
@@ -75,6 +69,7 @@ export async function storeUsageLog(
       if (existing) {
         if (agent === AGENTNAMES.prospectFinder) {
           // Update existing log entry
+          const newMessage = getMessage(status, agent, recordsCreated, recordsUpdated, existing);
           existing.timestamp = timestamp;
           existing.recordsUpdated = Number(recordsUpdated || 0) + Number(existing.recordsUpdated);
           existing.recordsCreated = Number(recordsCreated || 0) + Number(existing.recordsCreated);
@@ -82,13 +77,14 @@ export async function storeUsageLog(
           existing.signature = signature;
           existing.nonce = nonce;
           existing.updatedAt = new Date(timestamp).toISOString();
+          
           if (status === "failed" && (existing.recordsCreated > 0 || existing.recordsUpdated > 0)) {
             //existing.status = "failed";
-            existing.responseData = {...existing.responseData, errors: existing.responseData.errors ? existing.responseData.errors++ : 1};
+            existing.responseData = {...existing.responseData, execution_summary: newMessage, errors: existing.responseData.errors ? existing.responseData.errors++ : 1};
           } else {
             existing.status = status;
             existing.responseData = {
-              execution_summary : `${message}`,
+              execution_summary : newMessage,
               recordsUpdated: Number(recordsUpdated || 0) + existing.recordsUpdated,
               recordsCreated: Number(recordsCreated || 0) + existing.recordsCreated,
               meetingsBooked: Number(meetingsBooked || 0) + existing.meetingsBooked,
@@ -370,4 +366,20 @@ export async function getMonthlyRecordOperationsTotalBySub(
     console.error("Error retrieving monthly record operations total by sub:", error);
     return 0;
   }
+}
+
+
+const getMessage = (status: string, agent: string, recordsCreated: number, recordsUpdated: number, existing = null as UsageLogEntry | null) => {
+  if (agent === AGENTNAMES.prospectFinder && existing) {
+    if (existing.recordsCreated > 0 || existing.recordsUpdated > 0) {
+      return `Created ${recordsCreated || 0} records and updated ${recordsUpdated || 0} records`
+    }
+  }
+  return status === "failed" ?
+      'Failed to complete the operation' :
+      status === "in_progress" ?
+      'Operation is in progress' :
+      status === "success" ?
+      `Created ${recordsCreated || 0} records and updated ${recordsUpdated || 0} records` :
+      'Unknown status';
 }
