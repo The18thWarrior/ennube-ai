@@ -76,9 +76,9 @@ export async function storeUsageLog(
         if (agent === AGENTNAMES.prospectFinder) {
           // Update existing log entry
           existing.timestamp = timestamp;
-          existing.recordsUpdated = recordsUpdated || 0 + existing.recordsUpdated;
-          existing.recordsCreated = recordsCreated || 0 + existing.recordsCreated;
-          existing.meetingsBooked = meetingsBooked || 0 + existing.meetingsBooked;
+          existing.recordsUpdated = Number(recordsUpdated || 0) + Number(existing.recordsUpdated);
+          existing.recordsCreated = Number(recordsCreated || 0) + Number(existing.recordsCreated);
+          existing.meetingsBooked = Number(meetingsBooked || 0) + Number(existing.meetingsBooked);
           existing.signature = signature;
           existing.nonce = nonce;
           existing.updatedAt = new Date(timestamp).toISOString();
@@ -99,18 +99,18 @@ export async function storeUsageLog(
         } else {
           // Update existing log entry
           existing.timestamp = timestamp;
-          existing.recordsUpdated = recordsUpdated || 0;
-          existing.recordsCreated = recordsCreated || 0;
-          existing.meetingsBooked = meetingsBooked || 0;
+          existing.recordsUpdated = Number(recordsUpdated || 0);
+          existing.recordsCreated = Number(recordsCreated || 0);
+          existing.meetingsBooked = Number(meetingsBooked || 0);
           existing.signature = signature;
           existing.nonce = nonce;
           existing.updatedAt = new Date(timestamp).toISOString();
           existing.status = status;
           existing.responseData = {
             execution_summary : `${message}`,
-            recordsUpdated: Number(recordsUpdated || 0) + existing.recordsUpdated,
-            recordsCreated: Number(recordsCreated || 0) + existing.recordsCreated,
-            meetingsBooked: Number(meetingsBooked || 0) + existing.meetingsBooked,
+            recordsUpdated: Number(recordsUpdated || 0) + Number(existing.recordsUpdated),
+            recordsCreated: Number(recordsCreated || 0) + Number(existing.recordsCreated),
+            meetingsBooked: Number(meetingsBooked || 0) + Number(existing.meetingsBooked),
             errors: Number(existing.responseData.errors || 0)
           };
         }
@@ -249,16 +249,16 @@ export async function getUsageSummaryBySub(
 }> {
   try {
     const logs = await getUserUsageLogsBySub(sub);
-    
+    //console.log("logs", logs[0]);
     // Filter logs by time period and reduce to get totals
     const summary = logs
       .filter(log => log.timestamp >= startTime && log.timestamp <= endTime)
       .reduce(
         (acc, log) => {
           return {
-            recordsUpdated: acc.recordsUpdated + log.recordsUpdated,
-            recordsCreated: acc.recordsCreated + log.recordsCreated,
-            meetingsBooked: acc.meetingsBooked + log.meetingsBooked,
+            recordsUpdated: Number(acc.recordsUpdated) + Number(log.recordsUpdated),
+            recordsCreated: Number(acc.recordsCreated) + Number(log.recordsCreated),
+            meetingsBooked: Number(acc.meetingsBooked) + Number(log.meetingsBooked),
           };
         },
         { recordsUpdated: 0, recordsCreated: 0, meetingsBooked: 0 }
