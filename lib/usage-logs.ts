@@ -89,10 +89,10 @@ export async function storeUsageLog(
             existing.status = status;
             existing.responseData = {
               execution_summary : `${message}`,
-              recordsUpdated: recordsUpdated || 0 + existing.recordsUpdated,
-              recordsCreated: recordsCreated || 0 + existing.recordsCreated,
-              meetingsBooked: meetingsBooked || 0 + existing.meetingsBooked,
-              errors: existing.responseData.errors || 0
+              recordsUpdated: Number(recordsUpdated || 0) + existing.recordsUpdated,
+              recordsCreated: Number(recordsCreated || 0) + existing.recordsCreated,
+              meetingsBooked: Number(meetingsBooked || 0) + existing.meetingsBooked,
+              errors: Number(existing.responseData.errors || 0)
             };
           }
           
@@ -108,10 +108,10 @@ export async function storeUsageLog(
           existing.status = status;
           existing.responseData = {
             execution_summary : `${message}`,
-            recordsUpdated: recordsUpdated || 0,
-            recordsCreated: recordsCreated || 0,
-            meetingsBooked: meetingsBooked || 0,
-            errors: existing.responseData.errors || 0
+            recordsUpdated: Number(recordsUpdated || 0) + existing.recordsUpdated,
+            recordsCreated: Number(recordsCreated || 0) + existing.recordsCreated,
+            meetingsBooked: Number(meetingsBooked || 0) + existing.meetingsBooked,
+            errors: Number(existing.responseData.errors || 0)
           };
         }
         
