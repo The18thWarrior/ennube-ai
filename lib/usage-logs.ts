@@ -82,7 +82,7 @@ export async function storeUsageLog(
           existing.signature = signature;
           existing.nonce = nonce;
           existing.updatedAt = new Date(timestamp).toISOString();
-          if (status === "failed" && (existing.recordsCreated > 0 && existing.recordsUpdated > 0)) {
+          if (status === "failed" && (existing.recordsCreated > 0 || existing.recordsUpdated > 0)) {
             //existing.status = "failed";
             existing.responseData = {...existing.responseData, errors: existing.responseData.errors ? existing.responseData.errors++ : 1};
           } else {
