@@ -5,6 +5,7 @@ import { getUserUsageLogsBySub, storeUsageLog } from '@/lib/usage-logs';
 import { nanoid } from 'nanoid';
 import { log } from 'console';
 
+
 export async function GET(request: NextRequest) {
   try {
     // Get the current session to identify the user
@@ -72,6 +73,7 @@ export async function PUT(request: NextRequest) {
     const recordsUpdated = body.recordsUpdated || searchParams.get('recordsUpdated');
     const recordsCreated = body.recordsCreated || searchParams.get('recordsCreated');
     const meetingsBooked = body.meetingsBooked || searchParams.get('meetingsBooked');
+    const errors = body.errors || searchParams.get('errors');
 
     // Validate required parameters
     if (!sub) {
@@ -80,8 +82,10 @@ export async function PUT(request: NextRequest) {
         { status: 400 }
       );
     }
+
+
     // Store the usage log in the database
-    await storeUsageLog(sub, agent, recordsUpdated, recordsCreated, meetingsBooked, "", 0, id, false, status);
+    await storeUsageLog(sub, agent, recordsUpdated, recordsCreated, meetingsBooked, "", 0, id, false, status, errors);
     return NextResponse.json({id});
   } catch (error: any) {
     console.error('Error storing usage log:', error);

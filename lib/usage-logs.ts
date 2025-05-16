@@ -5,6 +5,11 @@ import { Redis } from '@upstash/redis';
 import { nanoid } from "nanoid";
 import { auth } from '@/auth';
 
+const AGENTNAMES = {
+  prospectFinder: 'ProspectFinder',
+  dataSteward: 'DataSteward',
+}
+
 // Create Redis client
 const redis = Redis.fromEnv();
 
@@ -50,6 +55,8 @@ export async function storeUsageLog(
   logId: string = nanoid(),
   isNew: boolean = false, 
   status: string = "In Progress",
+  errors: string | null = null
+  
 ): Promise<string | null> {
   try {
     const timestamp = Date.now();
@@ -64,22 +71,47 @@ export async function storeUsageLog(
     const key = `${USAGE_LOG_PREFIX}${logId}`;
     if (!isNew) {
       const existing = await redis.get<UsageLogEntry>(key);
+      
       if (existing) {
-        // Update existing log entry
-        existing.timestamp = timestamp;
-        existing.recordsUpdated = recordsUpdated || 0;
-        existing.recordsCreated = recordsCreated || 0;
-        existing.meetingsBooked = meetingsBooked || 0;
-        existing.signature = signature;
-        existing.nonce = nonce;
-        existing.updatedAt = new Date(timestamp).toISOString();
-        existing.status = status;
-        existing.responseData = {
-          execution_summary : `${message}`,
-          recordsUpdated: recordsUpdated || 0,
-          recordsCreated: recordsCreated || 0,
-          meetingsBooked: meetingsBooked || 0
-        };
+        if (agent === AGENTNAMES.prospectFinder) {
+          // Update existing log entry
+          existing.timestamp = timestamp;
+          existing.recordsUpdated = recordsUpdated || 0 + existing.recordsUpdated;
+          existing.recordsCreated = recordsCreated || 0 + existing.recordsCreated;
+          existing.meetingsBooked = meetingsBooked || 0 + existing.meetingsBooked;
+          existing.signature = signature;
+          existing.nonce = nonce;
+          existing.updatedAt = new Date(timestamp).toISOString();
+          if (status === "failed" && (existing.recordsCreated > 0 && existing.recordsUpdated > 0)) {
+            //existing.status = "failed";
+          } else {
+            existing.status = status;
+            existing.responseData = {
+              execution_summary : `${message}`,
+              recordsUpdated: recordsUpdated || 0 + existing.recordsUpdated,
+              recordsCreated: recordsCreated || 0 + existing.recordsCreated,
+              meetingsBooked: meetingsBooked || 0 + existing.meetingsBooked
+            };
+          }
+          
+        } else {
+          // Update existing log entry
+          existing.timestamp = timestamp;
+          existing.recordsUpdated = recordsUpdated || 0;
+          existing.recordsCreated = recordsCreated || 0;
+          existing.meetingsBooked = meetingsBooked || 0;
+          existing.signature = signature;
+          existing.nonce = nonce;
+          existing.updatedAt = new Date(timestamp).toISOString();
+          existing.status = status;
+          existing.responseData = {
+            execution_summary : `${message}`,
+            recordsUpdated: recordsUpdated || 0,
+            recordsCreated: recordsCreated || 0,
+            meetingsBooked: meetingsBooked || 0
+          };
+        }
+        
         await redis.set(`${USAGE_LOG_PREFIX}${logId}`, JSON.stringify(existing));
         return logId;
       }
