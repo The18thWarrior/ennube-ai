@@ -8,6 +8,8 @@ import { SessionProvider } from "next-auth/react"
 import { Session } from "next-auth"
 import { SnackbarProvider } from "../components/snackbar-provider"
 import { ThemeProvider } from "@/components/theme-provider"
+import { Analytics } from "@vercel/analytics/next"
+
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -22,6 +24,7 @@ export default function RootLayout({ children, session }: React.PropsWithChildre
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>          <ThemeProvider defaultTheme="system" storageKey="theme">
           <div className="flex h-full min-h-screen w-full flex-col justify-between">
+            
             <SessionProvider session={session}>
               <StripeProvider>
                   <SnackbarProvider>
@@ -30,6 +33,7 @@ export default function RootLayout({ children, session }: React.PropsWithChildre
                       {children}
                     </main>
                     <Footer />
+                    <Analytics />
                   </SnackbarProvider>
               </StripeProvider>
             </SessionProvider>
