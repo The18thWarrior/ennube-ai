@@ -12,6 +12,7 @@ export default function Footer() {
         <CustomLink href="https://github.com/nextauthjs/next-auth/tree/main/apps/examples/nextjs">
           Source on GitHub
         </CustomLink> */}
+        <CustomLink href="/terms">Terms of Service</CustomLink>
         <CustomLink href="/privacy">Privacy Policy</CustomLink>
       </div>
       <div className="flex flex-col gap-4 sm:flex-row">

@@ -100,10 +100,10 @@ export function ExecutionDetailsPanel({ execution, onClose }: ExecutionDetailsPa
               Error Details
             </h3>
             <p className="mt-1 text-red-700">{execution.response_data?.execution_summary || "Unknown error occurred"}</p>
-            <Button variant="outline" size="sm" className="mt-2">
+            {/* <Button variant="outline" size="sm" className="mt-2">
               <RefreshCw className="h-4 w-4 mr-2" />
               Retry Execution
-            </Button>
+            </Button> */}
           </div>
         )}
 
