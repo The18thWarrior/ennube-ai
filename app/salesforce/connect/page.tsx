@@ -1,6 +1,7 @@
 import CustomLink from "@/components/custom-link"
 import { Button } from "@/components/ui/button"
 import { auth, signIn } from "@/auth"
+import Link from "next/link"
 import { redirect } from "next/navigation"
 import DirectLoginForm from "./DirectLoginForm"
 
@@ -15,11 +16,13 @@ export default async function SalesforceConnect() {
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold">Connect to Salesforce</h1>
-      <p>
-        Connect your Salesforce instance to access and manage your Salesforce data directly from this application.
-      </p>
-      
-      <div className="flex flex-col gap-4">
+
+      <div className="p-6 bg-gray-50 dark:bg-gray-900 rounded-lg">
+        <p className="mb-4">Connect your Salesforce instance to access and manage your Salesforce data directly from this application.</p>
+        <DirectLoginForm />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="p-6 bg-gray-50 dark:bg-gray-900 rounded-lg">
           <h2 className="text-xl font-semibold mb-4">Benefits of connecting</h2>
           <ul className="list-disc pl-5 space-y-2">
@@ -40,13 +43,7 @@ export default async function SalesforceConnect() {
             <li>Your Salesforce connection will be securely stored for future use</li>
           </ol>
         </div>
-      </div>
-      
-      <div className="max-w-md mx-auto">
-        <h2 className="text-xl font-semibold mb-4">Connect with Salesforce OAuth</h2>
-        <p className="mb-4">Securely connect using Salesforce's OAuth flow. You'll be redirected to Salesforce to authorize this application.</p>
-        <DirectLoginForm />
-      </div>
+      </div>      
       
       <div className="mt-8">
         <p className="text-sm text-gray-500">

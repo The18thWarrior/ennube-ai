@@ -25,7 +25,7 @@ export async function middleware(request: NextRequest) {
     
     // If not authenticated, redirect to signin page
     if (!session) {
-      const signInUrl = new URL('/api/auth/signin', request.url)
+      const signInUrl = new URL('/', request.url)
       signInUrl.searchParams.set('callbackUrl', path)
       return NextResponse.redirect(signInUrl)
     }

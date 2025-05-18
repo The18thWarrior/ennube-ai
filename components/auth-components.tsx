@@ -3,8 +3,9 @@ import { Button } from "./ui/button"
 
 export function SignIn({
   provider,
+  label,
   ...props
-}: { provider?: string } & React.ComponentPropsWithRef<typeof Button>) {
+}: { provider?: string, label?: string } & React.ComponentPropsWithRef<typeof Button>) {
   return (
     <form
       action={async () => {
@@ -12,7 +13,7 @@ export function SignIn({
         await signIn(provider)
       }}
     >
-      <Button {...props}>Sign In</Button>
+      <Button {...props}>{label? label: `Sign In`}</Button>
     </form>
   )
 }
@@ -22,7 +23,8 @@ export function SignOut(props: React.ComponentPropsWithRef<typeof Button>) {
     <form
       action={async () => {
         "use server"
-        await signOut()
+        await signOut({redirectTo: "/"})
+
       }}
       className="w-full"
     >

@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import SalesforceSignOut from "./SalesforceSignOut"
 import { getSalesforceCredentialsById } from "@/lib/salesforce-storage"
 import { SalesforceClient } from "@/lib/salesforce"
+import Link from "next/link"
 
 export default async function SalesforceDashboard() {
   // Check if we have a NextAuth session with Salesforce OAuth data
@@ -41,8 +42,11 @@ export default async function SalesforceDashboard() {
   
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Salesforce Dashboard</h1>
-      
+      <h1 className="text-3xl font-bold flex items-center gap-2">
+        <img src={"/salesforce-logo.png"} alt={'Salesforce Logo'} className="h-10 w-10 object-contain" />
+        Salesforce Dashboard
+      </h1>
+
       {error ? (
         <div className="bg-red-50 border-l-4 border-red-400 p-4">
           <div className="flex">
@@ -108,6 +112,15 @@ export default async function SalesforceDashboard() {
                   </svg>
                   <span>View Accounts</span>
                 </CustomLink>
+              </Button>
+
+              <Button asChild variant="outline" className="h-auto py-4 px-6 flex flex-col items-center justify-center gap-2 text-center">
+                <Link href={process.env.NEXT_PUBLIC_SFDC_MANAGED_PACKAGE_URL as string} rel="noopener noreferrer" className="flex flex-col items-center justify-center gap-2 w-full">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+                  </svg>
+                  <span>Install Managed Package</span>
+                </Link>
               </Button>
               
               {/* <Button asChild variant="outline" className="h-auto py-4 px-6 flex flex-col items-center justify-center gap-2">

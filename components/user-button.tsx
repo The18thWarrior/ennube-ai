@@ -14,7 +14,7 @@ import Link from "next/link"
 
 export default async function UserButton() {
   const session = await auth()
-  if (!session?.user) return <SignIn />
+  if (!session?.user) return <SignIn provider={'auth0'} />
   return (
     <div className="flex items-center gap-2">
       <span className="hidden text-sm sm:inline-flex">
