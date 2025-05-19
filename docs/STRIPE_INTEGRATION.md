@@ -14,6 +14,7 @@ This project includes Stripe integration for handling subscriptions using Stripe
 STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key
 STRIPE_PUBLISHABLE_KEY=pk_test_your_stripe_publishable_key
 STRIPE_PRICE_ID=price_your_subscription_price_id
+STRIPE_PRICE_ID_PRO=price_your_subscription_price_id
 STRIPE_WEBHOOK_SECRET=whsec_your_stripe_webhook_secret
 ```
 

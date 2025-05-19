@@ -4,7 +4,7 @@ import { useSession } from 'next-auth/react';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 interface StripeContextType {
-  createCheckoutSession: () => Promise<{ url: string | null; error: string | null }>;
+  createCheckoutSession: (pro?: boolean) => Promise<{ url: string | null; error: string | null }>;
   createPortalLink: () => Promise<{ url: string | null; error: string | null }>;
   isLoading: boolean;
   subscription: SubscriptionStatus | null;
@@ -29,10 +29,10 @@ export function StripeProvider({ children }: { children: React.ReactNode }) {
   const [subscription, setSubscription] = useState<SubscriptionStatus | null>(null);
   const [isLoadingSubscription, setIsLoadingSubscription] = useState(true);
 
-  const createCheckoutSession = async () => {
+  const createCheckoutSession = async (pro = false) => {
     setIsLoading(true);
     try {
-      const response = await fetch('/api/stripe/checkout', {
+      const response = await fetch(`/api/stripe/checkout?pro=${pro}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

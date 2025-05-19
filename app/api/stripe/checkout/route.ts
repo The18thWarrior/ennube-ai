@@ -20,12 +20,17 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const searchParams = req.nextUrl.searchParams;
+    const isPro = Boolean(searchParams.get('pro')) || false; // Default to 10 if not specified
+    
+    //STRIPE_PRICE_ID_PRO
+
     // Create a Stripe checkout session
     const stripeSession = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
         {
-          price: process.env.STRIPE_PRICE_ID, // Your predefined price ID from Stripe dashboard
+          price: isPro ? process.env.STRIPE_PRICE_ID_PRO : process.env.STRIPE_PRICE_ID, // Your predefined price ID from Stripe dashboard
           quantity: 1,
         },
       ],

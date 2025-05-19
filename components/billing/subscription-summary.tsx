@@ -40,6 +40,19 @@ export default function SubscriptionSummary() {
     }
   };
 
+  const handleSubscribePro = async () => {
+    const { url, error } = await createCheckoutSession(true);
+    
+    if (error) {
+      console.error('Error creating checkout session:', error);
+      return;
+    }
+    
+    if (url) {
+      window.location.href = url;
+    }
+  };
+
   const handleManageSubscription = async () => {
     if (!session?.user?.auth0?.sub) {
       console.error('No customer ID found');
@@ -79,7 +92,7 @@ export default function SubscriptionSummary() {
 
   const isActive = subscription?.status === 'active' || subscription?.status === 'trialing';
   return (
-    <div className="flex flex-col max-w-xl mx-auto px-6">
+    <div className="flex flex-col max-w-xxl mx-auto px-6">
       <div className="bg-background rounded-lg border border-border p-6 mb-6">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">Your Plan</h2>
@@ -138,39 +151,110 @@ export default function SubscriptionSummary() {
                   <UsageProgressBar />
                 </Suspense>
               </div>
-              
-              <div className="bg-card border border-border rounded-md p-4 mb-6">
-                <h3 className="font-semibold text-lg mb-2">Premium Plan</h3>
-                <p className="text-2xl font-bold mb-2">$9.99 <span className="text-muted-foreground text-sm font-normal">/month</span></p>
-                <ul className="text-sm space-y-2 mb-4">
-                  <li className="flex items-center">
-                    <svg className="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    Full access to all features
-                  </li>
-                  <li className="flex items-center">
-                    <svg className="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    Priority support
-                  </li>
-                  <li className="flex items-center">
-                    <svg className="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    <strong>1,000 record operations</strong> per month (10x free tier)
-                  </li>
-                </ul>
+              <div className='flex justify-between items-top '>
+                <div className="bg-card border w-full max-w-1/2 mx-4 border-border rounded-md p-4 mb-6">
+                  <h3 className="font-semibold text-lg mb-2">Starter Plan</h3>
+                  <p className="text-2xl font-bold mb-2">$199 <span className="text-muted-foreground text-sm font-normal">/month</span></p>
+                  <ul className="text-sm space-y-2 mb-4">
+                    <li className="flex items-center">
+                      <svg className="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      2 AI agents of your choice
+                    </li>
+                    <li className="flex items-center">
+                      <svg className="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Standard support
+                    </li>
+                    <li className="flex items-center">
+                      <svg className="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      <strong>1,000 record operations</strong> per month (10x free tier)
+                    </li>
+                    <li className="flex items-center">
+                      <svg className="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Basic analytics
+                    </li>
+                    <li className="flex items-center">
+                      <svg className="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Email integration
+                    </li>
+                  </ul>
+                </div>
+                <div className="bg-card border w-full max-w-1/2 mx-4 border-border rounded-md p-4 mb-6">
+                  <h3 className="font-semibold text-lg mb-2">Professional Plan</h3>
+                  <p className="text-2xl font-bold mb-2">$549 <span className="text-muted-foreground text-sm font-normal">/month</span></p>
+                  <ul className="text-sm space-y-2 mb-4">
+                    <li className="flex items-center">
+                      <svg className="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      5 AI agents of your choice
+                    </li>
+                    <li className="flex items-center">
+                      <svg className="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Priority support
+                    </li>
+                    <li className="flex items-center">
+                      <svg className="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      <strong>10,000 record operations</strong> per month (10x starter tier)
+                    </li>
+                    <li className="flex items-center">
+                      <svg className="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Advanced analytics
+                    </li>
+                    <li className="flex items-center">
+                      <svg className="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Email and calendar integration
+                    </li>
+                    <li className="flex items-center">
+                      <svg className="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Custom workflows
+                    </li>
+                    <li className="flex items-center">
+                      <svg className="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      API access
+                    </li>
+                  </ul>
+                </div>
               </div>
               
-              <Button 
-                onClick={handleSubscribe} 
-                disabled={isLoading}
-                className="w-full"
-              >
-                {isLoading ? 'Loading...' : 'Subscribe Now'}
-              </Button>
+              <div className='flex justify-between items-top '>
+                  <Button 
+                    onClick={handleSubscribe} 
+                    disabled={isLoading}
+                    className="w-full mx-4"
+                  >
+                    {isLoading ? 'Loading...' : 'Subscribe Now'}
+                  </Button>
+
+                  <Button 
+                    onClick={handleSubscribePro} 
+                    disabled={isLoading}
+                    className="w-full mx-4"
+                  >
+                    {isLoading ? 'Loading...' : 'Subscribe Now'}
+                  </Button>
+              </div>
             </div>
           </div>
         )}
