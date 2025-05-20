@@ -22,7 +22,8 @@ export const metadata: Metadata = {
 export default function RootLayout({ children, session }: React.PropsWithChildren<{ session: Session | null }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>          <ThemeProvider defaultTheme="system" storageKey="theme">
+      <body className={inter.className}>          
+        <ThemeProvider defaultTheme="system" storageKey="theme">
           <div className="flex h-full min-h-screen w-full flex-col justify-between">
             
             <SessionProvider session={session}>
