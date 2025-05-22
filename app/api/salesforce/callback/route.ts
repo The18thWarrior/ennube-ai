@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
     const authResult = await handleOAuthCallback(code, process.env.SALESFORCE_CLIENT_ID as string, process.env.SALESFORCE_CLIENT_SECRET as string,  process.env.SALESFORCE_REDIRECT_URI as string, '');
     await storeSalesforceCredentials(authResult);    
     const url = request.nextUrl.clone()
-    url.pathname = '/salesforce/dashboard';
+    url.pathname = '/integrations/salesforce/dashboard';
     console.log('compeleted storage of salesforce credentials')
     return NextResponse.redirect(url);
   } catch (error) {

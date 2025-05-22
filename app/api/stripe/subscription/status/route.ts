@@ -41,21 +41,17 @@ export async function GET(req: NextRequest) {
 
 async function getCustomerSubscription (sub: string) {
     try {
+      const query = `status:'active' AND metadata['sub']:'${sub}'`;
+      //console.log(query);
+      //console.log()
         const subscriptionData = await stripe.subscriptions.search({
-            query: "status:'active' AND metadata['sub']:'" + sub + "'"
+            query
         });
+        //onsole.log(subscriptionData);
         if (subscriptionData.data.length > 0) {
             const subscription = subscriptionData.data[0]; //subscription.customer;
             //console.log(subscription)
-            // const invoices = await stripe.invoices.search({
-            //     query: "customer:'" + subscription.customer + "'"
-            // });
-
-            // const portalSession = await stripe.billingPortal.sessions.create({
-            //     customer: subscription.customer as string,
-            //     return_url: `http://${'DOMAIN'}/api/stripe/callback?organization=${'organization'}`
-            // });
-            //console.log(portalSession);
+            
             return subscription;
         } else {
             //return subscriptionData.data[0];

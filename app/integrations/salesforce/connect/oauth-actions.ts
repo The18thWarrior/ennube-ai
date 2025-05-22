@@ -11,11 +11,11 @@ import { signOut } from "@/auth";
 export async function oauthSalesforceLogout() {
   try {
     // Use NextAuth's signOut function to handle OAuth2 logout
-    await signOut({ redirectTo: "/salesforce" });
-    
+    await signOut({ redirectTo: "/integrations/salesforce" });
+
     // Revalidate the Salesforce page
-    revalidatePath("/salesforce");
-    
+    revalidatePath("/integrations/salesforce");
+
     return { success: true };
   } catch (error) {
     console.error("Salesforce OAuth logout error:", error);

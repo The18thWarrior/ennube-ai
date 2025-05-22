@@ -10,7 +10,7 @@ export default async function SalesforceConnect() {
   
   // If user is already connected to Salesforce, redirect to the Salesforce dashboard
   if (session?.user?.salesforce) {
-    redirect("/salesforce/dashboard")
+    redirect("/integrations/salesforce/dashboard")
   }
 
   return (

@@ -12,16 +12,16 @@ export default async function SalesforceAccounts() {
   const salesforceCredentials = await getSalesforceCredentialsById()
   if (!salesforceCredentials) {
     console.log('No Salesforce credentials found, redirecting to connect page')
-    redirect("/salesforce/connect");
+    redirect("/integrations/salesforce/connect");
   }
   const salesforceClient = new SalesforceClient(salesforceCredentials.accessToken, salesforceCredentials.instanceUrl, salesforceCredentials.refreshToken);
   // If no Salesforce client available and no OAuth session, redirect to connect page
   if (!salesforceClient) {
     console.log('No Salesforce client found, redirecting to connect page')
-    redirect("/salesforce/connect");
+    redirect("/integrations/salesforce/connect");
   }
-  
-  
+
+
   if (!salesforceClient) {
     return (
       <div className="space-y-6">
@@ -34,7 +34,7 @@ export default async function SalesforceAccounts() {
           </div>
         </div>
         <Button asChild>
-          <CustomLink href="/salesforce/connect">Reconnect to Salesforce</CustomLink>
+          <CustomLink href="/integrations/salesforce/connect">Reconnect to Salesforce</CustomLink>
         </Button>
       </div>
     )
@@ -59,7 +59,7 @@ export default async function SalesforceAccounts() {
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Salesforce Accounts</h1>
         <Button asChild>
-          <CustomLink href="/salesforce/dashboard">Back to Dashboard</CustomLink>
+          <CustomLink href="/integrations/salesforce/dashboard">Back to Dashboard</CustomLink>
         </Button>
       </div>
       
@@ -123,7 +123,7 @@ export default async function SalesforceAccounts() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           <Button size="sm" variant="outline" asChild>
-                            <CustomLink href={`/salesforce/accounts/${account.Id}`}>
+                            <CustomLink href={`/integrations/salesforce/accounts/${account.Id}`}>
                               View
                             </CustomLink>
                           </Button>

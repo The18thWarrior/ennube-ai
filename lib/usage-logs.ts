@@ -41,99 +41,118 @@ interface Execution {
   response_data: any
 }
 
+interface StoreUsageParams {
+  userSub: string,
+  agent: string,
+  recordsUpdated: number | null,
+  recordsCreated: number | null,
+  meetingsBooked: number | null,
+  signature: string | null,
+  nonce: number | null,
+  logId: string | null,
+  isNew: boolean | null,
+  status: string | null,
+  errors: string | null,
+  recordId: string | null,
+}
+
 /**
  * Store usage log entry in Upstash Redis
  */
 export async function storeUsageLog(
-  userSub: string,
-  agent: string,
-  recordsUpdated: number = 0,
-  recordsCreated: number = 0,
-  meetingsBooked: number = 0,
-  signature: string = "",
-  nonce: number = 0,
-  logId: string = nanoid(),
-  isNew: boolean = false, 
-  status: string = "In Progress",
-  errors: string | null = null
+  params: StoreUsageParams
+  // userSub: string,
+  // agent: string,
+  // recordsUpdated: number = 0,
+  // recordsCreated: number = 0,
+  // meetingsBooked: number = 0,
+  // signature: string = "",
+  // nonce: number = 0,
+  // logId: string = nanoid(),
+  // isNew: boolean = false, 
+  // status: string = "In Progress",
+  // errors: string | null = null
   
 ): Promise<string | null> {
   try {
     const timestamp = Date.now();
-    const message = getMessage(status, agent, recordsCreated, recordsUpdated);
-
+    const message = getMessage(params.status || "In Progress", params.agent, params.recordsCreated || 0, params.recordsUpdated || 0);
+    const logId = params.logId || nanoid();
     const key = `${USAGE_LOG_PREFIX}${logId}`;
-    if (!isNew) {
+    if (!params.isNew) {
       const existing = await redis.get<UsageLogEntry>(key);
       
       if (existing) {
-        if (agent === AGENTNAMES.prospectFinder) {
+        if (params.agent === AGENTNAMES.prospectFinder) {
           // Update existing log entry
-          const newMessage = getMessage(status, agent, recordsCreated, recordsUpdated, existing);
-          existing.timestamp = timestamp;
-          existing.recordsUpdated = Number(recordsUpdated || 0) + Number(existing.recordsUpdated);
-          existing.recordsCreated = Number(recordsCreated || 0) + Number(existing.recordsCreated);
-          existing.meetingsBooked = Number(meetingsBooked || 0) + Number(existing.meetingsBooked);
-          existing.signature = signature;
-          existing.nonce = nonce;
+          const newMessage = getMessage(params.status || "In Progress", params.agent, params.recordsCreated || 0, params.recordsUpdated || 0, existing);
+          existing.timestamp = existing.timestamp;
+          existing.recordsUpdated = Number(params.recordsUpdated || 0) + Number(existing.recordsUpdated);
+          existing.recordsCreated = Number(params.recordsCreated || 0) + Number(existing.recordsCreated);
+          existing.meetingsBooked = Number(params.meetingsBooked || 0) + Number(existing.meetingsBooked);
+          existing.signature = params.signature || existing.signature;
+          existing.nonce = params.nonce || existing.nonce;
           existing.updatedAt = new Date(timestamp).toISOString();
-          
-          if (status === "failed" && (existing.recordsCreated > 0 || existing.recordsUpdated > 0)) {
+
+          if (params.status === "failed" && (existing.recordsCreated > 0 || existing.recordsUpdated > 0)) {
             //existing.status = "failed";
             existing.responseData = {...existing.responseData, execution_summary: newMessage, errors: existing.responseData.errors ? existing.responseData.errors++ : 1};
           } else {
-            existing.status = status;
+            existing.status = params.status || existing.status;
             existing.responseData = {
               execution_summary : newMessage,
-              recordsUpdated: Number(recordsUpdated || 0) + existing.recordsUpdated,
-              recordsCreated: Number(recordsCreated || 0) + existing.recordsCreated,
-              meetingsBooked: Number(meetingsBooked || 0) + existing.meetingsBooked,
-              errors: Number(existing.responseData.errors || 0)
+              recordsUpdated: Number(params.recordsUpdated || 0) + existing.recordsUpdated,
+              recordsCreated: Number(params.recordsCreated || 0) + existing.recordsCreated,
+              meetingsBooked: Number(params.meetingsBooked || 0) + existing.meetingsBooked,
+              errors: Number(existing.responseData.errors || 0),
+              records: params.recordId ? [...existing.responseData.records, params.recordId] : [...existing.responseData.records]
             };
           }
           
         } else {
           // Update existing log entry
-          existing.timestamp = timestamp;
-          existing.recordsUpdated = Number(recordsUpdated || 0);
-          existing.recordsCreated = Number(recordsCreated || 0);
-          existing.meetingsBooked = Number(meetingsBooked || 0);
-          existing.signature = signature;
-          existing.nonce = nonce;
+          existing.timestamp = existing.timestamp;
+          existing.recordsUpdated = Number(params.recordsUpdated || 0);
+          existing.recordsCreated = Number(params.recordsCreated || 0);
+          existing.meetingsBooked = Number(params.meetingsBooked || 0);
+          existing.signature = params.signature || existing.signature;
+          existing.nonce = params.nonce || existing.nonce;
           existing.updatedAt = new Date(timestamp).toISOString();
-          existing.status = status;
+          existing.status = params.status || existing.status;
           existing.responseData = {
             execution_summary : `${message}`,
-            recordsUpdated: Number(recordsUpdated || 0) + Number(existing.recordsUpdated),
-            recordsCreated: Number(recordsCreated || 0) + Number(existing.recordsCreated),
-            meetingsBooked: Number(meetingsBooked || 0) + Number(existing.meetingsBooked),
-            errors: Number(existing.responseData.errors || 0)
+            recordsUpdated: Number(params.recordsUpdated || 0) + Number(existing.recordsUpdated),
+            recordsCreated: Number(params.recordsCreated || 0) + Number(existing.recordsCreated),
+            meetingsBooked: Number(params.meetingsBooked || 0) + Number(existing.meetingsBooked),
+            errors: Number(existing.responseData.errors || 0),
+            records: params.recordId ? [...existing.responseData.records, params.recordId] : [...existing.responseData.records]
           };
         }
-        
-        await redis.set(`${USAGE_LOG_PREFIX}${logId}`, JSON.stringify(existing));
+
+        await redis.set(key, JSON.stringify(existing));
         return logId;
       }
     }
 
     const usageLog: UsageLogEntry = {
       timestamp,
-      userSub,
-      agent,
-      recordsUpdated: recordsUpdated || 0,
-      recordsCreated: recordsCreated || 0,
-      meetingsBooked,
-      signature,
-      nonce,
-      status,
+      userSub: params.userSub,
+      agent: params.agent,
+      recordsUpdated: params.recordsUpdated || 0,
+      recordsCreated: params.recordsCreated || 0,
+      meetingsBooked: params.meetingsBooked || 0,
+      signature: params.signature || "",
+      nonce: params.nonce || 0,
+      status: params.status || "In Progress",
       createdAt: new Date(timestamp).toISOString(),
       updatedAt: new Date(timestamp).toISOString(),
       responseData: {
         execution_summary : `${message}`,
-        recordsUpdated,
-        recordsCreated,
-        meetingsBooked,
-        errors: 0
+        recordsUpdated: params.recordsUpdated || 0,
+        recordsCreated: params.recordsCreated || 0,
+        meetingsBooked: params.meetingsBooked || 0,
+        errors: 0,
+        records: params.recordId ? [params.recordId] : []
       },
     };
 
@@ -141,9 +160,9 @@ export async function storeUsageLog(
     await redis.set(key, JSON.stringify(usageLog));
     
     // Also store in a list of logs for this user for easy retrieval
-    const userLogsKey = `${USAGE_LOG_PREFIX}user:${userSub}`;
+    const userLogsKey = `${USAGE_LOG_PREFIX}user:${params.userSub}`;
     await redis.lpush(userLogsKey, key);
-    
+
     return logId;
   } catch (error) {
     console.error("Error storing usage log:", error);

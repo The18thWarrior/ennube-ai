@@ -72,44 +72,6 @@ async function getSalesforceClientFromSub(request: NextRequest): Promise<{
 }
 
 /**
- * Helper function to log usage for billing purposes
- * @param sub The user's Auth0 sub ID
- * @param operation The operation performed (create, update, delete)
- * @param recordsCreated Number of records created
- * @param recordsUpdated Number of records updated
- * @param sobjectType The Salesforce object type that was modified
- */
-async function logUsage(
-  sub: string,
-  agent: string,
-  operation: 'create' | 'update' | 'delete',
-  recordsCreated: number = 0,
-  recordsUpdated: number = 0,
-  sobjectType: string
-): Promise<void> {
-  try {
-    // Generate a simple signature as timestamp + operation + sobjectType
-    const timestamp = Date.now();
-    const signature = `${timestamp}-${operation}-${sobjectType}-${agent}`;
-    const nonce = Math.floor(Math.random() * 1000000);
-    
-    // Log based on operation type
-    await storeUsageLog(
-      sub,
-      `salesforce-${sobjectType}-${agent}`,
-      operation === 'update' ? recordsUpdated : 0,
-      operation === 'create' ? recordsCreated : 0,
-      0, // No meetings booked in this operation
-      signature,
-      nonce
-    );
-  } catch (error) {
-    // Just log the error but don't fail the parent operation
-    console.error('Error logging usage:', error);
-  }
-}
-
-/**
  * POST: Create a new record in Salesforce
  * Required query parameters:
  * - sub: Auth0 user sub (ID) to retrieve credentials

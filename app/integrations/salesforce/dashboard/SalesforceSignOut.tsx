@@ -12,7 +12,7 @@ export default function SalesforceSignOut() {
       // Use NextAuth's signOut function for OAuth2 logout
       await signOut({ 
         redirect: true,
-        callbackUrl: "/salesforce/connect" 
+        callbackUrl: "/integrations/salesforce/connect" 
       });
       
       // If redirect is false, manually redirect

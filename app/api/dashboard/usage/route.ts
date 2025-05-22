@@ -47,7 +47,21 @@ export async function POST(request: NextRequest) {
     }
     // Store the usage log in the database
     const logId = nanoid();
-    await storeUsageLog(sub, agent, 0,0,0,"",0, logId);
+    const params = {
+      userSub: sub,
+      agent: agent,
+      recordsUpdated: 0,
+      recordsCreated: 0,
+      meetingsBooked: 0,
+      signature: null,
+      nonce: 0,
+      logId: logId,
+      isNew: true,
+      status: null,
+      errors: null,
+      recordId: null
+    };
+    await storeUsageLog(params);
     return NextResponse.json({id: logId});
   } catch (error: any) {
     console.error('Error storing usage log:', error);
@@ -73,6 +87,7 @@ export async function PUT(request: NextRequest) {
     const recordsUpdated = body.recordsUpdated || searchParams.get('recordsUpdated');
     const recordsCreated = body.recordsCreated || searchParams.get('recordsCreated');
     const meetingsBooked = body.meetingsBooked || searchParams.get('meetingsBooked');
+    const recordId = body.recordId || searchParams.get('recordId');
     const errors = body.errors || searchParams.get('errors');
 
     // Validate required parameters
@@ -83,9 +98,23 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-
+    const params = {
+      userSub: sub,
+      agent: agent,
+      recordsUpdated: recordsUpdated,
+      recordsCreated: recordsCreated,
+      meetingsBooked: meetingsBooked,
+      signature: "",
+      nonce: 0,
+      logId: id,
+      isNew: false,
+      status: status,
+      errors: errors,
+      recordId: recordId
+    };
     // Store the usage log in the database
-    await storeUsageLog(sub, agent, recordsUpdated, recordsCreated, meetingsBooked, "", 0, id, false, status, errors);
+    await storeUsageLog(params);
+    
     return NextResponse.json({id});
   } catch (error: any) {
     console.error('Error storing usage log:', error);

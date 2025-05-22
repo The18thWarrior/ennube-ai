@@ -57,6 +57,8 @@
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
     "embla-carousel-react": "^8.6.0",
+    "google-auth-library": "^9.15.1",
+    "googleapis": "^149.0.0",
     "input-otp": "^1.4.2",
     "jsforce": "^3.8.1",
     "lucide-react": "^0.274.0",

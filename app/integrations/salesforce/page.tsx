@@ -7,9 +7,9 @@ export default async function SalesforcePage() {
   
   // Redirect based on connection status
   if (credential && credential.accessToken) {
-    redirect("/salesforce/dashboard")
+    redirect("/integrations/salesforce/dashboard")
   } else {
-    redirect("/salesforce/connect")
+    redirect("/integrations/salesforce/connect")
   }
   
   // This won't be reached due to redirects

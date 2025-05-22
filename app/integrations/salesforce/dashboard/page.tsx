@@ -106,7 +106,7 @@ export default async function SalesforceDashboard() {
               </Button> */}
               
               <Button asChild variant="outline" className="h-auto py-4 px-6 flex flex-col items-center justify-center gap-2">
-                <CustomLink href="/salesforce/accounts">
+                <CustomLink href="/integrations/salesforce/accounts">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                   </svg>
@@ -142,7 +142,7 @@ export default async function SalesforceDashboard() {
         <div className="flex flex-col space-y-4">
           <div className="flex flex-row space-x-4">
             <Button asChild variant="outline" className="w-full sm:w-auto">
-              <CustomLink href="/salesforce/connect">Reconnect to Salesforce</CustomLink>
+              <CustomLink href="/integrations/salesforce/connect">Reconnect to Salesforce</CustomLink>
             </Button>
             
             {/* Sign Out button for both OAuth and direct login */}

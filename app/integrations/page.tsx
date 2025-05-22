@@ -15,9 +15,17 @@ export default async function IntegrationsPage() {
                 title="Salesforce"
                 description="Connect your Salesforce account to sync contacts and opportunities."
                 icon="/salesforce-logo.png"
-                url={"/salesforce"}
+                url={"/integrations/salesforce"}
                 connected={hasSalesforce} isAddCard={false}        
             />
+
+            {/* <IntegrationCard
+                title="GSuite"
+                description="Connect your GSuite account to sync emails and calendars."
+                icon="/gmail-logo.webp"
+                url={"/integrations/gsuite"}
+                connected={false} isAddCard={false}        
+            /> */}
 
             <IntegrationCard
                 title="Add New Integration"
