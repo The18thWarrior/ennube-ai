@@ -44,6 +44,9 @@ export function ExecutionDetailsPanel({ execution, onClose }: ExecutionDetailsPa
     )
   }
 
+  const hasResponseData = execution.response_data && true;
+  const executionSummary = !hasResponseData ? "" : (execution.response_data.recordsUpdated || execution.response_data.recordsCreated) ? `Created ${execution.response_data.recordsCreated || 0} records and updated ${execution.response_data.recordsUpdated || 0} records` : execution.response_data.execution_summary;
+  const rawData = !hasResponseData ? {} : {...execution.response_data, execution_summary: executionSummary};
   return (
     <Card className="h-full">
       <CardHeader className="flex flex-row items-center justify-between">
@@ -131,7 +134,7 @@ export function ExecutionDetailsPanel({ execution, onClose }: ExecutionDetailsPa
               <CheckCircle className="h-4 w-4" />
               Execution Summary
             </h3>
-            <p className="mt-1 text-green-700">{execution.response_data.execution_summary}</p>
+            <p className="mt-1 text-green-700">{executionSummary}</p>
           </div>
         )}
 
@@ -143,10 +146,10 @@ export function ExecutionDetailsPanel({ execution, onClose }: ExecutionDetailsPa
               <TabsTrigger value="raw">Raw</TabsTrigger>
             </TabsList>
             <TabsContent value="formatted" className="p-4 bg-gray-50 dark:bg-gray-800 rounded-md">
-              <JsonView data={execution.response_data || {}} />
+              <JsonView data={rawData} />
             </TabsContent>
             <TabsContent value="raw" className="p-4 bg-gray-50 dark:bg-gray-800 rounded-md overflow-auto max-h-96">
-              <pre className="text-xs">{JSON.stringify(execution.response_data || {}, null, 2)}</pre>
+              <pre className="text-xs">{JSON.stringify(rawData, null, 2)}</pre>
             </TabsContent>
           </Tabs>
         </div>

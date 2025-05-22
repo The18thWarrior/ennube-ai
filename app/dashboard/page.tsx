@@ -122,7 +122,7 @@ function ExecutionsPageComponent() {
   const [selectedExecution, setSelectedExecution] = useState<string | null>(null)
   //const [executions, setExecutions] = useState(mockExecutions)
   const [isPanelOpen, setIsPanelOpen] = useState(false)
-  const { logs } = useUsageLogs(50);
+  const { logs, refresh } = useUsageLogs(50);
   const executions = logs.map((log) => {
     return {
       id: log.signature + log.timestamp,
@@ -253,6 +253,14 @@ function ExecutionsPageComponent() {
         >
           <Filter className="h-4 w-4 mr-2" />
           Reset
+        </Button>
+
+        <Button
+          variant="outline"
+          onClick={() => refresh()}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9 9 0 0 0-9 9 9 9 0 0 0 9 9 9 9 0 0 0 4.5-1.2"/><polyline points="21 12 21 3 12 12"/></svg>
+          Refresh
         </Button>
       </div>
 
