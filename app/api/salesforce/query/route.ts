@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSalesforceCredentialsBySub } from '@/lib/salesforce-storage';
+import { getSalesforceCredentialsBySub } from '@/lib/db/salesforce-storage';
 import { SalesforceClient, createSalesforceClient, SalesforceAuthResult } from '@/lib/salesforce';
 
 /**

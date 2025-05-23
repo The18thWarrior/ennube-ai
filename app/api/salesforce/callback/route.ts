@@ -1,5 +1,5 @@
 import { handleOAuthCallback } from '@/lib/salesforce';
-import { storeSalesforceCredentials } from '@/lib/salesforce-storage';
+import { storeSalesforceCredentials } from '@/lib/db/salesforce-storage';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {

@@ -1,5 +1,5 @@
 import IntegrationCard from "@/components/integration-card"
-import { getSalesforceCredentialsById } from "@/lib/salesforce-storage"
+import { getSalesforceCredentialsById } from "@/lib/db/salesforce-storage"
 
 export default async function IntegrationsPage() {
     const sf_credential = await getSalesforceCredentialsById()

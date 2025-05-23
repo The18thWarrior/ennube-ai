@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { UserProfile } from '@/lib/account-storage';
+import { UserProfile } from '@/lib/db/account-storage';
 
 interface UseProfileReturn {
   profile: Omit<UserProfile, 'updatedAt'> | null;

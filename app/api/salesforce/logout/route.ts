@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { removeSalesforceCredentials } from '@/lib/salesforce-storage';
+import { removeSalesforceCredentials } from '@/lib/db/salesforce-storage';
 
 export async function POST(request: NextRequest) {
   try {

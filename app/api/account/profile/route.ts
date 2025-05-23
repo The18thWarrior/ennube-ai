@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getUserProfile, saveUserProfile, updateUserProfile } from '@/lib/account-storage';
+import { getUserProfile, saveUserProfile, updateUserProfile } from '@/lib/db/account-storage';
 import { auth } from '@/auth';
 
 export async function GET(request: NextRequest) {

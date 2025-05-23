@@ -1,5 +1,5 @@
 import { auth } from "@/auth"
-import { getSalesforceCredentialsById } from "@/lib/salesforce-storage"
+import { getSalesforceCredentialsById } from "@/lib/db/salesforce-storage"
 import { redirect } from "next/navigation"
 
 export default async function SalesforcePage() {

@@ -4,7 +4,7 @@ export default function AccountLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen dark:bg-gray-900 p-8">
+    <div className="min-h-screen p-8">
       {children}
     </div>
   );

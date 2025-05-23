@@ -4,7 +4,7 @@ import CustomLink from "@/components/custom-link"
 import { redirect } from "next/navigation"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import SalesforceSignOut from "./SalesforceSignOut"
-import { getSalesforceCredentialsById } from "@/lib/salesforce-storage"
+import { getSalesforceCredentialsById } from "@/lib/db/salesforce-storage"
 import { SalesforceClient } from "@/lib/salesforce"
 import Link from "next/link"
 

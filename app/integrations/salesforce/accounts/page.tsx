@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 import CustomLink from "@/components/custom-link"
 import { redirect } from "next/navigation"
 import { SalesforceClient } from "@/lib/salesforce"
-import { getSalesforceCredentialsById } from "@/lib/salesforce-storage"
+import { getSalesforceCredentialsById } from "@/lib/db/salesforce-storage"
 
 export default async function SalesforceAccounts() {
   const session = await auth()

@@ -28,7 +28,14 @@ export interface UsageLogEntry {
   createdAt? : string;
   updatedAt? : string;
   status? : string;
-  responseData?: any;
+  responseData?: {
+    execution_summary? : string,
+    recordsUpdated?: number,
+    recordsCreated?: number,
+    meetingsBooked?: number,
+    errors?: number,
+    records?: string[]
+  };
 }
 
 interface Execution {
@@ -96,7 +103,7 @@ export async function storeUsageLog(
 
           if (params.status === "failed" && (existing.recordsCreated > 0 || existing.recordsUpdated > 0)) {
             //existing.status = "failed";
-            existing.responseData = {...existing.responseData, execution_summary: newMessage, errors: existing.responseData.errors ? existing.responseData.errors++ : 1};
+            existing.responseData = {...existing.responseData, execution_summary: newMessage, errors: existing.responseData?.errors ? existing.responseData.errors++ : 1};
           } else {
             existing.status = params.status || existing.status;
             existing.responseData = {
@@ -104,8 +111,8 @@ export async function storeUsageLog(
               recordsUpdated: Number(params.recordsUpdated || 0) + existing.recordsUpdated,
               recordsCreated: Number(params.recordsCreated || 0) + existing.recordsCreated,
               meetingsBooked: Number(params.meetingsBooked || 0) + existing.meetingsBooked,
-              errors: Number(existing.responseData.errors || 0),
-              records: params.recordId ? [...existing.responseData.records, params.recordId] : [...existing.responseData.records]
+              errors: Number(existing.responseData?.errors || 0),
+              records: params.recordId ? [...existing.responseData?.records || [], params.recordId] : [...existing.responseData?.records || []]
             };
           }
           
@@ -124,8 +131,8 @@ export async function storeUsageLog(
             recordsUpdated: Number(params.recordsUpdated || 0) + Number(existing.recordsUpdated),
             recordsCreated: Number(params.recordsCreated || 0) + Number(existing.recordsCreated),
             meetingsBooked: Number(params.meetingsBooked || 0) + Number(existing.meetingsBooked),
-            errors: Number(existing.responseData.errors || 0),
-            records: params.recordId ? [...existing.responseData.records, params.recordId] : [...existing.responseData.records]
+            errors: Number(existing.responseData?.errors || 0),
+            records: params.recordId ? [...existing.responseData?.records || [], params.recordId] : [...existing.responseData?.records || []]
           };
         }
 

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getMonthlyRecordOperationsTotal } from '@/lib/usage-logs';
+import { getMonthlyRecordOperationsTotal } from '@/lib/db/usage-logs';
 import { auth } from '@/auth';
 
 /**

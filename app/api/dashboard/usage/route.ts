@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { auth } from '@/auth';
-import { getUserUsageLogsBySub, storeUsageLog } from '@/lib/usage-logs';
+import { getUserUsageLogsBySub, storeUsageLog } from '@/lib/db/usage-logs';
 import { nanoid } from 'nanoid';
 import { log } from 'console';
 
