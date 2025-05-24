@@ -87,6 +87,7 @@ export async function storeUsageLog(
   params: StoreUsageParams
 ): Promise<string | null> {
   try {
+    console.log("Storing usage log with params:", params)
     const timestamp = Date.now();
     const message = getMessage(params.status || "In Progress", params.agent, params.recordsCreated || 0, params.recordsUpdated || 0);
     const logId = params.logId || nanoid();
