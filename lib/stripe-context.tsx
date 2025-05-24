@@ -9,6 +9,8 @@ interface StripeContextType {
   createPortalLink: () => Promise<{ url: string | null; error: string | null }>;
   isLoading: boolean;
   subscription: SubscriptionStatus | null;
+  limit: number;
+  isPro: boolean;
   isLoadingSubscription: boolean;
   hasSubscription: boolean;
   refetchSubscription: () => Promise<void>;
@@ -29,6 +31,8 @@ const StripeContext = createContext<StripeContextType | undefined>(undefined);
 
 export function StripeProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(false);
+  const [isPro, setIsPro] = useState(false);
+  const [limit, setLimit] = useState(10); // Default limit
   const { data: session } = useSession();
   const [subscription, setSubscription] = useState<SubscriptionStatus | null>(null);
   const [isLoadingSubscription, setIsLoadingSubscription] = useState(true);
@@ -70,6 +74,9 @@ export function StripeProvider({ children }: { children: React.ReactNode }) {
         const data = await response.json();
         console.log('Fetched subscription data:', data);
         setSubscription(data.subscription);
+        const parsedLimits = getSubscriptionLimit(data.subscription);
+        setIsPro(parsedLimits.isPro);
+        setLimit(parsedLimits.usageLimit);
       } else {
         // If no subscription is found, set default state
         setSubscription({ customer: '', status: 'incomplete', id: '' });
@@ -117,6 +124,8 @@ export function StripeProvider({ children }: { children: React.ReactNode }) {
     createPortalLink,
     isLoading,
     subscription,
+    isPro,
+    limit,
     isLoadingSubscription,
     hasSubscription,
     refetchSubscription: fetchSubscriptionStatus
@@ -136,16 +145,24 @@ export function useStripe() {
   return context;
 }
 
-export function getSubscriptionLimit(subscription: SubscriptionStatus | null): number {
-  if (!subscription) return 10;
+function getSubscriptionLimit(subscription: SubscriptionStatus | null): {
+  usageLimit: number;
+  isPro: boolean;
+  isSubscribed: boolean;
+} {
+  if (!subscription) return { usageLimit: 10, isPro: false, isSubscribed: false };
   const isSubscribed = getIsSubscribed(subscription);
   const isPro = getIsPro(subscription);
   const usageLimit = isSubscribed ? (isPro ? 10000 : 1000) : 10;
 
-  return usageLimit;
+  return {
+    usageLimit,
+    isPro,
+    isSubscribed
+  };
 }
 
-export function getIsPro(subscription: SubscriptionStatus | null): boolean {
+function getIsPro(subscription: SubscriptionStatus | null): boolean {
   if (!subscription || !subscription.items || !subscription.items.data) return false;
   console.log('Checking if user is Pro:', subscription);
   const isPro = subscription.items.data.some(item => {
@@ -155,7 +172,7 @@ export function getIsPro(subscription: SubscriptionStatus | null): boolean {
   return isPro;
 }
 
-export function getIsSubscribed(subscription: SubscriptionStatus | null): boolean {
+function getIsSubscribed(subscription: SubscriptionStatus | null): boolean {
   if (!subscription) return false;
 
   const status = subscription.status;

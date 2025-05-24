@@ -2,19 +2,18 @@
 import { useState } from "react";
 import CustomLink from "@/components/custom-link";
 import { Button } from "@/components/ui/button"
-import { useStripe, getSubscriptionLimit } from "@/lib/stripe-context";
+import { useStripe } from "@/lib/stripe-context";
 import { Loader2 } from "lucide-react";
 import { useSnackbar } from 'notistack';
 import { useBillingUsage } from "@/hooks/useBillingUsage";
 import { useRouter } from "next/navigation";
 
 export default function ProspectFinderExecuteButton() {
-  const { subscription, isLoadingSubscription, hasSubscription } = useStripe();
+  const { subscription, isLoadingSubscription, hasSubscription, limit } = useStripe();
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const { enqueueSnackbar } = useSnackbar();
-  const limit = getSubscriptionLimit(subscription);
   const { usage } = useBillingUsage();
   const exceededLimit = usage >= limit;
   const route = useRouter();

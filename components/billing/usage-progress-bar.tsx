@@ -3,24 +3,21 @@
 import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { Progress } from '@/components/ui/progress';
-import { getSubscriptionLimit, useStripe } from '@/lib/stripe-context';
+import { useStripe } from '@/lib/stripe-context';
 import { Button } from '@/components/ui/button';
 import { useBillingUsage } from '@/hooks/useBillingUsage';
 
 export default function UsageProgressBar() {
   const { data: session } = useSession();
-  const { subscription, hasSubscription : isSubscribed } = useStripe();
-  
-  const limit = getSubscriptionLimit(subscription);
+  const { subscription, hasSubscription : isSubscribed, limit } = useStripe();
   // Use the new custom hook
   const { usage, loading, error, refreshing, refresh } = useBillingUsage();
 
   // Define the usage limit based on subscription status
   //const isSubscribed = subscription?.status === 'active' || subscription?.status === 'trialing';
-  const usageLimit = limit;
   
   // Calculate the percentage of usage (capped at 100%)
-  const usagePercentage = Math.min(100, (usage / usageLimit) * 100);
+  const usagePercentage = Math.min(100, (usage / limit) * 100);
 
   if (loading && !refreshing) {
     return (
@@ -97,7 +94,7 @@ export default function UsageProgressBar() {
       <div className="flex justify-between items-center text-sm">
         <span className="font-medium">Monthly Records Usage</span>
         <div className="flex items-center gap-2">
-          <span className="font-medium">{usage} / {usageLimit}</span>
+          <span className="font-medium">{usage} / {limit}</span>
           <Button 
             variant="ghost" 
             size="sm" 
