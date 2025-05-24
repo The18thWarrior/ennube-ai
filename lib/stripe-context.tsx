@@ -17,7 +17,9 @@ interface StripeContextType {
 interface SubscriptionStatus {
   id: string;
   customer: string;
-  items? : Stripe.SubscriptionItem[],
+  items? : {
+    data: Stripe.SubscriptionItem[]
+  },
   days_until_due?: number;
   status: 'active' | 'canceled' | 'incomplete' | 'incomplete_expired' | 'past_due' | 'paused' | 'trialing' | 'unpaid';
 }
@@ -144,9 +146,9 @@ export function getSubscriptionLimit(subscription: SubscriptionStatus | null): n
 }
 
 export function getIsPro(subscription: SubscriptionStatus | null): boolean {
-  if (!subscription || !subscription.items) return false;
-
-  const isPro = subscription.items.some(item => {
+  if (!subscription || !subscription.items || !subscription.items.data) return false;
+  console.log('Checking if user is Pro:', subscription);
+  const isPro = subscription.items.data.some(item => {
     if (!item.price || !item.price.id) return false;
     return item.price?.id === process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO;
   });

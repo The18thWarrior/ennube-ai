@@ -3,20 +3,21 @@
 import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { Progress } from '@/components/ui/progress';
-import { useStripe } from '@/lib/stripe-context';
+import { getSubscriptionLimit, useStripe } from '@/lib/stripe-context';
 import { Button } from '@/components/ui/button';
 import { useBillingUsage } from '@/hooks/useBillingUsage';
 
 export default function UsageProgressBar() {
   const { data: session } = useSession();
-  const { subscription } = useStripe();
+  const { subscription, hasSubscription : isSubscribed } = useStripe();
   
+  const limit = getSubscriptionLimit(subscription);
   // Use the new custom hook
   const { usage, loading, error, refreshing, refresh } = useBillingUsage();
 
   // Define the usage limit based on subscription status
-  const isSubscribed = subscription?.status === 'active' || subscription?.status === 'trialing';
-  const usageLimit = isSubscribed ? 1000 : 100;
+  //const isSubscribed = subscription?.status === 'active' || subscription?.status === 'trialing';
+  const usageLimit = limit;
   
   // Calculate the percentage of usage (capped at 100%)
   const usagePercentage = Math.min(100, (usage / usageLimit) * 100);
