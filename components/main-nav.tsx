@@ -65,7 +65,7 @@ export function MainNav() {
               </NavigationMenuLink>
             </NavigationMenuItem> */}
 
-            {hasSubscription && 
+            { 
               <NavigationMenuItem>
                 <NavigationMenuLink
                   href="/dashboard"
@@ -75,7 +75,7 @@ export function MainNav() {
                 </NavigationMenuLink>
               </NavigationMenuItem>
             }
-            {hasSubscription && 
+            { 
 
               <NavigationMenuItem>
                 <NavigationMenuLink
