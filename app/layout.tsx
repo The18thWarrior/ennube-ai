@@ -30,7 +30,7 @@ export default function RootLayout({ children, session }: React.PropsWithChildre
               <StripeProvider>
                   <SnackbarProvider>
                     <Header />
-                    <main className="mx-auto w-full max-w-6xl flex-auto px-4 py-4 sm:px-6 md:py-6">
+                    <main className="mx-auto w-full max-w-4/5 flex-auto px-4 py-4 sm:px-6 md:py-6">
                       {children}
                     </main>
                     <Footer />

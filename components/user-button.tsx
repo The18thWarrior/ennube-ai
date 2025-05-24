@@ -51,12 +51,12 @@ export default async function UserButton() {
               Account
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuSeparator />          
+          {/* <DropdownMenuSeparator />          
           <DropdownMenuItem asChild>
             <Link href="/subscription" className="cursor-pointer">
               Billing
             </Link>
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
           <DropdownMenuSeparator />
           <DropdownMenuItem>
             <SignOut />

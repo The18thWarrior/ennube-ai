@@ -33,7 +33,7 @@ export default function AccountPage() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto">
+    <div >
       <div className="mb-8">
         <h1 className="text-3xl font-bold">Account</h1>
         <p className="text-muted-foreground mt-1">
@@ -42,7 +42,7 @@ export default function AccountPage() {
       </div>
 
       {/* Grid layout for side-by-side components */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {/* Profile Information Section */}
         <div className="flex flex-col">
           <div className="flex-grow">
