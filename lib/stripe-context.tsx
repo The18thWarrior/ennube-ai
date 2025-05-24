@@ -1,6 +1,7 @@
 'use client';
 
 import { useSession } from 'next-auth/react';
+import Stripe from 'stripe';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 interface StripeContextType {
@@ -16,6 +17,7 @@ interface StripeContextType {
 interface SubscriptionStatus {
   id: string;
   customer: string;
+  items? : Stripe.SubscriptionItem[],
   days_until_due?: number;
   status: 'active' | 'canceled' | 'incomplete' | 'incomplete_expired' | 'past_due' | 'paused' | 'trialing' | 'unpaid';
 }
@@ -64,6 +66,7 @@ export function StripeProvider({ children }: { children: React.ReactNode }) {
       const response = await fetch('/api/stripe/subscription/status');
       if (response.ok) {
         const data = await response.json();
+        console.log('Fetched subscription data:', data);
         setSubscription(data.subscription);
       } else {
         // If no subscription is found, set default state
@@ -132,10 +135,22 @@ export function useStripe() {
 }
 
 export function getSubscriptionLimit(subscription: SubscriptionStatus | null): number {
-  if (!subscription) return 100;
-    const usageLimit = getIsSubscribed(subscription) ? 1000 : 100;
+  if (!subscription) return 10;
+  const isSubscribed = getIsSubscribed(subscription);
+  const isPro = getIsPro(subscription);
+  const usageLimit = isSubscribed ? (isPro ? 10000 : 1000) : 10;
 
   return usageLimit;
+}
+
+export function getIsPro(subscription: SubscriptionStatus | null): boolean {
+  if (!subscription || !subscription.items) return false;
+
+  const isPro = subscription.items.some(item => {
+    if (!item.price || !item.price.id) return false;
+    return item.price?.id === process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO;
+  });
+  return isPro;
 }
 
 export function getIsSubscribed(subscription: SubscriptionStatus | null): boolean {
