@@ -1,6 +1,6 @@
 -- Create usage_log table
 CREATE TABLE IF NOT EXISTS usage_log (
-    id SERIAL PRIMARY KEY,
+    id VARCHAR(255) PRIMARY KEY,
     timestamp BIGINT NOT NULL,
     user_sub VARCHAR(255) NOT NULL,
     agent VARCHAR(255) NOT NULL,

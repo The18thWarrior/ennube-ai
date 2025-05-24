@@ -55,16 +55,6 @@ export interface UsageLogEntry {
   };
 }
 
-interface Execution {
-  id: number
-  agent_name: string
-  image_url: string
-  status: string
-  execution_time: number | null
-  created_at: string
-  response_data: any
-}
-
 interface StoreUsageParams {
   userSub: string,
   agent: string,
