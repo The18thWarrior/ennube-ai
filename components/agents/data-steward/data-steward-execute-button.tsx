@@ -54,7 +54,7 @@ export default function DataStewardExecuteButton() {
     <div className="space-y-4">
       <Button 
         onClick={handleExecute} 
-        disabled={isLoading || !hasSubscription || exceededLimit} 
+        disabled={isLoading || exceededLimit} 
         className="w-full"
       >
         {isLoading ? (
