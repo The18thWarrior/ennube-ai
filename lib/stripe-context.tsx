@@ -72,7 +72,7 @@ export function StripeProvider({ children }: { children: React.ReactNode }) {
       const response = await fetch('/api/stripe/subscription/status');
       if (response.ok) {
         const data = await response.json();
-        console.log('Fetched subscription data:', data);
+        //console.log('Fetched subscription data:', data);
         setSubscription(data.subscription);
         const parsedLimits = getSubscriptionLimit(data.subscription);
         setIsPro(parsedLimits.isPro);
@@ -164,7 +164,7 @@ function getSubscriptionLimit(subscription: SubscriptionStatus | null): {
 
 function getIsPro(subscription: SubscriptionStatus | null): boolean {
   if (!subscription || !subscription.items || !subscription.items.data) return false;
-  console.log('Checking if user is Pro:', subscription);
+  //console.log('Checking if user is Pro:', subscription);
   const isPro = subscription.items.data.some(item => {
     if (!item.price || !item.price.id) return false;
     return item.price?.id === process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO;

@@ -24,12 +24,12 @@ export function MainNav() {
   return (
     <div className="flex items-center gap-4">
       <CustomLink href="/">
-        <Button variant="ghost" className="p-0">
+        <Button variant="ghost" className="p-0 text-md content-end flex items-center gap-2">
           <Image
             src="/logo.png"
             alt="Home"
-            width="32"
-            height="32"
+            width="48"
+            height="48"
             className="min-w-8"
           />
           Ennube.ai

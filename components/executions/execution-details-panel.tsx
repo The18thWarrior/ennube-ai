@@ -186,12 +186,19 @@ function StatusBadge({ status }: { status: string }) {
       )
     case "in_progress":
       return (
-        <Badge variant="outline" className="flex items-center gap-1 text-amber-700">
+        <Badge variant="outline" className="flex items-center gap-1 dark:text-gray-700">
+          <Clock className="h-3 w-3" />
+          <span>In Progress</span>
+        </Badge>
+      )
+    case "In Progress":
+      return (
+        <Badge variant="outline" className="flex items-center gap-1 dark:text-gray-500">
           <Clock className="h-3 w-3" />
           <span>In Progress</span>
         </Badge>
       )
     default:
-      return <Badge variant="outline" className="text-muted">{status}</Badge>
+      return <Badge variant="outline" className="dark:text-gray-500">{status}</Badge>
   }
 }
