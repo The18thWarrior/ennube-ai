@@ -76,7 +76,7 @@ export default function Agents() {
       categories: ["marketing", "nurturing", "communication"],
       skills: ["content personalization", "email campaigns", "lead nurturing", "relationship management"],
       isNew: true,
-      comingSoon: false,
+      comingSoon: true,
       hasImage: true,
     }
   ]
