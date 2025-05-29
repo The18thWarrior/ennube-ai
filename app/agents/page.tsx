@@ -62,6 +62,22 @@ export default function Agents() {
       isNew: false,
       comingSoon: true,
       hasImage: true,
+    },
+    {
+      id: 4,
+      name: "Market Nurturer",
+      apiName: 'market-nurturer',
+      role: "Relationship Builder",
+      description:
+        "Nurtures long-term buying prospects through personalized content, timely communications, and relationship building.",
+      image: "/market-nurturer.png",
+      link: "/agents/market-nurturer",
+      button: null,
+      categories: ["marketing", "nurturing", "communication"],
+      skills: ["content personalization", "email campaigns", "lead nurturing", "relationship management"],
+      isNew: true,
+      comingSoon: false,
+      hasImage: true,
     }
   ]
 
