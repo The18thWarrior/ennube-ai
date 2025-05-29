@@ -145,7 +145,7 @@ export function useStripe() {
   return context;
 }
 
-function getSubscriptionLimit(subscription: SubscriptionStatus | null): {
+export function getSubscriptionLimit(subscription: SubscriptionStatus | null): {
   usageLimit: number;
   isPro: boolean;
   isSubscribed: boolean;

@@ -18,6 +18,7 @@ export default function Agents() {
     {
       id: 1,
       name: "Data Steward",
+      apiName: 'data-steward',
       role: "Data Management Expert",
       description:
         "Maintains the quality of data in your CRM by leveraging online search tools to verify, enrich, and clean customer information.",
@@ -33,6 +34,7 @@ export default function Agents() {
     {
       id: 2,
       name: "Prospect Finder",
+      apiName: 'prospect-finder',
       role: "Lead Generation Specialist",
       description:
         "Creates ideal customer profiles, updates them every 30 days, and finds matching prospects while incorporating feedback from Slack.",
@@ -48,6 +50,7 @@ export default function Agents() {
     {
       id: 3,
       name: "Meetings Booker",
+      apiName: 'meetings-booker',
       role: "Scheduling Specialist",
       description:
         "Sets up appointments with prospects identified by the Prospect Finder, handling scheduling, reminders, and follow-ups.",

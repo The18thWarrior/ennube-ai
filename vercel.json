@@ -1,0 +1,22 @@
+{
+    "crons": [
+        {
+            "path": "/api/webhooks/agent/execute?frequency=business_hours",
+            "schedule": "0 6-18 * * 1-5"
+        },
+        
+        {
+            "path": "/api/webhooks/agent/execute?frequency=daily",
+            "schedule": "0 6 * * *"
+        },
+
+        {
+            "path": "/api/webhooks/agent/execute?frequency=weekly",
+            "schedule": "0 6 * * 1"
+        },
+        {
+            "path": "/api/webhooks/agent/execute?frequency=monthly",
+            "schedule": "0 6 1 * *"
+        }
+    ]
+}

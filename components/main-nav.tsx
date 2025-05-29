@@ -18,13 +18,18 @@ import { Button } from "./ui/button"
 import { SubscribeButton } from "./subscribe-button"
 import { ThemeToggle } from "./theme-toggle"
 import { useStripe } from "@/lib/stripe-context"
+import { useRouter } from "next/navigation"
 
 export function MainNav() {
   const { hasSubscription, isLoadingSubscription, isLoading } = useStripe();
+  const router = useRouter();
+  const handleHome = () => {
+    router.push('/');
+  }
   return (
     <div className="flex items-center gap-4">
       <CustomLink href="/">
-        <Button variant="ghost" className="p-0 text-md content-end flex items-center gap-2">
+        <Button variant="none" className="p-0 text-md content-end flex items-center gap-2">
           <Image
             src="/logo.png"
             alt="Home"
