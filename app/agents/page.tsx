@@ -82,7 +82,7 @@ export default function Agents() {
   ]
 
   return (
-    <div className="grid grid-cols-1 gap-x-8 gap-y-16 lg:grid-cols-3 p-4">
+    <div className="grid grid-cols-1 gap-x-8 gap-y-16 lg:grid-cols-3 p-4 max-w-6xl mx-auto">
       {agents.map((agent) => {
         return (
           <AgentCard agent={agent} key={agent.id} />

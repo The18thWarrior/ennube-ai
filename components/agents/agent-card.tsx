@@ -95,7 +95,7 @@ export function AgentCard({ agent }: AgentCardProps) {
                     </div>
                     </div>
                     <div className="mt-2 flex flex-auto flex-col text-base leading-7 text-muted-foreground">
-                    <p className="flex-auto">{agent.description}</p>
+                    <p className="flex-auto md:text-sm">{agent.description}</p>
                     <div className="mt-4 flex flex-wrap gap-1.5">
                         {agent.skills.slice(0, 3).map((skill, index) => (
                         <Badge key={index} variant="outline" className="bg-accent/50 dark:bg-accent">
