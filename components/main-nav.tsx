@@ -21,7 +21,7 @@ import { useStripe } from "@/lib/stripe-context"
 import { useRouter } from "next/navigation"
 
 export function MainNav() {
-  const { hasSubscription, isLoadingSubscription, isLoading } = useStripe();
+  const { hasSubscription, isPrimary, isLoadingSubscription, isLoading, licenseCount } = useStripe();
   const router = useRouter();
   const handleHome = () => {
     router.push('/');
@@ -99,8 +99,17 @@ export function MainNav() {
                 Integrations
               </NavigationMenuLink>
             </NavigationMenuItem>
-            
-            {!hasSubscription && 
+            {licenseCount > 2 && isPrimary && 
+              <NavigationMenuItem>
+                <NavigationMenuLink
+                  href="/account/users"
+                  className={navigationMenuTriggerStyle()}
+                >
+                  Users
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+            }
+            {!hasSubscription && isPrimary && 
               <NavigationMenuItem>
                 <SubscribeButton />
               </NavigationMenuItem>

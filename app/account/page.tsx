@@ -6,10 +6,14 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import ProfileInformation from '@/components/account/profile-information';
 import SubscriptionSummary from '@/components/billing/subscription-summary';
+import { useStripe } from '@/lib/stripe-context';
+import { Suspense } from 'react';
+import UsageProgressBar from '@/components/billing/usage-progress-bar';
 
 export default function AccountPage() {
   const { data: session, status } = useSession();
 
+  const { isPrimary } = useStripe();
   // Show loading state while checking session
   if (status === 'loading') {
     return (
@@ -54,7 +58,14 @@ export default function AccountPage() {
         <div className="flex flex-col">
           {/* <h2 className="text-xl font-semibold mb-4">Account Summary</h2> */}
           <div className="flex-grow">
-            <SubscriptionSummary />
+            {isPrimary && <SubscriptionSummary />}
+            {!isPrimary && 
+              <div className="bg-background rounded-lg border border-border p-6 mb-6">
+                <Suspense fallback={<div>Loading usage data...</div>}>
+                  <UsageProgressBar />
+                </Suspense>
+              </div>
+            }
           </div>
         </div>
       </div>

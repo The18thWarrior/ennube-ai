@@ -32,6 +32,9 @@ export async function POST(req: NextRequest) {
         {
           price: isPro ? process.env.STRIPE_PRICE_ID_PRO : process.env.STRIPE_PRICE_ID, // Your predefined price ID from Stripe dashboard
           quantity: 1,
+          adjustable_quantity: {
+            enabled: true
+          }
         },
       ],
       allow_promotion_codes: true,
@@ -42,6 +45,9 @@ export async function POST(req: NextRequest) {
       metadata: {
         userId: session.user.id || session.user.email || 'unknown',
       },
+      subscription_data: {
+        trial_period_days: 30
+      }
     });
 
     return NextResponse.json({ url: stripeSession.url });

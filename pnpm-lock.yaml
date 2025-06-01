@@ -101,6 +101,9 @@ dependencies:
   '@vercel/kv':
     specifier: ^1.0.1
     version: 1.0.1
+  auth0:
+    specifier: ^4.23.1
+    version: 4.23.1
   class-variance-authority:
     specifier: ^0.7.0
     version: 0.7.1
@@ -2410,6 +2413,15 @@ packages:
     resolution: {integrity: sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==}
     dev: false
 
+  /auth0@4.23.1:
+    resolution: {integrity: sha512-Kx7T4eDZXzUZwS2MqX5N+vO72AbWIepT7cXyIbcFuiFn5VjQMhs70N+Yihc9YUv24JODyBOdzZkM8yW2x5stLw==}
+    engines: {node: '>=18'}
+    dependencies:
+      jose: 4.15.9
+      undici-types: 6.19.8
+      uuid: 9.0.1
+    dev: false
+
   /autoprefixer@10.4.21(postcss@8.5.3):
     resolution: {integrity: sha512-O+A6LWV5LDHSJD3LjHYoNi4VLsj/Whi7k6zG12xTYaU4cQ8oxQGckXNX8cRHK5yOZ/ppVHe0ZBXGzSV9jXdVbQ==}
     engines: {node: ^10 || ^12 || >=14}
@@ -3458,6 +3470,10 @@ packages:
   /jiti@1.21.7:
     resolution: {integrity: sha512-/imKNG4EbWNrVjoNC/1H5/9GFy+tqjGBHCaSsN+P2RnPqjsLmv6UD3Ej+Kj8nBWaRAwyk7kK5ZUc+OEatnTR3A==}
     hasBin: true
+
+  /jose@4.15.9:
+    resolution: {integrity: sha512-1vUQX+IdDMVPj4k8kOxgUqlcK518yluMuGZwqlr44FS1ppZB/5GWh4rZG89erpOBOJjU/OBsnCVFfapsRz6nEA==}
+    dev: false
 
   /jose@6.0.10:
     resolution: {integrity: sha512-skIAxZqcMkOrSwjJvplIPYrlXGpxTPnro2/QWTDCxAdWQrSTV5/KqspMWmi5WAx5+ULswASJiZ0a+1B/Lxt9cw==}

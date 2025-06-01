@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { getCustomerSubscription } from '@/lib/stripe';
+import { getLicenseBySubId } from '@/lib/db/license-storage';
+import { get } from 'http';
 
 // Initialize Stripe with your secret key
 
@@ -14,19 +16,21 @@ export async function GET(req: NextRequest) {
         { status: 401 }
       );
     }
+    let isPrimary = false;
+    let subscription = await getCustomerSubscription(session.user.auth0?.sub as string);
+    if (!subscription) {
+      const license = await getLicenseBySubId(session.user.auth0?.sub as string);
+      if (license && license.parentSubId) {
+        // If a license is found, you can use it to create a subscription
+        subscription = await getCustomerSubscription(license.parentSubId);
+      }
+    } else {
+      isPrimary = true;
+    }
 
-    const subscription = await getCustomerSubscription(session.user.auth0?.sub as string);
     if (!subscription) return NextResponse.json({ error: 'No subscription found' },{ status: 500 });
-    // Dummy response for demo purposes
-    const dummySubscription = {
-      isActive: false
-      // If the user had an active subscription, you would include details like:
-      // plan: 'Premium',
-      // currentPeriodEnd: '2023-12-31',
-      // status: 'active'
-    };
 
-    return NextResponse.json({ subscription: JSON.parse(JSON.stringify(subscription)) });
+    return NextResponse.json({ subscription: JSON.parse(JSON.stringify(subscription)), isPrimary });
   } catch (error: any) {
     console.error('Error checking subscription status:', error);
     return NextResponse.json(

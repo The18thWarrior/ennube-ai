@@ -11,8 +11,10 @@ interface StripeContextType {
   subscription: SubscriptionStatus | null;
   limit: number;
   isPro: boolean;
+  isPrimary: boolean;
   isLoadingSubscription: boolean;
   hasSubscription: boolean;
+  licenseCount: number;
   refetchSubscription: () => Promise<void>;
 }
 
@@ -32,6 +34,8 @@ const StripeContext = createContext<StripeContextType | undefined>(undefined);
 export function StripeProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(false);
   const [isPro, setIsPro] = useState(false);
+  const [isPrimary, setIsPrimary] = useState(false);
+  const [licenseCount, setLicenseCount] = useState(0);
   const [limit, setLimit] = useState(10); // Default limit
   const { data: session } = useSession();
   const [subscription, setSubscription] = useState<SubscriptionStatus | null>(null);
@@ -74,16 +78,20 @@ export function StripeProvider({ children }: { children: React.ReactNode }) {
         const data = await response.json();
         //console.log('Fetched subscription data:', data);
         setSubscription(data.subscription);
+        setIsPrimary(data.isPrimary);
         const parsedLimits = getSubscriptionLimit(data.subscription);
         setIsPro(parsedLimits.isPro);
         setLimit(parsedLimits.usageLimit);
+        setLicenseCount(parsedLimits.licenseCount);
       } else {
         // If no subscription is found, set default state
         setSubscription({ customer: '', status: 'incomplete', id: '' });
+        setIsPrimary(true);
       }
     } catch (error) {
       console.error('Error fetching subscription:', error);
       setSubscription({ customer: '', status: 'incomplete', id: '' });
+      setIsPrimary(true);
     } finally {
       setIsLoadingSubscription(false);
     }
@@ -128,6 +136,8 @@ export function StripeProvider({ children }: { children: React.ReactNode }) {
     limit,
     isLoadingSubscription,
     hasSubscription,
+    licenseCount,
+    isPrimary,
     refetchSubscription: fetchSubscriptionStatus
   } as StripeContextType;
   return (
@@ -149,16 +159,19 @@ export function getSubscriptionLimit(subscription: SubscriptionStatus | null): {
   usageLimit: number;
   isPro: boolean;
   isSubscribed: boolean;
+  licenseCount: number;
 } {
-  if (!subscription) return { usageLimit: 10, isPro: false, isSubscribed: false };
+  if (!subscription) return { usageLimit: 10, isPro: false, isSubscribed: false, licenseCount: 0 };
   const isSubscribed = getIsSubscribed(subscription);
   const isPro = getIsPro(subscription);
   const usageLimit = isSubscribed ? (isPro ? 10000 : 1000) : 10;
+  const licenseCount = subscription.items?.data[0]?.quantity || 0;
 
   return {
     usageLimit,
     isPro,
-    isSubscribed
+    isSubscribed,
+    licenseCount
   };
 }
 
