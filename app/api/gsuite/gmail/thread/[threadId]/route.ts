@@ -17,9 +17,10 @@ import { createGSuiteClient } from '@/lib/gsuite';
  * - 404 Not Found: No GSuite credentials found or thread not found
  * - 500 Internal Server Error: Server error
  */
+type Params = Promise<{ threadId: string }>;
 export async function GET(
   request: NextRequest,
-  { params }: { params: { threadId: string } }
+  { params }: { params: Params }
 ) {
   try {
     // Verify the user is authenticated
