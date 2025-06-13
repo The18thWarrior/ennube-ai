@@ -1,48 +1,9 @@
 import { auth } from "@/auth";
 import { Session } from "next-auth";
 import {Connection, SaveResult, OAuth2} from 'jsforce';
+import { RefreshTokenResponse, SalesforceAuthResult, SalesforceQueryResult, SalesforceUserInfo } from "./types";
 
-// Define RefreshTokenResponse type for jsforce
-interface RefreshTokenResponse {
-  access_token: string;
-  refresh_token?: string;
-  instance_url?: string;
-  id?: string;
-  issued_at?: string;
-  signature?: string;
-}
 
-export interface SalesforceAuthResult {
-  success: boolean;
-  accessToken?: string;
-  refreshToken?: string;
-  instanceUrl?: string;
-  clientId?: string;
-  clientSecret?: string;
-  userInfo?: {
-    id?: string;
-    organization_id?: string;
-    display_name?: string;
-    email?: string;
-    organizationId?: string;
-  };
-  error?: string;
-}
-
-export interface SalesforceUserInfo {
-  id?: string;
-  organization_id?: string;
-  display_name?: string;
-  email?: string;
-  organizationId?: string;
-}
-
-export interface SalesforceQueryResult<T> {
-  totalSize: number;
-  done: boolean;
-  records: T[];
-  nextRecordsUrl?: string;
-}
 
 /**
  * Salesforce API client using jsforce for more robust Salesforce API interactions

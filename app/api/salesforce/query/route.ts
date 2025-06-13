@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSalesforceCredentialsBySub } from '@/lib/db/salesforce-storage';
-import { SalesforceClient, createSalesforceClient, SalesforceAuthResult } from '@/lib/salesforce';
+import { SalesforceClient, createSalesforceClient } from '@/lib/salesforce';
+import { SalesforceAuthResult } from '@/lib/types';
 
 /**
  * API endpoint to run a Salesforce SOQL query

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSalesforceCredentialsBySub } from '@/lib/db/salesforce-storage';
-import { SalesforceClient, createSalesforceClient, SalesforceAuthResult } from '@/lib/salesforce';
+import { createSalesforceClient, SalesforceClient } from '@/lib/salesforce';
+import { SalesforceAuthResult } from '@/lib/types';
 /**
  * Helper function to get a Salesforce client from the sub parameter
  */

@@ -23,6 +23,7 @@ pool.query('SELECT NOW()', (err, res) => {
 });
 
 export type FrequencyType = 'business_hours' | 'daily' | 'weekly' | 'monthly';
+export type ProviderType = 'sfdc' | 'hubspot' | 'gmail' | 'msoffice';
 
 export interface AgentSetting {
   id?: string;
@@ -33,6 +34,7 @@ export interface AgentSetting {
   active: boolean;
   frequency: FrequencyType;
   batchSize?: number;
+  provider: ProviderType;
 }
 
 /**
@@ -63,13 +65,14 @@ export async function saveAgentSetting(agentSetting: Omit<AgentSetting, 'id' | '
       const id = checkResult.rows[0].id;
       await pool.query(
         `UPDATE AgentSettings 
-         SET active = $1, frequency = $2, updated_at = $3, batch_size = $4
-         WHERE id = $5`,
+         SET active = $1, frequency = $2, updated_at = $3, batch_size = $4, provider = $5
+         WHERE id = $6`,
         [
           completeAgentSetting.active, 
           completeAgentSetting.frequency, 
           completeAgentSetting.updatedAt, 
           completeAgentSetting.batchSize || 10, 
+          completeAgentSetting.provider,
           id
         ]
       );
@@ -79,8 +82,8 @@ export async function saveAgentSetting(agentSetting: Omit<AgentSetting, 'id' | '
       // Insert new setting
       const insertResult = await pool.query(
         `INSERT INTO AgentSettings 
-         (user_id, agent, created_at, updated_at, active, frequency, batch_size)
-         VALUES ($1, $2, $3, $4, $5, $6, $7)
+         (user_id, agent, created_at, updated_at, active, frequency, batch_size, provider)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
          RETURNING id`,
         [
           completeAgentSetting.userId, 
@@ -89,7 +92,8 @@ export async function saveAgentSetting(agentSetting: Omit<AgentSetting, 'id' | '
           completeAgentSetting.updatedAt,
           completeAgentSetting.active,
           completeAgentSetting.frequency,
-          completeAgentSetting.batchSize || 10 // Default to 10 if not specified
+          completeAgentSetting.batchSize || 10, // Default to 10 if not specified
+          completeAgentSetting.provider
         ]
       );
       
@@ -115,7 +119,7 @@ export async function getAgentSetting(userId: string, agent: string): Promise<Ag
     
     const result = await pool.query(
       `SELECT id, user_id as "userId", agent, created_at as "createdAt", 
-              updated_at as "updatedAt", active, frequency, batch_size as "batchSize"
+              updated_at as "updatedAt", active, frequency, batch_size as "batchSize", provider
        FROM AgentSettings
        WHERE user_id = $1 AND agent = $2`,
       [userId, agent]
@@ -144,7 +148,7 @@ export async function getUserAgentSettings(userId: string): Promise<AgentSetting
     
     const result = await pool.query(
       `SELECT id, user_id as "userId", agent, created_at as "createdAt", 
-              updated_at as "updatedAt", active, frequency, batch_size as "batchSize"
+              updated_at as "updatedAt", active, frequency, batch_size as "batchSize", provider
        FROM AgentSettings
        WHERE user_id = $1
        ORDER BY agent`,
@@ -163,7 +167,7 @@ export async function getUserAgentSettings(userId: string): Promise<AgentSetting
  */
 export async function updateAgentSetting(
   settingId: string,
-  updates: Partial<Pick<AgentSetting, 'active' | 'frequency' | 'batchSize'>>
+  updates: Partial<Pick<AgentSetting, 'active' | 'frequency' | 'batchSize' | 'provider'>>
 ): Promise<boolean> {
   try {
     if (!settingId) {
@@ -189,6 +193,11 @@ export async function updateAgentSetting(
     if (updates.batchSize !== undefined) {
       updateFields.push(`batch_size = $${paramIndex++}`);
       values.push(updates.batchSize);
+    }
+    
+    if (updates.provider !== undefined) {
+      updateFields.push(`provider = $${paramIndex++}`);
+      values.push(updates.provider);
     }
     
     // Always update the timestamp
@@ -303,7 +312,7 @@ export async function getAllActiveSettings(): Promise<AgentSetting[]> {
   try {
     const result = await pool.query(
       `SELECT id, user_id as "userId", agent, created_at as "createdAt", 
-              updated_at as "updatedAt", active, frequency, batch_size as "batchSize"
+              updated_at as "updatedAt", active, frequency, batch_size as "batchSize", provider
        FROM AgentSettings
        WHERE active = true
        ORDER BY user_id, agent`
