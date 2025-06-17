@@ -30,10 +30,10 @@ export default async function HubspotDashboard() {
   );
 
   // If no HubSpot client available, redirect to connect page
-  if (!hubspotClient) {
-    console.log('No HubSpot client found, redirecting to connect page')
-    redirect("/integrations/hubspot/connect");
-  }
+  // if (hubspotClient.) {
+  //   console.log('No HubSpot client found, redirecting to connect page')
+  //   redirect("/integrations/hubspot/connect");
+  // }
 
   // Removed unnecessary console.log statement
   
