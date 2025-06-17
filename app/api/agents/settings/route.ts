@@ -132,7 +132,8 @@ export async function POST(
       agent: body.agent,
       active,
       frequency: body.frequency,
-      batchSize
+      batchSize,
+      provider: body.provider || 'sfdc' // Default to 'sfdc' if not provided
     });
 
     if (!settingId) {

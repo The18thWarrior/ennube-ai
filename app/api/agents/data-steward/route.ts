@@ -25,7 +25,8 @@ export async function GET(request: NextRequest) {
     // Get query parameters
     const searchParams = request.nextUrl.searchParams;
     const limit = searchParams.get('limit') || '10'; // Default to 10 if not specified
-    
+    const provider = searchParams.get('provider') || 'sfdc'; // Default to 10 if not specified
+
     // Validate the limit parameter is a number
     if (isNaN(Number(limit))) {
       return NextResponse.json(
@@ -35,7 +36,7 @@ export async function GET(request: NextRequest) {
     }
     
     // Get the webhook URL from environment variable
-    const webhookUrl = process.env.DATASTEWARD_WEBHOOK_URL;
+    const webhookUrl = provider === 'sfdc' ? process.env.DATASTEWARD_WEBHOOK_URL : process.env.DATABASE_WEBHOOK_URL_HUBSPOT;
     if (!webhookUrl) {
       return NextResponse.json(
         { error: 'Data steward webhook URL is not configured' },

@@ -3,8 +3,8 @@
  */
 import { Pool } from 'pg';
 import { nanoid } from "nanoid";
-import { SalesforceAuthResult } from "../salesforce";
 import { auth } from '@/auth';
+import { SalesforceAuthResult } from '../types';
 
 // Create PostgreSQL connection pool using environment variables
 const pool = new Pool({

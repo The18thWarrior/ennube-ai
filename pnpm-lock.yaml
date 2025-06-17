@@ -8,6 +8,9 @@ dependencies:
   '@auth/unstorage-adapter':
     specifier: ^2.0.0
     version: 2.9.0(@simplewebauthn/server@9.0.3)(unstorage@1.16.0)
+  '@hubspot/api-client':
+    specifier: ^13.0.0
+    version: 13.0.0
   '@radix-ui/react-accordion':
     specifier: ^1.2.10
     version: 1.2.10(@types/react-dom@18.3.7)(@types/react@18.3.20)(react-dom@18.3.1)(react@18.3.1)
@@ -322,6 +325,21 @@ packages:
 
   /@hexagon/base64@1.1.28:
     resolution: {integrity: sha512-lhqDEAvWixy3bZ+UOYbPwUbBkwBq5C1LAJ/xPC8Oi+lL54oyakv/npbA0aU2hgCsx/1NUd4IBvV03+aUBWxerw==}
+    dev: false
+
+  /@hubspot/api-client@13.0.0:
+    resolution: {integrity: sha512-sXC1kRna+2uFlct1E1IQJQi53X36k24jRctmTTKzlvUM8it5VHXt6PCjVskQ4faLYGPyx9xh9GNx0GI7RMY4CQ==}
+    engines: {node: '>=18.0.0'}
+    dependencies:
+      '@types/node': 20.17.32
+      '@types/node-fetch': 2.6.12
+      bottleneck: 2.19.5
+      es6-promise: 4.2.8
+      form-data: 2.5.3
+      lodash.merge: 4.6.2
+      node-fetch: 2.7.0
+    transitivePeerDependencies:
+      - encoding
     dev: false
 
   /@img/sharp-darwin-arm64@0.34.1:
@@ -2259,6 +2277,13 @@ packages:
       '@types/node': 20.17.32
     dev: true
 
+  /@types/node-fetch@2.6.12:
+    resolution: {integrity: sha512-8nneRWKCg3rMtF69nLQJnOYUcbafYeFSjqkw3jCRLsqkWFlHaoQrr5mXmofFGOx3DKn7UfmBMyov8ySvLRVldA==}
+    dependencies:
+      '@types/node': 20.17.32
+      form-data: 4.0.2
+    dev: false
+
   /@types/node@20.17.32:
     resolution: {integrity: sha512-zeMXFn8zQ+UkjK4ws0RiOC9EWByyW1CcVmLe+2rQocXRsGEDxUCwPEIVgpsGcLHS/P8JkT0oa3839BRABS0oPw==}
     dependencies:
@@ -2468,6 +2493,10 @@ packages:
 
   /boolbase@1.0.0:
     resolution: {integrity: sha512-JZOSA7Mo9sNGB8+UjSgzdLtokWAky1zbztM3WRLCbZ70/3cTANmQmOdR7y2g+J0e2WXywy1yS468tY+IruqEww==}
+    dev: false
+
+  /bottleneck@2.19.5:
+    resolution: {integrity: sha512-VHiNCbI1lKdl44tGrhNfU3lup0Tj/ZBMJB5/2ZbNXRCPuRCO7ed2mgcK4r17y+KB2EfuYuRaVlwNbAeaWGSpbw==}
     dev: false
 
   /brace-expansion@2.0.1:
@@ -2999,6 +3028,10 @@ packages:
       hasown: 2.0.2
     dev: false
 
+  /es6-promise@4.2.8:
+    resolution: {integrity: sha512-HJDGx5daxeIvxdBxvG2cb9g4tEvwIk3i8+nhX0yGrYmZUzbkdg8QbDevheDB8gd0//uPj4c1EQua8Q+MViT0/w==}
+    dev: false
+
   /escalade@3.2.0:
     resolution: {integrity: sha512-WUj2qlxaQtO4g6Pq5c29GTcWGDyd8itL8zTlipgECz3JesAiiOKotd8JU6otB3PACgG6xkJUyVhboMS+bje/jA==}
     engines: {node: '>=6'}
@@ -3092,6 +3125,17 @@ packages:
     dependencies:
       cross-spawn: 7.0.6
       signal-exit: 4.1.0
+
+  /form-data@2.5.3:
+    resolution: {integrity: sha512-XHIrMD0NpDrNM/Ckf7XJiBbLl57KEhT3+i3yY+eWm+cqYZJQTZrKo8Y8AWKnuV5GT4scfuUGt9LzNoIx3dU1nQ==}
+    engines: {node: '>= 0.12'}
+    dependencies:
+      asynckit: 0.4.0
+      combined-stream: 1.0.8
+      es-set-tostringtag: 2.1.0
+      mime-types: 2.1.35
+      safe-buffer: 5.2.1
+    dev: false
 
   /form-data@4.0.2:
     resolution: {integrity: sha512-hGfm/slu0ZabnNt4oaRZ6uREyfCj6P4fT/n6A1rGV+Z0VdGXjfOhVUpkn6qVQONHGIFwmveGXyDs75+nr6FM8w==}
@@ -3536,6 +3580,10 @@ packages:
 
   /lines-and-columns@1.2.4:
     resolution: {integrity: sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==}
+
+  /lodash.merge@4.6.2:
+    resolution: {integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==}
+    dev: false
 
   /lodash@4.17.21:
     resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}

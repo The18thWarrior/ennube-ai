@@ -12,6 +12,7 @@ export default async function LandingPage() {
   } else {
     redirect("/api/auth/signin?provider=auth0")
   }
+  return <></>
   // Define a button for signed-in users
   // This button will redirect to the dashboard
 

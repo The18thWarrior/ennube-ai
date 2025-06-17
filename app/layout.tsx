@@ -5,7 +5,7 @@ import Footer from "@/components/footer"
 import Header from "@/components/header"
 import { StripeProvider } from "@/lib/stripe-context"
 import { SessionProvider } from "next-auth/react"
-import { Session } from "next-auth"
+//import { Session } from "next-auth"
 import { SnackbarProvider } from "../components/snackbar-provider"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Analytics } from "@vercel/analytics/next"
@@ -19,14 +19,14 @@ export const metadata: Metadata = {
     "Supercharge your CRM with AI Agents",
 }
 
-export default function RootLayout({ children, session }: React.PropsWithChildren<{ session: Session | null }>) {
+export default function RootLayout({ children }: React.PropsWithChildren<{}>) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>          
         <ThemeProvider defaultTheme="system" storageKey="theme">
           <div className="flex h-full min-h-screen w-full flex-col justify-between">
             
-            <SessionProvider session={session}>
+            <SessionProvider>
               <StripeProvider>
                   <SnackbarProvider>
                     <Header />

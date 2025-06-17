@@ -65,6 +65,7 @@ export default function DirectLoginForm({ onSubmit }: OAuth2LoginFormProps) {
         className="w-full" 
         disabled={isSubmitting}
       >
+        <img src="/salesforce-logo.png" alt="Salesforce Logo" className="h-5 w-5" />
         {isSubmitting ? "Redirecting..." : "Connect with Salesforce"}
       </Button>
       

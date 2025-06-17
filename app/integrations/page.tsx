@@ -1,12 +1,15 @@
 import IntegrationCard from "@/components/integration-card"
 import { getGSuiteCredentialsById } from "@/lib/db/gsuite-storage";
 import { getSalesforceCredentialsById } from "@/lib/db/salesforce-storage"
+import { getHubSpotCredentialsById } from "@/lib/db/hubspot-storage"
 
 export default async function IntegrationsPage() {
     const sf_credential = await getSalesforceCredentialsById()
     const hasSalesforce = Boolean(sf_credential && sf_credential.accessToken);
     const gs_credential = await getGSuiteCredentialsById();
     const hasGSuite = Boolean(gs_credential && gs_credential.accessToken);
+    const hs_credential = await getHubSpotCredentialsById();
+    const hasHubSpot = Boolean(hs_credential && hs_credential.accessToken);
       
     return (
         <div className="container mx-auto py-10 px-4">
@@ -29,6 +32,14 @@ export default async function IntegrationsPage() {
                     url={"/integrations/gsuite"}
                     connected={hasGSuite} isAddCard={false}        
                 /> }
+                
+                <IntegrationCard
+                    title="HubSpot"
+                    description="Connect your HubSpot account to sync contacts and companies."
+                    icon="/hubspot.webp"
+                    url={"/integrations/hubspot"}
+                    connected={hasHubSpot} isAddCard={false}        
+                />
 
                 <IntegrationCard
                     title="Add New Integration"

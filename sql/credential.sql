@@ -13,6 +13,7 @@ CREATE TABLE Credentials(
     user_info_display_name TEXT,
     user_info_email TEXT,
     user_info_organization_id_alt TEXT,
+    account_timestamp_field TEXT,
     created_at BIGINT NOT NULL,
     expires_at BIGINT NOT NULL,
     created_timestamp TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
@@ -34,3 +35,4 @@ COMMENT ON COLUMN Credentials.user_info_organization_id_alt IS 'Alternative orga
 COMMENT ON COLUMN Credentials.created_at IS 'Timestamp when the credentials were created (Unix timestamp in ms)';
 COMMENT ON COLUMN Credentials.expires_at IS 'Timestamp when the credentials expire (Unix timestamp in ms)';
 COMMENT ON COLUMN Credentials.created_timestamp IS 'Database timestamp when the record was created';
+COMMENT ON COLUMN Credentials.account_timestamp_field IS 'The timestamp field api name used account queries for credential';

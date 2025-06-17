@@ -5,20 +5,20 @@ import Link from "next/link"
 import { redirect } from "next/navigation"
 import DirectLoginForm from "./DirectLoginForm"
 
-export default async function SalesforceConnect() {
+export default async function HubspotConnect() {
   const session = await auth()
   
-  // If user is already connected to Salesforce, redirect to the Salesforce dashboard
-  // if (session?.user?.salesforce) {
-  //   redirect("/integrations/salesforce/dashboard")
-  // }
+  // If user is already connected to Hubspot, redirect to the Hubspot dashboard
+//   if (session?.user?.hubspot) {
+//     redirect("/integrations/hubspot/dashboard")
+//   }
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Connect to Salesforce</h1>
+      <h1 className="text-3xl font-bold">Connect to HubSpot</h1>
 
       <div className="p-6 bg-gray-50 dark:bg-gray-900 rounded-lg">
-        <p className="mb-4">Connect your Salesforce instance to access and manage your Salesforce data directly from this application.</p>
+        <p className="mb-4">Connect your HubSpot instance to access and manage your HubSpot data directly from this application.</p>
         <DirectLoginForm />
       </div>
 
@@ -26,21 +26,21 @@ export default async function SalesforceConnect() {
         <div className="p-6 bg-gray-50 dark:bg-gray-900 rounded-lg">
           <h2 className="text-xl font-semibold mb-4">Benefits of connecting</h2>
           <ul className="list-disc pl-5 space-y-2">
-            <li>Access your Salesforce data without switching applications</li>
-            <li>Perform common operations directly from this interface</li>
-            <li>Integrate Salesforce data with other systems</li>
-            <li>Automate workflows between Salesforce and other services</li>
+            <li>Access your HubSpot data without switching applications</li>
+            <li>Manage contacts and companies directly from this interface</li>
+            <li>Integrate HubSpot data with other systems</li>
+            <li>Automate marketing and sales workflows</li>
           </ul>
         </div>
         
         <div className="p-6 bg-gray-50 dark:bg-gray-900 rounded-lg">
           <h2 className="text-xl font-semibold mb-4">How it works</h2>
-          <p className="mb-4">When you connect to Salesforce:</p>
+          <p className="mb-4">When you connect to HubSpot:</p>
           <ol className="list-decimal pl-5 space-y-2">
-            <li>You'll be redirected to Salesforce's login page</li>
+            <li>You'll be redirected to HubSpot's login page</li>
             <li>After login, you'll be asked to grant permission to this application</li>
             <li>Once authorized, you'll be redirected back to this application</li>
-            <li>Your Salesforce connection will be securely stored for future use</li>
+            <li>Your HubSpot connection will be securely stored for future use</li>
           </ol>
         </div>
       </div>      
