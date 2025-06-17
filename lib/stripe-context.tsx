@@ -164,7 +164,7 @@ export function getSubscriptionLimit(subscription: SubscriptionStatus | null): {
   if (!subscription) return { usageLimit: 100, isPro: false, isSubscribed: false, licenseCount: 0 };
   const isSubscribed = getIsSubscribed(subscription);
   const isPro = getIsPro(subscription);
-  const usageLimit = isSubscribed ? (isPro ? 20000 : 2500) : 100;
+  const usageLimit = isSubscribed ? (isPro ? 25000 : 2500) : 100;
   const licenseCount = subscription.items?.data[0]?.quantity || 0;
 
   return {
