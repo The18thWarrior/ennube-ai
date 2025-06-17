@@ -83,11 +83,7 @@ export default async function HubspotDashboard() {
               <h2 className="text-xl font-semibold mb-4">Account Information</h2>
               <div className="flex items-center gap-4 mb-4">
                 <Avatar className="h-16 w-16">
-                  {userInfo.imageUrl ? (
-                    <AvatarImage src={userInfo.imageUrl} alt={userInfo.email} />
-                  ) : (
-                    <AvatarImage alt={userInfo.email} />
-                  )}
+                  <AvatarImage alt={userInfo.email} />
                   <AvatarFallback>{userInfo.email ? userInfo.email.substring(0, 2).toUpperCase() : ''}</AvatarFallback>
                 </Avatar>
                 <div>
