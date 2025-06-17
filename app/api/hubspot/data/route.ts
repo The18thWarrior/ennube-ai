@@ -186,7 +186,7 @@ export async function PUT(request: NextRequest) {
       notes = companyNotes;
     }
 
-    console.log(mappedData);
+    console.info('Mapped data for HubSpot update:', mappedData);
     // Update the record
     const success = await client!.update(objectType!, id, mappedData);
 
