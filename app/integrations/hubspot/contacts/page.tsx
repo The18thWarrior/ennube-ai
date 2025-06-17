@@ -27,7 +27,8 @@ export default async function HubspotContacts() {
     hubspotCredentials.refreshToken,
     process.env.HUBSPOT_CLIENT_ID,
     process.env.HUBSPOT_CLIENT_SECRET,
-    hubspotCredentials.expiresIn
+    hubspotCredentials.expiresAt,
+    hubspotCredentials
   );
   
   // Fetch contacts from HubSpot

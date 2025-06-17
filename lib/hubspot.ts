@@ -2,8 +2,39 @@ import { auth } from "@/auth";
 import { Session } from "next-auth";
 import { Client } from '@hubspot/api-client';
 import { HubSpotRefreshTokenResponse, RefreshTokenResponse, HubSpotUserInfo, HubSpotQueryResult, HubSpotAuthResult } from "./types";
+import { StoredHubSpotCredentials, storeHubSpotCredentials, updateHubSpotCredentials } from "./db/hubspot-storage";
 
-
+export const hubspotFields = {
+  companies: [
+    "createdate",
+    "hs_object_id",
+    "name",
+    "domain",
+    "description",
+    "industry",
+    "numberofemployees",
+    "annualrevenue",
+    "phone",
+    "website",
+    "address",
+    "city",
+    "state",
+    "zip",
+    "country",
+    "hs_lastmodifieddate",
+    "hs_lastmodifiedby",
+    "facebook_company_page",
+    "googleplus_page",
+    "hs_lastactivitydate",
+    "hs_lastcontacted",
+    "hs_csm_sentiment",
+    "hs_ideal_customer_profile",
+    "hs_is_enriched",
+    "hs_logo_url",
+    "linkedin_company_page",
+    "twitterhandle"
+  ]
+}
 
 /**
  * HubSpot API client using @hubspot/api-client for HubSpot API interactions
@@ -15,13 +46,15 @@ export class HubSpotClient {
   private clientSecret?: string;
   private accessToken?: string;
   private expiresAt?: number; // Timestamp when the token expires
+  private credential?: StoredHubSpotCredentials;
 
   constructor(
     accessToken: string,
     refreshToken?: string,
     clientId?: string,
     clientSecret?: string,
-    expiresIn?: number
+    expiresIn?: number,
+    credential?: StoredHubSpotCredentials
   ) {
     // Initialize HubSpot client with OAuth credentials
     this.client = new Client({
@@ -38,6 +71,10 @@ export class HubSpotClient {
     // Set token expiration time if provided
     if (expiresIn) {
       this.expiresAt = Date.now() + expiresIn * 1000;
+    }
+
+    if (credential) {
+      this.credential = credential;
     }
   }
 
@@ -92,6 +129,12 @@ export class HubSpotClient {
       // Update expiration time
       this.expiresAt = Date.now() + refreshResult.expires_in * 1000;
       
+      await updateHubSpotCredentials(
+        this.credential?.userId || '',
+        this.accessToken,
+        this.refreshToken,
+        refreshResult.expires_in
+      )
       console.log('Successfully refreshed HubSpot access token');
       return refreshResult;
     } catch (error) {
@@ -137,7 +180,8 @@ export class HubSpotClient {
         errorMsg.includes('expired') ||
         errorMsg.includes('invalid_token') ||
         errorMsg.includes('401') ||
-        errorMsg.includes('unauthorized');
+        errorMsg.includes('unauthorized') || 
+        errorMsg.includes('Not Found');
       
       if (isTokenError && this.refreshToken) {
         console.log('HubSpot token appears to be invalid. Attempting to refresh...');
@@ -218,6 +262,7 @@ export class HubSpotClient {
         }
         
         // Standardize response format to match the SalesforceQueryResult interface
+        
         return {
           totalSize: result.total || 0,
           done: !result.paging?.next,
@@ -225,7 +270,7 @@ export class HubSpotClient {
           nextPageToken: result.paging?.next?.after
         };
       } catch (error) {
-        console.error('Error executing HubSpot query:', error);
+        console.error('Error executing HubSpot query:');
         throw new Error(`Query failed: ${error instanceof Error ? error.message : String(error)}`);
       }
     });
@@ -306,7 +351,7 @@ export class HubSpotClient {
         
         return true;
       } catch (error) {
-        console.error(`Error updating ${objectType}:`, error);
+        console.error(`Error updating ${objectType}:`);
         throw new Error(`Failed to update ${objectType}: ${error instanceof Error ? error.message : String(error)}`);
       }
     });
@@ -348,6 +393,97 @@ export class HubSpotClient {
       } catch (error) {
         console.error(`Error deleting ${objectType}:`, error);
         throw new Error(`Failed to delete ${objectType}: ${error instanceof Error ? error.message : String(error)}`);
+      }
+    });
+  }
+  
+  /**
+   * Create a note in HubSpot and associate it with a record
+   * @param content The content of the note
+   * @param associatedObjectType The type of object to associate with (e.g., 'contacts', 'companies', 'deals')
+   * @param associatedObjectId The ID of the object to associate with
+   * @returns The ID of the newly created note
+   */
+  async createNotes(content: string, associatedObjectType: string, associatedObjectId: string): Promise<string> {
+    return this.withTokenRefresh(async () => {
+      try {
+        // Validate required parameters
+        if (!content) {
+          throw new Error('Note content is required');
+        }
+        
+        if (!associatedObjectId) {
+          throw new Error('Associated object ID is required');
+        }
+
+        // Create the note first
+        const noteData = {
+          properties: {
+            hs_note_body: content,
+          }
+        };
+        
+        // Create the note using HubSpot API
+        const result = await this.client.crm.objects.notes.basicApi.create(noteData);
+        
+        // Then create the association using the raw HTTP API since the client's association methods
+        // might have type incompatibilities
+        if (result.id) {
+          const associationUrl = `https://api.hubapi.com/crm/v4/objects/notes/${result.id}/associations/${associatedObjectType}/${associatedObjectId}`;
+          
+          const response = await fetch(associationUrl, {
+            method: 'PUT',
+            headers: {
+              'Authorization': `Bearer ${this.accessToken}`,
+              'Content-Type': 'application/json'
+            }
+          });
+          
+          if (!response.ok) {
+            console.warn(`Warning: Failed to create association for note ${result.id}: ${response.statusText}`);
+          }
+        }
+        
+        return result.id;
+      } catch (error) {
+        console.error('Error creating note in HubSpot:', error);
+        throw new Error(`Failed to create note: ${error instanceof Error ? error.message : String(error)}`);
+      }
+    });
+  }
+  
+  /**
+   * Add multiple notes to a HubSpot record
+   * @param objectType The HubSpot object type (e.g., 'contacts', 'companies', 'deals')
+   * @param objectId The ID of the record to associate the notes with
+   * @param notes Array of note contents to create
+   * @returns Array of created note IDs
+   */
+  async addNotes(objectType: string, objectId: string, notes: string[]): Promise<string[]> {
+    return this.withTokenRefresh(async () => {
+      try {
+        if (!notes || notes.length === 0) {
+          return [];
+        }
+        
+        const noteIds: string[] = [];
+        
+        // Create each note sequentially
+        for (const noteContent of notes) {
+          if (noteContent && noteContent.trim()) {
+            try {
+              const noteId = await this.createNotes(noteContent, objectType, objectId);
+              noteIds.push(noteId);
+            } catch (noteError) {
+              console.warn(`Warning: Failed to create note: ${noteError instanceof Error ? noteError.message : String(noteError)}`);
+            }
+          }
+        }
+        
+        return noteIds;
+      } catch (error) {
+        console.error('Error adding notes:', error);
+        throw new Error(`Failed to add notes: ${error instanceof Error ? error.message : String(error)}`);
       }
     });
   }
@@ -555,12 +691,14 @@ export async function connectToHubSpotWithApiKey(
     return {
       success: true,
       accessToken: apiKey,
+      credential: null
     };
   } catch (error) {
     console.error('HubSpot authentication error:', error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : String(error)
+      error: error instanceof Error ? error.message : String(error),
+      credential: null
     };
   }
 }
@@ -575,7 +713,7 @@ export async function connectToHubSpotWithApiKey(
 export function getAuthorizationUrl(
   clientId?: string,
   redirectUri?: string,
-  scopes: string[] = ['crm.objects.contacts.read', 'crm.objects.contacts.write']
+  scopes: string[] = []
 ): string {
   // Use provided credentials or fall back to environment variables
   const finalClientId = clientId || process.env.HUBSPOT_CLIENT_ID;
@@ -672,13 +810,15 @@ export async function handleOAuthCallback(
       expiresIn: tokenData.expires_in,
       clientId: finalClientId,
       clientSecret: finalClientSecret,
-      userInfo: userInfo as HubSpotUserInfo
+      userInfo: userInfo as HubSpotUserInfo,
+      credential: null
     };
   } catch (error) {
     console.error('Error handling OAuth callback:', error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : String(error)
+      error: error instanceof Error ? error.message : String(error),
+      credential: null
     };
   }
 }
@@ -699,7 +839,8 @@ export function createHubSpotClient(authResult: HubSpotAuthResult): HubSpotClien
     authResult.refreshToken,
     authResult.clientId,
     authResult.clientSecret,
-    authResult.expiresIn
+    authResult.expiresIn,
+    authResult.credential || undefined
   );
 }
 
@@ -751,13 +892,15 @@ export async function refreshHubSpotToken(
       refreshToken: tokenData.refresh_token || refreshToken, // Use new one if provided, otherwise keep the old one
       expiresIn: tokenData.expires_in,
       clientId: finalClientId,
-      clientSecret: finalClientSecret
+      clientSecret: finalClientSecret,
+      credential: null // No stored credentials in this case
     };
   } catch (error) {
     console.error('Error refreshing HubSpot token:', error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : String(error)
+      error: error instanceof Error ? error.message : String(error),
+      credential: null
     };
   }
 }

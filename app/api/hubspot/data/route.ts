@@ -1,7 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getHubSpotCredentialsBySub } from '@/lib/db/hubspot-storage';
-import { createHubSpotClient, HubSpotClient } from '@/lib/hubspot';
+import { getHubspotCredentialsBySub } from '@/lib/db/hubspot-storage';
+import { createHubSpotClient, HubSpotClient, hubspotFields } from '@/lib/hubspot';
 import { HubSpotAuthResult } from '@/lib/types';
+
+const companyFields = { 
+    "careers_website" : "notes",
+    "blog_website" : "notes",
+    "contact_us_form_url" : "notes",
+    "twitter_url" : "twitterhandle",
+    "linkedin_url" : "linkedin_company_page",
+    "youtube_url" : "notes"
+};
 
 /**
  * Helper function to get a HubSpot client from the sub parameter
@@ -40,7 +49,7 @@ async function getHubSpotClientFromSub(request: NextRequest): Promise<{
   }
   
   // Get stored credentials
-  const credentials = await getHubSpotCredentialsBySub(sub);
+  const credentials = await getHubspotCredentialsBySub(sub);
   
   if (!credentials) {
     return {
@@ -58,7 +67,8 @@ async function getHubSpotClientFromSub(request: NextRequest): Promise<{
     success: true,
     accessToken: credentials.accessToken,
     refreshToken: credentials.refreshToken,
-    expiresIn: credentials.expiresIn,
+    expiresIn: credentials.expiresAt,
+    credential: credentials
   };
   
   const client = createHubSpotClient(authResult);
@@ -168,9 +178,22 @@ export async function PUT(request: NextRequest) {
     
     // Parse the request body
     const data = await request.json();
-    
+    let mappedData: Record<string, any> = {};
+    let notes: string[] = [];
+    if (objectType === 'companies') {
+      const {fields, notes: companyNotes} = mapFieldsCompany(data, companyFields);
+      mappedData = fields;
+      notes = companyNotes;
+    }
+
+    console.log(mappedData);
     // Update the record
-    const success = await client!.update(objectType!, id, data);
+    const success = await client!.update(objectType!, id, mappedData);
+
+    if (notes.length > 0) {
+      // Add notes if provided
+      await client!.addNotes(objectType!, id, notes);
+    }
     
     return NextResponse.json({ success });
   } catch (error) {
@@ -274,4 +297,23 @@ export async function PATCH(request: NextRequest) {
       { status: 500 }
     );
   }
+}
+
+
+const mapFieldsCompany = (data: Record<string, any>, fieldsMap: Record<string, string>) => {
+  const fields2 = Object.keys(fieldsMap).reduce((acc, field) => {
+    if (data[field] !== undefined) {
+      const mappedField = fieldsMap[field as keyof typeof fieldsMap];
+      if (mappedField === 'notes') {
+        acc['notes'] = [...(acc['notes'] || []), data[field]];
+      } else {
+        acc[mappedField] = data[field];
+      }
+    }
+    return acc;
+  }, { notes: [] } as Record<string, any>);
+
+  const { notes, ...fields } = fields2;
+  return { fields, notes };
+
 }

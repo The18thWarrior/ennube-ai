@@ -1,3 +1,5 @@
+import { StoredHubSpotCredentials } from "./db/hubspot-storage";
+
 // Define RefreshTokenResponse type for jsforce
 export interface RefreshTokenResponse {
   access_token: string;
@@ -64,6 +66,7 @@ export interface HubSpotAuthResult {
     portalId?: number;
   };
   error?: string;
+  credential: StoredHubSpotCredentials | null;
 }
 
 export interface HubSpotUserInfo {

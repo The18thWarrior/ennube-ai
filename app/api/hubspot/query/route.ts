@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getHubSpotCredentialsBySub } from '@/lib/db/hubspot-storage';
-import { HubSpotClient, createHubSpotClient } from '@/lib/hubspot';
+import { getHubspotCredentialsBySub } from '@/lib/db/hubspot-storage';
+import { HubSpotClient, createHubSpotClient, hubspotFields } from '@/lib/hubspot';
 import { HubSpotAuthResult } from '@/lib/types';
 
 /**
@@ -34,21 +34,9 @@ export async function GET(request: NextRequest) {
         { status: 400 }
       );
     }
-    
-    let query = {};
-    if (queryStr) {
-      try {
-        query = JSON.parse(queryStr);
-      } catch (e) {
-        return NextResponse.json(
-          { error: 'Invalid query format. Must be a valid JSON string.' },
-          { status: 400 }
-        );
-      }
-    }
-    
+
     // Get stored credentials
-    const credentials = await getHubSpotCredentialsBySub(sub);
+    const credentials = await getHubspotCredentialsBySub(sub);
     
     if (!credentials) {
       return NextResponse.json(
@@ -57,12 +45,48 @@ export async function GET(request: NextRequest) {
       );
     }
     
+    let query = {};
+    if (queryStr) {
+      if (queryStr === 'data-steward-account') {
+        query = {
+          sorts: [
+            {
+              propertyName: `${credentials.account_timestamp_field || 'notes_last_updated'}`,
+              direction: `${credentials.account_timestamp_field ? "DESCENDING" : "ASCENDING"}`
+            }
+          ],
+          properties: hubspotFields.companies,
+          filterGroups: [
+            {
+              filters: [
+                {
+                  propertyName: "website",
+                  operator: "HAS_PROPERTY",
+                },
+              ],
+            },
+          ],
+        }
+      } else {
+      try {
+          query = JSON.parse(queryStr);
+        } catch (e) {
+          return NextResponse.json(
+            { error: 'Invalid query format. Must be a valid JSON string.' },
+            { status: 400 }
+          );
+        }
+      }
+ 
+    }
+
     // Create HubSpot client
     const authResult: HubSpotAuthResult = {
       success: true,
       accessToken: credentials.accessToken,
       refreshToken: credentials.refreshToken,
-      expiresIn: credentials.expiresIn,
+      expiresIn: credentials.expiresAt,
+      credential: credentials
     };
     
     const client = createHubSpotClient(authResult);

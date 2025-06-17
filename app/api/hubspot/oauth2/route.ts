@@ -10,7 +10,16 @@ export async function GET(request: NextRequest) {
       'crm.objects.contacts.read',
       'crm.objects.contacts.write',
       'crm.objects.companies.read',
-      'crm.objects.companies.write'
+      'crm.objects.companies.write',
+      'crm.schemas.companies.read',
+      'crm.schemas.contacts.read',
+      'crm.objects.custom.read',
+      'crm.schemas.custom.read',
+      'crm.objects.deals.read',
+      'crm.objects.deals.write',
+      'crm.schemas.deals.read',
+      'crm.objects.owners.read',
+      
     ];
     
     // Generate the HubSpot OAuth authorization URL

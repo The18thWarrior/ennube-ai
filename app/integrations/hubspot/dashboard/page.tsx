@@ -25,7 +25,8 @@ export default async function HubspotDashboard() {
     hubspotCredentials.refreshToken,
     process.env.HUBSPOT_CLIENT_ID,
     process.env.HUBSPOT_CLIENT_SECRET,
-    hubspotCredentials.expiresIn
+    hubspotCredentials.expiresAt,
+    hubspotCredentials
   );
 
   // If no HubSpot client available, redirect to connect page
@@ -33,6 +34,8 @@ export default async function HubspotDashboard() {
     console.log('No HubSpot client found, redirecting to connect page')
     redirect("/integrations/hubspot/connect");
   }
+
+  console.log(hubspotClient)
   
   // Fetch user information from HubSpot
   let userInfo;
@@ -116,6 +119,15 @@ export default async function HubspotDashboard() {
                   <div className="flex items-center">
                     <span className="mr-2">🏢</span>
                     <span>Companies</span>
+                  </div>
+                </Button>
+              </Link>
+
+              <Link href="/integrations/hubspot/schema" passHref>
+                <Button variant="outline" className="w-full justify-start">
+                  <div className="flex items-center">
+                    <span className="mr-2">🔄</span>
+                    <span>Schema Mapping</span>
                   </div>
                 </Button>
               </Link>

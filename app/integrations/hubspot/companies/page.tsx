@@ -27,7 +27,8 @@ export default async function HubspotCompanies() {
     hubspotCredentials.refreshToken,
     process.env.HUBSPOT_CLIENT_ID,
     process.env.HUBSPOT_CLIENT_SECRET,
-    hubspotCredentials.expiresIn
+    hubspotCredentials.expiresAt,
+    hubspotCredentials
   );
   
   // Fetch companies from HubSpot
