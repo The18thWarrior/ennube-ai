@@ -35,7 +35,7 @@ export default async function HubspotDashboard() {
     redirect("/integrations/hubspot/connect");
   }
 
-  console.log(hubspotClient)
+  // Removed unnecessary console.log statement
   
   // Fetch user information from HubSpot
   let userInfo;
