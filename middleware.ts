@@ -10,8 +10,14 @@ export async function middleware(request: NextRequest) {
 
   // Define protected routes that require authentication
   const protectedPaths = [
-    '/subscription',
-    '/subscription/success',
+    '/stripe',
+    '/stripe/checkout',
+    '/stripe/customer',
+    '/stripe/portal',
+    '/stripe/subscription',
+    '/salesforce/credentials',
+    '/hubspot/credentials',
+    '/gsuite/credentials',
   ]
   
   // Check if the current path is a protected path
