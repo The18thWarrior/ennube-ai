@@ -161,10 +161,10 @@ export function getSubscriptionLimit(subscription: SubscriptionStatus | null): {
   isSubscribed: boolean;
   licenseCount: number;
 } {
-  if (!subscription) return { usageLimit: 10, isPro: false, isSubscribed: false, licenseCount: 0 };
+  if (!subscription) return { usageLimit: 100, isPro: false, isSubscribed: false, licenseCount: 0 };
   const isSubscribed = getIsSubscribed(subscription);
   const isPro = getIsPro(subscription);
-  const usageLimit = isSubscribed ? (isPro ? 10000 : 1000) : 10;
+  const usageLimit = isSubscribed ? (isPro ? 20000 : 2500) : 100;
   const licenseCount = subscription.items?.data[0]?.quantity || 0;
 
   return {
