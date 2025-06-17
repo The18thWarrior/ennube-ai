@@ -38,9 +38,7 @@ export async function GET(request: NextRequest) {
     // Return sanitized credentials (no sensitive data)
     return NextResponse.json({
       hasCredentials: true,
-      portalId: credentials.userInfo?.portalId,
       userEmail: credentials.userInfo?.email,
-      userName: credentials.userInfo?.name,
       expiresAt: credentials.expiresAt
     });
   } catch (error) {
