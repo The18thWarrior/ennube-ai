@@ -1,3 +1,12 @@
+// Props interfaces/types for form components
+export interface FormProps extends React.ComponentPropsWithoutRef<typeof FormProvider> {}
+export interface FormItemProps extends React.HTMLAttributes<HTMLDivElement> {}
+export interface FormLabelProps extends React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root> {}
+export interface FormControlProps extends React.ComponentPropsWithoutRef<typeof Slot> {}
+export interface FormDescriptionProps extends React.HTMLAttributes<HTMLParagraphElement> {}
+export interface FormMessageProps extends React.HTMLAttributes<HTMLParagraphElement> {}
+export type FormFieldProps<TFieldValues extends FieldValues = FieldValues, TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>> = ControllerProps<TFieldValues, TName>;
+export type useFormFieldProps = ReturnType<typeof useFormField>;
 "use client"
 
 import * as React from "react"

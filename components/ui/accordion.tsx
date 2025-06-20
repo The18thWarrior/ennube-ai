@@ -6,6 +6,12 @@ import { ChevronDown } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
+// Props types for accordion components
+export type AccordionProps = React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Root>;
+export type AccordionItemProps = React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Item>;
+export type AccordionTriggerProps = React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger>;
+export type AccordionContentProps = React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Content>;
+
 const Accordion = AccordionPrimitive.Root
 
 const AccordionItem = React.forwardRef<

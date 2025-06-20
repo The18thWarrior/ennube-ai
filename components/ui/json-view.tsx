@@ -4,7 +4,7 @@ import { useState } from "react"
 import { ChevronRight, ChevronDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-interface JsonViewProps {
+export interface JsonViewProps {
   data: any
   level?: number
   isExpanded?: boolean

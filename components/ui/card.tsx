@@ -1,6 +1,15 @@
+
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
+
+// Props interfaces for card components
+export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {}
+export interface CardHeaderProps extends React.HTMLAttributes<HTMLDivElement> {}
+export interface CardTitleProps extends React.HTMLAttributes<HTMLDivElement> {}
+export interface CardDescriptionProps extends React.HTMLAttributes<HTMLDivElement> {}
+export interface CardContentProps extends React.HTMLAttributes<HTMLDivElement> {}
+export interface CardFooterProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 const Card = React.forwardRef<
   HTMLDivElement,
