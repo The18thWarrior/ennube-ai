@@ -6,6 +6,13 @@ import { X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
+// Props interfaces for dialog components
+export interface DialogProps extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Root> {}
+export interface DialogTriggerProps extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Trigger> {}
+export interface DialogContentProps extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> {}
+export interface DialogHeaderProps extends React.HTMLAttributes<HTMLDivElement> {}
+export interface DialogFooterProps extends React.HTMLAttributes<HTMLDivElement> {}
+
 const Dialog = DialogPrimitive.Root
 
 const DialogTrigger = DialogPrimitive.Trigger

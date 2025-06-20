@@ -1,0 +1,1387 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ComponentConfig",
+  "description": "Schema for a UI component configuration used by CustomResponse.",
+  "oneOf": [
+    {"$ref": "#/definitions/FlexConfig"},
+    {"$ref": "#/definitions/TextConfig"},
+    {"$ref": "#/definitions/ButtonConfig"},
+    {"$ref": "#/definitions/JsonViewConfig"},
+    {"$ref": "#/definitions/useFormFieldConfig"},
+    {"$ref": "#/definitions/FormConfig"},
+    {"$ref": "#/definitions/FormItemConfig"},
+    {"$ref": "#/definitions/FormLabelConfig"},
+    {"$ref": "#/definitions/FormControlConfig"},
+    {"$ref": "#/definitions/FormDescriptionConfig"},
+    {"$ref": "#/definitions/FormMessageConfig"},
+    {"$ref": "#/definitions/FormFieldConfig"},
+    {"$ref": "#/definitions/InputConfig"},
+    {"$ref": "#/definitions/CheckboxConfig"},
+    {"$ref": "#/definitions/SelectConfig"},
+    {"$ref": "#/definitions/RadioGroupConfig"},
+    {"$ref": "#/definitions/RadioGroupItemConfig"},
+    {"$ref": "#/definitions/SwitchConfig"},
+    {"$ref": "#/definitions/TextareaConfig"},
+    {"$ref": "#/definitions/DialogConfig"},
+    {"$ref": "#/definitions/DialogTriggerConfig"},
+    {"$ref": "#/definitions/DialogContentConfig"},
+    {"$ref": "#/definitions/DialogHeaderConfig"},
+    {"$ref": "#/definitions/DialogFooterConfig"},
+    {"$ref": "#/definitions/TooltipConfig"},
+    {"$ref": "#/definitions/TooltipTriggerConfig"},
+    {"$ref": "#/definitions/TooltipContentConfig"},
+    {"$ref": "#/definitions/AlertDialogConfig"},
+    {"$ref": "#/definitions/AlertDialogTriggerConfig"},
+    {"$ref": "#/definitions/AlertDialogContentConfig"},
+    {"$ref": "#/definitions/AlertDialogHeaderConfig"},
+    {"$ref": "#/definitions/AlertDialogFooterConfig"},
+    {"$ref": "#/definitions/AvatarConfig"},
+    {"$ref": "#/definitions/AvatarImageConfig"},
+    {"$ref": "#/definitions/AvatarFallbackConfig"},
+    {"$ref": "#/definitions/BadgeConfig"},
+    {"$ref": "#/definitions/ProgressConfig"},
+    {"$ref": "#/definitions/CardConfig"},
+    {"$ref": "#/definitions/CardHeaderConfig"},
+    {"$ref": "#/definitions/CardTitleConfig"},
+    {"$ref": "#/definitions/CardDescriptionConfig"},
+    {"$ref": "#/definitions/CardContentConfig"},
+    {"$ref": "#/definitions/CardFooterConfig"},
+    {"$ref": "#/definitions/TabsConfig"},
+    {"$ref": "#/definitions/TabsListConfig"},
+    {"$ref": "#/definitions/TabsTriggerConfig"},
+    {"$ref": "#/definitions/TabsContentConfig"},
+    {"$ref": "#/definitions/AccordionConfig"},
+    {"$ref": "#/definitions/AccordionItemConfig"},
+    {"$ref": "#/definitions/AccordionTriggerConfig"},
+    {"$ref": "#/definitions/AccordionContentConfig"},
+    {"$ref": "#/definitions/TableConfig"},
+    {"$ref": "#/definitions/TableHeaderConfig"},
+    {"$ref": "#/definitions/TableBodyConfig"},
+    {"$ref": "#/definitions/TableRowConfig"},
+    {"$ref": "#/definitions/TableCellConfig"},
+    {"$ref": "#/definitions/TableHeadConfig"},
+    {"$ref": "#/definitions/PopoverConfig"},
+    {"$ref": "#/definitions/PopoverTriggerConfig"},
+    {"$ref": "#/definitions/PopoverContentConfig"},
+    {"$ref": "#/definitions/ScrollAreaConfig"},
+    {"$ref": "#/definitions/ScrollBarConfig"},
+    {"$ref": "#/definitions/ToastConfig"},
+    {"$ref": "#/definitions/ToastProviderConfig"},
+    {"$ref": "#/definitions/ToastViewportConfig"},
+    {"$ref": "#/definitions/ToastTitleConfig"},
+    {"$ref": "#/definitions/ToastDescriptionConfig"},
+    {"$ref": "#/definitions/SkeletonConfig"},
+    {"$ref": "#/definitions/CollapsibleConfig"},
+    {"$ref": "#/definitions/CollapsibleTriggerConfig"},
+    {"$ref": "#/definitions/CollapsibleContentConfig"},
+    {"$ref": "#/definitions/LabelConfig"},
+    {"$ref": "#/definitions/LayoutConfig"},
+    {"$ref": "#/definitions/ToggleConfig"}
+  ],
+  "definitions": {
+    "ComponentConfigArray": {
+      "type": "array",
+      "items": { "$ref": "#" }
+    },
+    "FlexConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "Flex" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "direction": { "type": "string", "enum": ["row", "col"], "description": "Flex direction." },
+            "align": { "type": "string", "enum": ["start", "center", "end", "stretch", "baseline"], "description": "Align items." },
+            "justify": { "type": "string", "enum": ["start", "center", "end", "between", "around", "evenly"], "description": "Justify content." },
+            "wrap": { "type": "string", "enum": ["nowrap", "wrap", "wrap-reverse"], "description": "Flex wrap." },
+            "className": { "type": "string", "description": "CSS class names." },
+            "style": { "type": "object", "description": "Inline styles." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "TextConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "Text" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "variant": { "type": "string", "description": "Text style variant." },
+            "color": { "type": "string", "description": "Text color." },
+            "align": { "type": "string", "enum": ["left", "center", "right", "justify"], "description": "Text alignment." },
+            "truncate": { "type": "boolean", "description": "Truncate text with ellipsis." },
+            "className": { "type": "string", "description": "CSS class names." },
+            "style": { "type": "object", "description": "Inline styles." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "ButtonConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "Button" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "type": { "type": "string", "enum": ["button", "submit", "reset"], "description": "Button type." },
+            "variant": { "type": "string", "description": "Button visual variant." },
+            "size": { "type": "string", "description": "Button size variant." },
+            "disabled": { "type": "boolean", "description": "Whether the button is disabled." },
+            "loading": { "type": "boolean", "description": "Show loading spinner." },
+            "className": { "type": "string", "description": "CSS class names." },
+            "onClick": { "type": "string", "description": "Event handler name for click events." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "JsonViewConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "JsonView" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "data": { "type": ["object", "array", "string", "number", "boolean", "null"], "description": "The JSON data to display." },
+            "collapsed": { "type": "boolean", "description": "Collapse all nodes by default." },
+            "theme": { "type": "string", "description": "Theme for JSON view." },
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "useFormFieldConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "useFormField" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "name": { "type": "string", "description": "Field name." },
+            "control": { "type": "string", "description": "Control object from react-hook-form." },
+            "rules": { "type": "object", "description": "Validation rules." },
+            "defaultValue": { "type": ["string", "number", "boolean", "null"], "description": "Default value." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "FormConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "Form" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "onSubmit": { "type": "string", "description": "Event handler name for submit." },
+            "className": { "type": "string", "description": "CSS class names." },
+            "method": { "type": "string", "description": "Form method (e.g. post, get)." },
+            "action": { "type": "string", "description": "Form action URL." },
+            "noValidate": { "type": "boolean", "description": "Disable HTML5 validation." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "FormItemConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "FormItem" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "FormLabelConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "FormLabel" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "htmlFor": { "type": "string", "description": "ID of the input this label is for." },
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "FormControlConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "FormControl" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "FormDescriptionConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "FormDescription" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "FormMessageConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "FormMessage" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "FormFieldConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "FormField" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "name": { "type": "string", "description": "Field name." },
+            "control": { "type": "string", "description": "Control object from react-hook-form." },
+            "rules": { "type": "object", "description": "Validation rules." },
+            "defaultValue": { "type": ["string", "number", "boolean", "null"], "description": "Default value." },
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "InputConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "Input" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "type": { "type": "string", "description": "The input type attribute (e.g. text, password, email, number, etc.)" },
+            "value": { "type": ["string", "number", "boolean", "null"], "description": "The value of the input." },
+            "defaultValue": { "type": ["string", "number", "boolean", "null"], "description": "The default value of the input." },
+            "placeholder": { "type": "string", "description": "Placeholder text." },
+            "name": { "type": "string", "description": "Name of the input." },
+            "id": { "type": "string", "description": "ID of the input." },
+            "disabled": { "type": "boolean", "description": "Whether the input is disabled." },
+            "readOnly": { "type": "boolean", "description": "Whether the input is read-only." },
+            "required": { "type": "boolean", "description": "Whether the input is required." },
+            "min": { "type": ["string", "number"], "description": "Minimum value (for number/date)." },
+            "max": { "type": ["string", "number"], "description": "Maximum value (for number/date)." },
+            "step": { "type": ["string", "number"], "description": "Step value (for number)." },
+            "pattern": { "type": "string", "description": "Pattern for validation." },
+            "autoFocus": { "type": "boolean", "description": "Autofocus the input." },
+            "autoComplete": { "type": "string", "description": "Autocomplete attribute." },
+            "className": { "type": "string", "description": "CSS class names." },
+            "onChange": { "type": "string", "description": "Event handler name for change events." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "CheckboxConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "Checkbox" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "checked": { "type": "boolean", "description": "Whether the checkbox is checked." },
+            "defaultChecked": { "type": "boolean", "description": "Default checked state." },
+            "disabled": { "type": "boolean", "description": "Whether the checkbox is disabled." },
+            "required": { "type": "boolean", "description": "Whether the checkbox is required." },
+            "name": { "type": "string", "description": "Name of the checkbox." },
+            "id": { "type": "string", "description": "ID of the checkbox." },
+            "value": { "type": ["string", "number", "boolean", "null"], "description": "Value of the checkbox." },
+            "className": { "type": "string", "description": "CSS class names." },
+            "onChange": { "type": "string", "description": "Event handler name for change events." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "SelectConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "Select" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "value": { "type": ["string", "number", "null"], "description": "Selected value." },
+            "defaultValue": { "type": ["string", "number", "null"], "description": "Default selected value." },
+            "disabled": { "type": "boolean", "description": "Whether the select is disabled." },
+            "required": { "type": "boolean", "description": "Whether the select is required." },
+            "name": { "type": "string", "description": "Name of the select." },
+            "id": { "type": "string", "description": "ID of the select." },
+            "className": { "type": "string", "description": "CSS class names." },
+            "onChange": { "type": "string", "description": "Event handler name for change events." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "RadioGroupConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "RadioGroup" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "value": { "type": ["string", "number", "null"], "description": "Selected value." },
+            "defaultValue": { "type": ["string", "number", "null"], "description": "Default selected value." },
+            "disabled": { "type": "boolean", "description": "Whether the group is disabled." },
+            "required": { "type": "boolean", "description": "Whether the group is required." },
+            "name": { "type": "string", "description": "Name of the group." },
+            "id": { "type": "string", "description": "ID of the group." },
+            "className": { "type": "string", "description": "CSS class names." },
+            "onChange": { "type": "string", "description": "Event handler name for change events." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "RadioGroupItemConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "RadioGroupItem" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "value": { "type": ["string", "number", "null"], "description": "Value of the radio item." },
+            "disabled": { "type": "boolean", "description": "Whether the radio item is disabled." },
+            "required": { "type": "boolean", "description": "Whether the radio item is required." },
+            "name": { "type": "string", "description": "Name of the radio item." },
+            "id": { "type": "string", "description": "ID of the radio item." },
+            "className": { "type": "string", "description": "CSS class names." },
+            "onChange": { "type": "string", "description": "Event handler name for change events." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "SwitchConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "Switch" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "checked": { "type": "boolean", "description": "Whether the switch is checked." },
+            "defaultChecked": { "type": "boolean", "description": "Default checked state." },
+            "disabled": { "type": "boolean", "description": "Whether the switch is disabled." },
+            "required": { "type": "boolean", "description": "Whether the switch is required." },
+            "name": { "type": "string", "description": "Name of the switch." },
+            "id": { "type": "string", "description": "ID of the switch." },
+            "className": { "type": "string", "description": "CSS class names." },
+            "onChange": { "type": "string", "description": "Event handler name for change events." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "TextareaConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "Textarea" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "value": { "type": ["string", "null"], "description": "Value of the textarea." },
+            "defaultValue": { "type": ["string", "null"], "description": "Default value of the textarea." },
+            "placeholder": { "type": "string", "description": "Placeholder text." },
+            "name": { "type": "string", "description": "Name of the textarea." },
+            "id": { "type": "string", "description": "ID of the textarea." },
+            "disabled": { "type": "boolean", "description": "Whether the textarea is disabled." },
+            "readOnly": { "type": "boolean", "description": "Whether the textarea is read-only." },
+            "required": { "type": "boolean", "description": "Whether the textarea is required." },
+            "rows": { "type": "integer", "description": "Number of rows." },
+            "cols": { "type": "integer", "description": "Number of columns." },
+            "autoFocus": { "type": "boolean", "description": "Autofocus the textarea." },
+            "autoComplete": { "type": "string", "description": "Autocomplete attribute." },
+            "className": { "type": "string", "description": "CSS class names." },
+            "onChange": { "type": "string", "description": "Event handler name for change events." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "DialogConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "Dialog" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "open": { "type": "boolean", "description": "Whether the dialog is open." },
+            "defaultOpen": { "type": "boolean", "description": "Default open state." },
+            "modal": { "type": "boolean", "description": "Whether the dialog is modal." },
+            "onOpenChange": { "type": "string", "description": "Event handler name for open state changes." },
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "DialogTriggerConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "DialogTrigger" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "asChild": { "type": "boolean", "description": "Render as child element." },
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "DialogContentConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "DialogContent" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "className": { "type": "string", "description": "CSS class names." },
+            "onOpenAutoFocus": { "type": "string", "description": "Event handler name for open auto focus." },
+            "onCloseAutoFocus": { "type": "string", "description": "Event handler name for close auto focus." },
+            "onEscapeKeyDown": { "type": "string", "description": "Event handler name for escape key down." },
+            "onPointerDownOutside": { "type": "string", "description": "Event handler name for pointer down outside." },
+            "onInteractOutside": { "type": "string", "description": "Event handler name for interact outside." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "DialogHeaderConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "DialogHeader" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "DialogFooterConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "DialogFooter" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "TooltipConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "Tooltip" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "open": { "type": "boolean", "description": "Whether the tooltip is open." },
+            "defaultOpen": { "type": "boolean", "description": "Default open state." },
+            "delayDuration": { "type": "number", "description": "Delay in ms before showing tooltip." },
+            "disableHoverableContent": { "type": "boolean", "description": "Disable hoverable content." },
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "TooltipTriggerConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "TooltipTrigger" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "asChild": { "type": "boolean", "description": "Render as child element." },
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "TooltipContentConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "TooltipContent" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "sideOffset": { "type": "number", "description": "Offset for tooltip content." },
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "AlertDialogConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "AlertDialog" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "open": { "type": "boolean", "description": "Whether the alert dialog is open." },
+            "defaultOpen": { "type": "boolean", "description": "Default open state." },
+            "onOpenChange": { "type": "string", "description": "Event handler name for open state changes." },
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "AlertDialogTriggerConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "AlertDialogTrigger" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "asChild": { "type": "boolean", "description": "Render as child element." },
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "AlertDialogContentConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "AlertDialogContent" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "className": { "type": "string", "description": "CSS class names." },
+            "onOpenAutoFocus": { "type": "string", "description": "Event handler name for open auto focus." },
+            "onCloseAutoFocus": { "type": "string", "description": "Event handler name for close auto focus." },
+            "onEscapeKeyDown": { "type": "string", "description": "Event handler name for escape key down." },
+            "onPointerDownOutside": { "type": "string", "description": "Event handler name for pointer down outside." },
+            "onInteractOutside": { "type": "string", "description": "Event handler name for interact outside." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "AlertDialogHeaderConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "AlertDialogHeader" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "AlertDialogFooterConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "AlertDialogFooter" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "AvatarConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "Avatar" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "className": { "type": "string", "description": "CSS class names." },
+            "alt": { "type": "string", "description": "Alt text for avatar image." },
+            "src": { "type": "string", "description": "Image source URL." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "AvatarImageConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "AvatarImage" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "src": { "type": "string", "description": "Image source URL." },
+            "alt": { "type": "string", "description": "Alt text for image." },
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "AvatarFallbackConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "AvatarFallback" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "delayMs": { "type": "number", "description": "Delay in ms before showing fallback." },
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "BadgeConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "Badge" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "variant": { "type": "string", "enum": ["default", "secondary", "destructive", "outline", "success"], "description": "Badge visual variant." },
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "ProgressConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "Progress" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "value": { "type": "number", "description": "Progress value (0-100)." },
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "CardConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "Card" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "CardHeaderConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "CardHeader" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "CardTitleConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "CardTitle" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "CardDescriptionConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "CardDescription" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "CardContentConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "CardContent" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "CardFooterConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "CardFooter" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "TabsConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "Tabs" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "value": { "type": "string", "description": "Current tab value." },
+            "defaultValue": { "type": "string", "description": "Default tab value." },
+            "onValueChange": { "type": "string", "description": "Event handler name for tab value change." },
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "TabsListConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "TabsList" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "TabsTriggerConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "TabsTrigger" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "value": { "type": "string", "description": "Tab value." },
+            "disabled": { "type": "boolean", "description": "Whether the tab is disabled." },
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "TabsContentConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "TabsContent" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "value": { "type": "string", "description": "Tab value." },
+            "forceMount": { "type": "boolean", "description": "Force mount content." },
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "AccordionConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "Accordion" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "type": { "type": "string", "enum": ["single", "multiple"], "description": "Accordion type (single or multiple)." },
+            "defaultValue": { "type": ["string", "array", "null"], "description": "Default open item(s)." },
+            "value": { "type": ["string", "array", "null"], "description": "Controlled open item(s)." },
+            "collapsible": { "type": "boolean", "description": "Allow all items to be collapsed." },
+            "disabled": { "type": "boolean", "description": "Disable the accordion." },
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "AccordionItemConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "AccordionItem" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "value": { "type": "string", "description": "Unique value for the item." },
+            "disabled": { "type": "boolean", "description": "Disable this item." },
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "AccordionTriggerConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "AccordionTrigger" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "disabled": { "type": "boolean", "description": "Disable this trigger." },
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "AccordionContentConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "AccordionContent" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "TableConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "Table" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "bordered": { "type": "boolean", "description": "Show table borders." },
+            "striped": { "type": "boolean", "description": "Show striped rows." },
+            "hover": { "type": "boolean", "description": "Highlight row on hover." },
+            "size": { "type": "string", "enum": ["sm", "md", "lg"], "description": "Table size variant." },
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "TableHeaderConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "TableHeader" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "TableBodyConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "TableBody" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "TableRowConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "TableRow" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "selected": { "type": "boolean", "description": "Row is selected." },
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "TableCellConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "TableCell" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "align": { "type": "string", "enum": ["left", "center", "right"], "description": "Cell alignment." },
+            "colSpan": { "type": "integer", "description": "Number of columns spanned." },
+            "rowSpan": { "type": "integer", "description": "Number of rows spanned." },
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "TableHeadConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "TableHead" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "align": { "type": "string", "enum": ["left", "center", "right"], "description": "Header alignment." },
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "PopoverConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "Popover" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "open": { "type": "boolean", "description": "Popover open state." },
+            "defaultOpen": { "type": "boolean", "description": "Default open state." },
+            "onOpenChange": { "type": "string", "description": "Event handler name for open state changes." },
+            "modal": { "type": "boolean", "description": "Popover is modal." },
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "PopoverTriggerConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "PopoverTrigger" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "asChild": { "type": "boolean", "description": "Render as child element." },
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "PopoverContentConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "PopoverContent" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "side": { "type": "string", "enum": ["top", "right", "bottom", "left"], "description": "Popover side." },
+            "sideOffset": { "type": "number", "description": "Offset for popover content." },
+            "align": { "type": "string", "enum": ["start", "center", "end"], "description": "Popover alignment." },
+            "alignOffset": { "type": "number", "description": "Alignment offset." },
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "ScrollAreaConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "ScrollArea" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "type": { "type": "string", "enum": ["auto", "always", "scroll", "hidden"], "description": "Scroll area type." },
+            "scrollHideDelay": { "type": "number", "description": "Delay before scrollbars hide." },
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "ScrollBarConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "ScrollBar" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "orientation": { "type": "string", "enum": ["vertical", "horizontal"], "description": "Scrollbar orientation." },
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "ToastConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "Toast" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "open": { "type": "boolean", "description": "Toast open state." },
+            "onOpenChange": { "type": "string", "description": "Event handler name for open state changes." },
+            "duration": { "type": "number", "description": "Toast duration in ms." },
+            "type": { "type": "string", "enum": ["foreground", "background"], "description": "Toast type." },
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "ToastProviderConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "ToastProvider" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "duration": { "type": "number", "description": "Default toast duration in ms." },
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "ToastViewportConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "ToastViewport" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "ToastTitleConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "ToastTitle" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "ToastDescriptionConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "ToastDescription" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "SkeletonConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "Skeleton" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "width": { "type": ["string", "number"], "description": "Width of the skeleton." },
+            "height": { "type": ["string", "number"], "description": "Height of the skeleton." },
+            "circle": { "type": "boolean", "description": "Render as a circle." },
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "CollapsibleConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "Collapsible" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "open": { "type": "boolean", "description": "Collapsible open state." },
+            "defaultOpen": { "type": "boolean", "description": "Default open state." },
+            "onOpenChange": { "type": "string", "description": "Event handler name for open state changes." },
+            "disabled": { "type": "boolean", "description": "Disable the collapsible." },
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "CollapsibleTriggerConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "CollapsibleTrigger" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "disabled": { "type": "boolean", "description": "Disable this trigger." },
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "CollapsibleContentConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "CollapsibleContent" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "LabelConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "Label" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "htmlFor": { "type": "string", "description": "ID of the input this label is for." },
+            "className": { "type": "string", "description": "CSS class names." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "LayoutConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "Layout" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "direction": { "type": "string", "enum": ["row", "column", "row-reverse", "column-reverse"], "description": "Layout direction." },
+            "align": { "type": "string", "enum": ["start", "center", "end", "stretch", "baseline"], "description": "Align items." },
+            "justify": { "type": "string", "enum": ["start", "center", "end", "between", "around", "evenly"], "description": "Justify content." },
+            "wrap": { "type": "string", "enum": ["nowrap", "wrap", "wrap-reverse"], "description": "Flex wrap." },
+            "className": { "type": "string", "description": "CSS class names." },
+            "style": { "type": "object", "description": "Inline styles." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    },
+    "ToggleConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "Toggle" },
+        "props": {
+          "type": "object",
+          "properties": {
+            "pressed": { "type": "boolean", "description": "Whether the toggle is pressed/on." },
+            "defaultPressed": { "type": "boolean", "description": "Default pressed state." },
+            "disabled": { "type": "boolean", "description": "Whether the toggle is disabled." },
+            "name": { "type": "string", "description": "Name of the toggle." },
+            "id": { "type": "string", "description": "ID of the toggle." },
+            "variant": { "type": "string", "enum": ["default", "outline"], "description": "Visual variant." },
+            "size": { "type": "string", "enum": ["default", "sm", "lg"], "description": "Size variant." },
+            "className": { "type": "string", "description": "CSS class names." },
+            "onChange": { "type": "string", "description": "Event handler name for change events." }
+          },
+          "additionalProperties": true
+        },
+        "children": { "oneOf": [ { "$ref": "#/definitions/ComponentConfigArray" }, { "type": "string" } ] }
+      }
+    }
+  }
+}

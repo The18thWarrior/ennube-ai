@@ -7,6 +7,12 @@ import { X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
+// Props interfaces for toast components
+export interface ToastProviderProps extends React.ComponentPropsWithoutRef<typeof ToastPrimitives.Provider> {}
+export interface ToastViewportProps extends React.ComponentPropsWithoutRef<typeof ToastPrimitives.Viewport> {}
+export interface ToastTitleProps extends React.ComponentPropsWithoutRef<typeof ToastPrimitives.Title> {}
+export interface ToastDescriptionProps extends React.ComponentPropsWithoutRef<typeof ToastPrimitives.Description> {}
+
 const ToastProvider = ToastPrimitives.Provider
 
 const ToastViewport = React.forwardRef<

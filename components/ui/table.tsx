@@ -2,6 +2,15 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
+// Props interfaces for table components
+export interface TableProps extends React.HTMLAttributes<HTMLTableElement> {}
+export interface TableHeaderProps extends React.HTMLAttributes<HTMLTableSectionElement> {}
+export interface TableBodyProps extends React.HTMLAttributes<HTMLTableSectionElement> {}
+export interface TableRowProps extends React.HTMLAttributes<HTMLTableRowElement> {}
+export interface TableCellProps extends React.TdHTMLAttributes<HTMLTableCellElement> {}
+export interface TableHeadProps extends React.ThHTMLAttributes<HTMLTableCellElement> {}
+
+
 const Table = React.forwardRef<
   HTMLTableElement,
   React.HTMLAttributes<HTMLTableElement>
