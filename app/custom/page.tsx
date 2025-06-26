@@ -3,220 +3,221 @@ import React, { useEffect, useState } from "react";
 import CustomResponse, { ComponentConfig } from "@/components/custom-response";
 import { ToastProvider } from '@/components/ui';
 import examplejson from './example.json'
+import ChatContainer from "@/components/chat/chat-container";
 
 export default function TestPage() {
   const [config, setConfig] = useState<ComponentConfig[] | null>([
-  {
-    "type": "Card",
-    "children": [
-      {
-        "type": "CardHeader",
-        "children": [
-          {
-            "type": "Flex",
-            "props": {
-              "direction": "row",
-              "align": "center",
-              "justify": "between"
-            },
-            "children": [
-              {
-                "type": "CardTitle",
-                "children": "TechSolutions Inc."
+    {
+      "type": "Card",
+      "children": [
+        {
+          "type": "CardHeader",
+          "children": [
+            {
+              "type": "Flex",
+              "props": {
+                "direction": "row",
+                "align": "center",
+                "justify": "between"
               },
-              {
-                "type": "Badge",
-                "props": {
-                  "variant": "success"
+              "children": [
+                {
+                  "type": "CardTitle",
+                  "children": "TechSolutions Inc."
                 },
-                "children": "Contacted"
-              }
-            ]
-          },
-          {
-            "type": "Text",
-            "props": {
-              "variant": "muted"
-            },
-            "children": "ID: acc-12345"
-          }
-        ]
-      },
-      {
-        "type": "CardContent",
-        "children": [
-          {
-            "type": "Flex",
-            "props": {
-              "direction": "col",
-              "gap": 4
-            },
-            "children": [
-              {
-                "type": "Flex",
-                "props": {
-                  "direction": "col",
-                  "gap": 2
-                },
-                "children": [
-                  {
-                    "type": "Text",
-                    "props": {
-                      "variant": "label"
-                    },
-                    "children": "Industry & Size"
+                {
+                  "type": "Badge",
+                  "props": {
+                    "variant": "success"
                   },
-                  {
-                    "type": "Text",
-                    "children": "Information Technology"
+                  "children": "Contacted"
+                }
+              ]
+            },
+            {
+              "type": "Text",
+              "props": {
+                "variant": "muted"
+              },
+              "children": "ID: acc-12345"
+            }
+          ]
+        },
+        {
+          "type": "CardContent",
+          "children": [
+            {
+              "type": "Flex",
+              "props": {
+                "direction": "col",
+                "gap": 4
+              },
+              "children": [
+                {
+                  "type": "Flex",
+                  "props": {
+                    "direction": "col",
+                    "gap": 2
                   },
-                  {
-                    "type": "Flex",
-                    "props": {
-                      "direction": "row",
-                      "gap": 4
-                    },
-                    "children": [
-                      {
-                        "type": "Text",
-                        "children": "Revenue: $150.5M"
+                  "children": [
+                    {
+                      "type": "Text",
+                      "props": {
+                        "variant": "label"
                       },
-                      {
-                        "type": "Text",
-                        "children": "Employees: 500"
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                "type": "Flex",
-                "props": {
-                  "direction": "col",
-                  "gap": 2
-                },
-                "children": [
-                  {
-                    "type": "Text",
-                    "props": {
-                      "variant": "label"
+                      "children": "Industry & Size"
                     },
-                    "children": "Address"
-                  },
-                  {
-                    "type": "Text",
-                    "children": "123 Innovation Drive"
-                  },
-                  {
-                    "type": "Text",
-                    "children": "San Francisco, CA 94105"
-                  },
-                  {
-                    "type": "Text",
-                    "children": "USA"
-                  }
-                ]
-              },
-              {
-                "type": "Flex",
-                "props": {
-                  "direction": "col",
-                  "gap": 2
-                },
-                "children": [
-                  {
-                    "type": "Text",
-                    "props": {
-                      "variant": "label"
+                    {
+                      "type": "Text",
+                      "children": "Information Technology"
                     },
-                    "children": "Contact"
-                  },
-                  {
-                    "type": "Text",
-                    "children": "contact@techsolutions.com"
-                  },
-                  {
-                    "type": "Flex",
-                    "props": {
-                      "direction": "row",
-                      "gap": 4
-                    },
-                    "children": [
-                      {
-                        "type": "Text",
-                        "children": "Main: +1-415-555-1234"
+                    {
+                      "type": "Flex",
+                      "props": {
+                        "direction": "row",
+                        "gap": 4
                       },
-                      {
-                        "type": "Text",
-                        "children": "Support: +1-415-555-5678"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "Text",
-                    "children": "Owner: Sarah Johnson (Account Manager)"
-                  },
-                  {
-                    "type": "Text",
-                    "children": "sarah.johnson@techsolutions.com"
-                  }
-                ]
-              },
-              {
-                "type": "Flex",
-                "props": {
-                  "direction": "col",
-                  "gap": 2
+                      "children": [
+                        {
+                          "type": "Text",
+                          "children": "Revenue: $150.5M"
+                        },
+                        {
+                          "type": "Text",
+                          "children": "Employees: 500"
+                        }
+                      ]
+                    }
+                  ]
                 },
-                "children": [
-                  {
-                    "type": "Text",
-                    "props": {
-                      "variant": "label"
+                {
+                  "type": "Flex",
+                  "props": {
+                    "direction": "col",
+                    "gap": 2
+                  },
+                  "children": [
+                    {
+                      "type": "Text",
+                      "props": {
+                        "variant": "label"
+                      },
+                      "children": "Address"
                     },
-                    "children": "Notes"
+                    {
+                      "type": "Text",
+                      "children": "123 Innovation Drive"
+                    },
+                    {
+                      "type": "Text",
+                      "children": "San Francisco, CA 94105"
+                    },
+                    {
+                      "type": "Text",
+                      "children": "USA"
+                    }
+                  ]
+                },
+                {
+                  "type": "Flex",
+                  "props": {
+                    "direction": "col",
+                    "gap": 2
                   },
-                  {
-                    "type": "Text",
-                    "children": "Interested in upgrading to premium services next quarter. Follow up scheduled for June 1st."
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "type": "CardFooter",
-        "children": [
-          {
-            "type": "Flex",
-            "props": {
-              "direction": "row",
-              "justify": "between"
-            },
-            "children": [
-              {
-                "type": "Text",
-                "props": {
-                  "variant": "muted"
+                  "children": [
+                    {
+                      "type": "Text",
+                      "props": {
+                        "variant": "label"
+                      },
+                      "children": "Contact"
+                    },
+                    {
+                      "type": "Text",
+                      "children": "contact@techsolutions.com"
+                    },
+                    {
+                      "type": "Flex",
+                      "props": {
+                        "direction": "row",
+                        "gap": 4
+                      },
+                      "children": [
+                        {
+                          "type": "Text",
+                          "children": "Main: +1-415-555-1234"
+                        },
+                        {
+                          "type": "Text",
+                          "children": "Support: +1-415-555-5678"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Text",
+                      "children": "Owner: Sarah Johnson (Account Manager)"
+                    },
+                    {
+                      "type": "Text",
+                      "children": "sarah.johnson@techsolutions.com"
+                    }
+                  ]
                 },
-                "children": "Created: 2022-03-15"
+                {
+                  "type": "Flex",
+                  "props": {
+                    "direction": "col",
+                    "gap": 2
+                  },
+                  "children": [
+                    {
+                      "type": "Text",
+                      "props": {
+                        "variant": "label"
+                      },
+                      "children": "Notes"
+                    },
+                    {
+                      "type": "Text",
+                      "children": "Interested in upgrading to premium services next quarter. Follow up scheduled for June 1st."
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "CardFooter",
+          "children": [
+            {
+              "type": "Flex",
+              "props": {
+                "direction": "row",
+                "justify": "between"
               },
-              {
-                "type": "Text",
-                "props": {
-                  "variant": "muted"
+              "children": [
+                {
+                  "type": "Text",
+                  "props": {
+                    "variant": "muted"
+                  },
+                  "children": "Created: 2022-03-15"
                 },
-                "children": "Industry Code: 7372"
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  }
-]);
+                {
+                  "type": "Text",
+                  "props": {
+                    "variant": "muted"
+                  },
+                  "children": "Industry Code: 7372"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]);
   const [error, setError] = useState<string | null>(null);
 
   if (error) return <div>Error: {error}</div>;
@@ -224,7 +225,8 @@ export default function TestPage() {
 
   return (
     <ToastProvider>
-      <CustomResponse config={config} />
+      {/* <CustomResponse config={config} /> */}
+      <ChatContainer />
     </ToastProvider>
   );
 }

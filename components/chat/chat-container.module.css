@@ -1,0 +1,149 @@
+.spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid #fff;
+  border-radius: 50%;
+  border-top: 2.5px solid #1976d2;
+  animation: spin 0.7s linear infinite;
+  vertical-align: middle;
+  margin: 0 2px;
+}
+.darkSendButton .spinner {
+  border-top: 2.5px solid #fff;
+  border-right: 2.5px solid #2563eb;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+/* Chat container styles */
+.chatContainer {
+  max-width: 800px;
+  height: 600px;
+  margin: 0 auto;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  font-family: inherit;
+  font-size: 15px;
+}
+.dark {
+  background: #18181b;
+  border: 1px solid #333;
+  color: #f3f3f3;
+}
+.light {
+  background: #fff;
+  border: 1px solid #eee;
+  color: #222;
+}
+.messagesArea {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 12px;
+}
+.messageRow {
+  margin: 8px 0;
+  display: flex;
+}
+.userRow {
+  justify-content: flex-end;
+}
+.botRow {
+  justify-content: flex-start;
+}
+.messageBubble {
+  padding: 8px;
+  border-radius: 6px;
+  display: flex;
+  max-width: 80%;
+  min-width: 40px;
+  word-break: break-word;
+  white-space: pre-line;
+  font-size: 15px;
+  line-height: 1.6;
+}
+.jsonBubble {
+  width: 80% !important;
+}
+.userBubble {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+}
+.botBubble {
+  background: #f1f8e9;
+  color: #222;
+  border: 1px solid #e0e0e0;
+}
+.darkBubble.userBubble {
+  background: #2563eb;
+  color: #fff;
+}
+.darkBubble.botBubble {
+  background: #27272a;
+  color: #f3f3f3;
+  border: 1px solid #333;
+}
+.lightBubble.userBubble {
+  background: #1976d2;
+  color: #fff;
+}
+.lightBubble.botBubble {
+  background: #f1f8e9;
+  color: #222;
+  border: 1px solid #e0e0e0;
+}
+.inputRow {
+  display: flex;
+  gap: 8px;
+}
+.inputBox {
+  flex: 1;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background: #fff;
+  color: #222;
+  font-size: 15px;
+  font-family: inherit;
+  min-height: 40px;
+  max-height: 120px;
+  resize: vertical;
+  line-height: 1.5;
+  box-sizing: border-box;
+}
+.dark .inputBox {
+  background: #27272a;
+  color: #f3f3f3;
+  border: 1px solid #333;
+}
+.light .inputBox {
+  background: #fff;
+  color: #222;
+  border: 1px solid #ccc;
+}
+.sendButton {
+  padding: 8px 16px;
+  border-radius: 4px;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  transition: background 0.2s;
+}
+.sendButtonDisabled {
+  background: #bbb !important;
+  cursor: not-allowed;
+}
+.darkSendButton {
+  background: #2563eb;
+}
+.lightSendButton {
+  background: #1976d2;
+}
+.dark .sendButtonDisabled {
+  background: #444 !important;
+}

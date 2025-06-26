@@ -12,7 +12,7 @@ import { SalesforceAuthResult } from '@/lib/types';
 export async function GET(request: NextRequest) {
   try {
     // Get query parameters
-    console.log(request.nextUrl);
+    //console.log(request.nextUrl);
     const searchParams = request.nextUrl.searchParams;
     const sub = searchParams.get('sub');
     const soql = searchParams.get('soql');
