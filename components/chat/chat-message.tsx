@@ -134,7 +134,7 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: Message, theme
                                     return <ReactMarkdown key={i}>{part.text}</ReactMarkdown>;
                                 case 'tool-invocation': {
                                     const callId = part.toolInvocation.toolCallId;
-                                    console.log(part.toolInvocation)
+                                    //console.log(part.toolInvocation)
                                     switch (part.toolInvocation.toolName) {
                                         case 'getData': {
                                             switch (part.toolInvocation.state) {

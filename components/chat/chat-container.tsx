@@ -61,10 +61,11 @@ const ChatContainer = ({
         initialMessages: initialMessages || [],        
         api: `/api/chat?agent=${selectedAvatar}`,
         onFinish: (message) => {
-            console.log('onfinish', message);
-            setThread(threadId, [...messages, message], _name || '');
+            console.log('onfinish', message, messages);
+            //setThread(threadId, [...messages, message], _name || '');
             setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
         },
+        
         // experimental_prepareRequestBody({ messages, id }) {
         //     return { message: messages[messages.length - 1], id };
         // },
@@ -79,11 +80,21 @@ const ChatContainer = ({
     // Scroll to bottom on new message
     useEffect(() => {
         if (mounted) {
+            //console.log(messages);
             messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+            //setThread(threadId, [...messages], _name || '');
         }
     }, [messages.length, mounted]);
     useEffect(() => {
-        console.log('chat container name', name);
+        if (mounted) {
+            console.log(messages);
+            if (messages.length > 0) {
+                setThread(threadId, [...messages], _name || '');
+            }
+            //setThread(threadId, [...messages], _name || '');
+        }
+    }, [messages, mounted]);
+    useEffect(() => {
         if (name) setName(name);
     }, [name]);
     // EditableField for name, similar to crm-record-detail-card.tsx
