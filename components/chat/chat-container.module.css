@@ -19,8 +19,9 @@
 }
 /* Chat container styles */
 .chatContainer {
-  max-width: 800px;
-  height: 600px;
+  /* max-width: max-content; */
+  /* height: 600px; */
+  min-height: auto;
   margin: 0 auto;
   border-radius: 8px;
   padding: 16px;
@@ -28,6 +29,7 @@
   flex-direction: column;
   font-family: inherit;
   font-size: 15px;
+  scrollbar-color: transparent;
 }
 .dark {
   background: #18181b;
@@ -43,6 +45,7 @@
   flex: 1;
   overflow-y: auto;
   margin-bottom: 12px;
+  scrollbar-color: transparent;
 }
 .messageRow {
   margin: 8px 0;
@@ -58,8 +61,8 @@
   padding: 8px;
   border-radius: 6px;
   display: flex;
-  max-width: 80%;
-  min-width: 40px;
+  max-width: 100%;
+  min-width: fit-content;
   word-break: break-word;
   white-space: pre-line;
   font-size: 15px;
@@ -98,6 +101,10 @@
 }
 .inputRow {
   display: flex;
+  gap: 8px;
+}
+.inputBlock {
+  display: block;
   gap: 8px;
 }
 .inputBox {
@@ -147,3 +154,11 @@
 .dark .sendButtonDisabled {
   background: #444 !important;
 }
+.wfill {
+  width: -webkit-fill-available;
+}
+
+.wcontent {
+  width: fit-content;
+}
+

@@ -14,7 +14,6 @@ export interface JsonViewProps {
 
 export function JsonView({ data, classNames }: JsonViewProps) {
   const { theme } = useTheme();
-  console.log(classNames);
   return (
     <span className={`min-w-full ${classNames}`}>
       {data && (

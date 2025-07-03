@@ -82,3 +82,11 @@ export interface HubSpotQueryResult<T> {
   records: T[];
   nextPageToken?: string;
 }
+
+export interface Agent {
+  id: string
+  name: string
+  systemPrompt: string
+  description?: string
+  avatar?: string
+}

@@ -113,11 +113,9 @@ export function isJson(str: string): boolean {
     try {
         const data = getJsonData(str);
         if (data === null || data === undefined) {
-            console.log("Parsed data is null or undefined");
             return false;
         }        // If we reach here, the string is valid JSON
     } catch (e) {
-      console.log("Invalid JSON string:", e);
         return false;
     }
     return true;
@@ -158,4 +156,26 @@ export function getJsonData(input: string): any {
     return null;
     //throw new Error('Input is not valid JSON or JSON code block.');
   }
+}
+
+/**
+ * Truncates a string or object with a length property to a specified max length, adding ellipsis if needed.
+ * @param text The text or object with a length property to truncate
+ * @param maxLength The maximum allowed length
+ * @returns The truncated string (with ellipsis if truncated)
+ */
+export function truncateText(text: string, maxLength: number): string;
+export function truncateText<T>(text: T[], maxLength: number): T[] | (T | string)[];
+export function truncateText(text: any, maxLength: number): any {
+  if (typeof text === 'string') {
+    return text.length > maxLength ? text.slice(0, maxLength) + '…' : text;
+  }
+  if (Array.isArray(text)) {
+    return text.length > maxLength ? [...text.slice(0, maxLength), '…'] : text;
+  }
+  // fallback for objects with length
+  if (text && typeof text === 'object' && typeof text.length === 'number') {
+    return text.length > maxLength ? text.slice(0, maxLength) : text;
+  }
+  return text;
 }
