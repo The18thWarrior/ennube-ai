@@ -6,6 +6,7 @@ import {
   TextNode,
   Node as HtmlNode
 } from 'node-html-parser';
+import z from "zod";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -106,4 +107,75 @@ function nodeToMarkdown(
     default:
       return childrenMd;
   }
+}
+
+export function isJson(str: string): boolean {
+    try {
+        const data = getJsonData(str);
+        if (data === null || data === undefined) {
+            return false;
+        }        // If we reach here, the string is valid JSON
+    } catch (e) {
+        return false;
+    }
+    return true;
+}
+
+export function parseAndValidateResponse(jsonString: string, schema: z.ZodSchema): boolean {
+  try {
+    const parsedData = getJsonData(jsonString);
+    // Use the Zod schema to parse and validate the data
+    if (!parsedData) {
+      console.log("Parsed data is null or undefined");
+      return false;
+    }
+    const user = schema.parse(parsedData);
+    return true;
+  } catch (error) {
+    console.log("JSON data does not match the expected schema:", error);
+    return false;
+  }
+}
+
+/**
+ * Parses a string as JSON, supporting both raw JSON and JSON wrapped in ```json ... ``` code blocks.
+ * Throws if parsing fails or format is not recognized.
+ */
+export function getJsonData(input: string): any {
+  
+  try {
+    let jsonString = input.trim();
+    // Check for code block with ```json ... ```
+    const codeBlockMatch = jsonString.match(/^```json\s*([\s\S]*?)\s*```$/i);
+    //console.log("codeBlockMatch", codeBlockMatch);
+    if (codeBlockMatch) {
+      jsonString = codeBlockMatch[1].trim();
+    }
+    return JSON.parse(jsonString);
+  } catch (e) {
+    return null;
+    //throw new Error('Input is not valid JSON or JSON code block.');
+  }
+}
+
+/**
+ * Truncates a string or object with a length property to a specified max length, adding ellipsis if needed.
+ * @param text The text or object with a length property to truncate
+ * @param maxLength The maximum allowed length
+ * @returns The truncated string (with ellipsis if truncated)
+ */
+export function truncateText(text: string, maxLength: number): string;
+export function truncateText<T>(text: T[], maxLength: number): T[] | (T | string)[];
+export function truncateText(text: any, maxLength: number): any {
+  if (typeof text === 'string') {
+    return text.length > maxLength ? text.slice(0, maxLength) + '…' : text;
+  }
+  if (Array.isArray(text)) {
+    return text.length > maxLength ? [...text.slice(0, maxLength), '…'] : text;
+  }
+  // fallback for objects with length
+  if (text && typeof text === 'object' && typeof text.length === 'number') {
+    return text.length > maxLength ? text.slice(0, maxLength) : text;
+  }
+  return text;
 }

@@ -45,18 +45,6 @@ export function MainNav() {
 
   return (
     <div className="flex items-center gap-4">
-      <CustomLink href="/">
-        <Button variant="none" className="p-0 text-md content-end flex items-center gap-2">
-          <Image
-            src="/logo.png"
-            alt="Home"
-            width="48"
-            height="48"
-            className="min-w-8"
-          />
-          Ennube.ai
-        </Button>
-      </CustomLink>
       <TooltipProvider>
         <NavigationMenu>
           {!isLoadingSubscription && 
@@ -152,26 +140,35 @@ export function MainNav() {
                   )}
                 </Tooltip>
               </NavigationMenuItem>
-              {licenseCount > 2 && isPrimary && 
+
+              <NavigationMenuItem>
+                  <NavigationMenuLink
+                    href="/chat"
+                    className={navigationMenuTriggerStyle()}
+                  >
+                    Chat
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+              {licenseCount >= 2 && isPrimary && 
                 <NavigationMenuItem>
                   <NavigationMenuLink
                     href="/account/users"
                     className={navigationMenuTriggerStyle()}
                   >
                     Users
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-            }
-            {!hasSubscription && isPrimary && 
-              <NavigationMenuItem>
-                <SubscribeButton />
-              </NavigationMenuItem>
-            }
-            
-            {/* <NavigationMenuItem>
-              <ThemeToggle />
-            </NavigationMenuItem> */}
-              </NavigationMenuList>
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+              }
+              {!hasSubscription && isPrimary && 
+                <NavigationMenuItem>
+                  <SubscribeButton />
+                </NavigationMenuItem>
+              }
+              
+              {/* <NavigationMenuItem>
+                <ThemeToggle />
+              </NavigationMenuItem> */}
+            </NavigationMenuList>
           }
         </NavigationMenu>
       </TooltipProvider>

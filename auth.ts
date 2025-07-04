@@ -6,6 +6,7 @@ import Google from "next-auth/providers/google"
 import { createStorage } from "unstorage"
 import memoryDriver from "unstorage/drivers/memory"
 import vercelKVDriver from "unstorage/drivers/vercel-kv"
+import upstashDriver from "unstorage/drivers/upstash"
 import { UnstorageAdapter } from "@auth/unstorage-adapter"
 
 const storage = createStorage({

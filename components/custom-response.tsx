@@ -1,4 +1,5 @@
-
+'use client'
+import { z } from 'zod';
 import React, { useState } from 'react'
 import * as UI from '@/components/ui'
 // Import prop types for each UI component
@@ -121,6 +122,45 @@ export interface ComponentConfig<T extends keyof UIComponentPropsMap = keyof UIC
 export interface CustomResponseProps {
   config: ComponentConfig | ComponentConfig[]
 }
+
+// Zod schema for ComponentConfig
+const UIComponentTypeEnum = z.enum([
+  'Flex', 'Text', 'Button', 'JsonView', 'useFormField', 'Form', 'FormItem', 'FormLabel', 'FormControl', 'FormDescription', 'FormMessage', 'FormField',
+  'Input', 'Checkbox', 'Select', 'RadioGroup', 'RadioGroupItem', 'Switch', 'Textarea', 'Dialog', 'DialogTrigger', 'DialogContent', 'DialogHeader', 'DialogFooter',
+  'Tooltip', 'TooltipTrigger', 'TooltipContent', 'AlertDialog', 'AlertDialogTrigger', 'AlertDialogContent', 'AlertDialogHeader', 'AlertDialogFooter',
+  'Avatar', 'AvatarImage', 'AvatarFallback', 'Badge', 'Progress', 'Card', 'CardHeader', 'CardTitle', 'CardDescription', 'CardContent', 'CardFooter',
+  'Tabs', 'TabsList', 'TabsTrigger', 'TabsContent', 'Accordion', 'AccordionItem', 'AccordionTrigger', 'AccordionContent', 'Table', 'TableHeader', 'TableBody',
+  'TableRow', 'TableCell', 'TableHead', 'Popover', 'PopoverTrigger', 'PopoverContent', 'ScrollArea', 'ScrollBar', 'Toast', 'ToastProvider', 'ToastViewport',
+  'ToastTitle', 'ToastDescription', 'Skeleton', 'Collapsible', 'CollapsibleTrigger', 'CollapsibleContent', 'Layout', 'Toggle'
+]);
+
+
+export const ComponentConfigSchema: z.ZodType<ComponentConfig> = z.lazy(() =>
+  z.object({
+    type: UIComponentTypeEnum.describe('The type of UI component to render.'),
+    props: z
+      .record(z.any())
+      .optional()
+      .describe('Props to pass to the UI component. These should match the component type.'),
+    children: z
+      .union([
+        z.string(),
+        z.array(ComponentConfigSchema)
+      ])
+      .optional()
+      .describe('Child components or string content for this component.'),
+  }).describe('Configuration for a single UI component.')
+);
+
+
+export const CustomResponsePropsSchema = z.object({
+  config: z
+    .union([
+      ComponentConfigSchema,
+      z.array(ComponentConfigSchema)
+    ])
+    .describe('A single component config or an array of component configs to render.'),
+}).describe('Props for the CustomResponse component.');
 
 export const CustomResponse: React.FC<CustomResponseProps> = ({ config }) => {
   const configs = Array.isArray(config) ? config : [config]

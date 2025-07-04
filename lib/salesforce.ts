@@ -32,6 +32,7 @@ export class SalesforceClient {
       instanceUrl: instanceUrl,
       accessToken: accessToken,
       refreshToken: _refreshToken,
+      version: '63.0' // Use the latest API version
     });
 
     // Try to get client credentials from parameters or environment variables
