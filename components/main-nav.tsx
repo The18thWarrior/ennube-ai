@@ -21,6 +21,15 @@ import { useStripe } from "@/lib/stripe-context"
 import { useRouter } from "next/navigation"
 import { useOnboardingStatus } from "@/hooks/useOnboardingStatus"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip"
+import { it } from "node:test"
+
+interface NavigationListItem {
+  href: string;
+  title: string;
+  description?: string;
+  icon?: React.ElementType;
+  children?: React.ReactNode;
+}
 
 export function MainNav() {
   const { hasSubscription, isPrimary, isLoadingSubscription, isLoading, licenseCount } = useStripe();
@@ -43,112 +52,54 @@ export function MainNav() {
   // Highlight style for the menu item that needs attention
   const highlightStyle = "bg-amber-100 dark:bg-amber-900 border border-amber-300 dark:border-amber-700 font-medium";
 
+  const navigationList = [
+    {
+      href: "/apps",
+      title: "Apps",
+      description: "Manage your applications",
+    },
+    {
+      href: "/dashboard",
+      title: "Usage",
+      description: "Manage your applications",
+    },
+    // {
+    //   href: "/agents",
+    //   title: "Agents",
+    //   description: "Manage your applications",
+    // },
+    {
+      href: "/integrations",
+      title: "Connections",
+      description: "Manage your applications",
+    }
+  ] as NavigationListItem[];
   return (
     <div className="flex items-center gap-4">
       <TooltipProvider>
         <NavigationMenu>
           {!isLoadingSubscription && 
               <NavigationMenuList>
-              {/* <NavigationMenuItem>
-                <NavigationMenuTrigger className="px-2">
-                  Server Side
-                </NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
-                    <ListItem href="/server-example" title="RSC Example">
-                      Protecting React Server Component.
-                    </ListItem>
-                    <ListItem href="/middleware-example" title="Middleware Example">
-                      Using Middleware to protect pages & APIs.
-                    </ListItem>
-                    <ListItem href="/api-example" title="Route Handler Example">
-                      Getting the session inside an API Route.
-                    </ListItem>
-                  </ul>
-                </NavigationMenuContent>
-              </NavigationMenuItem> */}
-              {/* <NavigationMenuItem>
-                <NavigationMenuLink
-                  href="/client-example"
-                  className={navigationMenuTriggerStyle()}
-                >
-                  Client Side
-                </NavigationMenuLink>
-              </NavigationMenuItem> */}
-
-              { 
-                <NavigationMenuItem>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <NavigationMenuLink
-                        href="/dashboard"
-                        className={cn(
-                          navigationMenuTriggerStyle(),
-                          highlightDashboard && highlightStyle
-                        )}
-                      >
-                        Dashboard
-                      </NavigationMenuLink>
-                    </TooltipTrigger>
-                    {highlightDashboard && (
-                      <TooltipContent side="bottom" className="max-w-[220px] text-center">
-                        <p>{dashboardTooltip}</p>
-                      </TooltipContent>
-                    )}
-                  </Tooltip>
-                </NavigationMenuItem>
-              }
-              { 
-                <NavigationMenuItem>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <NavigationMenuLink
-                        href="/agents"
-                        className={cn(
-                          navigationMenuTriggerStyle(),
-                          highlightAgents && highlightStyle
-                        )}
-                      >
-                        Agents
-                      </NavigationMenuLink>
-                    </TooltipTrigger>
-                    {highlightAgents && (
-                      <TooltipContent side="bottom" className="max-w-[220px] text-center">
-                        <p>{agentsTooltip}</p>
-                      </TooltipContent>
-                    )}
-                  </Tooltip>
-                </NavigationMenuItem>
-              }
-              <NavigationMenuItem>
-                <Tooltip>
-                  <TooltipTrigger asChild>
+                {navigationList.map((item, index) => {
+                  if (item.children) {
+                    return (
+                      <NavigationMenuItem key={index}>
+                        {item.children}
+                      </NavigationMenuItem>
+                    );
+                  }
+                  return (
                     <NavigationMenuLink
-                      href="/integrations"
-                      className={cn(
-                        navigationMenuTriggerStyle(),
-                        highlightIntegrations && highlightStyle
-                      )}
+                      href={item.href}
+                      key={index}
+                      className={navigationMenuTriggerStyle()}
                     >
-                      Integrations
-                    </NavigationMenuLink>
-                  </TooltipTrigger>
-                  {highlightIntegrations && (
-                    <TooltipContent side="bottom" className="max-w-[220px] text-center">
-                      <p>{integrationTooltip}</p>
-                    </TooltipContent>
-                  )}
-                </Tooltip>
-              </NavigationMenuItem>
+                      {item.title}
+                  </NavigationMenuLink>
+                  )
 
-              <NavigationMenuItem>
-                  <NavigationMenuLink
-                    href="/chat"
-                    className={navigationMenuTriggerStyle()}
-                  >
-                    Chat
-                </NavigationMenuLink>
-              </NavigationMenuItem>
+
+                })}
               {licenseCount >= 2 && isPrimary && 
                 <NavigationMenuItem>
                   <NavigationMenuLink
