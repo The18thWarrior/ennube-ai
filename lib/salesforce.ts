@@ -1,7 +1,9 @@
 import { auth } from "@/auth";
 import { Session } from "next-auth";
-import {Connection, SaveResult, OAuth2} from 'jsforce';
+import {Connection, SaveResult, OAuth2, Schema} from 'jsforce';
 import { RefreshTokenResponse, SalesforceAuthResult, SalesforceQueryResult, SalesforceUserInfo } from "./types";
+import { IngestJobV2Results, JobInfoV2, QueryJobInfoV2 } from "jsforce/lib/api/bulk2";
+
 
 
 
@@ -23,7 +25,8 @@ export class SalesforceClient {
     clientSecret?: string
   ) {
     // Initialize jsforce connection with OAuth credentials
-    this.connection = new Connection({
+    //console.log(accessToken, instanceUrl, _refreshToken, clientId, clientSecret);
+    const connectionData = {
       oauth2: new OAuth2({
         clientId: clientId || process.env.SALESFORCE_CLIENT_ID,
         clientSecret: clientSecret || process.env.SALESFORCE_CLIENT_SECRET,
@@ -33,7 +36,9 @@ export class SalesforceClient {
       accessToken: accessToken,
       refreshToken: _refreshToken,
       version: '63.0' // Use the latest API version
-    });
+    };
+    this.connection = new Connection(connectionData);
+    if (_refreshToken) this.refreshToken = _refreshToken;
 
     // Try to get client credentials from parameters or environment variables
     const finalClientId = clientId || process.env.SALESFORCE_CLIENT_ID;
@@ -63,7 +68,7 @@ export class SalesforceClient {
    * Refresh the access token using the refresh token
    * @returns The refreshed token information or null if refresh failed
    */
-  private async refreshAccessToken(): Promise<RefreshTokenResponse | null> {
+  public async refreshAccessToken(): Promise<RefreshTokenResponse | null> {
     try {
       // If oauth2 is not initialized but we have a refresh token, try to initialize it with env vars
       if (!this.oauth2 && this.refreshToken) {
@@ -283,7 +288,7 @@ export class SalesforceClient {
         
         switch (operation) {
           case 'create':
-            results = await this.connection.sobject(sobjectType).create(records);
+            results = await this.connection.sobject(sobjectType).create(records); 
             break;
           case 'update':
             results = await this.connection.sobject(sobjectType).update(records as Array<{ Id: string, [key: string]: any }>);
@@ -312,7 +317,91 @@ export class SalesforceClient {
       }
     });
   }
-  
+
+  /**
+   * Perform a bulk operation using Salesforce Bulk API v2
+   * @param type 'ingest' for DML (insert, update, upsert, delete), 'query' for bulk query
+   * @param options For 'ingest': { sobjectType, operation, records, externalIdFieldName? } | For 'query': { soql }
+   * @returns The created job info
+   */
+  async bulk(
+    type: 'ingest' | 'query',
+    options: {
+      sobjectType?: string,
+      soql?: string,
+      operation: 'insert' | 'update' | 'upsert' | 'delete',
+      externalIdFieldName?: string,
+      records?: Array<{ [key: string]: any }>
+    }
+  ): Promise<IngestJobV2Results<Schema> | any> {
+    return this.withTokenRefresh(async () => {
+      const { sobjectType, operation, records, externalIdFieldName, soql } = options;
+      if (type === 'ingest' && records && records.length > 0 && sobjectType) {
+        //const readStream = Readable.from(records);
+        // Use jsforce's loadAndWaitForResults for ingest jobs
+        const job = externalIdFieldName ? this.connection.bulk2.createJob({
+          operation,
+          object: sobjectType,
+          externalIdFieldName
+        }) : this.connection.bulk2.createJob({
+          operation,
+          object: sobjectType
+        });
+        let id = '';
+        // the `open` event will be emitted when the job is created.
+        job.on('open', (job) => {
+          console.log(`Job ${job.id} succesfully created.`)
+          id = job.id;
+        })
+
+        await job.open()
+
+        // it accepts CSV as a string, an array of records or a Node.js readable stream.
+        await job.uploadData(records)
+
+        // uploading data from a CSV as a readable stream:
+
+        // const csvStream = fs.createReadStream(
+        //   path.join('Account_bulk2_test.csv'),
+        // );
+        // await job.uploadData(csvStream)
+
+        await job.close()
+        // const jobInfo = await this.connection.bulk2.loadAndWaitForResults({
+        //   object: sobjectType,
+        //   operation,
+        //   externalIdFieldName,
+        //   input: records
+        // });
+        return {id, message: 'job created'};
+      } else if (type === 'query' && soql) {
+        // Use jsforce's bulk2.query for bulk queries
+        const jobInfo = (await this.connection.bulk2.query(soql)).toArray();
+        return jobInfo;
+      } else {
+        throw new Error('Invalid bulk operation type');
+      }
+    });
+  }
+
+
+  async bulkStatus(type: 'query' | 'ingest', batchId: string): Promise<JobInfoV2 | QueryJobInfoV2> {
+    return this.withTokenRefresh(async () => {
+      try {
+        if (type === 'ingest') {
+          const result = await this.connection.bulk2.job('ingest', {id: batchId}).check();
+          return result;
+        } else {
+          const result = await this.connection.bulk2.job('query', {id: batchId}).check();
+          return result;
+        }
+      } catch (error) {
+        console.error(`Error checking batch status for ID ${batchId}:`, error);
+        throw new Error(`Failed to check batch status: ${error instanceof Error ? error.message : String(error)}`);
+      }
+    });
+  }
+
   /**
    * Describe a Salesforce object (get metadata)
    * @param sobjectType The API name of the Salesforce object

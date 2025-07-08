@@ -5,6 +5,9 @@ import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/component
 import { Pencil, FileText } from "lucide-react"
 import styles from './crm-record-detail-card.module.css';
 import React from "react"
+import { ac } from "@upstash/redis/zmscore-CjoCv9kz"
+import { CrmDataLoaderModal } from "./crm-data-loader-modal"
+import { Separator } from "@/components/ui/separator"
 
 // A small sub-component for displaying an editable field
 const EditableField = ({
@@ -67,9 +70,22 @@ export function CrmRecordDetailCard({
   return (
     <Card className="my-2 border-purple-500 w-full max-w-md flex flex-col">
       <CardHeader className="pb-3">
-        {showListButton && 
-          <Button variant='ghost' size="sm" className={'w-fit'} onClick={goToList}>Back to List</Button>
-        }
+        <div className="flex items-center justify-between">
+          {showListButton && 
+            <Button variant='ghost' size="sm" className={'w-fit'} onClick={goToList}>Back to List</Button>
+          }
+          {/* {
+            <CrmDataLoaderModal
+              triggerLabel="Load Data"
+              triggerClassName="w-fit"
+              records={[fields.reduce((acc, field) => {
+                acc[field.label] = field.value;
+                return acc;
+              }, {} as Record<string, any>)]}
+            />
+          } */}
+        </div>
+        <Separator />
         <CardTitle className="text-xl flex items-center">
           <RecordIcon className="mr-2 h-6 w-6 text-purple-500 flex-shrink-0" />
           <span className="truncate">
