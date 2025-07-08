@@ -74,7 +74,7 @@ export function CrmRecordDetailCard({
           {showListButton && 
             <Button variant='ghost' size="sm" className={'w-fit'} onClick={goToList}>Back to List</Button>
           }
-          {
+          {/* {
             <CrmDataLoaderModal
               triggerLabel="Load Data"
               triggerClassName="w-fit"
@@ -83,7 +83,7 @@ export function CrmRecordDetailCard({
                 return acc;
               }, {} as Record<string, any>)]}
             />
-          }
+          } */}
         </div>
         <Separator />
         <CardTitle className="text-xl flex items-center">

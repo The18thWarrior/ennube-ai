@@ -11,13 +11,13 @@ const apps = [
 		image: '/logo.png',
 		url: '/agents',
 	},
-	{
-		name: 'Data Loader',
-		description: 'Upload and manage your CRM data with ease',
-		author: 'promptspellsmit.com',
-		image: '/robot-admin-avatar.png',
-		url: '/dataloader',
-	},
+	// {
+	// 	name: 'Data Loader',
+	// 	description: 'Upload and manage your CRM data with ease',
+	// 	author: 'promptspellsmit.com',
+	// 	image: '/robot-admin-avatar.png',
+	// 	url: '/dataloader',
+	// },
 	{
 		name: 'Chat',
 		description: 'Engage in conversations with your AI agents',
