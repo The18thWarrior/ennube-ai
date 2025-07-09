@@ -17,6 +17,7 @@ export const metadata: Metadata = {
   title: "Ennube.ai",
   description:
     "Supercharge your CRM with AI Agents",
+  icons: ["/logo.png"]
 }
 
 export default function RootLayout({ children }: React.PropsWithChildren<{}>) {

@@ -9,13 +9,12 @@ import { getDataTool } from '@/lib/chat/getDataTool';
 import { getDataVisualizerTool } from '@/lib/chat/getDataVisualizerTool';
 import { getCountTool } from '@/lib/chat/getCountTool';
 import { getCredentialsTool } from '@/lib/chat/sfdc/getCredentialsTool';
+import { getWorkflowTool } from '@/lib/chat/callWorkflowTool';
 import { nanoid } from 'nanoid';
 import { setThread } from '@/lib/cache/message-history';
+import { getPrompt } from '@/lib/chat/helper';
 
-// System prompt for the Data Steward Agent
-const DATA_STEWARD_SYSTEM_PROMPT = `As the dedicated AI guardian for CRM data quality and integrity, your sole mission is to enforce absolute standards of pristine contact records—ensuring they remain duplicate-free, error-proof, and free from any guesswork. Sparked into action during a critical compliance audit when corrupted contact records nearly derailed a major deal, you now serve as the silent crusader for impeccable data. Your unwavering commitment to clean, compliant data is vital for our organization’s reputation and operational success. When provided database data, always return a summary, not the raw data itself. Use any provided tools automatically as needed. When the user asks for anying 'they own', they are referring to records where the OwnerId is the user's id, which can be retrieved using the getCredentials tool.`; //When a tool returns data with the "directOutput" flag set to true, do NOT reformat, summarize or interpret the data. Instead, with EXACTLY the json that is contained within the 'data' property. When using the 'getData' and 'getCount' tools, you must always use the 'getCredentials' tool to access user information.
-const PROSPECT_FINDER_SYSTEM_PROMPT = `You are Prospect Finder, an AI agent specialized in lead generation and prospect intelligence. You were forged during a startup’s Series A scramble—trained to hunt down decision-makers, zero in on ideal customers, and never waste time on cold leads. Your world is a fast-moving stream of signals, search results, and buyer intent breadcrumbs.
-Your mission is to build a crystal-clear picture of the perfect prospect, then relentlessly pursue them across every channel. You’re not just finding leads—you’re creating a pipeline of opportunities that fuels growth and powers sales success. When provided database data, always return a summary, not the raw data itself. Use any provided tools automatically as needed. When the user asks for anying 'they own', they are referring to records where the OwnerId is the user's id, which can be retrieved using the getCredentials tool.`;
+
 export const maxDuration = 30;
 // The main agent route
 export async function POST(req: NextRequest) {
@@ -46,7 +45,7 @@ export async function POST(req: NextRequest) {
     const openrouter = createOpenRouter({
       apiKey: `${process.env.OPENROUTER_API_KEY}`,
     });
-    const systemPrompt = agent === 'data-steward' ? DATA_STEWARD_SYSTEM_PROMPT : PROSPECT_FINDER_SYSTEM_PROMPT;
+    const systemPrompt = getPrompt(agent as 'data-steward' | 'prospect-finder');
     const model = openrouter('google/gemini-2.0-flash-001'); // openai/gpt-4.1-nano | google/gemini-2.0-flash-001
     // Set up the OpenAI model
     // Run the agent with tools
@@ -60,6 +59,7 @@ export async function POST(req: NextRequest) {
         getData: getDataTool(userSub),
         getDataVisualizer: getDataVisualizerTool(model),
         getCount: getCountTool(userSub),
+        callWorkflowTool: getWorkflowTool(agent as 'data-steward' | 'prospect-finder'),
       },
       messages: messages.map((msg: any) => {
         return {

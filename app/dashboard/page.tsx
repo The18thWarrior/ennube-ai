@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useUsageLogs } from "@/hooks/useUsageLogs"
 import { nanoid } from "nanoid"
 import dayjs from "dayjs";
+import { getAgentImage } from "@/lib/utils"
 
 // Mock data for executions
 const mockExecutions = [
@@ -99,20 +100,6 @@ const mockExecutions = [
     },
   },
 ]
-
-const agentImageMap: Record<string, string> = {
-  "DataSteward": "/data-steward.png",
-  "ProspectFinder": "/prospect-finder.png",
-  "MeetingsBooker": "/meetings-booker.png",
-  "MarketNurturer": "/market-nurturer.png",
-}
-
-const getAgentImage = (agentName: string) => {
-  if (agentName in agentImageMap) {
-    return agentImageMap[agentName]
-  }
-  return "/data-steward.png" // Fallback image
-}
 
 function ExecutionsPageComponent() {
   const searchParams = useSearchParams()

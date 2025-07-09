@@ -179,3 +179,17 @@ export function truncateText(text: any, maxLength: number): any {
   }
   return text;
 }
+
+const agentImageMap: Record<string, string> = {
+  "DataSteward": "/data-steward.png",
+  "ProspectFinder": "/prospect-finder.png",
+  "MeetingsBooker": "/meetings-booker.png",
+  "MarketNurturer": "/market-nurturer.png",
+}
+
+export const getAgentImage = (agentName: string) => {
+  if (agentName in agentImageMap) {
+    return agentImageMap[agentName]
+  }
+  return "/data-steward.png" // Fallback image
+}
