@@ -97,25 +97,6 @@ export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, colla
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <h3 className="text-sm font-medium text-gray-500">EXECUTION ID</h3>
-                <p className="font-mono dark:text-gray-400">{execution.id}</p>
-              </div>
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <h3 className="text-sm font-medium text-gray-500">EXECUTION TIME</h3>
-                <p className="dark:text-gray-400">{execution.execution_time ? `${(execution.execution_time).toFixed(2)} seconds` : "Running..."}</p>
-              </div>
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <h3 className="text-sm font-medium text-gray-500">DATE</h3>
-                <p className=" dark:text-gray-400">{new Date(execution.created_at).toLocaleString()}</p>
-              </div>
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <h3 className="text-sm font-medium text-gray-500">STATUS</h3>
-                <StatusBadge status={execution.status} />
-              </div>
-            </div>
-
             {execution.status === "failed" && (
               <div className="bg-red-50 border border-red-200 rounded-lg p-4">
                 <h3 className="text-sm font-medium text-red-800 flex items-center gap-2">
@@ -168,6 +149,24 @@ export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, colla
           <CollapsibleContent asChild className={`${styles.CollapsibleContent} `}>
             <CardContent className="pt-0">
               <div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <h3 className="text-sm font-medium text-gray-500">EXECUTION ID</h3>
+                    <p className="font-mono dark:text-gray-400">{execution.id}</p>
+                  </div>
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <h3 className="text-sm font-medium text-gray-500">EXECUTION TIME</h3>
+                    <p className="dark:text-gray-400">{execution.execution_time ? `${(execution.execution_time).toFixed(2)} seconds` : "Running..."}</p>
+                  </div>
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <h3 className="text-sm font-medium text-gray-500">DATE</h3>
+                    <p className=" dark:text-gray-400">{new Date(execution.created_at).toLocaleString()}</p>
+                  </div>
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <h3 className="text-sm font-medium text-gray-500">STATUS</h3>
+                    <StatusBadge status={execution.status} />
+                  </div>
+                </div>
                 <h3 className="text-lg font-medium mb-2">Response Data</h3>
                 <Tabs defaultValue="formatted">
                   <TabsList className="mb-4">
