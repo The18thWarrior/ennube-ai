@@ -36,15 +36,16 @@ type CustomResponseType = z.infer<typeof ComponentConfigSchema>;
 const ChatContainer = ({
   id,
   initialMessages,
-  name
-}: { id?: string | undefined; initialMessages?: Message[]; name?: string | null } = {}) => {
+  name,
+  agent = avatarOptions[0].key,
+}: { id?: string | undefined; initialMessages?: Message[]; name?: string | null; agent?: string | null } = {}) => {
     const { theme } = useTheme();
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const [mounted, setMounted] = React.useState(false);
     const [isEditingName, setIsEditingName] = React.useState(false);
     const [ _name, setName ] = React.useState<string>("");
     const { getThread, setThread } = useMessageHistory();
-    const [selectedAvatar, setSelectedAvatar] = React.useState(avatarOptions[0].key);
+    const [selectedAvatar, setSelectedAvatar] = React.useState(agent ? agent : avatarOptions[0].key);
     // Use the ai-sdk/react chat hook
     const {
         messages,

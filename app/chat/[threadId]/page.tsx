@@ -6,11 +6,14 @@ import { SidebarInset } from '@/components/ui/sidebar';
 import { useMessageHistory } from '@/hooks/useMessageHistory';
 import { ThreadHistory } from '@/lib/cache/message-history';
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 export default function ChatPage(props: { params: Promise<{ threadId: string }> }) {
   const [threadId, setThreadId] = useState<string | null>(null);
   const { getThread } = useMessageHistory();
   const [thread, setThread] = useState<ThreadHistory | null>(null);
+  const searchParams = useSearchParams();
+  const agent = searchParams.get('agent') || undefined; // get the agent from the URL params
   // useEffect(() => {
   //   const fetchThread = async () => {
   //     if (!threadId) return;
@@ -35,7 +38,7 @@ export default function ChatPage(props: { params: Promise<{ threadId: string }> 
     
         <ToastProvider>
             <div className={'px-8 mb-8'}>
-                <Chat id={threadId} initialMessages={thread?.messages || undefined} name={thread?.name} />
+                <Chat id={threadId} initialMessages={thread?.messages || undefined} name={thread?.name} agent={agent}/>
             </div>      
         </ToastProvider>
   );
