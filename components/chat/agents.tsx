@@ -22,16 +22,16 @@ export const avatarOptions = [
                 </Avatar>
             ),
         },
-        {
-            key: 'market-nurturer',
-            label: 'Market Nurturer',
-            avatar: (
-                <Avatar>
-                    <AvatarImage src="/market-nurturer.png" alt="Market Nurturer Avatar" />
-                    <AvatarFallback>MN</AvatarFallback>
-                </Avatar>
-            ),
-        },
+        // {
+        //     key: 'market-nurturer',
+        //     label: 'Market Nurturer',
+        //     avatar: (
+        //         <Avatar>
+        //             <AvatarImage src="/market-nurturer.png" alt="Market Nurturer Avatar" />
+        //             <AvatarFallback>MN</AvatarFallback>
+        //         </Avatar>
+        //     ),
+        // },
 ];
 
 export const AgentSelector = ({ selectedAvatar, setSelectedAvatar }: { selectedAvatar: string; setSelectedAvatar: (avatar: string) => void }) => (
