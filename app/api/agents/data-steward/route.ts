@@ -26,6 +26,7 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const limit = searchParams.get('limit') || '10'; // Default to 10 if not specified
     const provider = searchParams.get('provider') || 'sfdc'; // Default to 10 if not specified
+    const usageId = searchParams.get('usageId'); // Default to data steward if not specified
 
     // Validate the limit parameter is a number
     if (isNaN(Number(limit))) {
@@ -49,9 +50,9 @@ export async function GET(request: NextRequest) {
     // url.searchParams.append('limit', limit);
     // url.searchParams.append('limit', "1");
     // url.searchParams.append('sub', userSub);
-    const url2 = `${webhookUrl}?limit=${limit}&subId=${userSub}`;
+    const url2 = `${webhookUrl}?limit=${limit}&subId=${userSub}${usageId ? `&usageId=${usageId}` : ''}`;
     console.log(`Data steward webhook URL: ${url2}`);
-    // Make the request to the data steward webhook
+    // Make the request to the data steward webhooks
     const response = await fetch(url2, {
       method: 'GET',
       headers: {

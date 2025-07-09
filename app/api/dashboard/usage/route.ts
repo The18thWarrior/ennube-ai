@@ -3,7 +3,6 @@ import Stripe from 'stripe';
 import { auth } from '@/auth';
 import { getUserUsageLogsBySub, storeUsageLog } from '@/lib/db/usage-logs';
 import { nanoid } from 'nanoid';
-import { log } from 'console';
 
 
 export async function GET(request: NextRequest) {
@@ -53,6 +52,7 @@ export async function POST(request: NextRequest) {
       recordsUpdated: 0,
       recordsCreated: 0,
       meetingsBooked: 0,
+      queriesExecuted: 0, // Initialize queriesExecuted to 0
       signature: null,
       nonce: 0,
       logId: logId,
@@ -87,6 +87,7 @@ export async function PUT(request: NextRequest) {
     const recordsUpdated = body.recordsUpdated || searchParams.get('recordsUpdated');
     const recordsCreated = body.recordsCreated || searchParams.get('recordsCreated');
     const meetingsBooked = body.meetingsBooked || searchParams.get('meetingsBooked');
+    const queriesExecuted = body.queriesExecuted || searchParams.get('queriesExecuted');
     const recordId = body.recordId || searchParams.get('recordId');
     const errors = body.errors || searchParams.get('errors');
 
@@ -104,6 +105,7 @@ export async function PUT(request: NextRequest) {
       recordsUpdated: recordsUpdated,
       recordsCreated: recordsCreated,
       meetingsBooked: meetingsBooked,
+      queriesExecuted: queriesExecuted,
       signature: "",
       nonce: 0,
       logId: id,

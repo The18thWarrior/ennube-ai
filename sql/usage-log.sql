@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS usage_log (
     records_updated INTEGER NOT NULL DEFAULT 0,
     records_created INTEGER NOT NULL DEFAULT 0,
     meetings_booked INTEGER NOT NULL DEFAULT 0,
+    queries_executed INTEGER NOT NULL DEFAULT 0, -- Added queries_executed field
     usage INTEGER NOT NULL DEFAULT 0,
     signature VARCHAR(512) NOT NULL,
     nonce BIGINT NOT NULL,
@@ -31,6 +32,7 @@ COMMENT ON COLUMN usage_log.records_updated IS 'Count of records updated by the 
 COMMENT ON COLUMN usage_log.records_created IS 'Count of records created by the agent';
 COMMENT ON COLUMN usage_log.meetings_booked IS 'Count of meetings booked by the agent';
 COMMENT ON COLUMN usage_log.usage IS 'Stores usage count';
+COMMENT ON COLUMN usage_log.queries_executed IS 'Count of queries executed by the agent';
 COMMENT ON COLUMN usage_log.signature IS 'Cryptographic signature for verification';
 COMMENT ON COLUMN usage_log.nonce IS 'One-time number used for verification purposes';
 COMMENT ON COLUMN usage_log.created_at IS 'Timestamp when this log entry was created in the database';

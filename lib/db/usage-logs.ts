@@ -33,12 +33,14 @@ pool.query('SELECT NOW()', (err, res) => {
 const USAGE_LOG_TABLE = "usage_log";
 
 export interface UsageLogEntry {
+  id: string;
   timestamp: number;
   userSub: string;
   agent: string;
   recordsUpdated: number;
   recordsCreated: number;
   meetingsBooked: number;
+  queriesExecuted: number;
   signature: string;
   nonce: number;
   usage: number;
@@ -50,6 +52,7 @@ export interface UsageLogEntry {
     recordsUpdated?: number,
     recordsCreated?: number,
     meetingsBooked?: number,
+    queriesExecuted?: number,
     errors?: number,
     records?: string[]
   };
@@ -61,6 +64,7 @@ interface StoreUsageParams {
   recordsUpdated: number | null,
   recordsCreated: number | null,
   meetingsBooked: number | null,
+  queriesExecuted: number | null,
   signature: string | null,
   nonce: number | null,
   logId: string | null,
@@ -99,10 +103,11 @@ export async function storeUsageLog(
           const recordsUpdated = Number(params.recordsUpdated || 0) + Number(existing.recordsUpdated);
           const recordsCreated = Number(params.recordsCreated || 0) + Number(existing.recordsCreated);
           const meetingsBooked = Number(params.meetingsBooked || 0) + Number(existing.meetingsBooked);
-          
+          const queriesExecuted = Number(params.queriesExecuted || 0) + Number(existing.queriesExecuted);
+
           const responseData = existing.responseData || {};
           let updatedResponseData;
-          const usage = recordsCreated + recordsUpdated + meetingsBooked;
+          const usage = recordsCreated + recordsUpdated + meetingsBooked + queriesExecuted;
           if (params.status === "failed" && (existing.recordsCreated > 0 || existing.recordsUpdated > 0)) {
             const errorCount = responseData.errors ? responseData.errors + 1 : 1;
             updatedResponseData = {
@@ -118,6 +123,7 @@ export async function storeUsageLog(
               recordsUpdated: recordsUpdated,
               recordsCreated: recordsCreated,
               meetingsBooked: meetingsBooked,
+              queriesExecuted: queriesExecuted,
               usage,
               errors: Number(responseData.errors || 0),
               records: params.recordId 
@@ -132,17 +138,19 @@ export async function storeUsageLog(
              SET records_updated = $1, 
                  records_created = $2, 
                  meetings_booked = $3, 
-                 signature = $4, 
-                 nonce = $5, 
+                 queries_executed = $4,
+                 signature = $5, 
+                 nonce = $6, 
                  updated_at = NOW(), 
-                 status = $6, 
-                 usage = $7,
-                 response_data = $8
-             WHERE id = $9`,
+                 status = $7, 
+                 usage = $8,
+                 response_data = $9
+             WHERE id = $10`,
             [
               recordsUpdated,
               recordsCreated,
               meetingsBooked,
+              queriesExecuted,
               params.signature || existing.signature,
               params.nonce || existing.nonce,
               params.status === "failed" && (existing.recordsCreated > 0 || existing.recordsUpdated > 0) 
@@ -158,7 +166,8 @@ export async function storeUsageLog(
           const recordsUpdated = Number(params.recordsUpdated || 0) + Number(existing.recordsUpdated);
           const recordsCreated = Number(params.recordsCreated || 0) + Number(existing.recordsCreated);
           const meetingsBooked = Number(params.meetingsBooked || 0) + Number(existing.meetingsBooked);
-          const usage = recordsCreated + recordsUpdated + meetingsBooked;
+          const queriesExecuted = Number(params.queriesExecuted || 0) + Number(existing.queriesExecuted);
+          const usage = recordsCreated + recordsUpdated + meetingsBooked + queriesExecuted;
           
           const responseData = existing.responseData || {};
           const updatedResponseData = {
@@ -166,6 +175,7 @@ export async function storeUsageLog(
             recordsUpdated: recordsUpdated,
             recordsCreated: recordsCreated,
             meetingsBooked: meetingsBooked,
+            queriesExecuted: queriesExecuted,
             usage,
             errors: Number(responseData.errors || 0),
             records: params.recordId 
@@ -179,17 +189,19 @@ export async function storeUsageLog(
              SET records_updated = $1, 
                  records_created = $2, 
                  meetings_booked = $3, 
-                 signature = $4, 
-                 nonce = $5, 
+                 queries_executed = $4,
+                 signature = $5, 
+                 nonce = $6, 
                  updated_at = NOW(), 
-                 status = $6, 
-                 usage = $7,
-                 response_data = $8
-             WHERE id = $9`,
+                 status = $7, 
+                 usage = $8,
+                 response_data = $9
+             WHERE id = $10`,
             [
               recordsUpdated,
               recordsCreated,
               meetingsBooked,
+              queriesExecuted,
               params.signature || existing.signature,
               params.nonce || existing.nonce,
               params.status || existing.status,
@@ -204,13 +216,14 @@ export async function storeUsageLog(
       }
     }
 
-    const usage = (params.recordsCreated || 0) + (params.recordsUpdated || 0) + (params.meetingsBooked || 0);
+    const usage = (params.recordsCreated || 0) + (params.recordsUpdated || 0) + (params.meetingsBooked || 0) + (params.queriesExecuted || 0);
     // Create a new log entry
     const responseData = {
       execution_summary: message,
       recordsUpdated: params.recordsUpdated || 0,
       recordsCreated: params.recordsCreated || 0,
       meetingsBooked: params.meetingsBooked || 0,
+      queriesExecuted: params.queriesExecuted || 0,
       usage,
       errors: 0,
       records: params.recordId ? [params.recordId] : []
@@ -220,8 +233,8 @@ export async function storeUsageLog(
     await pool.query(
       `INSERT INTO ${USAGE_LOG_TABLE} 
        (id, timestamp, user_sub, agent, records_updated, records_created, 
-        meetings_booked, signature, nonce, usage, status, response_data)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
+        meetings_booked, queries_executed, signature, nonce, usage, status, response_data)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
       [
         logId,
         timestamp,
@@ -230,6 +243,7 @@ export async function storeUsageLog(
         params.recordsUpdated || 0,
         params.recordsCreated || 0,
         params.meetingsBooked || 0,
+        params.queriesExecuted || 0,
         params.signature || '',
         params.nonce || 0,
         usage,
@@ -268,6 +282,39 @@ export async function getUserUsageLogs(
 }
 
 /**
+ * Retrieve usage logs for the current authenticated user
+ */
+export async function getUserUsageLog(
+  usageId: string
+): Promise<UsageLogEntry | null> {
+  try {
+    const session = await auth();
+    if (!session || !session.user || !session.user.auth0) {
+      console.error("No session found");
+      return null;
+    }
+    
+    const userSub = session.user.auth0.sub;
+    const result = await pool.query(
+      `SELECT * FROM ${USAGE_LOG_TABLE} 
+       WHERE user_sub = $1
+       AND id = $2`,
+      [userSub, usageId]
+    );
+
+    if (result.rows.length > 0) {
+      return mapDbToUsageLogEntry(result.rows[0]);
+    }
+
+    return null;
+  } catch (error) {
+    console.error("Error retrieving user usage log:", error);
+    return null;
+  }
+}
+
+
+/**
  * Retrieve usage logs for a specific user by their sub ID
  */
 export async function getUserUsageLogsBySub(
@@ -302,19 +349,20 @@ export async function getUsageSummary(
   recordsUpdated: number;
   recordsCreated: number;
   meetingsBooked: number;
+  queriesExecuted: number;
 }> {
   try {
     const session = await auth();
     if (!session || !session.user || !session.user.auth0) {
       console.error("No session found");
-      return { recordsUpdated: 0, recordsCreated: 0, meetingsBooked: 0 };
+      return { recordsUpdated: 0, recordsCreated: 0, meetingsBooked: 0, queriesExecuted: 0 };
     }
     
     const userSub = session.user.auth0.sub;
     return await getUsageSummaryBySub(userSub, startTime, endTime);
   } catch (error) {
     console.error("Error retrieving usage summary:", error);
-    return { recordsUpdated: 0, recordsCreated: 0, meetingsBooked: 0 };
+    return { recordsUpdated: 0, recordsCreated: 0, meetingsBooked: 0, queriesExecuted: 0 };
   }
 }
 
@@ -329,6 +377,7 @@ export async function getUsageSummaryBySub(
   recordsUpdated: number;
   recordsCreated: number;
   meetingsBooked: number;
+  queriesExecuted: number;
   usage?: number;
 }> {
   try {
@@ -338,6 +387,7 @@ export async function getUsageSummaryBySub(
          SUM(records_updated) as records_updated,
          SUM(records_created) as records_created,
          SUM(meetings_booked) as meetings_booked,
+         SUM(queries_executed) as queries_executed,
          SUM(usage) as usage
        FROM ${USAGE_LOG_TABLE}
        WHERE user_sub = $1 
@@ -352,14 +402,15 @@ export async function getUsageSummaryBySub(
         recordsUpdated: Number(result.rows[0].records_updated || 0),
         recordsCreated: Number(result.rows[0].records_created || 0),
         meetingsBooked: Number(result.rows[0].meetings_booked || 0),
+        queriesExecuted: Number(result.rows[0].queries_executed || 0),
         usage: Number(result.rows[0].usage || 0)
       };
     }
 
-    return { recordsUpdated: 0, recordsCreated: 0, meetingsBooked: 0, usage: 0 };
+    return { recordsUpdated: 0, recordsCreated: 0, meetingsBooked: 0, queriesExecuted: 0, usage: 0 };
   } catch (error) {
     console.error("Error retrieving usage summary by sub:", error);
-    return { recordsUpdated: 0, recordsCreated: 0, meetingsBooked: 0, usage: 0 };
+    return { recordsUpdated: 0, recordsCreated: 0, meetingsBooked: 0, queriesExecuted: 0, usage: 0 };
   }
 }
 
@@ -468,12 +519,14 @@ export async function getMonthlyRecordOperationsTotalBySub(
  */
 function mapDbToUsageLogEntry(dbRow: any): UsageLogEntry {
   return {
+    id: dbRow.id,
     timestamp: dbRow.timestamp,
     userSub: dbRow.user_sub,
     agent: dbRow.agent,
     recordsUpdated: Number(dbRow.records_updated),
     recordsCreated: Number(dbRow.records_created),
     meetingsBooked: Number(dbRow.meetings_booked),
+    queriesExecuted: Number(dbRow.queries_executed),
     signature: dbRow.signature,
     nonce: Number(dbRow.nonce),
     usage: Number(dbRow.usage),
