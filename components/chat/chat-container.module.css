@@ -44,7 +44,7 @@
 .messagesArea {
   flex: 1;
   overflow-y: auto;
-  margin-bottom: 12px;
+  /* margin-bottom: auto; */
   scrollbar-color: transparent;
 }
 .messageRow {
