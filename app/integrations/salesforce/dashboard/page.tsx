@@ -13,7 +13,7 @@ export default async function SalesforceDashboard() {
   const session = await auth()
   const displayQuickActions = true;
 
-  console.log('Session:', session?.user?.auth0)
+  //console.log('Session:', session?.user?.auth0)
   // Check if we have a Salesforce client from either OAuth or direct authentication
   const salesforceCredentials = await getSalesforceCredentialsById()
   if (!salesforceCredentials) {
