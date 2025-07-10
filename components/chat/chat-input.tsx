@@ -3,7 +3,7 @@
 import type React from "react"
 
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { Input, InputTextArea } from "@/components/ui/input"
 import { Send } from "lucide-react"
 
 interface ChatInputProps {
@@ -16,10 +16,11 @@ interface ChatInputProps {
 export default function ChatInput({ input, handleInputChange, handleSubmit, isLoading }: ChatInputProps) {
   return (
     <form onSubmit={handleSubmit} className="flex items-center gap-2">
-      <Input
+      <InputTextArea
         value={input}
         onChange={handleInputChange}
         placeholder="Type your message..."
+        rows={2}
         disabled={isLoading}
         className="flex-1"
       />

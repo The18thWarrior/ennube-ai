@@ -122,7 +122,7 @@ const ChatContainer = ({
                     //theme === 'dark' ? styles.dark : styles.light,
                 ].join(' ')}
             >
-                <div className={styles.messagesArea}>
+                <div className={[styles.messagesArea, 'mb-16'].join(' ')}>
                     {messages.map((msg, idx) => (
                         <div
                             key={idx}
@@ -138,7 +138,7 @@ const ChatContainer = ({
                 </div>
             </div>
 
-            <div className={`p-4 md:p-6 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 fixed bottom-0 ${styles.wfill}`}>
+            <div className={`p-4 md:py-8 md:p-6 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 fixed bottom-0 ${styles.wfill}`}>
                 {error && <div className="text-red-500 mb-2">Error: {error.message}</div>}
                 <ChatInput
                 input={input}
