@@ -8,10 +8,9 @@ import { Shield, Users, Heart, Star, X, Clipboard } from "lucide-react"
 import { agents } from "@/resources/agent-defintion"
 import { AgentProfileHeader } from "../agent-profile-header"
 
-const prospectFinderAgent = agents.find(agent => agent.apiName === 'prospect-finder')
-export default function ProspectFinderHeader() {
+const meetingBookerAgent = agents.find(agent => agent.apiName === 'meetings-booker')
+export default function MeetingsBookerHeader() {
   const [isImageModalOpen, setIsImageModalOpen] = useState(false)
-
   return (
     <>
       {isImageModalOpen && (
@@ -25,8 +24,8 @@ export default function ProspectFinderHeader() {
               onClick={() => setIsImageModalOpen(false)}
             >
               <Image
-                src={prospectFinderAgent?.image || "/prospect-finder.png"}
-                alt="Prospect Finder Profile"
+                src={meetingBookerAgent?.image || "/meeting-booker.png"}
+                alt="Meeting Booker Profile"
                 width={800}
                 height={800}
                 className="object-contain max-h-[90vh]"
@@ -37,9 +36,9 @@ export default function ProspectFinderHeader() {
       )}
     
       <AgentProfileHeader
-        name={prospectFinderAgent?.name || "Prospect Finder"}
-        tagline="Track down high-quality prospects"
-        imageSrc={prospectFinderAgent?.image || "/prospect-finder.png"}
+        name={meetingBookerAgent?.name || "Meeting Booker"}
+        tagline="Schedule and manage your meetings effortlessly"
+        imageSrc={meetingBookerAgent?.image || "/meeting-booker.png"}
         hasImage={true}
         status="Online Now"
         onImageClick={() => setIsImageModalOpen(true)}

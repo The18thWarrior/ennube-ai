@@ -7,7 +7,7 @@ export const agents = [
       description:
         "Maintains the quality of data in your CRM by leveraging online search tools to verify, enrich, and clean customer information.",
       image: "/data-steward.png",
-      link: "/dashboard/data-steward",
+      link: "/agents/data-steward",
       categories: ["data", "management", "quality"],
       skills: ["data cleaning", "verification", "enrichment", "standardization"],
       isNew: false,
@@ -22,7 +22,7 @@ export const agents = [
       description:
         "Creates ideal customer profiles, updates them every 30 days, and finds matching prospects while incorporating feedback from Slack.",
       image: "/prospect-finder.png",
-      link: "/dashboard/prospect-finder",
+      link: "/agents/prospect-finder",
       categories: ["sales", "leads", "prospecting"],
       skills: ["lead generation", "customer profiling", "prospect research", "qualification"],
       isNew: true,
@@ -37,7 +37,7 @@ export const agents = [
       description:
         "Sets up appointments with prospects identified by the Prospect Finder, handling scheduling, reminders, and follow-ups.",
       image: "/meetings-booker.png",
-      link: "/dashboard/meetings-booker",
+      link: "/agents/meetings-booker",
       button: null,
       categories: ["sales", "scheduling", "productivity"],
       skills: ["meeting scheduling", "calendar management", "follow-up", "reminders"],

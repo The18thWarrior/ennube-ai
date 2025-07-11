@@ -8,8 +8,8 @@ import { Shield, Users, Heart, Star, X, Clipboard } from "lucide-react"
 import { agents } from "@/resources/agent-defintion"
 import { AgentProfileHeader } from "../agent-profile-header"
 
-const prospectFinderAgent = agents.find(agent => agent.apiName === 'prospect-finder')
-export default function ProspectFinderHeader() {
+const marketNurturerAgent = agents.find(agent => agent.apiName === 'market-nurturer')
+export default function MarketNurturerHeader() {
   const [isImageModalOpen, setIsImageModalOpen] = useState(false)
 
   return (
@@ -25,8 +25,8 @@ export default function ProspectFinderHeader() {
               onClick={() => setIsImageModalOpen(false)}
             >
               <Image
-                src={prospectFinderAgent?.image || "/prospect-finder.png"}
-                alt="Prospect Finder Profile"
+                src={marketNurturerAgent?.image || "/market-nurturer.png"}
+                alt="Market Nurturer Profile"
                 width={800}
                 height={800}
                 className="object-contain max-h-[90vh]"
@@ -37,9 +37,9 @@ export default function ProspectFinderHeader() {
       )}
     
       <AgentProfileHeader
-        name={prospectFinderAgent?.name || "Prospect Finder"}
-        tagline="Track down high-quality prospects"
-        imageSrc={prospectFinderAgent?.image || "/prospect-finder.png"}
+        name={marketNurturerAgent?.name || "Market Nurturer"}
+        tagline="Nurture and grow your leads"
+        imageSrc={marketNurturerAgent?.image || "/market-nurturer.png"}
         hasImage={true}
         status="Online Now"
         onImageClick={() => setIsImageModalOpen(true)}

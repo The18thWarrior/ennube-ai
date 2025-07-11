@@ -15,9 +15,15 @@ export default function UsageLogsList() {
     nextPage,
     prevPage
   } = useUsageLogs(ITEMS_PER_PAGE);
-
+  console.log(logs);
   const formatTimestamp = (timestamp: number) => {
-    return format(new Date(timestamp), 'PPpp');
+    if (!timestamp) return 'N/A';
+    try {
+      return format(new Date(Number(timestamp)), 'PPpp');
+    } catch (error) {
+      console.error('Error formatting timestamp:', error);
+      return 'Invalid date';
+    }
   };
 
   return (
