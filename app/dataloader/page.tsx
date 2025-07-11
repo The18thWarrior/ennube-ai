@@ -8,7 +8,7 @@ import { CrmDataLoaderCard } from "@/components/chat/tools/crm-data-loader-card"
 export default function LandingPage() {
   return (
     <>
-    <CrmDataLoaderCard records={[{ Id: '001VV00000RKDsqYAH', Name: 'Test Account' }]}/>
+    <CrmDataLoaderCard records={undefined}/>
     </>
   )
 }

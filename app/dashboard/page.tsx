@@ -188,7 +188,7 @@ function ExecutionsPageComponent() {
 
   return (
     <div className="container mx-auto py-8 px-4">
-      <h1 className="text-3xl font-bold mb-6">Agent Executions</h1>
+      <h1 className="text-3xl font-bold mb-6">Agent Action Details</h1>
 
       <div className="flex flex-col md:flex-row gap-4 mb-6">
         <div className="relative flex-1">
