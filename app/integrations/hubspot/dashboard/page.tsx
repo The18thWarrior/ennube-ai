@@ -11,7 +11,7 @@ import Link from "next/link"
 export default async function HubspotDashboard() {
   // Check if we have a NextAuth session with HubSpot OAuth data
   const session = await auth()
-  const displayQuickActions = false;
+  const displayQuickActions = true;
 
   // Check if we have HubSpot credentials
   const hubspotCredentials = await getHubSpotCredentialsById()
@@ -101,8 +101,24 @@ export default async function HubspotDashboard() {
             </div>
           )}
           
+          {displayQuickActions && <div className="p-6 bg-gray-50 dark:bg-gray-900 rounded-lg">
+            <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              
+
+              <Button asChild variant="outline" className="h-auto py-4 px-6 flex flex-col items-center justify-center gap-2 text-center">
+                <Link href={process.env.NEXT_PUBLIC_HUBSPOT_PACKAGE_URL as string} rel="noopener noreferrer" className="flex flex-col items-center justify-center gap-2 w-full">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+                  </svg>
+                  <span>Install Managed Package</span>
+                </Link>
+              </Button>
+            </div>
+          </div> }
+
           {/* Data Access Links */}
-          <div className="p-6 bg-gray-50 dark:bg-gray-900 rounded-lg">
+          {/* <div className="p-6 bg-gray-50 dark:bg-gray-900 rounded-lg">
             <h2 className="text-xl font-semibold mb-4">HubSpot Data</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Link href="/integrations/hubspot/contacts" passHref>
@@ -132,7 +148,7 @@ export default async function HubspotDashboard() {
                 </Button>
               </Link>
             </div>
-          </div>
+          </div> */}
         </>
       )}
       
