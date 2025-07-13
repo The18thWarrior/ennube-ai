@@ -56,6 +56,7 @@ export async function saveUserProfile(userSub: string, profile: Omit<UserProfile
     
     if (exists) {
       // Update existing user
+      console.log('Updating existing user profile:', userSub);
       await pool.query(
         `UPDATE user_profile 
          SET name = $1, email = $2, company = $3, job_role = $4, updated_at = $5
@@ -64,6 +65,7 @@ export async function saveUserProfile(userSub: string, profile: Omit<UserProfile
       );
     } else {
       // Insert new user
+      console.log('Inserting new user profile:', userSub);
       await pool.query(
         `INSERT INTO user_profile 
          (user_sub, name, email, company, job_role, updated_at)
@@ -72,7 +74,7 @@ export async function saveUserProfile(userSub: string, profile: Omit<UserProfile
       );
     }
     
-    console.log('Profile saved:', profileData);
+    console.log('Profile saved:', profileData.updatedAt);
     return true;
   } catch (error) {
     console.error('Error saving user profile:', error);
