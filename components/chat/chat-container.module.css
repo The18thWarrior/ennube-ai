@@ -140,16 +140,17 @@
   cursor: pointer;
   font-size: 15px;
   transition: background 0.2s;
+  background: linear-gradient(135deg, #3b82f6 0%, #a21caf 100%);
 }
 .sendButtonDisabled {
   background: #bbb !important;
   cursor: not-allowed;
 }
 .darkSendButton {
-  background: #2563eb;
+  /* background: #2563eb; */
 }
 .lightSendButton {
-  background: #1976d2;
+  /* background: #1976d2; */
 }
 .dark .sendButtonDisabled {
   background: #444 !important;

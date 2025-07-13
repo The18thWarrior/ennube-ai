@@ -92,10 +92,10 @@ function ChatSidebar({
                           onClick={() => onSelectAgent(agent.apiName)}
                           disabled={loading}
                         >
-                          <span className={'flex justify-between gap-2 mb-1'}>
-                            <Image src={agent.icon || '/logo.png'} alt={agent.name} width={60} height={60} className="rounded-full " />
+                          <span className={'flex start gap-2 mb-1 items-center'}>
+                            <Image src={agent.icon || '/logo.png'} alt={agent.name} width={30} height={30} className="rounded-full" />
                             <span>
-                              <span className="font-medium">{agent.name}</span>
+                              <span className="flex-1 text-sm font-bold">{agent.name}</span>
                               {agent.description && (
                                 <span className="block text-xs text-muted-foreground">{agent.description}</span>
                               )}
@@ -135,7 +135,7 @@ function ChatSidebar({
                       }
                     }}
                   >
-                    <span className="truncate flex-1">
+                    <span className="truncate flex-1 font-bold">
                       {thread.name || thread.messages[0]?.content?.slice(0, 30) || 'Untitled'}
                     </span>
                   </SidebarMenuButton>

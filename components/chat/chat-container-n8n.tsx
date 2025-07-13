@@ -52,15 +52,16 @@ const ChatContainer = () => {
             if (isJson(data.output)) {
                 if (parseAndValidateResponse(data.output, ComponentConfigSchema)) {
                     setMessages((msgs) => [...msgs, { role: 'bot', content: data.output, type: 'custom-ui' }]);
-                    return;
-                }
-                const jsonData = JSON.parse(data.output);
-                if (parseAndValidateResponse(jsonData.data, ComponentConfigSchema)) {
-                    setMessages((msgs) => [...msgs, { role: 'bot', content: data.output, type: 'custom-ui' }]);
-                    return;
-                } 
-                setMessages((msgs) => [...msgs, { role: 'bot', content: data.output, type: 'json' }]);
-                
+                    //return;
+                } else {
+                    const jsonData = JSON.parse(data.output);
+                    if (parseAndValidateResponse(jsonData.data, ComponentConfigSchema)) {
+                        setMessages((msgs) => [...msgs, { role: 'bot', content: data.output, type: 'custom-ui' }]);
+                        // return;
+                    } else {
+                        setMessages((msgs) => [...msgs, { role: 'bot', content: data.output, type: 'json' }]);
+                    }                    
+                }               
             } else {
                 setMessages((msgs) => [...msgs, { role: 'bot', content: data.text || data.message || data.output || JSON.stringify(data), type: 'text' }]);
             }
@@ -161,7 +162,7 @@ const ChatContainer = () => {
                     className={[
                         styles.sendButton,
                         loading ? styles.sendButtonDisabled : '',
-                        theme === 'dark' ? styles.darkSendButton : styles.lightSendButton
+                        //theme === 'dark' ? styles.darkSendButton : styles.lightSendButton
                     ].join(' ')}
                 >
                     {loading ? (
