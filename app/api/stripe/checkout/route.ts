@@ -8,7 +8,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
   typescript: true,
 });
 
-export async function POST(req: NextRequest) {
+export async function GET(req: NextRequest) {
   try {
     // Get the current session to identify the user
     const session = await auth();
@@ -21,8 +21,9 @@ export async function POST(req: NextRequest) {
     }
 
     const searchParams = req.nextUrl.searchParams;
-    const isPro = Boolean(searchParams.get('pro')) || false; // Default to 10 if not specified
-    
+    const pro = searchParams.get('pro');
+    const isPro = pro === "true"; // Default to 10 if not specified
+    console.log('Creating checkout session for user:', session.user.email, 'Pro:', isPro, pro);
     //STRIPE_PRICE_ID_PRO
 
     // Create a Stripe checkout session

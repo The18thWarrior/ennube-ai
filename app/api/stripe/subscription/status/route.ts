@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
     } else {
       isPrimary = true;
     }
-
+    console.log('Subscription found:', subscription);
     if (!subscription) return NextResponse.json({ error: 'No subscription found' },{ status: 500 });
 
     return NextResponse.json({ subscription: JSON.parse(JSON.stringify(subscription)), isPrimary });

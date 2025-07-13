@@ -13,7 +13,7 @@ export async function getCustomerSubscription (sub: string) {
         const subscriptionData = await stripe.subscriptions.search({
             query
         });
-        //onsole.log(subscriptionData);
+        console.log(subscriptionData);
         if (subscriptionData.data.length > 0) {
             const subscription = subscriptionData.data[0]; //subscription.customer;
             //console.log(subscription)
