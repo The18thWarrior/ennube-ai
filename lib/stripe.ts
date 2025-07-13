@@ -7,7 +7,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
 });
 export async function getCustomerSubscription (sub: string) {
     try {
-      const query = `status:'active' AND metadata['sub']:'${sub}'`;
+      const query = `(status:'active' OR status:'trialing') AND metadata['sub']:'${sub}'`;
       //console.log(query);
       //console.log()
         const subscriptionData = await stripe.subscriptions.search({
