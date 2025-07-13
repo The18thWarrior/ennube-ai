@@ -98,7 +98,7 @@ export async function getUserProfile(userSub: string, session?: Session | null):
        WHERE user_sub = $1`,
       [userSub]
     );
-    console.log('Query result:', result.rows);
+    //console.log('Query result:', result.rows);
     if (result.rows.length > 0) {
       return result.rows[0] as UserProfile;
     }
