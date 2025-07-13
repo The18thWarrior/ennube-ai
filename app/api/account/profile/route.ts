@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
     }
 
     const profile = await getUserProfile(userSub, session);
-    console.log('Fetched profile:', profile);
+    //console.log('Fetched profile:', profile);
     if (!profile) {
       // If no profile exists, return default values from session
       return NextResponse.json({

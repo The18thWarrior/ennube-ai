@@ -12,35 +12,47 @@ export default function ProfileInformation() {
   const { data: session } = useSession();
   const { profile, isLoading, error, updateProfile, isUpdating } = useProfile();
   const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    company: '',
-    jobRole: ''
-  });
+  const [email, setEmail] = useState(session?.user?.email || '');
+  // const [formData, setFormData] = useState({
+  //   name: '',
+  //   company: '',
+  //   jobRole: ''
+  // });
+  const [name, setName] = useState('');
+  const [company, setCompany] = useState('');
+  const [jobRole, setJobRole] = useState('');
   const { toast } = useToast();
 
   // Update form data when profile is loaded
   useEffect(() => {
     if (profile) {
-      setFormData({
-        name: profile.name,
-        company: profile.company,
-        jobRole: profile.jobRole
-      });
+      setEmail(profile.email || session?.user?.email || '');
+      setName(profile.name );
+      setCompany(profile.company);
+      setJobRole(profile.jobRole);
     }
   }, [profile]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+
+    switch (name) {
+      case 'name':
+        setName(value);
+        break;
+      case 'company':
+        setCompany(value);
+        break;
+      case 'jobRole':
+        setJobRole(value);
+        break;
+      default:
+        break;
+    }
   };
 
   const handleSave = async () => {
-    const success = await updateProfile(formData);
-    
+    const success = await updateProfile({ name, company, jobRole });
     if (success) {
       setIsEditing(false);
       toast({
@@ -96,58 +108,62 @@ export default function ProfileInformation() {
         {profile && 
             <div className="space-y-4">
                 <div className="grid gap-4">
-                <div className="space-y-2">
-                    <Label htmlFor="name">Full Name</Label>
-                    <Input
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    disabled={!isEditing || isLoading}
-                    placeholder="Enter your full name"
-                    />
-                </div>
-                
-                <div className="space-y-2">
-                    <Label htmlFor="email">Email Address</Label>
-                    <Input
-                    id="email"
-                    name="email"
-                    value={session?.user?.email || ''}
-                    disabled={true}
-                    placeholder="Your email address"
-                    className="bg-gray-50 dark:bg-gray-800"
-                    />
-                    <p className="text-xs text-muted-foreground mt-1">
-                    Email cannot be changed as it is linked to your account
-                    </p>
-                </div>
+                  <div className="space-y-2">
+                      <Label htmlFor="name">Full Name</Label>
+                      <Input
+                      id="name"
+                      name="name"
+                      value={name}
+                      onChange={handleChange}
+                      disabled={!isEditing || isLoading}
+                      placeholder="Enter your full name"
+                      type="text"
+                      />
+                  </div>
+                  
+                  <div className="space-y-2">
+                      <Label htmlFor="email">Email Address</Label>
+                      <Input
+                      id="email"
+                      name="email"
+                      value={email}
+                      disabled={true}
+                      placeholder="Your email address"
+                      className="bg-gray-50 dark:bg-gray-800"
+                      type="text"
+                      />
+                      <p className="text-xs text-muted-foreground mt-1">
+                      Email cannot be changed as it is linked to your account
+                      </p>
+                  </div>
                 </div>
                 
                 <div className="grid  gap-4">
-                <div className="space-y-2">
-                    <Label htmlFor="company">Company</Label>
-                    <Input
-                    id="company"
-                    name="company"
-                    value={formData.company}
-                    onChange={handleChange}
-                    disabled={!isEditing}
-                    placeholder="Enter your company name"
-                    />
-                </div>
-                
-                <div className="space-y-2">
-                    <Label htmlFor="jobRole">Job Role</Label>
-                    <Input
-                    id="jobRole"
-                    name="jobRole"
-                    value={formData.jobRole}
-                    onChange={handleChange}
-                    disabled={!isEditing || isLoading}
-                    placeholder="Enter your job role"
-                    />
-                </div>
+                  <div className="space-y-2">
+                      <Label htmlFor="company">Company</Label>
+                      <Input
+                      id="company"
+                      name="company"
+                      value={company}
+                      onChange={handleChange}
+                      disabled={!isEditing}
+                      placeholder="Enter your company name"
+                      type="text"
+                      />
+                  </div>
+                  
+                  <div className="space-y-2">
+                      <Label htmlFor="jobRole">Job Role</Label>
+                      <Input
+                      id="jobRole"
+                      name="jobRole"
+                      value={jobRole}
+                      onChange={handleChange}
+                      disabled={!isEditing || isLoading}
+                      placeholder="Enter your job role"
+                      type="text"
+                      />
+                  </div>
                 </div>
             </div>
         }

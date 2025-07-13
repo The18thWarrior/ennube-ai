@@ -15,13 +15,13 @@ const pool = new Pool({
 });
 
 // Test the connection and log success or error
-pool.query('SELECT NOW()', (err, res) => {
-  if (err) {
-    console.error('Error connecting to PostgreSQL database:', err);
-  } else {
-    console.log('PostgreSQL connected successfully');
-  }
-});
+// pool.query('SELECT NOW()', (err, res) => {
+//   if (err) {
+//     console.error('Error connecting to PostgreSQL database:', err);
+//   } else {
+//     console.log('PostgreSQL connected successfully');
+//   }
+// });
 
 // Table name for licenses
 const LICENSE_TABLE = "licenses";

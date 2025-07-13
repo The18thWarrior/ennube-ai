@@ -36,6 +36,7 @@ export function useProfile(): UseProfileReturn {
         }
         
         const profileData = await response.json();
+        //console.log(profileData);
         setProfile(profileData);
       } catch (err) {
         console.error('Error loading profile:', err);
