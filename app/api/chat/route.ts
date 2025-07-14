@@ -114,6 +114,6 @@ export async function GET(req: NextRequest) {
   const agent = searchParams.get('agent') || 'data-steward';
   // Get the chat history for the user
   const id = nanoid();
-  await setThread(id, userSub, [], null);
+  await setThread(id, userSub, [], null, agent);
   return NextResponse.json({id, agent}, { status: 200 });
 }
