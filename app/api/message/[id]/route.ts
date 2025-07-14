@@ -24,10 +24,19 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     }
     const thread = await getThread(threadId);
     if (!thread) {
-      console.log('Thread not found', { threadId });
-        return NextResponse.json({ error: 'Thread not found' }, { status: 404 });
-    }
-    return NextResponse.json(thread);
+      setTimeout(async () => {
+        const thread2 = await getThread(threadId);
+        if (thread2) {
+          return NextResponse.json(thread2);
+        } else {
+          console.log('Thread not found', { threadId });
+          return NextResponse.json({ error: 'Thread not found' }, { status: 404 });
+        }
+      }, 5000)
+      
+    } else {
+      return NextResponse.json(thread);
+    }    
 }
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
