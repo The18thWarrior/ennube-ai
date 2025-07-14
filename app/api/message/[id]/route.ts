@@ -41,12 +41,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     }
     const subId = session.user.auth0.sub;
     const { id: threadId } = await params;
-    const { messages, name } = await req.json();
+    const { messages, name, currentAgent } = await req.json();
     if (!threadId || !subId || !Array.isArray(messages)) {
       console.log('Missing threadId, subId, or messages', { threadId, subId, messages }); 
         return NextResponse.json({ error: 'Missing threadId, subId, or messages' }, { status: 400 });
     }
-    await setThread(threadId, subId, messages, name);
+    await setThread(threadId, subId, messages, name, currentAgent);
     return NextResponse.json({ success: true });
 }
 

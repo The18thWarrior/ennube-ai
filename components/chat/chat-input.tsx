@@ -28,7 +28,7 @@ export default function ChatInput({ input, handleInputChange, handleSubmit, isLo
         className="flex-1"
       />
       <Button type="submit" disabled={isLoading || !input.trim()} size="icon" className={styles.sendButton}>
-        <Send className={`h-4 w-4 ${theme === 'dark' ? 'text-white' : 'text-black'}`} />
+        <Send className={`h-4 w-4 text-white`} />
         <span className="sr-only">Send message</span>
       </Button>
     </form>

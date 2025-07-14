@@ -35,12 +35,12 @@ export function useMessageHistory() {
   }, []);
 
   // Create or update a thread
-  const setThread = useCallback(async (threadId: string, messages: any[], name: string) => {
+  const setThread = useCallback(async (threadId: string, messages: any[], name: string, currentAgent: string) => {
     console.log('Setting thread:', threadId, name);
     const res = await fetch(`/api/message/${encodeURIComponent(threadId)}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ messages, name }),
+      body: JSON.stringify({ messages, name, currentAgent }),
     });
     if (!res.ok) throw new Error('Failed to set thread');
     return res.json();

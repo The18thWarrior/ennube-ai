@@ -32,16 +32,17 @@ export async function getThread(threadId: string): Promise<ThreadHistory | null>
   }
 }
 
-export async function setThread(threadId: string, subId: string, messages: Message[], name: string | null): Promise<void> {
+export async function setThread(threadId: string, subId: string, messages: Message[], name: string | null, currentAgent: string): Promise<void> {
   let existingThread = await getThread(threadId);
   if (existingThread) {
     if (messages.length > 0) existingThread.messages = [...messages];
     existingThread.lastUpdated = Date.now();
+    existingThread.currentAgent = currentAgent;
     //console.log('Updated thread name:', name);
     if (name) existingThread.name = name;
     await redis.set(THREAD_PREFIX + threadId, JSON.stringify(existingThread));
   } else {
-    await redis.set(THREAD_PREFIX + threadId, JSON.stringify({ threadId, messages, lastUpdated: Date.now(), name }));
+    await redis.set(THREAD_PREFIX + threadId, JSON.stringify({ threadId, messages, lastUpdated: Date.now(), name, currentAgent }));
   }
   
   

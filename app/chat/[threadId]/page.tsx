@@ -37,7 +37,7 @@ export default function ChatPage(props: { params: Promise<{ threadId: string }> 
   return (
     
         <ToastProvider>
-            <div className={'px-8 mb-8'}>
+            <div className={'px-8 mb-8 '} style={{scrollbarColor: 'black'}}>
                 <Chat id={threadId} initialMessages={thread?.messages || undefined} name={thread?.name} agent={agent}/>
             </div>      
         </ToastProvider>

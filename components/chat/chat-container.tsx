@@ -90,7 +90,7 @@ const ChatContainer = ({
         if (mounted) {
             console.log(messages);
             if (messages.length > 0) {
-                setThread(threadId, [...messages], _name || '');
+                setThread(threadId, [...messages], _name || '', selectedAvatar);
             }
             //setThread(threadId, [...messages], _name || '');
         }
@@ -102,42 +102,51 @@ const ChatContainer = ({
 
     const handleNameSave = async () => {
         setIsEditingName(false);
-        await setThread(threadId, [], _name || '');
+        await setThread(threadId, [], _name || '', selectedAvatar);
     };
 
     if (!theme || !mounted) return <div />;
 
     return (
-        <div>
+        <div className="flex flex-col h-full shadow-lg relative" >
             {/* EditableField for Name */}
-            <div className="flex justify-between items-start group mb-4 ml-6">
-                {/* <svg className="mr-3 h-4 w-4 text-muted-foreground mt-1 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /></svg> */}
-                <NameComponent isEditingName={isEditingName} _name={_name} setName={setName} handleNameSave={handleNameSave} setIsEditingName={setIsEditingName} />
-                <AgentSelector selectedAvatar={selectedAvatar} setSelectedAvatar={setSelectedAvatar} />
-            </div>
+            <div className={'rounded-lg border border-gray-200 dark:border-gray-700 min-h-fit'} style={{maxHeight:"calc(100vh - 240px)", scrollbarColor: 'transparent'}}>
+                <div className="flex justify-between items-start group mb-4 p-3 border-b">
+                    {/* <svg className="mr-3 h-4 w-4 text-muted-foreground mt-1 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /></svg> */}
+                    <div className={'px-2'}>
+                        <NameComponent isEditingName={isEditingName} _name={_name} setName={setName} handleNameSave={handleNameSave} setIsEditingName={setIsEditingName} />
+                    </div>
+                    {/* <AgentSelector selectedAvatar={selectedAvatar} setSelectedAvatar={setSelectedAvatar} /> */}
+                    <div className="flex items-center gap-2 px-2 py-1 rounded">
+                        {avatarOptions.find(a => a.key === selectedAvatar)?.avatar}
+                        <span className="text-xs text-muted-foreground">{avatarOptions.find(a => a.key === selectedAvatar)?.label}</span>
+                    </div>
+                </div>
 
-            <div
-                className={[
-                    styles.chatContainer,
-                    //theme === 'dark' ? styles.dark : styles.light,
-                ].join(' ')}
-            >
-                <div className={[styles.messagesArea, 'mb-16'].join(' ')}>
-                    {messages.map((msg, idx) => (
-                        <div
-                            key={idx}
-                            className={[
-                                styles.messageRow,
-                                msg.role === 'user' ? styles.userRow : styles.botRow,
-                            ].join(' ')}
-                        >
-                            {renderMessage(msg, idx, theme)}
-                        </div>
-                    ))}
-                    <div ref={messagesEndRef}></div>
+                <div
+                    className={[
+                        styles.chatContainer,
+                    
+                        //theme === 'dark' ? styles.dark : styles.light,
+                    ].join(' ')}
+                    style={{scrollbarColor: 'none'}}
+                >
+                    <div className={[styles.messagesArea, 'mb-16'].join(' ')}>
+                        {messages.map((msg, idx) => (
+                            <div
+                                key={idx}
+                                className={[
+                                    styles.messageRow,
+                                    msg.role === 'user' ? styles.userRow : styles.botRow,
+                                ].join(' ')}
+                            >
+                                {renderMessage(msg, idx, theme)}
+                            </div>
+                        ))}
+                        <div ref={messagesEndRef}></div>
+                    </div>
                 </div>
             </div>
-
             <div className={`p-4 md:py-8 md:p-6 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 fixed bottom-0 ${styles.wfill}`}>
                 {error && <div className="text-red-500 mb-2">Error: {error.message}</div>}
                 <ChatInput
