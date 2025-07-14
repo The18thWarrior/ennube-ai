@@ -1,5 +1,6 @@
 import { Tool, tool } from "ai";
 import z from "zod";
+import { getBaseUrl } from "./helper";
 
 
 // Tool: Get Fields
@@ -8,7 +9,8 @@ export const getFieldsTool = (subId: string) => {
         description: 'Introspect a Salesforce sObject and return a JSON payload listing every valid field available for use.',
         async execute({ sobjectType, limit = 1 }: { sobjectType: string, limit?: number}) {
             if (!subId) throw new Error('subId is required');
-            const url = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/salesforce/describe?sub=${encodeURIComponent(subId)}&sobjectType=${encodeURIComponent(sobjectType)}`;
+            const baseUrl = await getBaseUrl();
+            const url = `${baseUrl}/api/salesforce/describe?sub=${encodeURIComponent(subId)}&sobjectType=${encodeURIComponent(sobjectType)}`;
             const res = await fetch(url);
             if (!res.ok) throw new Error('Failed to fetch fields');
             const data = await res.json();

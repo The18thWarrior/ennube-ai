@@ -1,5 +1,6 @@
 import { tool } from "ai";
 import z from "zod";
+import { getBaseUrl } from "./helper";
 
 
 // Tool: Get Fields
@@ -9,7 +10,8 @@ export const getCountTool = (subId: string) => {
       async execute({ sobject, filter }: { sobject: string, filter: string }) {
         if (!subId) throw new Error('subId is required');
         const soql = `SELECT COUNT() FROM ${sobject} WHERE ${filter}`;
-        const url = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/salesforce/query?sub=${encodeURIComponent(subId)}&soql=${encodeURIComponent(soql)}`;
+        const baseUrl = await getBaseUrl();
+        const url = `${baseUrl}/api/salesforce/query?sub=${encodeURIComponent(subId)}&soql=${encodeURIComponent(soql)}`;
         const res = await fetch(url);
         if (!res.ok) throw new Error('Failed to fetch data');
         const data = await res.json();
