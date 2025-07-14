@@ -7,12 +7,14 @@ export const getDataTool = (subId: string) => {
     return tool({
       description: 'Query Salesforce for CRM data.',
       async execute({ limit, sobject, filter }: { limit: number, sobject: string, filter: string }) {
+        console.log('getDataTool called with:', { limit, sobject, filter, subId });
         if (!subId) throw new Error('subId is required');
         const soql = `SELECT FIELDS(ALL) FROM ${sobject} WHERE ${filter} LIMIT ${limit}`;
         const url = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/salesforce/query?sub=${encodeURIComponent(subId)}&soql=${encodeURIComponent(soql)}`;
         const res = await fetch(url);
         if (!res.ok) throw new Error('Failed to fetch data');
         const data = await res.json();
+        console.log('Data fetched:', data);
         return data;
       },
       parameters: z.object({
