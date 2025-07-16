@@ -61,16 +61,17 @@ export async function POST(req: NextRequest) {
         getCount: getCountTool(userSub),
         callWorkflowTool: getWorkflowTool(agent as 'data-steward' | 'prospect-finder'),
       },
-      messages: messages.map((msg: any) => {
-        return {
-          role: msg.role,
-          content: msg.content,
-          toolCalls: msg.toolCalls || [],
-          // If the message has tool calls, we need to include them in the response
-          // so that the agent can use them in its next step
-          ...(msg.toolCalls ? { toolCalls: msg.toolCalls } : {}),
-        }
-      }), 
+      messages: messages,
+      // messages: messages.map((msg: any) => {
+      //   return {
+      //     role: msg.role,
+      //     content: msg.content,
+      //     toolCalls: msg.toolCalls || [],
+      //     // If the message has tool calls, we need to include them in the response
+      //     // so that the agent can use them in its next step
+      //     ...(msg.toolCalls ? { toolCalls: msg.toolCalls } : {}),
+      //   }
+      // }), 
       // experimental_output: Output.object({
       //   schema: z.object({
       //     message: z.string().describe('The message to return to the user.'),

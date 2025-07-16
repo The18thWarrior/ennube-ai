@@ -22,10 +22,11 @@ export function JsonView({ data, classNames }: JsonViewProps) {
           name={null}
           theme={theme === "dark" ? "tomorrow" : "rjv-default"}
           collapsed={2}
-          enableClipboard={true}
-          onAdd={() => {return false;}}
-          onDelete={() => {return false;}}
-          onEdit={() => {return false;}}
+          enableClipboard={false}
+          
+          onAdd={undefined}
+          onDelete={undefined}
+          onEdit={undefined}
           displayDataTypes={false}
           style={{ fontSize: 13 }}
         />
