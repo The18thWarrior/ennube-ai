@@ -19,8 +19,7 @@ export const agents = [
       name: "Prospect Finder",
       apiName: 'prospect-finder',
       role: "Lead Generation Specialist",
-      description:
-        "Creates ideal customer profiles, updates them every 30 days, and finds matching prospects while incorporating feedback from Slack.",
+      description: "Helps with creating your ideal customer profiles and finds matching prospects while incorporating feedback from users.",
       image: "/prospect-finder.png",
       link: "/agents/prospect-finder",
       categories: ["sales", "leads", "prospecting"],
