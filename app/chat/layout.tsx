@@ -16,6 +16,8 @@ import {
   SidebarMenuAction,
   SidebarSeparator,
   SidebarInset,
+  SidebarTrigger,
+  useSidebar,
 } from '../../components/ui/sidebar';
 import { useRouter, usePathname } from 'next/navigation';
 import { Delete, History, SquarePlus, Trash2 } from 'lucide-react';
@@ -60,10 +62,12 @@ function ChatSidebar({
   showAgentSelect: boolean;
   setShowAgentSelect: (show: boolean) => void;
 }) {
+
+  const { toggleSidebar } = useSidebar()
   return (
-    <SidebarProvider>
-      <Sidebar className="min-h-50 border-r bg-muted/40 " variant={'inset'}>
+      <Sidebar className="min-h-50 " variant={'floating'} collapsible={'icon'}>
         <SidebarHeader>
+          
           <div className="flex items-center justify-between">
             <span className="font-semibold text-lg">Chats</span>
           </div>
@@ -82,7 +86,7 @@ function ChatSidebar({
                 </SidebarMenuButton>
               </SidebarMenuItem>
               { (
-                <div id="agent-select-section" className={`bg-muted rounded transition-height duration-300 ease-in-out ${showAgentSelect ? 'h-auto p-2 mt-2' : 'h-0 overflow-hidden m-0 p-0'}`}>
+                <div id="agent-select-section" className={`rounded transition-height duration-300 ease-in-out ${showAgentSelect ? 'h-auto p-2 mt-2' : 'h-0 overflow-hidden m-0 p-0'}`}>
                   {/* <div className="mb-2 text-xs font-semibold text-muted-foreground">Select an agent:</div> */}
                   <ul className="space-y-1">
                     {agents.map((agent) => (
@@ -93,7 +97,7 @@ function ChatSidebar({
                           disabled={loading}
                         >
                           <span className={'flex start gap-2 mb-1 items-center'}>
-                            <Image src={agent.icon || '/logo.png'} alt={agent.name} width={30} height={30} className="rounded-full" />
+                            <Image src={agent.icon || '/logo.png'} alt={agent.name} width={35} height={35} className="rounded-full" />
                             <span>
                               <span className="flex-1 text-sm font-bold">{agent.name}</span>
                               {agent.description && (
@@ -162,7 +166,6 @@ function ChatSidebar({
           </button>
         </SidebarFooter>
       </Sidebar>
-    </SidebarProvider>
   );
 }
 
@@ -246,21 +249,23 @@ export default function ChatLayout({ children }: { children: React.ReactNode }) 
   return (
     <div className="">
       <div className="flex">
-        <ChatSidebar
-          threads={threads}
-          onNewChat={() => setShowAgentSelect((v) => !v)}
-          onDeleteThread={handleDeleteThread}
-          onDeleteAll={handleDeleteAll}
-          loading={loading}
-          activeThreadId={activeThreadId}
-          agents={activeAgents}
-          onSelectAgent={handleSelectAgent}
-          showAgentSelect={showAgentSelect}
-          setShowAgentSelect={setShowAgentSelect}
-        />
-        <SidebarInset className="flex flex-col bg-lavender-chat">
-          <div className="flex-1 overflow-auto">{children}</div>
-        </SidebarInset>
+        <SidebarProvider>
+          <ChatSidebar
+            threads={threads}
+            onNewChat={() => setShowAgentSelect((v) => !v)}
+            onDeleteThread={handleDeleteThread}
+            onDeleteAll={handleDeleteAll}
+            loading={loading}
+            activeThreadId={activeThreadId}
+            agents={activeAgents}
+            onSelectAgent={handleSelectAgent}
+            showAgentSelect={showAgentSelect}
+            setShowAgentSelect={setShowAgentSelect}
+          />
+          <SidebarInset className="flex flex-col bg-lavender-chat">
+            <div className="flex-1 overflow-auto">{children}</div>
+          </SidebarInset>
+        </SidebarProvider>
       </div>
     </div>
   );

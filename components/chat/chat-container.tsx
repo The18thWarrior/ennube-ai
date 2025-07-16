@@ -105,6 +105,8 @@ const ChatContainer = ({
         await setThread(threadId, [], _name || '', selectedAvatar);
     };
 
+    const Agent = avatarOptions.find(a => a.key === selectedAvatar)?.avatar;
+
     if (!theme || !mounted) return <div />;
 
     return (
@@ -119,7 +121,7 @@ const ChatContainer = ({
                     {/* <AgentSelector selectedAvatar={selectedAvatar} setSelectedAvatar={setSelectedAvatar} /> */}
                     <div className="flex items-center gap-2 px-2 py-1 rounded">
                         {avatarOptions.find(a => a.key === selectedAvatar)?.avatar}
-                        <span className="text-xs text-muted-foreground">{avatarOptions.find(a => a.key === selectedAvatar)?.label}</span>
+                        {/* <span className="text-xs text-muted-foreground">{avatarOptions.find(a => a.key === selectedAvatar)?.label}</span> */}
                     </div>
                 </div>
 
@@ -140,7 +142,7 @@ const ChatContainer = ({
                                     msg.role === 'user' ? styles.userRow : styles.botRow,
                                 ].join(' ')}
                             >
-                                {renderMessage(msg, idx, theme)}
+                                {renderMessage(msg, idx, Agent, theme)}
                             </div>
                         ))}
                         <div ref={messagesEndRef}></div>

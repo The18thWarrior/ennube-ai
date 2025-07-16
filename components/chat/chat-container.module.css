@@ -78,9 +78,9 @@
   border: none;
 }
 .botBubble {
-  background: #f1f8e9;
+  /* background: #f1f8e9; */
   color: #222;
-  border: 1px solid #e0e0e0;
+  /* border: 1px solid #e0e0e0; */
 }
 .darkBubble.userBubble {
   background: #2563eb;
@@ -89,16 +89,16 @@
 .darkBubble.botBubble {
   background: #27272a;
   color: #f3f3f3;
-  border: 1px solid #333;
+  /* border: 1px solid #333; */
 }
 .lightBubble.userBubble {
   background: #1976d2;
   color: #fff;
 }
 .lightBubble.botBubble {
-  background: #f1f8e9;
+  /*background: #f3f4f6;*/
   color: #222;
-  border: 1px solid #e0e0e0;
+  /* border: 1px solid #e0e0e0; */
 }
 .inputRow {
   display: flex;

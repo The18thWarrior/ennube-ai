@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, ReactNode } from 'react';
 import { useSession } from 'next-auth/react';
 import { useTheme } from '../theme-provider';
 import styles from './chat-container.module.css';
@@ -18,7 +18,7 @@ import ReactMarkdown from 'react-markdown';
 import { Card, CardContent } from '../ui';
 import { CrmRecordListTable } from './tools/crm-record-list-table';
 import { CrmRecordDetailCard } from './tools/crm-record-detail-card';
-import { Loader2 } from 'lucide-react';
+import { Loader2, User } from 'lucide-react';
 import { RecordIcon } from './tools/icon-map';
 import CrmResultCard from './tools/crm-result-card';
 import { UsageLogEntry } from '@/lib/db/usage-logs';
@@ -26,11 +26,11 @@ import dayjs from 'dayjs';
 import { ExecutionDetailsPanel } from '@/components/executions/execution-details-panel';
 
 // Custom message rendering
-export const renderMessage = (msg: Message, idx: number, theme: 'dark' | 'light' | 'system') => {
+export const renderMessage = (msg: Message, idx: number, agent: ReactNode, theme: 'dark' | 'light' | 'system') => {
     //console.log(msg);
     // If the message is from the user, always render as text
     if (msg.role === 'user') {
-        return RenderHtmlComponent(DefaultMessageComponent(msg, theme), msg, theme);
+        return RenderHtmlComponent(DefaultMessageComponent(msg, theme), msg, theme, agent);
     }
 
     // Try to parse the message for custom-ui or json
@@ -46,7 +46,7 @@ export const renderMessage = (msg: Message, idx: number, theme: 'dark' | 'light'
                     ].join(' ')}
                     style={{ padding: 0, background: 'none', border: 'none' }}
                 >
-                    {RenderHtmlComponent(<CustomResponse config={getJsonData(msg.content)} />, msg, theme)}
+                    {RenderHtmlComponent(<CustomResponse config={getJsonData(msg.content)} />, msg, theme, agent)}
                 </span>
             );
         }
@@ -61,7 +61,7 @@ export const renderMessage = (msg: Message, idx: number, theme: 'dark' | 'light'
                     ].join(' ')}
                     style={{ padding: 0, background: 'none', border: 'none' }}
                 >
-                    {RenderHtmlComponent(<CustomResponse config={jsonData.data} />, msg, theme)}
+                    {RenderHtmlComponent(<CustomResponse config={jsonData.data} />, msg, theme, agent)}
                 </span>
             );
         }
@@ -75,7 +75,7 @@ export const renderMessage = (msg: Message, idx: number, theme: 'dark' | 'light'
                     ].join(' ')}
                     style={{ padding: 0, background: 'none', border: 'none' }}
                 >
-                    {RenderHtmlComponent( MessageComponentWrapper(<JsonView data={jsonData} />, msg.role, theme), msg, theme)}
+                    {RenderHtmlComponent( MessageComponentWrapper(<JsonView data={jsonData} />, msg.role, theme), msg, theme, agent)}
                 </span>
             );
         }
@@ -89,14 +89,14 @@ export const renderMessage = (msg: Message, idx: number, theme: 'dark' | 'light'
                 ].join(' ')}
                 style={{ padding: 0, background: 'none', border: 'none' }}
             >
-                {RenderHtmlComponent( MessageComponentWrapper(<JsonView data={jsonData} />, msg.role, theme), msg, theme)}
+                {RenderHtmlComponent( MessageComponentWrapper(<JsonView data={jsonData} />, msg.role, theme), msg, theme, agent)}
             </span>
         );
         
     }
 
     // Default: render as text
-    return RenderHtmlComponent(DefaultMessageComponent(msg, theme), msg, theme);
+    return RenderHtmlComponent(DefaultMessageComponent(msg, theme), msg, theme, agent);
 };
 
 const DefaultMessageComponent = (msg: Message, theme: 'dark' | 'light' | 'system') => {
@@ -115,8 +115,13 @@ const MessageComponentWrapper = (Component: React.ReactElement, role:string, the
     </span>
 );
 
-const RenderHtmlComponent = (Component : React.ReactElement, msg: Message, theme: 'dark' | 'light' | 'system') => (
-    <div>
+const RenderHtmlComponent = (Component : React.ReactElement, msg: Message, theme: 'dark' | 'light' | 'system', agent: ReactNode) => (
+    <div className={'flex items-start gap-2'}>
+        {msg.role === 'assistant' && 
+            <div className="flex aspect-square size-12 items-center justify-center rounded-full overflow-hidden flex-shrink-0 mt-2 ">
+                {agent}
+            </div>
+        }
         <Card
             className={cn("mx-2", msg.role === "user" ? "" : "bg-card", "")}
           >
@@ -212,6 +217,11 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: Message, theme
             </CardContent>
         
         </Card>
+        {msg.role === 'user' &&
+            <div className="flex aspect-square size-12 items-center justify-center rounded-full overflow-hidden flex-shrink-0 mt-2 ">
+              <User className="h-5 w-5" />
+            </div>
+        }
     </div>
 )
 
