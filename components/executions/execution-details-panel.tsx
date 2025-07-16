@@ -148,7 +148,7 @@ export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, colla
             </div>
             <div className="bg-gray-50 p-4 rounded-lg">
               <h3 className="text-sm font-medium text-gray-500">EXECUTION TIME</h3>
-              <p className="dark:text-gray-400">{execution.execution_time ? `${(execution.execution_time).toFixed(2)} seconds` : "Running..."}</p>
+              <p className="dark:text-gray-400">{execution.execution_time ? `${(execution.execution_time).toFixed(2)} seconds` : execution.status === "success" || execution.status === "failed" ? "Unknown" :"Running..."}</p>
             </div>
             <div className="bg-gray-50 p-4 rounded-lg">
               <h3 className="text-sm font-medium text-gray-500">DATE</h3>

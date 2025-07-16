@@ -69,7 +69,9 @@ export function ExecutionsList({ executions, onSelectExecution, selectedExecutio
               <div className="text-right">
                 {execution.execution_time ? (
                   <p className="text-sm font-medium">{(execution.execution_time).toFixed(2)}s</p>
-                ) : (
+                ) : execution.status === "success" || execution.status === "failed" ? (
+                  <p className="text-sm font-medium">Partial Completion</p>
+                ): (
                   <p className="text-sm font-medium text-amber-500">Running...</p>
                 )}
               </div>
