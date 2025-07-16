@@ -1,5 +1,5 @@
 "use client"
-import React from "react"
+import React, { useEffect } from "react"
 
 import Image from "next/image"
 import { formatDistanceToNow } from "date-fns"
@@ -62,6 +62,12 @@ export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, colla
       </Card>
     )
   }
+
+  useEffect(() => {
+    setFlip(false);
+    setFlipping(false);
+    setSelectedRecordId(null);
+  }, [execution]);
 
   const hasResponseData = execution.response_data && true;
   const executionSummary = !hasResponseData ? "" : (execution.response_data.recordsUpdated || execution.response_data.recordsCreated) ? `Created ${execution.response_data.recordsCreated || 0} records and updated ${execution.response_data.recordsUpdated || 0} records` : execution.response_data.execution_summary;
