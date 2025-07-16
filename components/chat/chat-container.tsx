@@ -82,7 +82,7 @@ const ChatContainer = ({
     useEffect(() => {
         if (mounted) {
             //console.log(messages);
-            messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+            messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'end'});
             //setThread(threadId, [...messages], _name || '');
         }
     }, [messages.length, mounted]);

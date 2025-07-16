@@ -193,3 +193,9 @@ export const getAgentImage = (agentName: string) => {
   }
   return "/data-steward.png" // Fallback image
 }
+
+const salesforceIdRegex = /^[a-zA-Z0-9]{15,18}$/;
+
+export function isValidSalesforceId(id: string): boolean {
+  return salesforceIdRegex.test(id);
+}

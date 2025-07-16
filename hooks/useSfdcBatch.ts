@@ -1,7 +1,8 @@
 
 import { useState, useEffect } from 'react';
-import { createConnection, describeGlobal, bulk as bulkAsync, describe as describeAsync } from '@/lib/salesforce-client';
+import { createConnection, describeGlobal as describeGlobalAsync, bulk as bulkAsync, describe as describeAsync } from '@/lib/salesforce-client';
 import { Connection } from 'jsforce';
+import { } from 'jsforce/lib/types/common'
 import { getDescribeGlobalResult, storeDescribeGlobalResult } from '@/lib/client-cache/salesforce';
 
 /**
@@ -20,6 +21,12 @@ export function useSfdcBatch() {
       setIsLoading(true);
       setError(null);
       try {
+        let describeResult = await getDescribeGlobalResult();
+        if (describeResult && isMounted) {
+          setDescribeGlobal(describeResult);
+          return; // Use cached result if available
+        }
+
         const res = await fetch('/api/salesforce/credentials');
         if (!res.ok) throw new Error('Failed to fetch Salesforce credentials');
         const data = await res.json();
@@ -32,10 +39,9 @@ export function useSfdcBatch() {
         if (isMounted) setClient(sfdcClient);
 
         // Try to get describeGlobal from cache
-        let describeResult = await getDescribeGlobalResult();
         if (!describeResult) {
           // If not in cache, fetch from Salesforce and store
-          describeResult = await describeGlobal(sfdcClient);
+          describeResult = await describeGlobalAsync(sfdcClient);
           await storeDescribeGlobalResult(describeResult as import('jsforce/lib/types/common').DescribeGlobalResult);
         }
         if (isMounted) setDescribeGlobal(describeResult);

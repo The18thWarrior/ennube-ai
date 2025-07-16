@@ -47,9 +47,11 @@ interface CrmRecordDetailCardProps {
     label: string
     value: React.ReactNode
   }[]
+  updatedAt?: number
   notes?: string
   htmlBody?: string
   showListButton?: boolean
+  listButtonText?: string
   goToList?: () => void
 }
 
@@ -61,7 +63,9 @@ export function CrmRecordDetailCard({
   fields,
   notes,
   htmlBody,
+  updatedAt,
   showListButton,
+  listButtonText,
   goToList
 }: CrmRecordDetailCardProps) {
   const [open, setOpen] = React.useState(false)
@@ -72,7 +76,7 @@ export function CrmRecordDetailCard({
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           {showListButton && 
-            <Button variant='ghost' size="sm" className={'w-fit'} onClick={goToList}>Back to List</Button>
+            <Button variant='ghost' size="sm" className={'w-fit'} onClick={goToList}>{listButtonText || 'Back to List'}</Button>
           }
           {/* {
             <CrmDataLoaderModal
@@ -114,6 +118,12 @@ export function CrmRecordDetailCard({
               ))}
             </CollapsibleContent>
           )}
+          {/* Updated at timestamp */}
+          {updatedAt && (
+            <div className="text-xs text-muted-foreground mt-2">
+              Last updated: {new Date(updatedAt).toLocaleString()}
+            </div>
+          )}
           {/* Expand/collapse button */}
           {hasExtraFields && (
             <div className="flex justify-center pt-2">
@@ -126,7 +136,7 @@ export function CrmRecordDetailCard({
           )}
         </Collapsible>
         {/* Email body section */}
-        {htmlBody && (
+        {/*htmlBody && (
           <div className="mt-auto pt-4">
             <h4 className="text-sm font-semibold flex items-center mb-1">Email Body</h4>
             <div
@@ -134,9 +144,9 @@ export function CrmRecordDetailCard({
               dangerouslySetInnerHTML={{ __html: htmlBody }}
             />
           </div>
-        )}
+        )*/}
         {/* Notes section */}
-        {notes !== undefined && !htmlBody && (
+        {/*notes !== undefined && !htmlBody && (
           <div className="mt-auto pt-4">
             <div className="flex items-center group mb-1">
               <h4 className="text-sm font-semibold flex items-center">
@@ -158,7 +168,7 @@ export function CrmRecordDetailCard({
               <p className="text-sm text-muted-foreground italic p-2">No notes added.</p>
             )}
           </div>
-        )}
+        )*/}
       </CardContent>
     </Card>
   )
