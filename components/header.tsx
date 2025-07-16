@@ -13,7 +13,7 @@ export default async function Header() {
     <header className="sticky flex justify-center border-b bg-transparent">
       <div className="mx-auto flex h-16 w-full items-center justify-between px-4 sm:px-6">
         <CustomLink href="/">
-          <Button variant="none" className="p-0 text-md content-end flex items-center gap-2">
+          <Button variant="none" className="p-0 text-lg font-bold content-end flex items-center gap-2">
             <Image
               src="/logo.png"
               alt="Home"

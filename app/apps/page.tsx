@@ -52,8 +52,8 @@ export default function AppsLayout() {
        return (
 	       <main className="min-h-screen bg-white dark:bg-neutral-950 text-black dark:text-white py-12 px-4">
 		       <div className="max-w-4xl mx-auto">
-			       <h1 className="text-3xl text-black dark:text-white font-bold mb-2">Apps</h1>
-			       <p className="text-neutral-600 dark:text-neutral-400 mb-8">Access a variety of AI-powered applications to enhance your productivity.</p>
+			       <h1 className="text-xl text-black dark:text-white font-bold mb-2">Apps</h1>
+			       <p className="text-neutral-600 dark:text-neutral-400 mb-8">AI Agent powered applications that enhance your productivity and seamlessly connect your business systems.</p>
 			       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
 				       {apps.map((app, idx) => (
 							       <Link
@@ -77,9 +77,9 @@ export default function AppsLayout() {
 							       </Link>
 				       ))}
 			       </div>
-			       <div className="flex justify-center mt-10">
+			       {/* <div className="flex justify-center mt-10">
 				       <button className="bg-neutral-200 dark:bg-neutral-800 text-black dark:text-white px-6 py-2 rounded-full hover:bg-neutral-300 dark:hover:bg-neutral-700 transition">See more</button>
-			       </div>
+			       </div> */}
 		       </div>
 	       </main>
        );
