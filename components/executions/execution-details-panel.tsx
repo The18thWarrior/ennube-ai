@@ -13,6 +13,7 @@ import { X, CheckCircle, XCircle, Clock, RefreshCw, Workflow, ChevronDown, Chevr
 import { JsonView } from "../ui/json-view"
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "../ui/collapsible"
 import ExecutionRecordDetailItem from "./execution-record-detail-item"
+import { Agent } from "http"
 
 
 
@@ -31,9 +32,10 @@ interface ExecutionDetailsPanelProps {
   onClose: (() => void) | null
   coloredBorder?: boolean
   collapsible?: boolean
+  layout?: 'portrait' | 'landscape'
 }
 
-export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, collapsible }: ExecutionDetailsPanelProps) {
+export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, collapsible, layout = 'portrait' }: ExecutionDetailsPanelProps) {
   // Support collapsible state
   const [open, setOpen] = React.useState(collapsible ? false : true);
   
@@ -88,6 +90,275 @@ export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, colla
       }, 500);
     }, 50);
   };
+  const AgentHeader = () => {
+    return (
+      <div className="flex items-center gap-4 flex-auto">
+        <div className="h-16 w-16 rounded-full overflow-hidden flex-shrink-0 border border-gray-200">
+          <Image
+            src={execution.image_url || "/placeholder.svg"}
+            alt={execution.agent_name}
+            width={64}
+            height={64}
+            className="object-cover"
+          />
+        </div>
+        <div>
+          <h2 className="text-xl font-bold">{execution.agent_name}</h2>
+          <div className="flex items-center gap-2 mt-1">
+            <StatusBadge status={execution.status} />
+            <span className="text-sm text-muted-foreground">
+              {formatDistanceToNow(new Date(execution.created_at), { addSuffix: true })}
+            </span>
+          </div>
+        </div>
+      </div>
+    )
+  }
+  const FrontCard = () => {
+    return (
+      <Card className={`h-full ${coloredBorder ? "border-blue-500" : ""}`}>
+        <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="text-xl flex items-center">
+              <Workflow className="mr-2 h-6 w-6 text-blue-500 flex-shrink-0" />
+              <span className="truncate">
+                Execution Details
+              </span>
+            </CardTitle>
+          <div className="flex items-center gap-2">
+            {selectedRecordId && (
+              <Button variant="ghost" size="sm" onClick={handleGoToList}>
+                ← Back to List
+              </Button>
+            )}
+            {onClose && 
+              <Button variant="ghost" size="icon" onClick={onClose}>
+                <X className="h-4 w-4" />
+              </Button>
+            }
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          
+          <AgentHeader />
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h3 className="text-sm font-medium text-gray-500">EXECUTION ID</h3>
+              <p className="font-mono dark:text-gray-400">{execution.id}</p>
+            </div>
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h3 className="text-sm font-medium text-gray-500">EXECUTION TIME</h3>
+              <p className="dark:text-gray-400">{execution.execution_time ? `${(execution.execution_time).toFixed(2)} seconds` : "Running..."}</p>
+            </div>
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h3 className="text-sm font-medium text-gray-500">DATE</h3>
+              <p className=" dark:text-gray-400">{new Date(execution.created_at).toLocaleString()}</p>
+            </div>
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h3 className="text-sm font-medium text-gray-500">STATUS</h3>
+              <StatusBadge status={execution.status} />
+            </div>
+          </div>
+
+          {execution.status === "failed" && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <h3 className="text-sm font-medium text-red-800 flex items-center gap-2">
+                <XCircle className="h-4 w-4" />
+                Error Details
+              </h3>
+              <p className="mt-1 text-red-700">{execution.response_data?.execution_summary || "Unknown error occurred"}</p>
+            </div>
+          )}
+
+          {execution.status === "in_progress" && (
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+              <h3 className="text-sm font-medium text-amber-800 flex items-center gap-2">
+                <Clock className="h-4 w-4" />
+                Execution in Progress
+              </h3>
+              <p className="mt-1 text-amber-700">
+                {execution.response_data?.execution_summary ? `Progress: ${execution.response_data.execution_summary}` : "Processing..."}
+              </p>
+              <div className="w-full bg-amber-200 rounded-full h-2.5 mt-2">
+                <div
+                  className="bg-amber-500 h-2.5 rounded-full"
+                  style={{ width: execution.response_data?.progress || "50%" }}
+                ></div>
+              </div>
+            </div>
+          )}
+
+          {execution.status === "success" && execution.response_data?.execution_summary && (
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+              <h3 className="text-sm font-medium text-green-800 flex items-center gap-2">
+                <CheckCircle className="h-4 w-4" />
+                Execution Summary
+              </h3>
+              <p className="mt-1 text-green-700">{executionSummary}</p>
+            </div>
+          )}
+
+          <div>
+            <h3 className="text-lg font-medium mb-2">Records Processed</h3>
+            {recordIds.length > 0 ? (
+              <ul className="list-disc pl-5 space-y-1">
+                {recordIds.map((id: string, index: number) => (
+                  <li key={id+index} >
+                    <Badge
+                      variant="outline"
+                      className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                      onClick={() => handleSelectRecord(id)}
+                    >
+                      <span className="truncate">{id}</span>
+                    </Badge>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-sm text-gray-500">No records processed.</p>
+            )}
+          </div>        
+
+          <div>
+            <h3 className="text-lg font-medium mb-2">Response Data</h3>
+            <Tabs defaultValue="formatted">
+              <TabsList className="mb-4">
+                <TabsTrigger value="formatted">Formatted</TabsTrigger>
+                <TabsTrigger value="raw">Raw</TabsTrigger>
+              </TabsList>
+              <TabsContent value="formatted" className="p-4 bg-gray-50 dark:bg-gray-800 rounded-md">
+                <JsonView data={rawData} />
+              </TabsContent>
+              <TabsContent value="raw" className="p-4 bg-gray-50 dark:bg-gray-800 rounded-md overflow-auto max-h-96">
+                <pre className="text-xs">{JSON.stringify(rawData, null, 2)}</pre>
+              </TabsContent>
+            </Tabs>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  const FrontCardCollapsible = () => {
+    return (
+      <Collapsible open={open} onOpenChange={setOpen}>
+        <Card className={`h-full ${coloredBorder ? "border-blue-500" : ""}`}>
+          <CardHeader className="flex flex-row items-center justify-between cursor-pointer select-none">
+            <CardTitle className="text-xl flex items-center">
+              <Workflow className="mr-2 h-6 w-6 text-blue-500 flex-shrink-0" />
+              <span className="truncate">Execution Details</span>
+            </CardTitle>
+            <div className="flex items-center gap-2">
+              {selectedRecordId && (
+                <Button variant="ghost" size="sm" onClick={handleGoToList}>
+                  ← Back to List
+                </Button>
+              )}
+            </div>
+          </CardHeader>
+          {/* ...existing collapsible content... */}
+          <CardContent className="space-y-6">
+            
+            {!open && <AgentHeader /> }
+
+            {execution.status === "failed" && !open && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                <h3 className="text-sm font-medium text-red-800 flex items-center gap-2">
+                  <XCircle className="h-4 w-4" />
+                  Error Details
+                </h3>
+                <p className="mt-1 text-red-700">{execution.response_data?.execution_summary || "Unknown error occurred"}</p>
+              </div>
+            )}
+
+            {execution.status === "in_progress" && !open && (
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                <h3 className="text-sm font-medium text-amber-800 flex items-center gap-2">
+                  <Clock className="h-4 w-4" />
+                  Execution in Progress
+                </h3>
+                <p className="mt-1 text-amber-700">
+                  {execution.response_data?.execution_summary ? `Progress: ${execution.response_data.execution_summary}` : "Processing..."}
+                </p>
+                <div className="w-full bg-amber-200 rounded-full h-2.5 mt-2">
+                  <div
+                    className="bg-amber-500 h-2.5 rounded-full"
+                    style={{ width: execution.response_data?.progress || "50%" }}
+                  ></div>
+                </div>
+              </div>
+            )}
+
+            {execution.status === "success" && !open && execution.response_data?.execution_summary && (
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                <h3 className="text-sm font-medium text-green-800 flex items-center gap-2">
+                  <CheckCircle className="h-4 w-4" />
+                  Execution Summary
+                </h3>
+                <p className="mt-1 text-green-700">{executionSummary}</p>
+              </div>
+            )}
+            <div className="flex justify-center pt-2">
+              <CollapsibleTrigger asChild>
+                <Button variant="ghost" className={`${open ? "hidden" : ""}`} size="sm" aria-label={open ? "Collapse" : "Expand"} >
+                  {open ? "Show less" : `Show more`}
+                </Button>
+              </CollapsibleTrigger>
+            </div>
+          </CardContent>
+          <CollapsibleContent asChild className={`${styles.CollapsibleContent} `}>
+            <CardContent className="pt-0 w-full">
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <AgentHeader />
+                  
+                </div>
+                <div className="grid grid-cols-4 gap-4 flex-1">
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                      <h3 className="text-sm font-medium text-gray-500">EXECUTION ID</h3>
+                      <p className="font-mono dark:text-gray-400">{execution.id}</p>
+                    </div>
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                      <h3 className="text-sm font-medium text-gray-500">EXECUTION TIME</h3>
+                      <p className="dark:text-gray-400">{execution.execution_time ? `${(execution.execution_time).toFixed(2)} seconds` : "Running..."}</p>
+                    </div>
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                      <h3 className="text-sm font-medium text-gray-500">DATE</h3>
+                      <p className=" dark:text-gray-400">{new Date(execution.created_at).toLocaleString()}</p>
+                    </div>
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                      <h3 className="text-sm font-medium text-gray-500">STATUS</h3>
+                      <StatusBadge status={execution.status} />
+                    </div>
+                  </div>
+
+                <h3 className="text-lg font-medium my-2">Response Data</h3>
+                <Tabs defaultValue="formatted">
+                  <TabsList className="mb-4">
+                    <TabsTrigger value="formatted">Formatted</TabsTrigger>
+                    <TabsTrigger value="raw">Raw</TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="formatted" className="p-4 bg-gray-50 dark:bg-gray-800 rounded-md">
+                    <JsonView data={rawData} />
+                  </TabsContent>
+                  <TabsContent value="raw" className="p-4 bg-gray-50 dark:bg-gray-800 rounded-md overflow-auto max-h-96">
+                    <pre className="text-xs">{JSON.stringify(rawData, null, 2)}</pre>
+                  </TabsContent>
+                </Tabs>
+              </div>
+              <div className="flex justify-center pt-2">
+                <CollapsibleTrigger asChild>
+                  <Button variant="ghost" className={`${open ? "" : "hidden"}`} size="sm" aria-label={open ? "Collapse" : "Expand"}>
+                    {open ? "Show less" : `Show more`}
+                  </Button>
+                </CollapsibleTrigger>
+              </div>
+            </CardContent>
+          </CollapsibleContent>
+        </Card>
+      </Collapsible>
+    )
+  }
 
   // If collapsible is enabled, wrap in Collapsible and put Response Data below the fold
   if (typeof collapsible !== "undefined" && collapsible) {
@@ -105,136 +376,7 @@ export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, colla
             className={`flip-card-front ${flipping ? "absolute": "relative"} w-full backface-hidden`}
             style={{ backfaceVisibility: "hidden", position: 'relative', height: flip ? "0px" : "" }}
           >
-            <Collapsible open={open} onOpenChange={setOpen}>
-              <Card className={`h-full ${coloredBorder ? "border-blue-500" : ""}`}>
-                <CardHeader className="flex flex-row items-center justify-between cursor-pointer select-none">
-                  <CardTitle className="text-xl flex items-center">
-                    <Workflow className="mr-2 h-6 w-6 text-blue-500 flex-shrink-0" />
-                    <span className="truncate">Execution Details</span>
-                  </CardTitle>
-                  <div className="flex items-center gap-2">
-                    {selectedRecordId && (
-                      <Button variant="ghost" size="sm" onClick={handleGoToList}>
-                        ← Back to List
-                      </Button>
-                    )}
-                  </div>
-                </CardHeader>
-                {/* ...existing collapsible content... */}
-                <CardContent className="space-y-6">
-                  <div className="flex items-center gap-4">
-                    <div className="h-16 w-16 rounded-full overflow-hidden flex-shrink-0 border border-gray-200">
-                      <Image
-                        src={execution.image_url || "/placeholder.svg"}
-                        alt={execution.agent_name}
-                        width={64}
-                        height={64}
-                        className="object-cover"
-                      />
-                    </div>
-                    <div>
-                      <h2 className="text-xl font-bold">{execution.agent_name}</h2>
-                      <div className="flex items-center gap-2 mt-1">
-                        <StatusBadge status={execution.status} />
-                        <span className="text-sm text-muted-foreground">
-                          {formatDistanceToNow(new Date(execution.created_at), { addSuffix: true })}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {execution.status === "failed" && (
-                    <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                      <h3 className="text-sm font-medium text-red-800 flex items-center gap-2">
-                        <XCircle className="h-4 w-4" />
-                        Error Details
-                      </h3>
-                      <p className="mt-1 text-red-700">{execution.response_data?.execution_summary || "Unknown error occurred"}</p>
-                    </div>
-                  )}
-
-                  {execution.status === "in_progress" && (
-                    <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                      <h3 className="text-sm font-medium text-amber-800 flex items-center gap-2">
-                        <Clock className="h-4 w-4" />
-                        Execution in Progress
-                      </h3>
-                      <p className="mt-1 text-amber-700">
-                        {execution.response_data?.execution_summary ? `Progress: ${execution.response_data.execution_summary}` : "Processing..."}
-                      </p>
-                      <div className="w-full bg-amber-200 rounded-full h-2.5 mt-2">
-                        <div
-                          className="bg-amber-500 h-2.5 rounded-full"
-                          style={{ width: execution.response_data?.progress || "50%" }}
-                        ></div>
-                      </div>
-                    </div>
-                  )}
-
-                  {execution.status === "success" && execution.response_data?.execution_summary && (
-                    <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                      <h3 className="text-sm font-medium text-green-800 flex items-center gap-2">
-                        <CheckCircle className="h-4 w-4" />
-                        Execution Summary
-                      </h3>
-                      <p className="mt-1 text-green-700">{executionSummary}</p>
-                    </div>
-                  )}
-                  <div className="flex justify-center pt-2">
-                    <CollapsibleTrigger asChild>
-                      <Button variant="ghost" className={`${open ? "hidden" : ""}`} size="sm" aria-label={open ? "Collapse" : "Expand"} >
-                        {open ? "Show less" : `Show more`}
-                      </Button>
-                    </CollapsibleTrigger>
-                  </div>
-                </CardContent>
-                <CollapsibleContent asChild className={`${styles.CollapsibleContent} `}>
-                  <CardContent className="pt-0">
-                    <div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="bg-gray-50 p-4 rounded-lg">
-                          <h3 className="text-sm font-medium text-gray-500">EXECUTION ID</h3>
-                          <p className="font-mono dark:text-gray-400">{execution.id}</p>
-                        </div>
-                        <div className="bg-gray-50 p-4 rounded-lg">
-                          <h3 className="text-sm font-medium text-gray-500">EXECUTION TIME</h3>
-                          <p className="dark:text-gray-400">{execution.execution_time ? `${(execution.execution_time).toFixed(2)} seconds` : "Running..."}</p>
-                        </div>
-                        <div className="bg-gray-50 p-4 rounded-lg">
-                          <h3 className="text-sm font-medium text-gray-500">DATE</h3>
-                          <p className=" dark:text-gray-400">{new Date(execution.created_at).toLocaleString()}</p>
-                        </div>
-                        <div className="bg-gray-50 p-4 rounded-lg">
-                          <h3 className="text-sm font-medium text-gray-500">STATUS</h3>
-                          <StatusBadge status={execution.status} />
-                        </div>
-                      </div>
-
-                      <h3 className="text-lg font-medium mb-2">Response Data</h3>
-                      <Tabs defaultValue="formatted">
-                        <TabsList className="mb-4">
-                          <TabsTrigger value="formatted">Formatted</TabsTrigger>
-                          <TabsTrigger value="raw">Raw</TabsTrigger>
-                        </TabsList>
-                        <TabsContent value="formatted" className="p-4 bg-gray-50 dark:bg-gray-800 rounded-md">
-                          <JsonView data={rawData} />
-                        </TabsContent>
-                        <TabsContent value="raw" className="p-4 bg-gray-50 dark:bg-gray-800 rounded-md overflow-auto max-h-96">
-                          <pre className="text-xs">{JSON.stringify(rawData, null, 2)}</pre>
-                        </TabsContent>
-                      </Tabs>
-                    </div>
-                    <div className="flex justify-center pt-2">
-                      <CollapsibleTrigger asChild>
-                        <Button variant="ghost" className={`${open ? "" : "hidden"}`} size="sm" aria-label={open ? "Collapse" : "Expand"}>
-                          {open ? "Show less" : `Show more`}
-                        </Button>
-                      </CollapsibleTrigger>
-                    </div>
-                  </CardContent>
-                </CollapsibleContent>
-              </Card>
-            </Collapsible>
+            <FrontCardCollapsible />
           </div>
           
           {/* Back: Record Detail */}
@@ -266,144 +408,7 @@ export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, colla
           className={`flip-card-front ${flipping ? "absolute": "relative"} w-full backface-hidden`}
           style={{ backfaceVisibility: "hidden", position: 'relative', height: flip ? "0px" : "" }}
         >
-          <Card className={`h-full ${coloredBorder ? "border-blue-500" : ""}`}>
-            <CardHeader className="flex flex-row items-center justify-between">
-               <CardTitle className="text-xl flex items-center">
-                  <Workflow className="mr-2 h-6 w-6 text-blue-500 flex-shrink-0" />
-                  <span className="truncate">
-                    Execution Details
-                  </span>
-                </CardTitle>
-              <div className="flex items-center gap-2">
-                {selectedRecordId && (
-                  <Button variant="ghost" size="sm" onClick={handleGoToList}>
-                    ← Back to List
-                  </Button>
-                )}
-                {onClose && 
-                  <Button variant="ghost" size="icon" onClick={onClose}>
-                    <X className="h-4 w-4" />
-                  </Button>
-                }
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="flex items-center gap-4">
-                <div className="h-16 w-16 rounded-full overflow-hidden flex-shrink-0 border border-gray-200">
-                  <Image
-                    src={execution.image_url || "/placeholder.svg"}
-                    alt={execution.agent_name}
-                    width={64}
-                    height={64}
-                    className="object-cover"
-                  />
-                </div>
-                <div>
-                  <h2 className="text-xl font-bold">{execution.agent_name}</h2>
-                  <div className="flex items-center gap-2 mt-1">
-                    <StatusBadge status={execution.status} />
-                    <span className="text-sm text-muted-foreground">
-                      {formatDistanceToNow(new Date(execution.created_at), { addSuffix: true })}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <h3 className="text-sm font-medium text-gray-500">EXECUTION ID</h3>
-                  <p className="font-mono dark:text-gray-400">{execution.id}</p>
-                </div>
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <h3 className="text-sm font-medium text-gray-500">EXECUTION TIME</h3>
-                  <p className="dark:text-gray-400">{execution.execution_time ? `${(execution.execution_time).toFixed(2)} seconds` : "Running..."}</p>
-                </div>
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <h3 className="text-sm font-medium text-gray-500">DATE</h3>
-                  <p className=" dark:text-gray-400">{new Date(execution.created_at).toLocaleString()}</p>
-                </div>
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <h3 className="text-sm font-medium text-gray-500">STATUS</h3>
-                  <StatusBadge status={execution.status} />
-                </div>
-              </div>
-
-              {execution.status === "failed" && (
-                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                  <h3 className="text-sm font-medium text-red-800 flex items-center gap-2">
-                    <XCircle className="h-4 w-4" />
-                    Error Details
-                  </h3>
-                  <p className="mt-1 text-red-700">{execution.response_data?.execution_summary || "Unknown error occurred"}</p>
-                </div>
-              )}
-
-              {execution.status === "in_progress" && (
-                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                  <h3 className="text-sm font-medium text-amber-800 flex items-center gap-2">
-                    <Clock className="h-4 w-4" />
-                    Execution in Progress
-                  </h3>
-                  <p className="mt-1 text-amber-700">
-                    {execution.response_data?.execution_summary ? `Progress: ${execution.response_data.execution_summary}` : "Processing..."}
-                  </p>
-                  <div className="w-full bg-amber-200 rounded-full h-2.5 mt-2">
-                    <div
-                      className="bg-amber-500 h-2.5 rounded-full"
-                      style={{ width: execution.response_data?.progress || "50%" }}
-                    ></div>
-                  </div>
-                </div>
-              )}
-
-              {execution.status === "success" && execution.response_data?.execution_summary && (
-                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                  <h3 className="text-sm font-medium text-green-800 flex items-center gap-2">
-                    <CheckCircle className="h-4 w-4" />
-                    Execution Summary
-                  </h3>
-                  <p className="mt-1 text-green-700">{executionSummary}</p>
-                </div>
-              )}
-
-              <div>
-                <h3 className="text-lg font-medium mb-2">Records Processed</h3>
-                {recordIds.length > 0 ? (
-                  <ul className="list-disc pl-5 space-y-1">
-                    {recordIds.map((id: string, index: number) => (
-                      <li key={id+index} >
-                        <Badge
-                          variant="outline"
-                          className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                          onClick={() => handleSelectRecord(id)}
-                        >
-                          <span className="truncate">{id}</span>
-                        </Badge>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-sm text-gray-500">No records processed.</p>
-                )}
-              </div>        
-
-              <div>
-                <h3 className="text-lg font-medium mb-2">Response Data</h3>
-                <Tabs defaultValue="formatted">
-                  <TabsList className="mb-4">
-                    <TabsTrigger value="formatted">Formatted</TabsTrigger>
-                    <TabsTrigger value="raw">Raw</TabsTrigger>
-                  </TabsList>
-                  <TabsContent value="formatted" className="p-4 bg-gray-50 dark:bg-gray-800 rounded-md">
-                    <JsonView data={rawData} />
-                  </TabsContent>
-                  <TabsContent value="raw" className="p-4 bg-gray-50 dark:bg-gray-800 rounded-md overflow-auto max-h-96">
-                    <pre className="text-xs">{JSON.stringify(rawData, null, 2)}</pre>
-                  </TabsContent>
-                </Tabs>
-              </div>
-            </CardContent>
-          </Card>
+          <FrontCard />
         </div>
         
         {/* Back: Record Detail */}
