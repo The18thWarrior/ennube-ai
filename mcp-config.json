@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+    "ennube-ai-tools": {
+      "command": "curl",
+      "args": [
+        "-X",
+        "POST",
+        "http://localhost:3000/api/mcp",
+        "-H",
+        "Content-Type: application/json",
+        "-d",
+        "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"initialize\", \"params\": {}}"
+      ],
+      "env": {},
+      "description": "Ennube AI tools MCP server for CRM data management and workflow automation"
+    }
+  }
+}

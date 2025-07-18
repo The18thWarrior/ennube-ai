@@ -13,94 +13,6 @@ import { nanoid } from "nanoid"
 import dayjs from "dayjs";
 import { getAgentImage } from "@/lib/utils"
 
-// Mock data for executions
-const mockExecutions = [
-  {
-    id: 1,
-    agent_name: "Data Steward",
-    image_url: "/data-steward.png",
-    status: "completed",
-    execution_time: 2340,
-    created_at: new Date(Date.now() - 1000 * 60 * 30).toISOString(), // 30 minutes ago
-    response_data: {
-      verified_contacts: 125,
-      enriched_fields: 430,
-      duplicates_removed: 17,
-      standardization_applied: true,
-      execution_summary: "Successfully processed 125 contacts with 430 enriched fields and removed 17 duplicates.",
-    },
-  },
-  {
-    id: 2,
-    agent_name: "Prospect Finder",
-    image_url: "/prospect-finder.png",
-    status: "completed",
-    execution_time: 5120,
-    created_at: new Date(Date.now() - 1000 * 60 * 120).toISOString(), // 2 hours ago
-    response_data: {
-      prospects_found: 42,
-      matching_criteria: ["industry", "company_size", "technology_stack"],
-      data_sources: ["web", "social", "public_records"],
-      execution_summary: "Found 42 new prospects matching your ICP criteria across multiple data sources.",
-    },
-  },
-  {
-    id: 3,
-    agent_name: "Meetings Booker",
-    image_url: "/meetings-booker.png",
-    status: "completed",
-    execution_time: 1850,
-    created_at: new Date(Date.now() - 1000 * 60 * 180).toISOString(), // 3 hours ago
-    response_data: {
-      meetings_scheduled: 8,
-      emails_sent: 15,
-      calendar_conflicts_resolved: 2,
-      execution_summary: "Successfully scheduled 8 meetings with prospects and sent 15 confirmation emails.",
-    },
-  },
-  {
-    id: 4,
-    agent_name: "Market Nurturer",
-    image_url: "/market-nurturer.png",
-    status: "completed",
-    execution_time: 3200,
-    created_at: new Date(Date.now() - 1000 * 60 * 240).toISOString(), // 4 hours ago
-    response_data: {
-      campaigns_executed: 2,
-      emails_sent: 250,
-      open_rate: "32%",
-      click_rate: "8%",
-      execution_summary: "Executed 2 nurture campaigns to 250 contacts with 32% open rate and 8% click rate.",
-    },
-  },
-  {
-    id: 5,
-    agent_name: "Data Steward",
-    image_url: "/data-steward.png",
-    status: "failed",
-    execution_time: 1200,
-    created_at: new Date(Date.now() - 1000 * 60 * 300).toISOString(), // 5 hours ago
-    response_data: {
-      error: "API rate limit exceeded",
-      error_code: "RATE_LIMIT_EXCEEDED",
-      execution_summary: "Failed to complete data enrichment due to API rate limit. Please try again later.",
-    },
-  },
-  {
-    id: 6,
-    agent_name: "Prospect Finder",
-    image_url: "/prospect-finder.png",
-    status: "in_progress",
-    execution_time: null,
-    created_at: new Date(Date.now() - 1000 * 60 * 5).toISOString(), // 5 minutes ago
-    response_data: {
-      status: "in_progress",
-      progress: "65%",
-      execution_summary: "Currently searching for prospects matching your criteria. 65% complete.",
-    },
-  },
-]
-
 function ExecutionsPageComponent() {
   const searchParams = useSearchParams()
   const [searchTerm, setSearchTerm] = useState("")
@@ -138,6 +50,10 @@ function ExecutionsPageComponent() {
     // Fetch logs from the API
     console.log("Fetched logs:", logs);
   }, [logs]);
+  useEffect(() => {
+    // Fetch logs from the API
+    console.log("All executions:", executions);
+  }, [executions]);
   // Filter and sort executions based on current state
   const filteredExecutions = executions
     .filter((execution) => {
@@ -209,9 +125,9 @@ function ExecutionsPageComponent() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Statuses</SelectItem>
-              <SelectItem value="completed">Completed</SelectItem>
+              <SelectItem value="success">Completed</SelectItem>
               <SelectItem value="failed">Failed</SelectItem>
-              <SelectItem value="in_progress">In Progress</SelectItem>
+              <SelectItem value="In Progress">In Progress</SelectItem>
             </SelectContent>
           </Select>
         </div>

@@ -13,6 +13,7 @@ import { getWorkflowTool } from '@/lib/chat/callWorkflowTool';
 import { nanoid } from 'nanoid';
 import { setThread } from '@/lib/cache/message-history';
 import { getPrompt } from '@/lib/chat/helper';
+import dayjs from 'dayjs';
 
 
 export const maxDuration = 30;
@@ -41,11 +42,11 @@ export async function POST(req: NextRequest) {
     
     // Get user's sub from the session
     const userSub = session.user.auth0.sub;
-        
+    const today = dayjs().format('YYYY-MM-DD');
     const openrouter = createOpenRouter({
       apiKey: `${process.env.OPENROUTER_API_KEY}`,
     });
-    const systemPrompt = getPrompt(agent as 'data-steward' | 'prospect-finder');
+    const systemPrompt = `${getPrompt(agent as 'data-steward' | 'prospect-finder')} Today's date is ${today}.`;
     const model = openrouter('google/gemini-2.0-flash-001'); // openai/gpt-4.1-nano | google/gemini-2.0-flash-001
     // Set up the OpenAI model
     // Run the agent with tools

@@ -17,11 +17,25 @@ interface ChatInputProps {
 
 export default function ChatInput({ input, handleInputChange, handleSubmit, isLoading }: ChatInputProps) {
   const {theme} = useTheme();
+  // Handle Enter key press in textarea
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      // Create a fake form event to pass to handleSubmit
+      const form = e.currentTarget.form;
+      if (form) {
+        // @ts-ignore
+        handleSubmit({ ...e, target: form, currentTarget: form });
+      }
+    }
+  };
+
   return (
     <form onSubmit={handleSubmit} className="flex items-center gap-2">
       <InputTextArea
         value={input}
         onChange={handleInputChange}
+        onKeyDown={handleKeyDown}
         placeholder="Type your message..."
         rows={2}
         disabled={isLoading}

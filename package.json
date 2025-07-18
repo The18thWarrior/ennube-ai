@@ -24,6 +24,7 @@
     "@auth/unstorage-adapter": "^2.0.0",
     "@hubspot/api-client": "^13.0.0",
     "@microlink/react-json-view": "^1.26.2",
+    "@modelcontextprotocol/sdk": "^1.15.1",
     "@n8n/chat": "^0.44.0",
     "@openrouter/ai-sdk-provider": "^0.7.2",
     "@radix-ui/react-accordion": "^1.2.10",
