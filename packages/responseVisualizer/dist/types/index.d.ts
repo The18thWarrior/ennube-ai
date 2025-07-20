@@ -255,15 +255,15 @@ export declare const AnimationConfigSchema: z.ZodObject<{
     delay: z.ZodOptional<z.ZodNumber>;
     repeat: z.ZodOptional<z.ZodBoolean>;
 }, "strip", z.ZodTypeAny, {
-    type?: "pulse" | "none" | "fade" | "slide" | "bounce" | "spin" | undefined;
-    repeat?: boolean | undefined;
+    type?: "fade" | "slide" | "bounce" | "pulse" | "spin" | "none" | undefined;
     duration?: number | undefined;
     delay?: number | undefined;
+    repeat?: boolean | undefined;
 }, {
-    type?: "pulse" | "none" | "fade" | "slide" | "bounce" | "spin" | undefined;
-    repeat?: boolean | undefined;
+    type?: "fade" | "slide" | "bounce" | "pulse" | "spin" | "none" | undefined;
     duration?: number | undefined;
     delay?: number | undefined;
+    repeat?: boolean | undefined;
 }>;
 export declare const LoadingConfigSchema: z.ZodObject<{
     enabled: z.ZodOptional<z.ZodBoolean>;
@@ -271,15 +271,15 @@ export declare const LoadingConfigSchema: z.ZodObject<{
     type: z.ZodOptional<z.ZodEnum<["spinner", "skeleton", "dots", "pulse"]>>;
     size: z.ZodOptional<z.ZodEnum<["sm", "md", "lg"]>>;
 }, "strip", z.ZodTypeAny, {
-    size?: "sm" | "md" | "lg" | undefined;
+    type?: "pulse" | "spinner" | "skeleton" | "dots" | undefined;
     enabled?: boolean | undefined;
-    type?: "spinner" | "skeleton" | "dots" | "pulse" | undefined;
     text?: string | undefined;
+    size?: "sm" | "md" | "lg" | undefined;
 }, {
-    size?: "sm" | "md" | "lg" | undefined;
+    type?: "pulse" | "spinner" | "skeleton" | "dots" | undefined;
     enabled?: boolean | undefined;
-    type?: "spinner" | "skeleton" | "dots" | "pulse" | undefined;
     text?: string | undefined;
+    size?: "sm" | "md" | "lg" | undefined;
 }>;
 export declare const ThemeConfigSchema: z.ZodObject<{
     primary: z.ZodOptional<z.ZodString>;
@@ -288,17 +288,17 @@ export declare const ThemeConfigSchema: z.ZodObject<{
     radius: z.ZodOptional<z.ZodEnum<["none", "sm", "md", "lg", "full"]>>;
     shadow: z.ZodOptional<z.ZodEnum<["none", "sm", "md", "lg", "xl"]>>;
 }, "strip", z.ZodTypeAny, {
-    background?: "default" | "muted" | "card" | undefined;
-    radius?: "sm" | "md" | "lg" | "none" | "full" | undefined;
-    shadow?: "sm" | "md" | "lg" | "none" | "xl" | undefined;
     primary?: string | undefined;
     secondary?: string | undefined;
+    background?: "default" | "muted" | "card" | undefined;
+    radius?: "none" | "sm" | "md" | "lg" | "full" | undefined;
+    shadow?: "none" | "sm" | "md" | "lg" | "xl" | undefined;
 }, {
-    background?: "default" | "muted" | "card" | undefined;
-    radius?: "sm" | "md" | "lg" | "none" | "full" | undefined;
-    shadow?: "sm" | "md" | "lg" | "none" | "xl" | undefined;
     primary?: string | undefined;
     secondary?: string | undefined;
+    background?: "default" | "muted" | "card" | undefined;
+    radius?: "none" | "sm" | "md" | "lg" | "full" | undefined;
+    shadow?: "none" | "sm" | "md" | "lg" | "xl" | undefined;
 }>;
 export declare const ComponentConfigSchema: z.ZodType<ComponentConfig>;
 export declare const VisualizationConfigSchema: z.ZodObject<{
@@ -329,17 +329,17 @@ export declare const VisualizationConfigSchema: z.ZodObject<{
         radius: z.ZodOptional<z.ZodEnum<["none", "sm", "md", "lg", "full"]>>;
         shadow: z.ZodOptional<z.ZodEnum<["none", "sm", "md", "lg", "xl"]>>;
     }, "strip", z.ZodTypeAny, {
-        background?: "default" | "muted" | "card" | undefined;
-        radius?: "sm" | "md" | "lg" | "none" | "full" | undefined;
-        shadow?: "sm" | "md" | "lg" | "none" | "xl" | undefined;
         primary?: string | undefined;
         secondary?: string | undefined;
+        background?: "default" | "muted" | "card" | undefined;
+        radius?: "none" | "sm" | "md" | "lg" | "full" | undefined;
+        shadow?: "none" | "sm" | "md" | "lg" | "xl" | undefined;
     }, {
-        background?: "default" | "muted" | "card" | undefined;
-        radius?: "sm" | "md" | "lg" | "none" | "full" | undefined;
-        shadow?: "sm" | "md" | "lg" | "none" | "xl" | undefined;
         primary?: string | undefined;
         secondary?: string | undefined;
+        background?: "default" | "muted" | "card" | undefined;
+        radius?: "none" | "sm" | "md" | "lg" | "full" | undefined;
+        shadow?: "none" | "sm" | "md" | "lg" | "xl" | undefined;
     }>>;
     animation: z.ZodOptional<z.ZodObject<{
         type: z.ZodOptional<z.ZodEnum<["fade", "slide", "bounce", "pulse", "spin", "none"]>>;
@@ -347,15 +347,15 @@ export declare const VisualizationConfigSchema: z.ZodObject<{
         delay: z.ZodOptional<z.ZodNumber>;
         repeat: z.ZodOptional<z.ZodBoolean>;
     }, "strip", z.ZodTypeAny, {
-        type?: "pulse" | "none" | "fade" | "slide" | "bounce" | "spin" | undefined;
-        repeat?: boolean | undefined;
+        type?: "fade" | "slide" | "bounce" | "pulse" | "spin" | "none" | undefined;
         duration?: number | undefined;
         delay?: number | undefined;
+        repeat?: boolean | undefined;
     }, {
-        type?: "pulse" | "none" | "fade" | "slide" | "bounce" | "spin" | undefined;
-        repeat?: boolean | undefined;
+        type?: "fade" | "slide" | "bounce" | "pulse" | "spin" | "none" | undefined;
         duration?: number | undefined;
         delay?: number | undefined;
+        repeat?: boolean | undefined;
     }>>;
     components: z.ZodArray<z.ZodType<ComponentConfig, z.ZodTypeDef, ComponentConfig>, "many">;
     data: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodAny>>;
@@ -364,6 +364,7 @@ export declare const VisualizationConfigSchema: z.ZodObject<{
 }, "strip", z.ZodTypeAny, {
     components: ComponentConfig[];
     data?: Record<string, any> | undefined;
+    version?: string | undefined;
     metadata?: {
         title?: string | undefined;
         description?: string | undefined;
@@ -371,25 +372,25 @@ export declare const VisualizationConfigSchema: z.ZodObject<{
         created?: string | undefined;
         updated?: string | undefined;
     } | undefined;
-    styles?: string | undefined;
     theme?: {
-        background?: "default" | "muted" | "card" | undefined;
-        radius?: "sm" | "md" | "lg" | "none" | "full" | undefined;
-        shadow?: "sm" | "md" | "lg" | "none" | "xl" | undefined;
         primary?: string | undefined;
         secondary?: string | undefined;
+        background?: "default" | "muted" | "card" | undefined;
+        radius?: "none" | "sm" | "md" | "lg" | "full" | undefined;
+        shadow?: "none" | "sm" | "md" | "lg" | "xl" | undefined;
     } | undefined;
-    version?: string | undefined;
     animation?: {
-        type?: "pulse" | "none" | "fade" | "slide" | "bounce" | "spin" | undefined;
-        repeat?: boolean | undefined;
+        type?: "fade" | "slide" | "bounce" | "pulse" | "spin" | "none" | undefined;
         duration?: number | undefined;
         delay?: number | undefined;
+        repeat?: boolean | undefined;
     } | undefined;
     events?: Record<string, string> | undefined;
+    styles?: string | undefined;
 }, {
     components: ComponentConfig[];
     data?: Record<string, any> | undefined;
+    version?: string | undefined;
     metadata?: {
         title?: string | undefined;
         description?: string | undefined;
@@ -397,21 +398,20 @@ export declare const VisualizationConfigSchema: z.ZodObject<{
         created?: string | undefined;
         updated?: string | undefined;
     } | undefined;
-    styles?: string | undefined;
     theme?: {
-        background?: "default" | "muted" | "card" | undefined;
-        radius?: "sm" | "md" | "lg" | "none" | "full" | undefined;
-        shadow?: "sm" | "md" | "lg" | "none" | "xl" | undefined;
         primary?: string | undefined;
         secondary?: string | undefined;
+        background?: "default" | "muted" | "card" | undefined;
+        radius?: "none" | "sm" | "md" | "lg" | "full" | undefined;
+        shadow?: "none" | "sm" | "md" | "lg" | "xl" | undefined;
     } | undefined;
-    version?: string | undefined;
     animation?: {
-        type?: "pulse" | "none" | "fade" | "slide" | "bounce" | "spin" | undefined;
-        repeat?: boolean | undefined;
+        type?: "fade" | "slide" | "bounce" | "pulse" | "spin" | "none" | undefined;
         duration?: number | undefined;
         delay?: number | undefined;
+        repeat?: boolean | undefined;
     } | undefined;
     events?: Record<string, string> | undefined;
+    styles?: string | undefined;
 }>;
 //# sourceMappingURL=index.d.ts.map
