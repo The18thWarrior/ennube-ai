@@ -19,9 +19,12 @@
         "name": "next"
       }
     ],
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"],
-      "auth": ["./auth"]
+      "@/*": ["*"],
+      "auth": ["auth"],
+      "@ennube-ai/data-validation": ["packages/dataValidation/dist/index.js"],
+      "@ennube-ai/data-validation/*": ["packages/dataValidation/dist/*"]
     }
   },
   "include": [
