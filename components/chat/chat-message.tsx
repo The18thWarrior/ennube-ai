@@ -126,7 +126,7 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: Message, theme
             className={cn("mx-2", msg.role === "user" ? "" : "bg-card", "")}
           >
             <CardContent className="p-4 text-base">
-                {msg.parts && msg.parts.filter(part => part.type === 'tool-invocation'  && (part.toolInvocation.toolName === 'getData' || part.toolInvocation.toolName === 'getCount' || part.toolInvocation.toolName === 'callWorkflowTool')).map((part) => (
+                {msg.parts && msg.parts.filter(part => part.type === 'tool-invocation'  && (part.toolInvocation.toolName === 'getSFDCDataTool' || part.toolInvocation.toolName === 'getPostgresDataTool' || part.toolInvocation.toolName === 'getCount' || part.toolInvocation.toolName === 'callWorkflowTool')).map((part) => (
                     <span
                         className={[
                             styles.messageBubble,
@@ -144,7 +144,7 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: Message, theme
                                     const callId = part.toolInvocation.toolCallId;
                                     //console.log(part.toolInvocation)
                                     switch (part.toolInvocation.toolName) {
-                                        case 'getData': {
+                                        case 'getSFDCDataTool': {
                                             switch (part.toolInvocation.state) {
                                                 case 'call':
                                                     //return <div key={callId}>Getting data...</div>;
@@ -158,6 +158,26 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: Message, theme
                                                         <div key={callId}>
                                                             {RenderGetDataToolCallComponent(part.toolInvocation.args, part.toolInvocation.result, theme)}
                                                             {/* <JsonView data={part.toolInvocation.result} classNames={styles.jsonBubble} /> */}
+                                                        </div>
+                                                    );
+                                            }
+                                            break;
+                                        }
+                                        case 'getPostgresDataTool': {
+                                            switch (part.toolInvocation.state) {
+                                                case 'call':
+                                                    //return <div key={callId}>Getting data...</div>;
+                                                    return (<div key={callId} className="flex items-center gap-2 text-xs text-muted-foreground py-2">
+                                                        <Loader2 className="h-4 w-4 animate-spin" />
+                                                        <span>Calling {part.toolInvocation.toolName}...</span>
+                                                        </div>
+                                                    )
+                                                case 'result': 
+                                                    console.log( part.toolInvocation.result);                                                   
+                                                    return (
+                                                        <div key={callId}>
+                                                            {/* {RenderGetDataToolCallComponent(part.toolInvocation.args, part.toolInvocation.result, theme)} */}
+                                                            <JsonView data={part.toolInvocation.result} classNames={styles.jsonBubble} />
                                                         </div>
                                                     );
                                             }

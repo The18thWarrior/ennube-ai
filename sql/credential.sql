@@ -1,5 +1,5 @@
 -- Create the credential type enum
-CREATE TYPE credential_type AS ENUM ('sfdc', 'hubspot', 'gsuite');
+CREATE TYPE credential_type AS ENUM ('sfdc', 'hubspot', 'gsuite', 'postgres');
 
 CREATE TABLE Credentials(  
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

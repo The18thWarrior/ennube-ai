@@ -1,6 +1,6 @@
 import { Tool, tool } from "ai";
 import z from "zod";
-import { getBaseUrl } from "./helper";
+import { getBaseUrl } from "../helper";
 
 
 // Tool: Get Fields

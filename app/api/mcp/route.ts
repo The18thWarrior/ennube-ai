@@ -14,8 +14,8 @@ import {
 import { auth } from '@/auth';
 import { callWorkflowToolDataSteward, callWorkflowToolProspectFinder } from '@/lib/chat/callWorkflowTool';
 import { getCountTool } from '@/lib/chat/getCountTool';
-import { getDataTool } from '@/lib/chat/getDataTool';
-import { getFieldsTool } from '@/lib/chat/getFieldsTool';
+import { getSFDCDataTool } from '@/lib/chat/sfdc/getDataTool';
+import { getFieldsTool } from '@/lib/chat/sfdc/getFieldsTool';
 import { getCredentialsTool } from '@/lib/chat/sfdc/getCredentialsTool';
 import { openai } from '@ai-sdk/openai';
 import { getDataVisualizerTool } from '@/lib/chat/getDataVisualizerTool';
@@ -162,7 +162,7 @@ async function executeTool(name: string, args: any, subId: string) {
       return await countTool.execute(args, {} as any);
       
     case 'get_data':
-      const dataTool = getDataTool(subId);
+      const dataTool = getSFDCDataTool(subId);
       return await dataTool.execute(args, {} as any);
       
     case 'get_fields':

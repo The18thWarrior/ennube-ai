@@ -2,6 +2,7 @@ import IntegrationCard from "@/components/integration-card"
 import { getGSuiteCredentialsById } from "@/lib/db/gsuite-storage";
 import { getSalesforceCredentialsById } from "@/lib/db/salesforce-storage"
 import { getHubSpotCredentialsById } from "@/lib/db/hubspot-storage"
+import { getPostgresUrlById } from "@/lib/db/postgres-storage"
 
 export default async function IntegrationsPage() {
     const sf_credential = await getSalesforceCredentialsById()
@@ -10,6 +11,8 @@ export default async function IntegrationsPage() {
     const hasGSuite = Boolean(gs_credential && gs_credential.accessToken);
     const hs_credential = await getHubSpotCredentialsById();
     const hasHubSpot = Boolean(hs_credential && hs_credential.accessToken);
+    const pg_credential = await getPostgresUrlById();
+    const hasPostgres = Boolean(pg_credential && pg_credential.instanceUrl);
       
     return (
         <div className="container mx-auto py-10 px-4">
@@ -39,6 +42,14 @@ export default async function IntegrationsPage() {
                     icon="/hubspot.webp"
                     url={"/integrations/hubspot"}
                     connected={hasHubSpot} isAddCard={false}        
+                />
+
+                <IntegrationCard
+                    title="PostgreSQL"
+                    description="Connect your PostgreSQL database to execute queries and analyze data."
+                    icon="/postgres.svg"
+                    url={"/integrations/postgres"}
+                    connected={hasPostgres} isAddCard={false}        
                 />
 
                 <IntegrationCard

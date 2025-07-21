@@ -1,10 +1,10 @@
 import { tool } from "ai";
 import z from "zod";
-import { getBaseUrl } from "./helper";
+import { getBaseUrl } from "../helper";
 
 
 // Tool: Get Fields
-export const getDataTool = (subId: string) => {
+export const getSFDCDataTool = (subId: string) => {
     return tool({
       description: 'Query Salesforce for CRM data.',
       async execute({ limit, sobject, filter }: { limit: number, sobject: string, filter: string }) {

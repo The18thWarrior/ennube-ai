@@ -4,8 +4,10 @@ import { openai } from '@ai-sdk/openai';
 import { createOpenRouter } from '@openrouter/ai-sdk-provider';
 import { z } from 'zod';
 import { auth } from '@/auth';
-import { getFieldsTool } from '@/lib/chat/getFieldsTool';
-import { getDataTool } from '@/lib/chat/getDataTool';
+import { getFieldsTool as getSFDCFieldsTool} from '@/lib/chat/sfdc/getFieldsTool';
+import { getSFDCDataTool } from '@/lib/chat/sfdc/getDataTool';
+import { getPostgresDataTool } from '@/lib/chat/postgres/getDataTool';
+import { getDescribeTool as getPostgresDescribeTool } from '@/lib/chat/postgres/getDescribeTool';
 import { getDataVisualizerTool } from '@/lib/chat/getDataVisualizerTool';
 import { getCountTool } from '@/lib/chat/getCountTool';
 import { getCredentialsTool } from '@/lib/chat/sfdc/getCredentialsTool';
@@ -56,8 +58,10 @@ export async function POST(req: NextRequest) {
       system: systemPrompt,
       tools: {
         getCredentials: getCredentialsTool(userSub),
-        getFields: getFieldsTool(userSub),
-        getData: getDataTool(userSub),
+        getSFDCFieldDescribeTool: getSFDCFieldsTool(userSub),
+        getSFDCDataTool: getSFDCDataTool(userSub),
+        getPostgresDataTool: getPostgresDataTool(userSub),
+        getPostgresDescribeTool: getPostgresDescribeTool(userSub),
         getDataVisualizer: getDataVisualizerTool(model),
         getCount: getCountTool(userSub),
         callWorkflowTool: getWorkflowTool(agent as 'data-steward' | 'prospect-finder'),
