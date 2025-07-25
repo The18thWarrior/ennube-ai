@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
     
     // Remove credentials from Vercel KV
     const authUrl = await getAuthorizationUrl(process.env.SALESFORCE_CLIENT_ID as string, process.env.SALESFORCE_CLIENT_SECRET as string, process.env.SALESFORCE_REDIRECT_URI as string, loginUrl || 'https://login.salesforce.com');
-
+    console.log('Salesforce auth URL:', authUrl);
     return NextResponse.redirect(authUrl);
   } catch (error) {
     console.error('Error getting Salesforce auth url:', error);

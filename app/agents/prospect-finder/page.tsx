@@ -2,6 +2,7 @@
 
 import ProspectFinderHeader from '@/components/agents/prospect-finder/prospect-finder-header';
 import UsageLogsList from '@/components/agents/usage-logs-list';
+import { CustomerProfileList } from '@/components/customer-profile/customer-profile-list';
 
 export default function ProspectFinderDashboard() {
   return (
@@ -14,9 +15,9 @@ export default function ProspectFinderDashboard() {
             👋 Where in the world is your next customer? That's my job to find out. I'm your AI-powered, globe-trotting lead scout—sleuthing across the internet to uncover your dream clients.
           </p>
 
-            <div className="mt-6 space-y-6 text-gray-600">
-              <h3 className="text-xl font-semibold text-gray-900">🎯 What I Do (aka My Toolkit):</h3>
-              <ul className="list-disc pl-5 space-y-2 mb-6">
+            <div className="mt-6 space-y-6 text-gray-600 dark:text-gray-400">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">🎯 What I Do (aka My Toolkit):</h3>
+              <ul className="list-disc pl-5 space-y-2 mb-6 text-gray-600 dark:text-gray-400">
                 <li>🧭 Craft and sharpen your Ideal Customer Profile (ICP)</li>
                 <li>🛰️ Scan the web and dark corners of data to locate perfect-fit leads</li>
                 <li>🕵️‍♀️ Qualify each contact using your exact criteria</li>
@@ -24,8 +25,8 @@ export default function ProspectFinderDashboard() {
                 <li>💬 Sync with your team in Slack to capture frontline feedback</li>
               </ul>
 
-              <h3 className="text-xl font-semibold text-gray-900">💼 How I Boost Your Sales Team:</h3>
-              <p className="mb-6">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">💼 How I Boost Your Sales Team:</h3>
+              <p className="mb-6 text-gray-600 dark:text-gray-400">
                 No more hours lost chasing dead ends. I deliver a steady stream of verified, high-potential leads—so
                 your reps can zero in on the win 🏆.
               </p>
@@ -52,7 +53,7 @@ export default function ProspectFinderDashboard() {
             </div>
           </div> */}
         </div>
-        
+        <CustomerProfileList />  
         <UsageLogsList />
       </div>
     </div>
