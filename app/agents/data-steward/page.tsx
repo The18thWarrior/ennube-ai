@@ -1,5 +1,6 @@
 'use client';
 
+import DataStewardExecuteButton from '@/components/agents/data-steward/data-steward-execute-button';
 import DataStewardHeader from '@/components/agents/data-steward/data-steward-header';
 import UsageLogsList from '@/components/agents/usage-logs-list';
 
@@ -9,7 +10,11 @@ export default function DataStewardDashboard() {
       <DataStewardHeader />
       <div className="container mx-auto px-4 py-8">
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
-          <h2 className="text-xl font-semibold mb-4">Data Steward Overview</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-semibold">Data Steward Overview</h2>
+            {/* Inline Data Steward Execute Button */}
+            <DataStewardExecuteButton />
+          </div>
           <p className="text-gray-600 dark:text-gray-300 mb-4">
             The Data Steward agent keeps your CRM data clean, accurate, and up-to-date. 
             It automatically enriches contact information, removes duplicates, and ensures 

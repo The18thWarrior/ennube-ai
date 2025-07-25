@@ -14,6 +14,8 @@ import { JsonView } from "../ui/json-view"
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "../ui/collapsible"
 import ExecutionRecordDetailItem from "./execution-record-detail-item"
 import { Agent } from "http"
+import Link from "next/link"
+import { getAgentLink } from "@/lib/utils"
 
 
 
@@ -100,13 +102,16 @@ export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, colla
     return (
       <div className="flex items-center gap-4 flex-auto">
         <div className="h-16 w-16 rounded-full overflow-hidden flex-shrink-0 border border-gray-200">
-          <Image
-            src={execution.image_url || "/placeholder.svg"}
-            alt={execution.agent_name}
-            width={64}
-            height={64}
-            className="object-cover"
-          />
+          <Link href={getAgentLink(execution.agent_name)}>
+            <Image
+              src={execution.image_url || "/placeholder.svg"}
+              alt={execution.agent_name}
+              width={64}
+              height={64}
+              className="object-cover"
+            />
+          </Link>
+          
         </div>
         <div>
           <h2 className="text-xl font-bold">{execution.agent_name}</h2>

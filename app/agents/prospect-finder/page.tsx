@@ -1,5 +1,6 @@
 'use client';
 
+import ProspectFinderExecuteButton from '@/components/agents/prospect-finder/prospect-finder-execute-button';
 import ProspectFinderHeader from '@/components/agents/prospect-finder/prospect-finder-header';
 import UsageLogsList from '@/components/agents/usage-logs-list';
 import { CustomerProfileList } from '@/components/customer-profile/customer-profile-list';
@@ -10,7 +11,11 @@ export default function ProspectFinderDashboard() {
       <ProspectFinderHeader />
       <div className="container mx-auto px-4 py-8">
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
-          <h2 className="text-xl font-semibold mb-4">Prospect Finder Overview</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-semibold">Prospect Finder Overview</h2>
+            {/* Inline Prospect Finder Execute Button */}
+            <ProspectFinderExecuteButton />
+          </div>
           <p className="text-gray-600 dark:text-gray-300 mb-4">
             👋 Where in the world is your next customer? That's my job to find out. I'm your AI-powered, globe-trotting lead scout—sleuthing across the internet to uncover your dream clients.
           </p>

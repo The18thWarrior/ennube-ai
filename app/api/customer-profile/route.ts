@@ -85,7 +85,8 @@ export async function POST(req: NextRequest) {
       channelRecommendation: body.channelRecommendation ? String(body.channelRecommendation) : undefined,
       accountStrategy: body.accountStrategy ? String(body.accountStrategy) : undefined,
       accountEmployeeSize: body.accountEmployeeSize ? String(body.accountEmployeeSize) : undefined,
-      accountLifecycle: body.accountLifecycle ? String(body.accountLifecycle) : undefined
+      accountLifecycle: body.accountLifecycle ? String(body.accountLifecycle) : undefined,
+      active: typeof body.active === 'boolean' ? body.active : true
     };
     const id = await saveCustomerProfile(profile);
     if (!id) return NextResponse.json({ error: 'Failed to create profile' }, { status: 500 });
@@ -113,7 +114,7 @@ export async function PUT(req: NextRequest) {
     const allowed = [
       'customerProfileName', 'commonIndustries', 'frequentlyPurchasedProducts', 'geographicRegions',
       'averageDaysToClose', 'socialMediaPresence', 'channelRecommendation', 'accountStrategy',
-      'accountEmployeeSize', 'accountLifecycle'
+      'accountEmployeeSize', 'accountLifecycle', 'active'
     ] as const;
     const filteredUpdates: Partial<Omit<CustomerProfile, 'id' | 'createdAt' | 'updatedAt'>> = {};
     for (const key of allowed) {

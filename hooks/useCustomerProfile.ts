@@ -23,6 +23,7 @@ export interface CustomerProfile {
   accountStrategy?: string;
   accountEmployeeSize?: string;
   accountLifecycle?: string;
+  active: boolean;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -89,7 +90,7 @@ export function useCustomerProfile() {
       const res = await fetch('/api/customer-profile', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(profileData)
+        body: JSON.stringify({ ...profileData, active: profileData.active ?? true })
       });
       const data = await res.json();
       if (res.ok) {

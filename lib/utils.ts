@@ -187,11 +187,25 @@ const agentImageMap: Record<string, string> = {
   "MarketNurturer": "/market-nurturer.png",
 }
 
+const agentLinkMap: Record<string, string> = {
+  "DataSteward": "/agents/data-steward",
+  "ProspectFinder": "/agents/prospect-finder",
+  "MeetingsBooker": "/agents/meetings-booker",
+  "MarketNurturer": "/agents/market-nurturer",
+}
+
 export const getAgentImage = (agentName: string) => {
   if (agentName in agentImageMap) {
     return agentImageMap[agentName]
   }
   return "/data-steward.png" // Fallback image
+}
+
+export const getAgentLink = (agentName: string) => {
+  if (agentName in agentLinkMap) {
+    return agentLinkMap[agentName];
+  }
+  return "/agents/data-steward"; // Fallback link
 }
 
 const salesforceIdRegex = /^[a-zA-Z0-9]{15,18}$/;

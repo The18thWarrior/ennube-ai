@@ -62,7 +62,7 @@ export default function ProspectFinderExecuteButton() {
             Processing...
           </>
         ) : (
-          'Execute Prospect Finder'
+          'Find Prospects'
         )}
       </Button>
       

@@ -81,6 +81,25 @@ export const CustomerProfileCard: React.FC<CustomerProfileCardProps> = ({ profil
       {success && <div className="mb-2 text-green-600 dark:text-green-400 text-sm">{success}</div>}
       {error && <div className="mb-2 text-red-500 dark:text-red-400 text-sm">{error}</div>}
       <form className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4" onSubmit={e => { e.preventDefault(); handleSave(); }}>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Active</label>
+          {editMode ? (
+            <select
+              name="active"
+              value={form.active ? 'true' : 'false'}
+              onChange={e => setForm(f => ({ ...f, active: e.target.value === 'true' }))}
+              className="mt-1 block w-full outline outline-gray-300 dark:outline-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
+              required
+            >
+              <option value="true">Active</option>
+              <option value="false">Inactive</option>
+            </select>
+          ) : (
+            <span className={form.active ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400'}>
+              {form.active ? 'Active' : 'Inactive'}
+            </span>
+          )}
+        </div>
         <div className="md:col-span-2">
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Profile Name</label>
           <input
@@ -89,7 +108,7 @@ export const CustomerProfileCard: React.FC<CustomerProfileCardProps> = ({ profil
             value={form.customerProfileName || ''}
             onChange={handleChange}
             disabled={!editMode}
-            className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
+            className="mt-1 block w-full outline outline-gray-300 dark:outline-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
             required
           />
         </div>
@@ -101,7 +120,7 @@ export const CustomerProfileCard: React.FC<CustomerProfileCardProps> = ({ profil
             value={form.commonIndustries || ''}
             onChange={handleChange}
             disabled={!editMode}
-            className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
+            className="mt-1 block w-full outline outline-gray-300 dark:outline-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
             placeholder="e.g. Finance;Healthcare"
           />
         </div>
@@ -113,7 +132,7 @@ export const CustomerProfileCard: React.FC<CustomerProfileCardProps> = ({ profil
             value={form.frequentlyPurchasedProducts || ''}
             onChange={handleChange}
             disabled={!editMode}
-            className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
+            className="mt-1 block w-full outline outline-gray-300 dark:outline-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
             placeholder="e.g. CRM;Analytics"
           />
         </div>
@@ -125,7 +144,7 @@ export const CustomerProfileCard: React.FC<CustomerProfileCardProps> = ({ profil
             value={form.geographicRegions || ''}
             onChange={handleChange}
             disabled={!editMode}
-            className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
+            className="mt-1 block w-full outline outline-gray-300 dark:outline-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
             placeholder="e.g. US;Europe"
           />
         </div>
@@ -137,7 +156,7 @@ export const CustomerProfileCard: React.FC<CustomerProfileCardProps> = ({ profil
             value={form.averageDaysToClose ?? ''}
             onChange={handleChange}
             disabled={!editMode}
-            className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
+            className="mt-1 block w-full outline outline-gray-300 dark:outline-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
             min={0}
           />
         </div>
@@ -149,7 +168,7 @@ export const CustomerProfileCard: React.FC<CustomerProfileCardProps> = ({ profil
             value={form.socialMediaPresence || ''}
             onChange={handleChange}
             disabled={!editMode}
-            className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
+            className="mt-1 block w-full outline outline-gray-300 dark:outline-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
             placeholder="e.g. Strong;Weak"
           />
         </div>
@@ -161,7 +180,7 @@ export const CustomerProfileCard: React.FC<CustomerProfileCardProps> = ({ profil
             value={form.channelRecommendation || ''}
             onChange={handleChange}
             disabled={!editMode}
-            className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
+            className="mt-1 block w-full outline outline-gray-300 dark:outline-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
             placeholder="e.g. Email;Phone"
           />
         </div>
@@ -172,7 +191,7 @@ export const CustomerProfileCard: React.FC<CustomerProfileCardProps> = ({ profil
             value={form.accountStrategy || ''}
             onChange={handleChange}
             disabled={!editMode}
-            className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
+            className="mt-1 block w-full outline outline-gray-300 dark:outline-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
             rows={2}
           />
         </div>
@@ -184,7 +203,7 @@ export const CustomerProfileCard: React.FC<CustomerProfileCardProps> = ({ profil
             value={form.accountEmployeeSize || ''}
             onChange={handleChange}
             disabled={!editMode}
-            className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
+            className="mt-1 block w-full outline outline-gray-300 dark:outline-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
             placeholder="e.g. 5-10"
           />
         </div>
@@ -196,7 +215,7 @@ export const CustomerProfileCard: React.FC<CustomerProfileCardProps> = ({ profil
             value={form.accountLifecycle || ''}
             onChange={handleChange}
             disabled={!editMode}
-            className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
+            className="mt-1 block w-full outline outline-gray-300 dark:outline-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
             placeholder="e.g. Enterprise"
           />
         </div>

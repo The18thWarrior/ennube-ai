@@ -38,7 +38,8 @@ export const CustomerProfileCreateCard: React.FC<CustomerProfileCreateCardProps>
     channelRecommendation: '',
     accountStrategy: '',
     accountEmployeeSize: '',
-    accountLifecycle: ''
+    accountLifecycle: '',
+    active: true
   });
   const [success, setSuccess] = useState<string | null>(null);
 
@@ -68,6 +69,19 @@ export const CustomerProfileCreateCard: React.FC<CustomerProfileCreateCardProps>
       {success && <div className="mb-2 text-green-600 dark:text-green-400 text-sm">{success}</div>}
       {error && <div className="mb-2 text-red-500 dark:text-red-400 text-sm">{error}</div>}
       <form className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4" onSubmit={handleSubmit}>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Active</label>
+          <select
+            name="active"
+            value={form.active ? 'true' : 'false'}
+            onChange={e => setForm(f => ({ ...f, active: e.target.value === 'true' }))}
+            className="mt-1 block w-full outline outline-gray-300 dark:outline-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
+            required
+          >
+            <option value="true">Active</option>
+            <option value="false">Inactive</option>
+          </select>
+        </div>
         
         <div className="md:col-span-2">
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Profile Name</label>
@@ -76,7 +90,7 @@ export const CustomerProfileCreateCard: React.FC<CustomerProfileCreateCardProps>
             name="customerProfileName"
             value={form.customerProfileName}
             onChange={handleChange}
-            className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
+            className="mt-1 block w-full outline outline-gray-300 dark:outline-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
             required
           />
         </div>
@@ -87,7 +101,7 @@ export const CustomerProfileCreateCard: React.FC<CustomerProfileCreateCardProps>
             name="commonIndustries"
             value={form.commonIndustries}
             onChange={handleChange}
-            className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
+            className="mt-1 block w-full outline outline-gray-300 dark:outline-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
             placeholder="e.g. Finance;Healthcare"
           />
         </div>
@@ -98,7 +112,7 @@ export const CustomerProfileCreateCard: React.FC<CustomerProfileCreateCardProps>
             name="frequentlyPurchasedProducts"
             value={form.frequentlyPurchasedProducts}
             onChange={handleChange}
-            className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
+            className="mt-1 block w-full outline outline-gray-300 dark:outline-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
             placeholder="e.g. CRM;Analytics"
           />
         </div>
@@ -109,7 +123,7 @@ export const CustomerProfileCreateCard: React.FC<CustomerProfileCreateCardProps>
             name="geographicRegions"
             value={form.geographicRegions}
             onChange={handleChange}
-            className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
+            className="mt-1 block w-full outline outline-gray-300 dark:outline-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
             placeholder="e.g. US;Europe"
           />
         </div>
@@ -120,7 +134,7 @@ export const CustomerProfileCreateCard: React.FC<CustomerProfileCreateCardProps>
             name="averageDaysToClose"
             value={form.averageDaysToClose}
             onChange={handleChange}
-            className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
+            className="mt-1 block w-full outline outline-gray-300 dark:outline-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
             min={0}
           />
         </div>
@@ -131,7 +145,7 @@ export const CustomerProfileCreateCard: React.FC<CustomerProfileCreateCardProps>
             name="socialMediaPresence"
             value={form.socialMediaPresence}
             onChange={handleChange}
-            className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
+            className="mt-1 block w-full outline outline-gray-300 dark:outline-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
             placeholder="e.g. Strong;Weak"
           />
         </div>
@@ -142,7 +156,7 @@ export const CustomerProfileCreateCard: React.FC<CustomerProfileCreateCardProps>
             name="channelRecommendation"
             value={form.channelRecommendation}
             onChange={handleChange}
-            className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
+            className="mt-1 block w-full outlineoutline-gray-300 dark:outline-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
             placeholder="e.g. Email;Phone"
           />
         </div>
@@ -152,7 +166,7 @@ export const CustomerProfileCreateCard: React.FC<CustomerProfileCreateCardProps>
             name="accountStrategy"
             value={form.accountStrategy}
             onChange={handleChange}
-            className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
+            className="mt-1 block w-full outline outline-gray-300 dark:outline-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
             rows={2}
           />
         </div>
@@ -163,7 +177,7 @@ export const CustomerProfileCreateCard: React.FC<CustomerProfileCreateCardProps>
             name="accountEmployeeSize"
             value={form.accountEmployeeSize}
             onChange={handleChange}
-            className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
+            className="mt-1 block w-full outline outline-gray-300 dark:outline-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
             placeholder="e.g. 5-10"
           />
         </div>
@@ -174,7 +188,7 @@ export const CustomerProfileCreateCard: React.FC<CustomerProfileCreateCardProps>
             name="accountLifecycle"
             value={form.accountLifecycle}
             onChange={handleChange}
-            className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
+            className="mt-1 block w-full outline outline-gray-300 dark:outline-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
             placeholder="e.g. Enterprise"
           />
         </div>

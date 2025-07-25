@@ -92,7 +92,7 @@ export default function DataStewardExecuteButton() {
                 </>
               ) : (
                 <>
-                  Execute Data Steward
+                  Run Enrichment
                   <ChevronDown className="ml-2 h-4 w-4" />
                 </>
               )}

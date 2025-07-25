@@ -8,6 +8,7 @@
 CREATE TABLE customer_profile (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(), -- Unique identifier for each customer profile
     user_id VARCHAR(255) NOT NULL, -- ID of the user who owns this profile
+    active BOOLEAN DEFAULT FALSE, -- Indicates if the customer profile is active or not
     customer_profile_name VARCHAR(255) NOT NULL, -- Human-readable name for the customer profile
     common_industries VARCHAR(512) NOT NULL, -- Semicolon-separated list of industries commonly associated with the customer
     frequently_purchased_products VARCHAR(512) NOT NULL, -- Semicolon-separated list of products/services frequently purchased
@@ -47,7 +48,7 @@ COMMENT ON COLUMN customer_profile.account_employee_size IS 'Employee size range
 COMMENT ON COLUMN customer_profile.account_lifecycle IS 'Lifecycle stage of the account (e.g., Enterprise)';
 COMMENT ON COLUMN customer_profile.created_at IS 'Timestamp when the profile was created';
 COMMENT ON COLUMN customer_profile.updated_at IS 'Timestamp when the profile was last updated';
-
+COMMENT ON COLUMN customer_profile.active IS 'Indicates if the customer profile is active or not';
 
 /*
  * === customer-profile.sql ===

@@ -37,6 +37,7 @@ export interface CustomerProfile {
   accountStrategy?: string;
   accountEmployeeSize?: string;
   accountLifecycle?: string;
+  active: boolean;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -54,9 +55,9 @@ export async function saveCustomerProfile(profile: Omit<CustomerProfile, 'id' | 
     const insertResult = await pool.query(
       `INSERT INTO customer_profile (
         user_id, customer_profile_name, common_industries, frequently_purchased_products, geographic_regions,
-        average_days_to_close, social_media_presence, channel_recommendation, account_strategy, account_employee_size, account_lifecycle, created_at, updated_at
+        average_days_to_close, social_media_presence, channel_recommendation, account_strategy, account_employee_size, account_lifecycle, active, created_at, updated_at
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14
       ) RETURNING id`,
       [
         profile.userId,
@@ -70,6 +71,7 @@ export async function saveCustomerProfile(profile: Omit<CustomerProfile, 'id' | 
         profile.accountStrategy || null,
         profile.accountEmployeeSize || null,
         profile.accountLifecycle || null,
+        profile.active ?? true,
         now,
         now
       ]
@@ -96,7 +98,7 @@ export async function getCustomerProfile(id: string): Promise<CustomerProfile | 
               average_days_to_close as "averageDaysToClose", social_media_presence as "socialMediaPresence",
               channel_recommendation as "channelRecommendation", account_strategy as "accountStrategy",
               account_employee_size as "accountEmployeeSize", account_lifecycle as "accountLifecycle",
-              created_at as "createdAt", updated_at as "updatedAt"
+              active, created_at as "createdAt", updated_at as "updatedAt"
        FROM customer_profile WHERE id = $1`,
       [id]
     );
@@ -125,7 +127,7 @@ export async function getUserCustomerProfiles(userId: string): Promise<CustomerP
               average_days_to_close as "averageDaysToClose", social_media_presence as "socialMediaPresence",
               channel_recommendation as "channelRecommendation", account_strategy as "accountStrategy",
               account_employee_size as "accountEmployeeSize", account_lifecycle as "accountLifecycle",
-              created_at as "createdAt", updated_at as "updatedAt"
+              active, created_at as "createdAt", updated_at as "updatedAt"
        FROM customer_profile WHERE user_id = $1 ORDER BY customer_profile_name`,
       [userId]
     );

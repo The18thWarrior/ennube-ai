@@ -66,13 +66,14 @@ export const CustomerProfileList: React.FC<CustomerProfileListProps> = ({ }) => 
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Industries</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Products</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Regions</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Active</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Created</th>
             </tr>
           </thead>
           <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
             {loading ? (
               <tr>
-                <td colSpan={6} className="px-6 py-4 text-center">
+                <td colSpan={7} className="px-6 py-4 text-center">
                   <div className="flex justify-center">
                     <div className="animate-spin h-5 w-5 border-2 border-gray-500 rounded-full border-t-transparent"></div>
                   </div>
@@ -80,7 +81,7 @@ export const CustomerProfileList: React.FC<CustomerProfileListProps> = ({ }) => 
               </tr>
             ) : profiles.length === 0 ? (
               <tr>
-                <td colSpan={6} className="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
+                <td colSpan={7} className="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
                   No customer profiles found
                 </td>
               </tr>
@@ -106,6 +107,11 @@ export const CustomerProfileList: React.FC<CustomerProfileListProps> = ({ }) => 
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                     {profile.geographicRegions || '—'}
                   </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-xs">
+                    <span className={profile.active ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400'}>
+                      {profile.active ? 'Active' : 'Inactive'}
+                    </span>
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-400 dark:text-gray-500">
                     {profile.createdAt ? new Date(profile.createdAt).toLocaleDateString() : '—'}
                   </td>
@@ -130,7 +136,7 @@ export const CustomerProfileList: React.FC<CustomerProfileListProps> = ({ }) => 
       {/* Modal for profile detail */}
       {selectedProfile && (
         <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
-          <div className="rounded-lg shadow-lg p-6 min-w-[320px] max-w-2xl">
+          <div className="rounded-lg shadow-lg p-6 w-full max-w-3xl">
             <CustomerProfileCard
               profile={selectedProfile}
               onClose={() => setSelectedProfile(null)}
