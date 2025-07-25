@@ -133,14 +133,9 @@ export const CustomerProfileList: React.FC<CustomerProfileListProps> = ({ }) => 
           <div className="rounded-lg shadow-lg p-6 min-w-[320px] max-w-2xl">
             <CustomerProfileCard
               profile={selectedProfile}
+              onClose={() => setSelectedProfile(null)}
               onSave={updated => setSelectedProfile(updated)}
             />
-            <button
-              className="mt-4 bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded"
-              onClick={() => setSelectedProfile(null)}
-            >
-              Close
-            </button>
           </div>
         </div>
       )}

@@ -14,6 +14,7 @@ import { CustomerProfile, useCustomerProfile } from '@/hooks/useCustomerProfile'
 interface CustomerProfileCardProps {
   profile: CustomerProfile;
   onSave?: (updated: CustomerProfile) => void;
+  onClose?: () => void;
 }
 
 /**
@@ -26,7 +27,7 @@ interface CustomerProfileCardProps {
  * - Future Improvements: Add field-level validation, better UX, loading states.
  */
 
-export const CustomerProfileCard: React.FC<CustomerProfileCardProps> = ({ profile, onSave }) => {
+export const CustomerProfileCard: React.FC<CustomerProfileCardProps> = ({ profile, onSave, onClose }) => {
   const { updateProfile, loading, error } = useCustomerProfile();
   const [editMode, setEditMode] = useState(false);
   const [form, setForm] = useState<Partial<CustomerProfile>>({ ...profile });
@@ -49,154 +50,169 @@ export const CustomerProfileCard: React.FC<CustomerProfileCardProps> = ({ profil
   };
 
   return (
-    <div className="bg-white rounded-lg shadow p-6 w-full max-w-xl mx-auto">
+    <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-6 w-full mx-auto">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-xl font-semibold text-blue-700">{form.customerProfileName || 'Untitled Profile'}</h3>
-        {!editMode ? (
-          <button
-            className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded"
-            onClick={() => setEditMode(true)}
-          >Edit</button>
-        ) : (
-          <button
-            className="bg-gray-300 hover:bg-gray-400 text-gray-800 text-sm px-4 py-2 rounded"
-            onClick={() => { setEditMode(false); setForm({ ...profile }); setSuccess(null); }}
-          >Cancel</button>
-        )}
+        <h3 className="text-xl font-semibold text-blue-700 dark:text-blue-300">{form.customerProfileName || 'Untitled Profile'}</h3>
+        <div className="flex gap-2">
+          {!editMode ? (
+            <button
+              className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded"
+              onClick={() => setEditMode(true)}
+            >Edit</button>
+          ) : (
+            <button
+              className="bg-gray-300 hover:bg-gray-400 text-gray-800 text-sm px-4 py-2 rounded"
+              onClick={() => { setEditMode(false); setForm({ ...profile }); setSuccess(null); }}
+            >Cancel</button>
+          )}
+          {/* Close button */}
+          {typeof onClose === 'function' && (
+            <button
+              className="bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm px-4 py-2 rounded"
+              onClick={onClose}
+              type="button"
+              aria-label="Close"
+            >
+              Close
+            </button>
+          )}
+        </div>
       </div>
-      {success && <div className="mb-2 text-green-600 text-sm">{success}</div>}
-      {error && <div className="mb-2 text-red-500 text-sm">{error}</div>}
-      <form className="space-y-4" onSubmit={e => { e.preventDefault(); handleSave(); }}>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Profile Name</label>
+      {success && <div className="mb-2 text-green-600 dark:text-green-400 text-sm">{success}</div>}
+      {error && <div className="mb-2 text-red-500 dark:text-red-400 text-sm">{error}</div>}
+      <form className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4" onSubmit={e => { e.preventDefault(); handleSave(); }}>
+        <div className="md:col-span-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Profile Name</label>
           <input
             type="text"
             name="customerProfileName"
             value={form.customerProfileName || ''}
             onChange={handleChange}
             disabled={!editMode}
-            className="mt-1 block w-full border-gray-300 rounded px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+            className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
             required
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Industries</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Industries</label>
           <input
             type="text"
             name="commonIndustries"
             value={form.commonIndustries || ''}
             onChange={handleChange}
             disabled={!editMode}
-            className="mt-1 block w-full border-gray-300 rounded px-3 py-2"
+            className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
             placeholder="e.g. Finance;Healthcare"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Products</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Products</label>
           <input
             type="text"
             name="frequentlyPurchasedProducts"
             value={form.frequentlyPurchasedProducts || ''}
             onChange={handleChange}
             disabled={!editMode}
-            className="mt-1 block w-full border-gray-300 rounded px-3 py-2"
+            className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
             placeholder="e.g. CRM;Analytics"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Regions</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Regions</label>
           <input
             type="text"
             name="geographicRegions"
             value={form.geographicRegions || ''}
             onChange={handleChange}
             disabled={!editMode}
-            className="mt-1 block w-full border-gray-300 rounded px-3 py-2"
+            className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
             placeholder="e.g. US;Europe"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Avg Days to Close</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Avg Days to Close</label>
           <input
             type="number"
             name="averageDaysToClose"
             value={form.averageDaysToClose ?? ''}
             onChange={handleChange}
             disabled={!editMode}
-            className="mt-1 block w-full border-gray-300 rounded px-3 py-2"
+            className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
             min={0}
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Social Media Presence</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Social Media Presence</label>
           <input
             type="text"
             name="socialMediaPresence"
             value={form.socialMediaPresence || ''}
             onChange={handleChange}
             disabled={!editMode}
-            className="mt-1 block w-full border-gray-300 rounded px-3 py-2"
+            className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
             placeholder="e.g. Strong;Weak"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Channel Recommendation</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Channel Recommendation</label>
           <input
             type="text"
             name="channelRecommendation"
             value={form.channelRecommendation || ''}
             onChange={handleChange}
             disabled={!editMode}
-            className="mt-1 block w-full border-gray-300 rounded px-3 py-2"
+            className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
             placeholder="e.g. Email;Phone"
           />
         </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Account Strategy</label>
+        <div className="md:col-span-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Account Strategy</label>
           <textarea
             name="accountStrategy"
             value={form.accountStrategy || ''}
             onChange={handleChange}
             disabled={!editMode}
-            className="mt-1 block w-full border-gray-300 rounded px-3 py-2"
+            className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
             rows={2}
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Employee Size</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Employee Size</label>
           <input
             type="text"
             name="accountEmployeeSize"
             value={form.accountEmployeeSize || ''}
             onChange={handleChange}
             disabled={!editMode}
-            className="mt-1 block w-full border-gray-300 rounded px-3 py-2"
+            className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
             placeholder="e.g. 5-10"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Lifecycle</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Lifecycle</label>
           <input
             type="text"
             name="accountLifecycle"
             value={form.accountLifecycle || ''}
             onChange={handleChange}
             disabled={!editMode}
-            className="mt-1 block w-full border-gray-300 rounded px-3 py-2"
+            className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
             placeholder="e.g. Enterprise"
           />
         </div>
         {editMode && (
-          <button
-            type="submit"
-            className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded mt-4"
-            disabled={loading}
-          >
-            {loading ? 'Saving...' : 'Save Changes'}
-          </button>
+          <div className="md:col-span-2 flex flex-row items-center gap-2 mt-4">
+            <button
+              type="submit"
+              className="bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-700 dark:hover:bg-blue-800 dark:text-blue-100 font-medium px-4 py-2 rounded"
+              disabled={loading}
+            >
+              {loading ? 'Saving...' : 'Save Changes'}
+            </button>
+          </div>
         )}
       </form>
-      <div className="mt-4 text-xs text-gray-400">
+      <div className="mt-4 text-xs text-gray-400 dark:text-gray-500">
         Created: {profile.createdAt ? new Date(profile.createdAt).toLocaleDateString() : '—'}<br />
         Updated: {profile.updatedAt ? new Date(profile.updatedAt).toLocaleDateString() : '—'}
       </div>
