@@ -58,8 +58,8 @@ export default function ProspectFinderDashboard() {
             </div>
           </div> */}
         </div>
-        <CustomerProfileList />  
-        <UsageLogsList />
+        <CustomerProfileList />
+        <UsageLogsList filter="ProspectFinder" />
       </div>
     </div>
   );

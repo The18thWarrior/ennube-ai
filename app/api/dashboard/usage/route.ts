@@ -19,8 +19,9 @@ export async function GET(request: NextRequest) {
     
     const limit = request.nextUrl.searchParams.get('limit') || '10';
     const offset = request.nextUrl.searchParams.get('offset') || '0';
+    const filter = request.nextUrl.searchParams.get('filter') || '';
 
-    const logs = await getUserUsageLogsBySub(userSub, Number(limit), Number(offset));
+    const logs = await getUserUsageLogsBySub(userSub, Number(limit), Number(offset), filter);
     return NextResponse.json(logs);
   } catch (error: any) {
     console.error('Error retrieving usage logs:', error);

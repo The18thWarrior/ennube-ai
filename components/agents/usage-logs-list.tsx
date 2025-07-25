@@ -4,7 +4,11 @@ import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { useUsageLogs } from '@/hooks/useUsageLogs';
 
-export default function UsageLogsList() {
+interface UsageLogListProps {
+  filter?: string;
+}
+
+export default function UsageLogsList({ filter }: UsageLogListProps) {
   const ITEMS_PER_PAGE = 10;
   const { 
     logs, 
@@ -14,7 +18,7 @@ export default function UsageLogsList() {
     hasMore,
     nextPage,
     prevPage
-  } = useUsageLogs(ITEMS_PER_PAGE);
+  } = useUsageLogs(ITEMS_PER_PAGE, filter);
   console.log(logs);
   const formatTimestamp = (timestamp: number) => {
     if (!timestamp) return 'N/A';

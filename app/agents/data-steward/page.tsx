@@ -41,8 +41,8 @@ export default function DataStewardDashboard() {
             </div>
           </div>
         </div>
-        
-        <UsageLogsList />
+
+        <UsageLogsList filter="DataSteward" />
       </div>
     </div>
   );

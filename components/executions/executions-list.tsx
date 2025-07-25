@@ -20,9 +20,10 @@ interface ExecutionsListProps {
   executions: Execution[]
   onSelectExecution: (id: string) => void
   selectedExecutionId: string | null
+  executionFilter?: string
 }
 
-export function ExecutionsList({ executions, onSelectExecution, selectedExecutionId }: ExecutionsListProps) {
+export function ExecutionsList({ executions, onSelectExecution, selectedExecutionId, executionFilter }: ExecutionsListProps) {
   if (executions.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
@@ -34,9 +35,15 @@ export function ExecutionsList({ executions, onSelectExecution, selectedExecutio
     )
   }
 
+  const filteredExecutions = executionFilter
+    ? executions.filter(execution =>
+        execution.agent_name.toLowerCase().includes(executionFilter.toLowerCase())
+      )
+    : executions;
+
   return (
     <div className="space-y-4">
-      {executions.map((execution) => (
+      {filteredExecutions.map((execution) => (
         <Card
           key={nanoid()}
           className={`cursor-pointer transition-all hover:shadow-md ${

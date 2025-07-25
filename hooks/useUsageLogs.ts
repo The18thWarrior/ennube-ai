@@ -14,7 +14,7 @@ interface UseUsageLogsReturn {
   refresh: () => Promise<void>;
 }
 
-export function useUsageLogs(itemsPerPage: number = 10): UseUsageLogsReturn {
+export function useUsageLogs(itemsPerPage: number = 10, filter?: string): UseUsageLogsReturn {
   const [logs, setLogs] = useState<UsageLogEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -26,7 +26,7 @@ export function useUsageLogs(itemsPerPage: number = 10): UseUsageLogsReturn {
     setLoading(true);
     try {
       const offset = page * itemsPerPage;
-      const response = await fetch(`/api/dashboard/usage?limit=${itemsPerPage}&offset=${offset}`);
+      const response = await fetch(`/api/dashboard/usage?limit=${itemsPerPage}&offset=${offset}${filter ? `&filter=${encodeURIComponent(filter)}` : ''}`);
       
       if (!response.ok) {
         const errorData = await response.json();

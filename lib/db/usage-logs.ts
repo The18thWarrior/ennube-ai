@@ -320,12 +320,26 @@ export async function getUserUsageLog(
 export async function getUserUsageLogsBySub(
   sub: string,
   limit: number = 100,
-  offset: number = 0
+  offset: number = 0,
+  filter?: string
 ): Promise<UsageLogEntry[]> {
   try {
+    console.log('getUserUsageLogsBySub called with:', { sub, limit, offset, filter });
+    if (filter && filter.length > 0) {
+      const result = await pool.query(
+        `SELECT * FROM ${USAGE_LOG_TABLE} 
+        WHERE user_sub = $1 AND agent = $4
+        ORDER BY timestamp DESC
+        LIMIT $2 OFFSET $3`,
+        [sub, limit, offset, filter]
+      );
+      
+      // Map the results to our interface format
+      return result.rows.map(mapDbToUsageLogEntry);
+    }
     const result = await pool.query(
       `SELECT * FROM ${USAGE_LOG_TABLE} 
-       WHERE user_sub = $1
+       WHERE user_sub = $1 
        ORDER BY timestamp DESC
        LIMIT $2 OFFSET $3`,
       [sub, limit, offset]
