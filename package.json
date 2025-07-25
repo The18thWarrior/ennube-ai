@@ -1,4 +1,7 @@
 {
+  "workspaces": [
+    "packages/*"
+  ],
   "private": true,
   "description": "An example project for NextAuth.js with Next.js",
   "repository": "https://github.com/nextauthjs/next-auth-example.git",
@@ -9,6 +12,7 @@
   "scripts": {
     "dev": "next",
     "build": "next build",
+    "build:all": "pnpm -r build",
     "start": "next start",
     "start:mpc": "pnpm --filter @ennube-ai/mcp exec mpc-server"
   },
