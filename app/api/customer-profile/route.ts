@@ -35,6 +35,7 @@ export async function GET(req: NextRequest) {
 
     const {isValid, userId} = await validateSession(req);
     if (!isValid) {
+      console.log('GET /customer-profile - Invalid session');
       return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
     }
     const { searchParams } = new URL(req.url);
@@ -42,13 +43,18 @@ export async function GET(req: NextRequest) {
     //const userId = session?.user?.auth0?.sub || searchParams.get('subId'); // Use authenticated user's ID
     if (id) {
       const profile = await getCustomerProfile(id);
+
+      console.log('GET /customer-profile - Profile fetched:', profile);
       if (!profile) return NextResponse.json({ error: 'Profile not found' }, { status: 404 });
       return NextResponse.json(profile);
     }
     if (userId) {
+      
       const profiles = await getUserCustomerProfiles(userId);
+      console.log('GET /customer-profile - Profiles fetched:', profiles);
       return NextResponse.json(profiles);
     }
+    console.log('GET /customer-profile - ' + 'Missing id or userId');
     return NextResponse.json({ error: 'Missing id or userId' }, { status: 400 });
   } catch (error) {
     console.error('GET /customer-profile error:', error);
