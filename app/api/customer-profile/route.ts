@@ -18,6 +18,7 @@ import {
   CustomerProfile
 } from '@/lib/db/customer-profile-storage';
 import { auth } from '@/auth';
+import { validateSession } from '@/lib/n8n/utils';
 
 /**
  * OVERVIEW
@@ -31,17 +32,14 @@ import { auth } from '@/auth';
 
 export async function GET(req: NextRequest) {
   try {
-    const session = await auth();
-    if (!session?.user?.auth0?.sub) {
-        return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-        );
+
+    const {isValid, userId} = await validateSession(req);
+    if (!isValid) {
+      return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
     }
-    
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');
-    const userId = session.user.auth0.sub; // Use authenticated user's ID
+    //const userId = session?.user?.auth0?.sub || searchParams.get('subId'); // Use authenticated user's ID
     if (id) {
       const profile = await getCustomerProfile(id);
       if (!profile) return NextResponse.json({ error: 'Profile not found' }, { status: 404 });
@@ -60,12 +58,9 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await auth();
-    if (!session?.user?.auth0?.sub) {
-        return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-        );
+    const {isValid, userId} = await validateSession(req);
+    if (!isValid) {
+      return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
     }
     
     const body = await req.json();
@@ -75,7 +70,7 @@ export async function POST(req: NextRequest) {
     }
     // Sanitize input (basic)
     const profile: Omit<CustomerProfile, 'id' | 'createdAt' | 'updatedAt'> = {
-      userId: String(session.user.auth0.sub),
+      userId: String(userId),
       customerProfileName: String(body.customerProfileName),
       commonIndustries: String(body.commonIndustries || ''),
       frequentlyPurchasedProducts: String(body.frequentlyPurchasedProducts || ''),
@@ -99,12 +94,9 @@ export async function POST(req: NextRequest) {
 
 export async function PUT(req: NextRequest) {
   try {
-    const session = await auth();
-    if (!session?.user?.auth0?.sub) {
-        return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-        );
+    const {isValid, userId} = await validateSession(req);
+    if (!isValid) {
+      return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
     }
     
     const body = await req.json();
@@ -133,12 +125,9 @@ export async function PUT(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   try {
-    const session = await auth();
-    if (!session?.user?.auth0?.sub) {
-        return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-        );
+    const {isValid, userId} = await validateSession(req);
+    if (!isValid) {
+      return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
     }
     
     const { searchParams } = new URL(req.url);

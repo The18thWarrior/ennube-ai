@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSalesforceCredentialsBySub } from '@/lib/db/salesforce-storage';
 import { createSalesforceClient, SalesforceClient } from '@/lib/salesforce';
 import { SalesforceAuthResult } from '@/lib/types';
+import { validateSession } from '@/lib/n8n/utils';
 /**
  * Helper function to get a Salesforce client from the sub parameter
  */
@@ -10,13 +11,23 @@ async function getSalesforceClientFromSub(request: NextRequest): Promise<{
   error: NextResponse | null,
   sobjectType: string | null 
 }> {
+  const {isValid, userId} = await validateSession(request);
+  if (!isValid) {
+      return {
+      client: null,
+      error: NextResponse.json(
+        { error: 'Missing required parameter: sub' },
+        { status: 400 }
+      ),
+      sobjectType: null
+    };
+  }
   // Get query parameters
   const searchParams = request.nextUrl.searchParams;
-  const sub = searchParams.get('sub');
   const sobjectType = searchParams.get('sobjectType');
   
   // Validate required parameters
-  if (!sub) {
+  if (!userId) {
     return {
       client: null,
       error: NextResponse.json(
@@ -39,7 +50,7 @@ async function getSalesforceClientFromSub(request: NextRequest): Promise<{
   }
   
   // Get Salesforce credentials for the user
-  const credentials = await getSalesforceCredentialsBySub(sub);
+  const credentials = await getSalesforceCredentialsBySub(userId);
   
   if (!credentials) {
     return {
