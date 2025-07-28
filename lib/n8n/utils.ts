@@ -11,6 +11,7 @@
 import { auth } from '@/auth';
 import { NextRequest } from 'next/server';
 import { timingSafeEqual } from 'node:crypto';
+import { getBaseUrl } from '../chat/helper';
 
 /**
  * OVERVIEW
@@ -30,7 +31,7 @@ import { timingSafeEqual } from 'node:crypto';
 async function validateHeader(req: NextRequest): Promise<boolean> {
   const authHeader = req.headers.get('authorization');
   if (!authHeader || !authHeader.startsWith('Basic ')) return false;
-
+  console.log('Validating header:', authHeader)
   const base64Credentials = authHeader.replace('Basic ', '').trim();
   let credentials: string;
   try {
@@ -57,12 +58,37 @@ interface SessionValidationResponse {
 
 export async function validateSession(req: NextRequest): Promise<SessionValidationResponse> {
     const session = await auth();
+    console.log(session);
     if (!session?.user?.auth0?.sub && !(await validateHeader(req))) {
+        console.log(session?.user?.auth0?.sub, 'Invalid session or header');
         return { isValid: false, userId: null };
     }
 
     const { searchParams } = new URL(req.url);
     return { isValid: true, userId: session?.user?.auth0?.sub || searchParams.get('subId') || searchParams.get('sub') };
+}
+
+export async function buildCalloutWithHeader(url: string, body: any, method: 'GET' | 'POST' | 'PATCH' | 'PUT' = 'GET'): Promise<Response> {
+    const basicAuth = process.env.N8N_BASIC_AUTH;
+    const basicHeader = Buffer.from(basicAuth as string).toString('base64');
+    const baseUrl = await getBaseUrl();
+    if (body) {
+        return fetch(`${baseUrl}${url}`, {
+            method: method,
+            headers: {
+                'Authorization': `Basic ${basicHeader}`
+            },
+            body: JSON.stringify(body)
+        });
+    }
+
+    return fetch(`${baseUrl}${url}`, {
+        method: method,
+        headers: {
+            'Authorization': `Basic ${basicHeader}`
+        }
+    });
+    
 }
 
 /**

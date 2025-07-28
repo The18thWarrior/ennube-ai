@@ -10,10 +10,10 @@ import { useSearchParams } from 'next/navigation';
 
 export default function ChatPage(props: { params: Promise<{ threadId: string }> }) {
   const [threadId, setThreadId] = useState<string | null>(null);
-  const { getThread } = useMessageHistory();
   const [thread, setThread] = useState<ThreadHistory | null>(null);
   const searchParams = useSearchParams();
   const agent = searchParams.get('agent') || undefined; // get the agent from the URL params
+  const { getThread } = useMessageHistory();
   // useEffect(() => {
   //   const fetchThread = async () => {
   //     if (!threadId) return;
@@ -28,7 +28,7 @@ export default function ChatPage(props: { params: Promise<{ threadId: string }> 
       const { threadId: _threadId } = await props.params; // get the chat ID from the URL
       setThreadId(_threadId);
       if (!_threadId) return;
-      const thread = await getThread(_threadId);
+      const thread = await getThread(_threadId, agent as 'data-steward' | 'prospect-finder' | undefined);
       setThread(thread);
     };
     runAsync();

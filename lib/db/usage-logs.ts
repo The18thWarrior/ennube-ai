@@ -324,7 +324,7 @@ export async function getUserUsageLogsBySub(
   filter?: string
 ): Promise<UsageLogEntry[]> {
   try {
-    console.log('getUserUsageLogsBySub called with:', { sub, limit, offset, filter });
+    //console.log('getUserUsageLogsBySub called with:', { sub, limit, offset, filter });
     if (filter && filter.length > 0) {
       const result = await pool.query(
         `SELECT * FROM ${USAGE_LOG_TABLE} 

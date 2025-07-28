@@ -25,8 +25,8 @@ export function useMessageHistory() {
   }, []);
 
   // Fetch a specific thread (POST with body)
-  const getThread = useCallback(async (threadId: string) => {
-    const res = await fetch(`/api/message/${encodeURIComponent(threadId)}`, {
+  const getThread = useCallback(async (threadId: string, agent: 'data-steward' | 'prospect-finder' | undefined) => {
+    const res = await fetch(`/api/message/${encodeURIComponent(threadId)}${agent ? `?agent=${agent}` : ''}`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' }
     });

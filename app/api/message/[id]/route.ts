@@ -23,17 +23,15 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         return NextResponse.json({ error: 'Missing thread id' }, { status: 400 });
     }
     const thread = await getThread(threadId);
+    const searchParams = req.nextUrl.searchParams;
+    const agent = searchParams.get('agent') || 'data-steward';
     if (!thread) {
-      setTimeout(async () => {
-        const thread2 = await getThread(threadId);
-        if (thread2) {
-          return NextResponse.json(thread2);
-        } else {
-          console.log('Thread not found', { threadId });
-          return NextResponse.json({ error: 'Thread not found' }, { status: 404 });
-        }
-      }, 5000)
-      
+      await setThread(threadId, session.user.auth0.sub, [], null, agent);
+      const newThread = await getThread(threadId);
+      if (!newThread) {
+        return NextResponse.json({ error: 'Failed to create new thread' }, { status: 500 });
+      }
+      return NextResponse.json(newThread);
     } else {
       return NextResponse.json(thread);
     }    

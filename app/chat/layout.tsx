@@ -248,7 +248,7 @@ export default function ChatLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <div className="">
-      <div className="flex">
+      {/* <div className="flex"> */}
         <SidebarProvider>
           <ChatSidebar
             threads={threads}
@@ -266,7 +266,7 @@ export default function ChatLayout({ children }: { children: React.ReactNode }) 
             <div className="flex-1 overflow-auto">{children}</div>
           </SidebarInset>
         </SidebarProvider>
-      </div>
+      {/* </div> */}
     </div>
   );
 }

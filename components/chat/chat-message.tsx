@@ -126,7 +126,7 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: Message, theme
             className={cn("mx-2", msg.role === "user" ? "" : "bg-card", "")}
           >
             <CardContent className="p-4 text-base">
-                {msg.parts && msg.parts.filter(part => part.type === 'tool-invocation'  && (part.toolInvocation.toolName === 'getSFDCDataTool' || part.toolInvocation.toolName === 'getPostgresDataTool' || part.toolInvocation.toolName === 'getCount' || part.toolInvocation.toolName === 'callWorkflowTool')).map((part) => (
+                {msg.parts && msg.parts.filter(part => part.type === 'tool-invocation'  /*&& (part.toolInvocation.toolName === 'getSFDCDataTool' || part.toolInvocation.toolName === 'getPostgresDataTool' || part.toolInvocation.toolName === 'getCount' || part.toolInvocation.toolName === 'callWorkflowTool')*/).map((part) => (
                     <span
                         className={[
                             styles.messageBubble,

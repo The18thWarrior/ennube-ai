@@ -14,7 +14,7 @@ import { getCredentialsTool } from '@/lib/chat/sfdc/getCredentialsTool';
 import { getWorkflowTool } from '@/lib/chat/callWorkflowTool';
 import { nanoid } from 'nanoid';
 import { setThread } from '@/lib/cache/message-history';
-import { getPrompt } from '@/lib/chat/helper';
+import { getPrompt, getTools } from '@/lib/chat/helper';
 import dayjs from 'dayjs';
 
 
@@ -56,16 +56,7 @@ export async function POST(req: NextRequest) {
       //model: openai('gpt-4.1-nano'),
       model: model,
       system: systemPrompt,
-      tools: {
-        getCredentials: getCredentialsTool(userSub),
-        getSFDCFieldDescribeTool: getSFDCFieldsTool(userSub),
-        getSFDCDataTool: getSFDCDataTool(userSub),
-        getPostgresDataTool: getPostgresDataTool(userSub),
-        getPostgresDescribeTool: getPostgresDescribeTool(userSub),
-        getDataVisualizer: getDataVisualizerTool(model),
-        getCount: getCountTool(userSub),
-        callWorkflowTool: getWorkflowTool(agent as 'data-steward' | 'prospect-finder'),
-      },
+      tools: await getTools(agent as 'data-steward' | 'prospect-finder', userSub),
       messages: messages,
       // messages: messages.map((msg: any) => {
       //   return {

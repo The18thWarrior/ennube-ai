@@ -51,7 +51,7 @@ export async function GET(req: NextRequest) {
     if (userId) {
       
       const profiles = await getUserCustomerProfiles(userId);
-      console.log('GET /customer-profile - Profiles fetched:', profiles);
+      console.log('GET /customer-profile - Profiles fetched:', profiles.length);
       return NextResponse.json(profiles);
     }
     console.log('GET /customer-profile - ' + 'Missing id or userId');

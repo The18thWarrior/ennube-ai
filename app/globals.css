@@ -124,3 +124,13 @@
 .flip-card-back {
   transform: rotateY(180deg);
 }
+
+
+.sidebar-inset-main {
+  min-width: calc(100vw - 300px);
+}
+
+.chat-inset-main {
+  min-height: calc(100vh - 240px);
+  max-height: calc(100vh - 240px);
+}
