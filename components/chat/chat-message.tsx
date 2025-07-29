@@ -21,6 +21,7 @@ import { CrmRecordDetailCard } from './tools/crm-record-detail-card';
 import { Loader2, User } from 'lucide-react';
 import { RecordIcon } from './tools/icon-map';
 import CrmResultCard from './tools/crm-result-card';
+import { CustomProfileToolResult } from './wrappers/custom-profile-tool-result';
 import { UsageLogEntry } from '@/lib/db/usage-logs';
 import dayjs from 'dayjs';
 import { ExecutionDetailsPanel } from '@/components/executions/execution-details-panel';
@@ -143,16 +144,18 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: Message, theme
                                 case 'tool-invocation': {
                                     const callId = part.toolInvocation.toolCallId;
                                     //console.log(part.toolInvocation)
+
+                                    if (part.toolInvocation.state === 'call') {
+                                        return (
+                                            <div key={callId} className="flex items-center gap-2 text-xs text-muted-foreground py-2">
+                                                <Loader2 className="h-4 w-4 animate-spin" />
+                                                <span>Calling {part.toolInvocation.toolName}...</span>
+                                            </div>
+                                        );
+                                    }
                                     switch (part.toolInvocation.toolName) {
                                         case 'getSFDCDataTool': {
                                             switch (part.toolInvocation.state) {
-                                                case 'call':
-                                                    //return <div key={callId}>Getting data...</div>;
-                                                    return (<div key={callId} className="flex items-center gap-2 text-xs text-muted-foreground py-2">
-                                                        <Loader2 className="h-4 w-4 animate-spin" />
-                                                        <span>Calling {part.toolInvocation.toolName}...</span>
-                                                        </div>
-                                                    )
                                                 case 'result':                                                    
                                                     return (
                                                         <div key={callId}>
@@ -165,13 +168,6 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: Message, theme
                                         }
                                         case 'getPostgresDataTool': {
                                             switch (part.toolInvocation.state) {
-                                                case 'call':
-                                                    //return <div key={callId}>Getting data...</div>;
-                                                    return (<div key={callId} className="flex items-center gap-2 text-xs text-muted-foreground py-2">
-                                                        <Loader2 className="h-4 w-4 animate-spin" />
-                                                        <span>Calling {part.toolInvocation.toolName}...</span>
-                                                        </div>
-                                                    )
                                                 case 'result': 
                                                     console.log( part.toolInvocation.result);                                                   
                                                     return (
@@ -185,17 +181,22 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: Message, theme
                                         }
                                         case 'callWorkflowTool': {
                                             switch (part.toolInvocation.state) {
-                                                case 'call':
-                                                    //return <div key={callId}>Getting data...</div>;
-                                                    return (<div key={callId} className="flex items-center gap-2 text-xs text-muted-foreground py-2">
-                                                        <Loader2 className="h-4 w-4 animate-spin" />
-                                                        <span>Calling {part.toolInvocation.toolName}...</span>
-                                                        </div>
-                                                    )
                                                 case 'result':                                                    
                                                     return (
                                                         <div key={callId}>
                                                             <RenderCallWorkflowToolCallComponent result={part.toolInvocation.result} />
+                                                            {/* <JsonView data={part.toolInvocation.result} classNames={styles.jsonBubble} /> */}
+                                                        </div>
+                                                    );
+                                            }
+                                            break;
+                                        }
+                                        case 'getCustomerProfilesTool': {
+                                            switch (part.toolInvocation.state) {
+                                                case 'result':                                                    
+                                                    return (
+                                                        <div key={callId}>
+                                                            {RenderGetCustomProfileToolCallComponent(part.toolInvocation.args, part.toolInvocation.result, theme)}
                                                             {/* <JsonView data={part.toolInvocation.result} classNames={styles.jsonBubble} /> */}
                                                         </div>
                                                     );
@@ -287,8 +288,27 @@ const RenderGetDataToolCallComponent = (args: any, result: any, theme: 'dark' | 
     );
 }
 
+const RenderGetCustomProfileToolCallComponent = (args: any, result: any, theme: 'dark' | 'light' | 'system') => {
+    const {profiles } = result;
+    if (!profiles || profiles.length === 0) {
+        return <div>No data found</div>;
+    }
 
-
+    return (
+        <div className="transition-all duration-300 ease-in-out" style={{ transitionProperty: 'width' }}>
+            {/* <CrmRecordListView records={records} /> */}
+            <CustomProfileToolResult
+                profiles={profiles}
+                filterApplied={args?.filter}
+                objectType={args?.sobject}
+                onSelectProfile={(profileId) => {
+                    // Handle profile selection if needed
+                    console.log(`Selected profile ID: ${profileId}`);
+                }}
+            />
+        </div>
+    );
+}
 
 const RenderCallWorkflowToolCallComponent = ({result: {usageId}} : {result: {usageId: string}}) => {
     const [log, setLog] = useState<UsageLogEntry | null>(null);

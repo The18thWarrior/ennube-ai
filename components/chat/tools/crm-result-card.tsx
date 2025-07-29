@@ -20,6 +20,7 @@ interface CrmRecordListData {
   filterApplied?: string
   totalReturned: number
   objectType: string
+  customLabel? : boolean
 }
 
 export function CrmResultCard(props: CrmRecordListData) {
@@ -82,7 +83,7 @@ export function CrmResultCard(props: CrmRecordListData) {
                                 selectedRecord.fields.find((field) => field.label === 'Name')?.value as string || 'Untitled'
                             }
                             subtitle={
-                                'ID: ' + selectedRecord.fields.find((field) => field.label === 'Id')?.value as string || 'Id not found'
+                                'ID: ' + selectedRecord.fields.find((field) => field.label === 'Id' || field.label === 'id')?.value as string || 'Id not found'
                             }
                             fields={filteredFields || []}
                             // Optionally pass notes, htmlBody, etc. if available in your data

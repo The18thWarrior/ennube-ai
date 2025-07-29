@@ -1,8 +1,6 @@
 
 import React from "react";
 import { useSfdcId } from "@/hooks/useSfdcId";
-import CrmResultCard from "@/components/chat/tools/crm-result-card";
-import { SObject } from "jsforce";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { CrmRecordDetailCard } from "../chat/tools/crm-record-detail-card";
 import { RecordIcon, RecordType } from "../chat/tools/icon-map";
