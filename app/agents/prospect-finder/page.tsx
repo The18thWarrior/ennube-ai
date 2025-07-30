@@ -20,17 +20,29 @@ export default function ProspectFinderDashboard() {
             👋 Where in the world is your next customer? That's my job to find out. I'm your AI-powered, globe-trotting lead scout—sleuthing across the internet to uncover your dream clients.
           </p>
 
-            <div className="mt-6 space-y-6 text-gray-600 dark:text-gray-400">
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">🎯 What I Do (aka My Toolkit):</h3>
-              <ul className="list-disc pl-5 space-y-2 mb-6 text-gray-600 dark:text-gray-400">
-                <li>🧭 Craft and sharpen your Ideal Customer Profile (ICP)</li>
-                <li>🛰️ Scan the web and dark corners of data to locate perfect-fit leads</li>
-                <li>🕵️‍♀️ Qualify each contact using your exact criteria</li>
-                <li>📅 Refresh my list every 30 days with performance-tuned updates</li>
-                <li>💬 Sync with your team in Slack to capture frontline feedback</li>
-              </ul>
-
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">💼 How I Boost Your Sales Team:</h3>
+            <div className="mt-6 text-gray-600 dark:text-gray-400">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">🎯 What I Do (aka My Toolkit):</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-100 dark:border-blue-800">
+                  <h3 className="font-medium text-blue-800 dark:text-blue-300 mb-2">ICP Crafting</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Crafts and sharpens your Ideal Customer Profile (ICP) to target the right prospects for your business.
+                  </p>
+                </div>
+                <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg border border-purple-100 dark:border-purple-800">
+                  <h3 className="font-medium text-purple-800 dark:text-purple-300 mb-2">Lead Discovery</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Scans the web and hidden data sources to locate perfect-fit leads, qualifying each contact using your exact criteria.
+                  </p>
+                </div>
+                <div className="bg-pink-50 dark:bg-pink-900/20 p-4 rounded-lg border border-pink-100 dark:border-pink-800">
+                  <h3 className="font-medium text-pink-800 dark:text-pink-300 mb-2">Automated Refresh & Team Sync</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Refreshes your lead list every 30 days and syncs with your team in Slack to capture frontline feedback.
+                  </p>
+                </div>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mt-8">💼 How I Boost Your Sales Team:</h3>
               <p className="mb-6 text-gray-600 dark:text-gray-400">
                 No more hours lost chasing dead ends. I deliver a steady stream of verified, high-potential leads—so
                 your reps can zero in on the win 🏆.

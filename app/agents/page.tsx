@@ -39,6 +39,9 @@ export default function Agents() {
       case 'prospect-finder':
         agentButton = <AgentButton apiName={agent.apiName} />;
         break;
+      case 'contract-reader':
+        agentButton = <AgentButton apiName={agent.apiName} />;
+        break;
       default:
         agentButton = null;
     }

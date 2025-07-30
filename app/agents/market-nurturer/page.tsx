@@ -14,23 +14,33 @@ export default function MarketNurturerDashboard() {
             👋 I'm your AI marketing assistant. I help you nurture leads and engage customers through personalized content and timely communications.
           </p>
 
-            <div className="mt-6 space-y-6 text-gray-600">
-
-                <h3 className="text-xl font-semibold text-gray-900">📣 What I Do (Mi Arsenal de Marketing):</h3>
-                <ul className="list-disc pl-5 space-y-2">
-                  <li>✍️ Craft contenido súper-personalizado for every prospect segment</li>
-                  <li>📧 Design and launch email journeys that enamoran y convierten</li>
-                  <li>📊 Track cada open, click & scroll—then tweak estrategias en tiempo real</li>
-                  <li>🔔 Spot the exact momento a lead is sales-ready and hand it off, rapidito</li>
-                  <li>📈 Deliver clear insights on qué historias pegan and quién está listo para comprar</li>
-                </ul>
-
-                <h3 className="text-xl font-semibold text-gray-900">🤝 How I Boost Your Team:</h3>
-                <p>
-                  You dream the big creative idea; I run the motores. I keep every prospect warm with mensajes
-                  relevantes y puntuales so no lead se enfría and your funnel moves with salsa-level ritmo. 🎶
-                </p>
+            <div className="mt-6 text-gray-600 dark:text-gray-400">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">📣 What I Do (Mi Arsenal de Marketing):</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-100 dark:border-blue-800">
+                  <h3 className="font-medium text-blue-800 dark:text-blue-300 mb-2">Personalized Content</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    ✍️ Crafts super-personalized content for every prospect segment, ensuring every message resonates.
+                  </p>
+                </div>
+                <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg border border-purple-100 dark:border-purple-800">
+                  <h3 className="font-medium text-purple-800 dark:text-purple-300 mb-2">Automated Journeys</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    📧 Designs and launches email journeys that delight and convert, tracking every open, click, and scroll to optimize in real time.
+                  </p>
+                </div>
+                <div className="bg-pink-50 dark:bg-pink-900/20 p-4 rounded-lg border border-pink-100 dark:border-pink-800">
+                  <h3 className="font-medium text-pink-800 dark:text-pink-300 mb-2">Lead Readiness & Insights</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    🔔 Spots the exact moment a lead is sales-ready and hands it off fast, delivering clear insights on what stories work and who's ready to buy.
+                  </p>
+                </div>
               </div>
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mt-8">🤝 How I Boost Your Team:</h3>
+              <p>
+                You dream the big creative idea; I run the engines. I keep every prospect warm with relevant, timely messages so no lead goes cold and your funnel moves with salsa-level rhythm. 🎶
+              </p>
+            </div>
         </div>
         
         <UsageLogsList />

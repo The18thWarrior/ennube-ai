@@ -29,6 +29,21 @@ export const agents = [
       hasImage: true,
     },
     {
+      id: 5,
+      name: "Contract Reader",
+      apiName: 'contract-reader',
+      role: "Contract Intelligence Assistant",
+      description:
+        "Keeps your contracts and CRM in sync by reviewing legal agreements, extract key terms, and automatically updating your CRM fields—so your data stays accurate, auditable, and compliant.",
+      image: "/contracts-reader.png",
+      link: "/agents/contracts-reader",
+      categories: ["contracts", "compliance", "crm", "legal"],
+      skills: ["contract extraction", "crm sync", "compliance monitoring", "agreement cross-referencing"],
+      isNew: true,
+      comingSoon: false,
+      hasImage: true,
+    },
+    {
       id: 3,
       name: "Meetings Booker",
       apiName: 'meetings-booker',
@@ -56,8 +71,9 @@ export const agents = [
       button: null,
       categories: ["marketing", "nurturing", "communication"],
       skills: ["content personalization", "email campaigns", "lead nurturing", "relationship management"],
-      isNew: true,
+      isNew: false,
       comingSoon: true,
       hasImage: true,
     }
+    
 ];
