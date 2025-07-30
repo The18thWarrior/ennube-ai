@@ -2,11 +2,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible"
-import { Pencil, FileText } from "lucide-react"
 import styles from './crm-record-detail-card.module.css';
 import React from "react"
-import { ac } from "@upstash/redis/zmscore-CjoCv9kz"
-import { CrmDataLoaderModal } from "./crm-data-loader-modal"
 import { Separator } from "@/components/ui/separator"
 
 // A small sub-component for displaying an editable field
