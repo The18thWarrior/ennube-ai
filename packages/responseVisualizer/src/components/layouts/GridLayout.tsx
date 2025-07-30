@@ -1,0 +1,164 @@
+// === components/layouts/GridLayout.tsx ===
+// Created: 2025-07-19 15:10
+// Purpose: Grid layout component for organizing content in responsive grids
+// Exports:
+//   - GridLayout: Main grid container component
+// Interactions:
+//   - Used by: VisualizerRenderer, LLM-generated configurations
+// Notes:
+//   - Responsive grid with customizable columns and gaps
+
+'use client';
+
+import React from 'react';
+import { clsx } from 'clsx';
+import { LayoutComponentConfig } from '../../types';
+import { getAnimationClasses } from '../../utils/animation-utils';
+
+export interface GridLayoutProps {
+  /** Number of columns or auto-fit behavior */
+  columns?: number | 'auto' | 'fit';
+  /** Gap between grid items */
+  gap?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
+  /** Responsive behavior */
+  responsive?: boolean;
+  /** Additional CSS classes */
+  className?: string;
+  /** Child components */
+  children?: React.ReactNode;
+  /** Animation configuration */
+  animation?: LayoutComponentConfig['animation'];
+  /** Layout configuration */
+  layout?: LayoutComponentConfig['layout'];
+}
+
+/**
+ * Grid layout component for responsive content organization
+ */
+export const GridLayout: React.FC<GridLayoutProps> = ({
+  columns = 'auto',
+  gap = 'md',
+  responsive = true,
+  className,
+  children,
+  animation,
+  layout
+}) => {
+  // Generate grid classes
+  const gridClasses = React.useMemo(() => {
+    const classes: string[] = ['grid'];
+    
+    // Column classes
+    if (typeof columns === 'number') {
+      if (columns <= 12) {
+        classes.push(`grid-cols-${columns}`);
+      } else {
+        classes.push('grid-cols-12');
+      }
+    } else if (columns === 'auto') {
+      classes.push('grid-cols-1');
+      if (responsive) {
+        classes.push('sm:grid-cols-2', 'md:grid-cols-3', 'lg:grid-cols-4');
+      }
+    } else if (columns === 'fit') {
+      classes.push('grid-cols-[repeat(auto-fit,minmax(250px,1fr))]');
+    }
+    
+    // Gap classes
+    const gapClasses = {
+      none: 'gap-0',
+      sm: 'gap-2',
+      md: 'gap-4',
+      lg: 'gap-6',
+      xl: 'gap-8'
+    };
+    classes.push(gapClasses[gap]);
+    
+    // Layout-specific classes
+    if (layout) {
+      if (layout.padding) {
+        const paddingClasses = {
+          none: 'p-0',
+          sm: 'p-2',
+          md: 'p-4',
+          lg: 'p-6',
+          xl: 'p-8'
+        };
+        classes.push(paddingClasses[layout.padding]);
+      }
+      
+      if (layout.margin) {
+        const marginClasses = {
+          none: 'm-0',
+          sm: 'm-2',
+          md: 'm-4',
+          lg: 'm-6',
+          xl: 'm-8'
+        };
+        classes.push(marginClasses[layout.margin]);
+      }
+      
+      // Responsive overrides
+      if (layout.responsive) {
+        if (layout.responsive.sm?.columns) {
+          classes.push(`sm:grid-cols-${layout.responsive.sm.columns}`);
+        }
+        if (layout.responsive.md?.columns) {
+          classes.push(`md:grid-cols-${layout.responsive.md.columns}`);
+        }
+        if (layout.responsive.lg?.columns) {
+          classes.push(`lg:grid-cols-${layout.responsive.lg.columns}`);
+        }
+        if (layout.responsive.xl?.columns) {
+          classes.push(`xl:grid-cols-${layout.responsive.xl.columns}`);
+        }
+      }
+    }
+    
+    return clsx(
+      classes,
+      getAnimationClasses(animation),
+      className
+    );
+  }, [columns, gap, responsive, layout, animation, className]);
+
+  return (
+    <div className={gridClasses}>
+      {children}
+    </div>
+  );
+};
+
+/**
+ * OVERVIEW
+ *
+ * Flexible grid layout component for organizing content in responsive grids.
+ * Supports auto-fit columns, custom column counts, and responsive behavior.
+ * Includes comprehensive gap and spacing controls.
+ * 
+ * Features:
+ * - Responsive grid with breakpoint support
+ * - Auto-fit and fixed column layouts
+ * - Customizable gaps and spacing
+ * - Animation support
+ * 
+ * Future Improvements:
+ * - Grid area support for complex layouts
+ * - Masonry layout option
+ * - Advanced responsive controls
+ */
+
+/*
+ * === components/layouts/GridLayout.tsx ===
+ * Updated: 2025-07-19 15:10
+ * Summary: Responsive grid layout component
+ * Key Components:
+ *   - GridLayout: Main grid container with responsive behavior
+ * Dependencies:
+ *   - Requires: clsx, React, animation utilities
+ * Version History:
+ *   v1.0 – initial grid layout with responsive support
+ * Notes:
+ *   - Uses Tailwind CSS grid classes
+ *   - Supports both fixed and auto-fit column layouts
+ */
