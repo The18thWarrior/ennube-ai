@@ -11,7 +11,7 @@
 
 import dynamic from 'next/dynamic'
 import React, { useState } from 'react';
-import { SingleRecordValidator, MultiRowValidator, matchRows, detectAnomalies, ModernComparisonTable } from '@ennube-ai/data-validation';
+import { SingleRecordValidator, MultiRowValidator, matchRows, detectAnomalies, ModernComparisonTable } from '@ennube/data-validation';
 
 /**
  * OVERVIEW
