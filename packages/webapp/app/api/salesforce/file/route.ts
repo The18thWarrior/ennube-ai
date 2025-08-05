@@ -20,8 +20,7 @@ const mimeByExt: Record<string, string> = {
 };
 
 export async function GET(
-  _req: NextRequest,
-  { params }: { params: { id: string } }
+  _req: NextRequest
 ) {
   const searchParams = _req.nextUrl.searchParams;
   const _sub = searchParams.get("sub");
