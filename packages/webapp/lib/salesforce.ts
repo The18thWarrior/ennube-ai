@@ -432,6 +432,70 @@ export class SalesforceClient {
       }
     });
   }
+
+  /**
+   * Perform a raw GET request to a Salesforce REST API endpoint
+   * @param url The relative or absolute Salesforce REST API URL
+   * @returns The result of the GET request
+   */
+  async getByUrl<T = any>(url: string): Promise<T> {
+    return this.withTokenRefresh(async () => {
+      try {
+        return await this.connection.requestGet(url);
+      } catch (error) {
+        console.error(`Error performing GET request to ${url}:`, error);
+        throw new Error(`Failed to GET from Salesforce: ${error instanceof Error ? error.message : String(error)}`);
+      }
+    });
+  }
+
+
+  async streamContentVersion(
+    contentVersionId: string
+  ): Promise<NodeJS.ReadableStream> {
+    return this.withTokenRefresh(async () => {
+      try {
+        return this.connection.sobject('ContentVersion').record(contentVersionId).blob('VersionData');
+      } catch (error) {
+        console.error(`Error streaming content version ${contentVersionId}:`, error);
+        throw new Error(`Failed to stream content version: ${error instanceof Error ? error.message : String(error)}`);
+      }
+    });
+  }
+  
+  /**
+   * Check if a managed package is installed in the org
+   * @param namespacePrefix The namespace prefix of the managed package
+   * @returns The InstalledSubscriberPackage record if installed, otherwise null
+   *
+   * Usage:
+   *   const pkg = await client.isPackageInstalled('my_ns');
+   *   if (pkg) { ... }
+   */
+  async isPackageInstalled(namespacePrefix: string): Promise<boolean | null> {
+    return this.withTokenRefresh(async () => {
+      try {
+        // Query the Tooling API for InstalledSubscriberPackage by NamespacePrefix
+        const soql = `SELECT Id, SubscriberPackageId, SubscriberPackage.NamespacePrefix, SubscriberPackage.Name, SubscriberPackageVersionId FROM InstalledSubscriberPackage`;
+        const result = await this.connection.tooling.query<any>(soql);
+        if (result.records && result.records.length > 0) {
+          const _package = result.records.find((packageRecord: any) => {
+            if (packageRecord.SubscriberPackage.NamespacePrefix === namespacePrefix) {
+              return true;
+            }
+          });
+          if (_package) {
+            return true;
+          }
+        }
+        return false;
+      } catch (error) {
+        console.log(`Error checking package installation for namespace '${namespacePrefix}':`, error);
+        //throw new Error(`Failed to check package installation: ${error instanceof Error ? error.message : String(error)}`);
+        return false;
+      }
+    });
+  }
 }
 
 /**

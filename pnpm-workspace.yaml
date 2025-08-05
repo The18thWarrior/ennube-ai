@@ -3,3 +3,5 @@ packages:
   - 'packages/dataValidation'
   - 'packages/responseVisualizer'
   - 'packages/webapp'
+  - 'packages/ennube-salesforce'
+  - 'packages/contractReader'
