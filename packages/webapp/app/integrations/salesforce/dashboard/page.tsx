@@ -16,6 +16,7 @@ export default async function SalesforceDashboard() {
   //console.log('Session:', session?.user?.auth0)
   // Check if we have a Salesforce client from either OAuth or direct authentication
   const salesforceCredentials = await getSalesforceCredentialsById()
+  console.log(salesforceCredentials);
   if (!salesforceCredentials) {
     console.log('No Salesforce credentials found, redirecting to connect page')
     redirect("/integrations/salesforce/connect");
@@ -98,8 +99,8 @@ export default async function SalesforceDashboard() {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500">Username</h3>
-                  <p>{userInfo.id}</p>
+                  <h3 className="text-sm font-medium text-gray-500">Instance Url</h3>
+                  <p>{salesforceCredentials.instanceUrl}</p>
                 </div>
               </div>
             </div>
