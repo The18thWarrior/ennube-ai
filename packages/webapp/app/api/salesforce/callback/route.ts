@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
     console.log('Received code:', code);
     if (!code) return NextResponse.json({ success: false, error: 'Missing code parameter' }, { status: 400 });
     
-    const authResult = await handleOAuthCallback(code, process.env.SALESFORCE_CLIENT_ID as string, process.env.SALESFORCE_CLIENT_SECRET as string,  process.env.SALESFORCE_REDIRECT_URI as string, '');
+    const authResult = await handleOAuthCallback(code, process.env.SALESFORCE_CLIENT_ID as string, process.env.SALESFORCE_CLIENT_SECRET as string,  process.env.SALESFORCE_REDIRECT_URI as string, request.headers.get('referer') || "");
     await storeSalesforceCredentials(authResult);    
     const url = request.nextUrl.clone()
     url.pathname = '/integrations/salesforce/dashboard';
