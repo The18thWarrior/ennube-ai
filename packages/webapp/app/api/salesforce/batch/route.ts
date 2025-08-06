@@ -111,7 +111,7 @@ export async function POST(request: NextRequest) {
     const results = await client.batch(operation, sobjectType, records);
     return NextResponse.json({ success: true, operation, results });
   } catch (error) {
-    console.error('Error in Salesforce batch operation:', error);
+    console.log('Error in Salesforce batch operation:', error);
     return NextResponse.json({ error: 'Failed to perform Salesforce batch operation', details: error instanceof Error ? error.message : String(error) }, { status: 500 });
   }
 }
@@ -150,7 +150,7 @@ export async function PUT(request: NextRequest) {
     const results = await client.batch('update', sobjectType, records);
     return NextResponse.json({ success: true, operation: 'update', results });
   } catch (error) {
-    console.error('Error in Salesforce batch update:', error);
+    console.log('Error in Salesforce batch update:', error);
     return NextResponse.json({ error: 'Failed to perform Salesforce batch update', details: error instanceof Error ? error.message : String(error) }, { status: 500 });
   }
 }
@@ -189,7 +189,7 @@ export async function DELETE(request: NextRequest) {
     const results = await client.batch('delete', sobjectType, records);
     return NextResponse.json({ success: true, operation: 'delete', results });
   } catch (error) {
-    console.error('Error in Salesforce batch delete:', error);
+    console.log('Error in Salesforce batch delete:', error);
     return NextResponse.json({ error: 'Failed to perform Salesforce batch delete', details: error instanceof Error ? error.message : String(error) }, { status: 500 });
   }
 }

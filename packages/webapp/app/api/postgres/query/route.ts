@@ -108,7 +108,7 @@ export async function GET(request: NextRequest) {
     }
     
   } catch (error) {
-    console.error('Error executing PostgreSQL query:', error);
+    console.log('Error executing PostgreSQL query:', error);
     return NextResponse.json(
       { 
         error: 'Failed to execute PostgreSQL query',
@@ -197,7 +197,7 @@ export async function POST(request: NextRequest) {
     }
     
   } catch (error) {
-    console.error('Error executing PostgreSQL query:', error);
+    console.log('Error executing PostgreSQL query:', error);
     return NextResponse.json(
       { 
         error: 'Failed to execute PostgreSQL query',

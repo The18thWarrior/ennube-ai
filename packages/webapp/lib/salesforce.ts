@@ -96,7 +96,7 @@ export class SalesforceClient {
       console.log('Successfully refreshed Salesforce access token');
       return refreshResult;
     } catch (error) {
-      console.error('Error refreshing Salesforce access token:', error);
+      console.log('Error refreshing Salesforce access token:', error);
       return null;
     }
   }
@@ -146,7 +146,7 @@ export class SalesforceClient {
         const userInfo = await this.connection.identity();
         return userInfo as unknown as SalesforceUserInfo;
       } catch (error) {
-        console.error('Error fetching Salesforce user info:');
+        console.log('Error fetching Salesforce user info:');
         throw new Error(`Failed to fetch user info: ${error instanceof Error ? error.message : String(error)}`);
       }
     });
@@ -167,7 +167,7 @@ export class SalesforceClient {
           nextRecordsUrl: queryResult.nextRecordsUrl
         };
       } catch (error) {
-        console.error('Error executing Salesforce SOQL query:', error);
+        console.log('Error executing Salesforce SOQL query:', error);
         throw new Error(`SOQL query failed: ${error instanceof Error ? error.message : String(error)}`);
       }
     });
@@ -188,7 +188,7 @@ export class SalesforceClient {
         }
         return result.id;
       } catch (error) {
-        console.error(`Error creating ${sobjectType}:`, error);
+        console.log(`Error creating ${sobjectType}:`, error);
         throw new Error(`Failed to create ${sobjectType}: ${error instanceof Error ? error.message : String(error)}`);
       }
     });
@@ -213,7 +213,7 @@ export class SalesforceClient {
         }
         return true;
       } catch (error) {
-        console.error(`Error updating ${sobjectType}:`, error);
+        console.log(`Error updating ${sobjectType}:`, error);
         throw new Error(`Failed to update ${sobjectType}: ${error instanceof Error ? error.message : String(error)}`);
       }
     });
@@ -234,7 +234,7 @@ export class SalesforceClient {
         }
         return true;
       } catch (error) {
-        console.error(`Error deleting ${sobjectType}:`, error);
+        console.log(`Error deleting ${sobjectType}:`, error);
         throw new Error(`Failed to delete ${sobjectType}: ${error instanceof Error ? error.message : String(error)}`);
       }
     });
@@ -265,7 +265,7 @@ export class SalesforceClient {
           return await this.connection.sobject(sobjectType).retrieve(id) as T;
         }
       } catch (error) {
-        console.error(`Error retrieving ${sobjectType}:`, error);
+        console.log(`Error retrieving ${sobjectType}:`, error);
         throw new Error(`Failed to retrieve ${sobjectType}: ${error instanceof Error ? error.message : String(error)}`);
       }
     });
@@ -307,12 +307,12 @@ export class SalesforceClient {
           .map(r => `ID: ${r.id}, Errors: ${r.errors.join(', ')}`);
         
         if (errors.length > 0) {
-          console.error(`Batch ${operation} errors:`, errors);
+          console.log(`Batch ${operation} errors:`, errors);
         }
         
         return results;
       } catch (error) {
-        console.error(`Error in batch ${operation}:`, error);
+        console.log(`Error in batch ${operation}:`, error);
         throw new Error(`Batch ${operation} failed: ${error instanceof Error ? error.message : String(error)}`);
       }
     });
@@ -396,7 +396,7 @@ export class SalesforceClient {
           return result;
         }
       } catch (error) {
-        console.error(`Error checking batch status for ID ${batchId}:`, error);
+        console.log(`Error checking batch status for ID ${batchId}:`, error);
         throw new Error(`Failed to check batch status: ${error instanceof Error ? error.message : String(error)}`);
       }
     });
@@ -412,7 +412,7 @@ export class SalesforceClient {
         const result = await this.connection.sobject(sobjectType).describe();
         return result;
       } catch (error) {
-        console.error(`Error describing ${sobjectType}:`, error);
+        console.log(`Error describing ${sobjectType}:`, error);
         throw new Error(`Failed to describe ${sobjectType}: ${error instanceof Error ? error.message : String(error)}`);
       }
     });
@@ -427,7 +427,7 @@ export class SalesforceClient {
         const result = await this.connection.describeGlobal();
         return result;
       } catch (error) {
-        console.error('Error retrieving global object descriptions:', error);
+        console.log('Error retrieving global object descriptions:', error);
         throw new Error(`Failed to retrieve object list: ${error instanceof Error ? error.message : String(error)}`);
       }
     });
@@ -443,7 +443,7 @@ export class SalesforceClient {
       try {
         return await this.connection.requestGet(url);
       } catch (error) {
-        console.error(`Error performing GET request to ${url}:`, error);
+        console.log(`Error performing GET request to ${url}:`, error);
         throw new Error(`Failed to GET from Salesforce: ${error instanceof Error ? error.message : String(error)}`);
       }
     });
@@ -457,7 +457,7 @@ export class SalesforceClient {
       try {
         return this.connection.sobject('ContentVersion').record(contentVersionId).blob('VersionData');
       } catch (error) {
-        console.error(`Error streaming content version ${contentVersionId}:`, error);
+        console.log(`Error streaming content version ${contentVersionId}:`, error);
         throw new Error(`Failed to stream content version: ${error instanceof Error ? error.message : String(error)}`);
       }
     });
@@ -536,7 +536,7 @@ export async function connectToSalesforce(
       }
     };
   } catch (error) {
-    console.error('Salesforce authentication error:', error);
+    console.log('Salesforce authentication error:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : String(error)
@@ -629,7 +629,7 @@ export async function handleOAuthCallback(
       }
     };
   } catch (error) {
-    console.error('Error handling OAuth callback:', error);
+    console.log('Error handling OAuth callback:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : String(error)
@@ -695,7 +695,7 @@ export async function refreshSalesforceToken(
       clientSecret: finalClientSecret
     };
   } catch (error) {
-    console.error('Error refreshing Salesforce token:', error);
+    console.log('Error refreshing Salesforce token:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : String(error)

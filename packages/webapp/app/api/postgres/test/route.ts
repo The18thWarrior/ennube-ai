@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
     }
     
   } catch (error) {
-    console.error('Error testing PostgreSQL connection:', error);
+    console.log('Error testing PostgreSQL connection:', error);
     return NextResponse.json(
       { 
         success: false,
@@ -147,7 +147,7 @@ export async function GET(request: NextRequest) {
     }
     
   } catch (error) {
-    console.error('Error testing stored PostgreSQL connection:', error);
+    console.log('Error testing stored PostgreSQL connection:', error);
     return NextResponse.json(
       { 
         success: false,

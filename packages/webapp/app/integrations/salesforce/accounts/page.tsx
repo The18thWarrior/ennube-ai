@@ -50,7 +50,7 @@ export default async function SalesforceAccounts() {
     );
     accounts = result.records;
   } catch (e) {
-    console.error("Failed to fetch Salesforce accounts:", e);
+    console.log("Failed to fetch Salesforce accounts:", e);
     error = e instanceof Error ? e.message : "Unknown error";
   }
   

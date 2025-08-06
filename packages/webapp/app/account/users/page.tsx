@@ -61,7 +61,7 @@ export default function UsersPage() {
         const data = await response.json();
         setUsers(data.users || []);
       } catch (error) {
-        console.error('Error fetching users:', error);
+        console.log('Error fetching users:', error);
         toast.error('Failed to load users');
       } finally {
         setIsLoading(false);
@@ -119,7 +119,7 @@ export default function UsersPage() {
       
       toast.success('User created successfully');
     } catch (error: any) {
-      console.error('Error creating user:', error);
+      console.log('Error creating user:', error);
       toast.error(error.message || 'Failed to create user');
     } finally {
       setIsSubmitting(false);
@@ -150,7 +150,7 @@ export default function UsersPage() {
       setUsers(prev => prev.filter(user => user.user_id !== userId));
       toast.success('User deleted successfully');
     } catch (error) {
-      console.error('Error deleting user:', error);
+      console.log('Error deleting user:', error);
       toast.error('Failed to delete user');
     }
   };

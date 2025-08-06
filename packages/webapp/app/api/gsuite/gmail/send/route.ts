@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
       message: 'Email sent successfully'
     });
   } catch (error) {
-    console.error('Error sending email:', error);
+    console.log('Error sending email:', error);
     return NextResponse.json(
       { error: 'Failed to send email: ' + (error instanceof Error ? error.message : String(error)) },
       { status: 500 }

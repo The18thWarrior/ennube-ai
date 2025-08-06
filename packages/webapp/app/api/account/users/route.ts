@@ -38,7 +38,7 @@ async function verifyPrimaryUser(request: NextRequest) {
 
     return { authorized: true, userSub };
   } catch (error) {
-    console.error('Error verifying primary user:', error);
+    console.log('Error verifying primary user:', error);
     return { authorized: false, error: 'Server error during authorization', status: 500 };
   }
 }
@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
       users
     });
   } catch (error: any) {
-    console.error('Error listing secondary users:', error);
+    console.log('Error listing secondary users:', error);
     return NextResponse.json({ 
       error: 'Failed to list secondary users',
       details: error.message 
@@ -116,7 +116,7 @@ export async function POST(request: NextRequest) {
       user: newUser
     }, { status: 201 });
   } catch (error: any) {
-    console.error('Error creating secondary user:', error);
+    console.log('Error creating secondary user:', error);
     return NextResponse.json({ 
       error: 'Failed to create secondary user',
       details: error.message 
@@ -177,7 +177,7 @@ export async function PATCH(request: NextRequest) {
       user: updatedUser
     });
   } catch (error: any) {
-    console.error('Error updating secondary user:', error);
+    console.log('Error updating secondary user:', error);
     return NextResponse.json({ 
       error: 'Failed to update secondary user',
       details: error.message 
@@ -220,7 +220,7 @@ export async function DELETE(request: NextRequest) {
       message: 'User successfully deleted'
     });
   } catch (error: any) {
-    console.error('Error deleting secondary user:', error);
+    console.log('Error deleting secondary user:', error);
     return NextResponse.json({ 
       error: 'Failed to delete secondary user',
       details: error.message 

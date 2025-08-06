@@ -19,7 +19,7 @@ const pool = new Pool({
 // Test the connection and log success or error
 // pool.query('SELECT NOW()', (err, res) => {
 //   if (err) {
-//     console.error('Error connecting to PostgreSQL database:', err);
+//     console.log('Error connecting to PostgreSQL database:', err);
 //   } else {
 //     console.log('PostgreSQL connected successfully');
 //   }
@@ -55,7 +55,7 @@ export async function storeSalesforceCredentials(authResult: SalesforceAuthResul
   const session = await auth();
 
   if (!session || !session.user || !session.user.auth0) {
-    console.error("No session found");
+    console.log("No session found");
     return null;
   }
 
@@ -122,7 +122,7 @@ export async function storeSalesforceCredentials(authResult: SalesforceAuthResul
     
     return sessionId;
   } catch (error) {
-    console.error("Error storing Salesforce credentials:", error);
+    console.log("Error storing Salesforce credentials:", error);
     return null;
   }
 }
@@ -134,7 +134,7 @@ export async function getSalesforceCredentialsById(): Promise<StoredSalesforceCr
   try {
     const session = await auth();
     if (!session || !session.user || !session.user.auth0) {
-      console.error("No session found");
+      console.log("No session found");
       return null;
     }
     
@@ -159,7 +159,7 @@ export async function getSalesforceCredentialsById(): Promise<StoredSalesforceCr
     );
     
     if (result.rows.length === 0) {
-      console.error("No credentials found for user:", userSub);
+      console.log("No credentials found for user:", userSub);
       return null;
     }
     
@@ -173,7 +173,7 @@ export async function getSalesforceCredentialsById(): Promise<StoredSalesforceCr
 
     return credentials;
   } catch (error) {
-    console.error("Error retrieving Salesforce credentials:", error);
+    console.log("Error retrieving Salesforce credentials:", error);
     return null;
   }
 }
@@ -203,7 +203,7 @@ export async function getSalesforceCredentialsBySub(sub: string): Promise<Stored
     );
     
     if (result.rows.length === 0) {
-      console.error("No credentials found for sub:", sub);
+      console.log("No credentials found for sub:", sub);
       return null;
     }
     
@@ -217,7 +217,7 @@ export async function getSalesforceCredentialsBySub(sub: string): Promise<Stored
 
     return credentials;
   } catch (error) {
-    console.error("Error retrieving Salesforce credentials:", error);
+    console.log("Error retrieving Salesforce credentials:", error);
     return null;
   }
 }
@@ -229,7 +229,7 @@ export async function removeSalesforceCredentials(): Promise<boolean> {
   try {
     const session = await auth();
     if (!session || !session.user || !session.user.auth0) {
-      console.error("No session found");
+      console.log("No session found");
       return false;
     }
     
@@ -241,7 +241,7 @@ export async function removeSalesforceCredentials(): Promise<boolean> {
     
     return true;
   } catch (error) {
-    console.error("Error removing Salesforce credentials:", error);
+    console.log("Error removing Salesforce credentials:", error);
     return false;
   }
 }
@@ -254,6 +254,6 @@ export async function closeConnection(): Promise<void> {
     await pool.end();
     console.log('PostgreSQL connection pool closed');
   } catch (error) {
-    console.error('Error closing PostgreSQL connection pool:', error);
+    console.log('Error closing PostgreSQL connection pool:', error);
   }
 }

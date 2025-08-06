@@ -59,7 +59,7 @@ export async function GET(
     
     return NextResponse.json(result);
   } catch (error) {
-    console.error('Error handling GET request:', error);
+    console.log('Error handling GET request:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -148,7 +148,7 @@ export async function POST(
     
     return NextResponse.json(setting, { status: 201 });
   } catch (error) {
-    console.error('Error handling POST request:', error);
+    console.log('Error handling POST request:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -239,7 +239,7 @@ export async function PUT(
     
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error handling PUT request:', error);
+    console.log('Error handling PUT request:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -290,7 +290,7 @@ export async function PATCH(
     
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error handling PATCH request:', error);
+    console.log('Error handling PATCH request:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -338,7 +338,7 @@ export async function DELETE(
     
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error handling DELETE request:', error);
+    console.log('Error handling DELETE request:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

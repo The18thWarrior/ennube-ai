@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
     
     return NextResponse.json(searchResults);
   } catch (error) {
-    console.error('Error searching Gmail:', error);
+    console.log('Error searching Gmail:', error);
     return NextResponse.json(
       { error: 'Failed to search emails: ' + (error instanceof Error ? error.message : String(error)) },
       { status: 500 }

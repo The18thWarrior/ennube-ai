@@ -22,7 +22,7 @@ export default function GSuiteSignOut() {
       // router.push("/integrations/gsuite/connect");
       // router.refresh();
     } catch (error) {
-      console.error("Error signing out from Google Workspace:", error);
+      console.log("Error signing out from Google Workspace:", error);
     }
   };
   

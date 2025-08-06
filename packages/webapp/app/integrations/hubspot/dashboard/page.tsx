@@ -46,7 +46,7 @@ export default async function HubspotDashboard() {
       userInfo = await hubspotClient.getUserInfo();
     } 
   } catch (e) {
-    console.error("Failed to fetch HubSpot user info:", e);
+    console.log("Failed to fetch HubSpot user info:", e);
     error = e instanceof Error ? e.message : "Unknown error";
   }
   

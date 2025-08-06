@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
     
     // Validate required parameters
     if (!sub) {
-      console.error('Missing required parameter: sub');
+      console.log('Missing required parameter: sub');
       return NextResponse.json(
         { error: 'Missing required parameter: sub' },
         { status: 400 }
@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
     }
     
     if (!objectType) {
-      console.error('Missing required parameter: objectType');
+      console.log('Missing required parameter: objectType');
       return NextResponse.json(
         { error: 'Missing required parameter: objectType' },
         { status: 400 }
@@ -96,7 +96,7 @@ export async function GET(request: NextRequest) {
     
     return NextResponse.json({ success: true, data: result });
   } catch (error) {
-    console.error('Error executing HubSpot query:', error);
+    console.log('Error executing HubSpot query:', error);
     return NextResponse.json(
       {
         error: error instanceof Error ? error.message : 'An unexpected error occurred'

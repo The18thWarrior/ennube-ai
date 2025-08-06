@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
     console.log('compeleted storage of salesforce credentials')
     return NextResponse.redirect(url);
   } catch (error) {
-    console.error('Error getting Salesforce credentials:', error);
+    console.log('Error getting Salesforce credentials:', error);
     return NextResponse.json({ 
       success: false, 
       error: error instanceof Error ? error.message : 'An unexpected error occurred' 

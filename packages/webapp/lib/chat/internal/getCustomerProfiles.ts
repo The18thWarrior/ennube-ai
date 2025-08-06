@@ -36,7 +36,7 @@ export const getCustomerProfilesTool = (userId: string) => {
         try {
           const res = await buildCalloutWithHeader(`/api/customer-profile?subId=${encodeURIComponent(userId)}`, null, 'GET');
           if (!res.ok) {
-            console.error("API error:", res.status, await res.text());
+            console.log("API error:", res.status, await res.text());
             return { success: false, message: `API error: ${res.status}` };
           }
           const data = await res.json();
@@ -45,7 +45,7 @@ export const getCustomerProfilesTool = (userId: string) => {
           }
           return { profiles: data };
         } catch (error) {
-          console.error("Fetch error:", error);
+          console.log("Fetch error:", error);
           return { success: false, message: `Fetch error: ${error instanceof Error ? error.message : String(error)}` };
         }
       }

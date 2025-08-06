@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
     
     return NextResponse.json(userInfo);
   } catch (error) {
-    console.error('Error retrieving GSuite user info:', error);
+    console.log('Error retrieving GSuite user info:', error);
     return NextResponse.json(
       { error: 'Failed to retrieve user info: ' + (error instanceof Error ? error.message : String(error)) },
       { status: 500 }

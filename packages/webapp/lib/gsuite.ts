@@ -172,7 +172,7 @@ export class GSuiteClient {
       console.log('Successfully refreshed Google access token');
       return credentials;
     } catch (error) {
-      console.error('Error refreshing Google access token:', error);
+      console.log('Error refreshing Google access token:', error);
       return null;
     }
   }
@@ -228,7 +228,7 @@ export class GSuiteClient {
           picture: response.data.picture
         };
       } catch (error) {
-        console.error('Error fetching Google user info:', error);
+        console.log('Error fetching Google user info:', error);
         throw new Error(`Failed to fetch user info: ${error instanceof Error ? error.message : String(error)}`);
       }
     });
@@ -258,7 +258,7 @@ export class GSuiteClient {
           nextPageToken: threadResponse.data.nextPageToken
         };
       } catch (error) {
-        console.error('Error searching Gmail:', error);
+        console.log('Error searching Gmail:', error);
         throw new Error(`Failed to search emails: ${error instanceof Error ? error.message : String(error)}`);
       }
     });
@@ -357,7 +357,7 @@ export class GSuiteClient {
           };
         });
       } catch (error) {
-        console.error('Error fetching email thread:', error);
+        console.log('Error fetching email thread:', error);
         throw new Error(`Failed to fetch email thread: ${error instanceof Error ? error.message : String(error)}`);
       }
     });
@@ -436,7 +436,7 @@ export class GSuiteClient {
         
         return response.data.id || '';
       } catch (error) {
-        console.error('Error sending email:', error);
+        console.log('Error sending email:', error);
         throw new Error(`Failed to send email: ${error instanceof Error ? error.message : String(error)}`);
       }
     });
@@ -469,7 +469,7 @@ export class GSuiteClient {
           nextPageToken: response.data.nextPageToken
         };
       } catch (error) {
-        console.error('Error searching contacts:', error);
+        console.log('Error searching contacts:', error);
         throw new Error(`Failed to search contacts: ${error instanceof Error ? error.message : String(error)}`);
       }
     });
@@ -509,7 +509,7 @@ export class GSuiteClient {
           nextPageToken: response.data.nextPageToken
         };
       } catch (error) {
-        console.error('Error searching calendar events:', error);
+        console.log('Error searching calendar events:', error);
         throw new Error(`Failed to search calendar events: ${error instanceof Error ? error.message : String(error)}`);
       }
     });
@@ -531,7 +531,7 @@ export class GSuiteClient {
         
         return response.data;
       } catch (error) {
-        console.error('Error creating calendar event:', error);
+        console.log('Error creating calendar event:', error);
         throw new Error(`Failed to create calendar event: ${error instanceof Error ? error.message : String(error)}`);
       }
     });
@@ -636,7 +636,7 @@ export async function handleOAuthCallback(
       }
     };
   } catch (error) {
-    console.error('Error handling Google OAuth callback:', error);
+    console.log('Error handling Google OAuth callback:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : String(error)
@@ -705,7 +705,7 @@ export async function refreshGoogleToken(
       clientSecret: finalClientSecret
     };
   } catch (error) {
-    console.error('Error refreshing Google token:', error);
+    console.log('Error refreshing Google token:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : String(error)

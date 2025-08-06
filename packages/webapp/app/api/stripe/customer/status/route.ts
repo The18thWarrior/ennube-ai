@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ customerId: null });
   } catch (error: any) {
-    console.error('Error checking subscription status:', error);
+    console.log('Error checking subscription status:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to check subscription status' },
       { status: 500 }

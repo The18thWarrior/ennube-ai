@@ -30,7 +30,7 @@ export default function AgentCards({ agents }: { agents: Agent[]; }) {
     const result = await fetch(`/api/chat?agent=${agent}`);
     const data = await result.json();
     if (!result.ok) {
-        console.error('Error starting chat:', data.error);
+        console.log('Error starting chat:', data.error);
         return;
     }
     redirect(`/chat/${data.id}?agent=${agent}`);

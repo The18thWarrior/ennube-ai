@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
     
     // Validate required parameters
     if (!sub) {
-      console.error('Missing required parameter: sub');
+      console.log('Missing required parameter: sub');
       return NextResponse.json(
         { error: 'Missing required parameter: sub' },
         { status: 400 }
@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
     }
     
     if (!soql) {
-      console.error('Missing required parameter: soql');
+      console.log('Missing required parameter: soql');
       return NextResponse.json(
         { error: 'Missing required parameter: soql' },
         { status: 400 }
@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
     const credentials = await getSalesforceCredentialsBySub(sub);
     
     if (!credentials) {
-      console.error(`No Salesforce credentials found for user: ${sub}`);
+      console.log(`No Salesforce credentials found for user: ${sub}`);
       return NextResponse.json(
         { error: 'No Salesforce credentials found for this user' },
         { status: 404 }
@@ -63,7 +63,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(queryResult);
     
   } catch (error) {
-    console.error('Error executing Salesforce query:', error);
+    console.log('Error executing Salesforce query:', error);
     return NextResponse.json(
       { 
         error: 'Failed to execute Salesforce query',

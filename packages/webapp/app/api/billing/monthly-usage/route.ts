@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
     // Return the total
     return NextResponse.json({ total, year, month });
   } catch (error) {
-    console.error('Error getting monthly record operations:', error);
+    console.log('Error getting monthly record operations:', error);
     return NextResponse.json(
       { error: 'Failed to fetch monthly record operations' },
       { status: 500 }

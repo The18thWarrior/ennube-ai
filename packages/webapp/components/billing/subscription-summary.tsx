@@ -31,7 +31,7 @@ export default function SubscriptionSummary() {
     const { url, error } = await createCheckoutSession();
     
     if (error) {
-      console.error('Error creating checkout session:', error);
+      console.log('Error creating checkout session:', error);
       return;
     }
     
@@ -44,7 +44,7 @@ export default function SubscriptionSummary() {
     const { url, error } = await createCheckoutSession(true);
     
     if (error) {
-      console.error('Error creating checkout session:', error);
+      console.log('Error creating checkout session:', error);
       return;
     }
     
@@ -55,13 +55,13 @@ export default function SubscriptionSummary() {
 
   const handleManageSubscription = async () => {
     if (!session?.user?.auth0?.sub) {
-      console.error('No customer ID found');
+      console.log('No customer ID found');
       return;
     }
     const { url, error } = await createPortalLink();
 
     if (error) {
-      console.error('Error creating portal link:', error);
+      console.log('Error creating portal link:', error);
       return;
     }
     

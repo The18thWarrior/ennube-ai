@@ -93,7 +93,7 @@ export default function HubspotSchemaPage() {
         setSelectedTimestampField(data.account_timestamp_field || "");
         setInitialTimestampField(data.account_timestamp_field || "");
       } catch (err) {
-        console.error("Error fetching settings:", err);
+        console.log("Error fetching settings:", err);
         // Don't show toast for settings error, not critical
       } finally {
         setIsLoadingSettings(false);

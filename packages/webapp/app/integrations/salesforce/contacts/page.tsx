@@ -44,7 +44,7 @@ export default async function SalesforceContacts() {
     // );
     // contacts = result.records;
   } catch (e) {
-    console.error("Failed to fetch Salesforce contacts:", e);
+    console.log("Failed to fetch Salesforce contacts:", e);
     error = e instanceof Error ? e.message : "Unknown error";
   }
   

@@ -244,7 +244,7 @@ export async function POST(request: NextRequest) {
     
     // Validate required parameters
     if (!subId) {
-      console.error('Missing required parameter: sub');
+      console.log('Missing required parameter: sub');
       return NextResponse.json(
         { 
           jsonrpc: '2.0',
@@ -273,7 +273,7 @@ export async function POST(request: NextRequest) {
       const response = await (server as any).handleRequest(body);
       return NextResponse.json(response);
     } catch (error) {
-      console.error('MCP Server Error:', error);
+      console.log('MCP Server Error:', error);
       return NextResponse.json(
         { 
           jsonrpc: '2.0',
@@ -289,7 +289,7 @@ export async function POST(request: NextRequest) {
     }
     
   } catch (error) {
-    console.error('MCP Server Error:', error);
+    console.log('MCP Server Error:', error);
     return NextResponse.json(
       { 
         jsonrpc: '2.0',

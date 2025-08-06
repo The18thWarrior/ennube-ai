@@ -25,7 +25,7 @@ export default function UsageLogsList({ filter }: UsageLogListProps) {
     try {
       return format(new Date(Number(timestamp)), 'PPpp');
     } catch (error) {
-      console.error('Error formatting timestamp:', error);
+      console.log('Error formatting timestamp:', error);
       return 'Invalid date';
     }
   };

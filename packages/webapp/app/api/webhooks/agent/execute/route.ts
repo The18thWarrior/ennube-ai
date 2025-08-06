@@ -129,7 +129,7 @@ export async function GET(request: Request) {
             
             agentResponse = await response.json();
           } catch (agentError: any) {
-            console.error(`Error calling agent ${setting.agent} for user ${setting.userId}:`, agentError);
+            console.log(`Error calling agent ${setting.agent} for user ${setting.userId}:`, agentError);
             results.push({
               userId: setting.userId,
               agent: setting.agent,
@@ -154,7 +154,7 @@ export async function GET(request: Request) {
           });
         }
       } catch (error: any) {
-        console.error(`Error processing setting for user ${setting.userId}, agent ${setting.agent}:`, error);
+        console.log(`Error processing setting for user ${setting.userId}, agent ${setting.agent}:`, error);
         results.push({
           userId: setting.userId,
           agent: setting.agent,
@@ -183,7 +183,7 @@ export async function GET(request: Request) {
       results
     });
   } catch (error: any) {
-    console.error('Error executing agents:', error);
+    console.log('Error executing agents:', error);
     return NextResponse.json({ 
       timestamp: new Date().toISOString(),
       error: error.message || 'An unexpected error occurred',

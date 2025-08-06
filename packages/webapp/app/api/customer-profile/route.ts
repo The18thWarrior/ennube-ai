@@ -57,7 +57,7 @@ export async function GET(req: NextRequest) {
     console.log('GET /customer-profile - ' + 'Missing id or userId');
     return NextResponse.json({ error: 'Missing id or userId' }, { status: 400 });
   } catch (error) {
-    console.error('GET /customer-profile error:', error);
+    console.log('GET /customer-profile error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -93,7 +93,7 @@ export async function POST(req: NextRequest) {
     if (!id) return NextResponse.json({ error: 'Failed to create profile' }, { status: 500 });
     return NextResponse.json({ id }, { status: 201 });
   } catch (error) {
-    console.error('POST /customer-profile error:', error);
+    console.log('POST /customer-profile error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -124,7 +124,7 @@ export async function PUT(req: NextRequest) {
     if (!success) return NextResponse.json({ error: 'Failed to update profile' }, { status: 404 });
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('PUT /customer-profile error:', error);
+    console.log('PUT /customer-profile error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -143,7 +143,7 @@ export async function DELETE(req: NextRequest) {
     if (!success) return NextResponse.json({ error: 'Profile not found or could not be deleted' }, { status: 404 });
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('DELETE /customer-profile error:', error);
+    console.log('DELETE /customer-profile error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

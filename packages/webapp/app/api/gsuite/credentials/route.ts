@@ -55,7 +55,7 @@ export async function GET(request: NextRequest) {
     
     return NextResponse.json(sanitizedCredentials);
   } catch (error) {
-    console.error('Error retrieving GSuite credentials:', error);
+    console.log('Error retrieving GSuite credentials:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

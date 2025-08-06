@@ -162,7 +162,7 @@ export const ComponentRenderer = ({ config, components, handlers, dataProviders,
 /**
  * Main visualizer renderer component
  */
-export const VisualizerRenderer = ({ config, components = {}, handlers = {}, dataProviders = {}, onError = console.error, onLoading }) => {
+export const VisualizerRenderer = ({ config, components = {}, handlers = {}, dataProviders = {}, onError = console.log, onLoading }) => {
     const [validationError, setValidationError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     // Merge default components with custom components
@@ -187,7 +187,7 @@ export const VisualizerRenderer = ({ config, components = {}, handlers = {}, dat
     }, [onLoading]);
     // Handle errors
     const handleError = useCallback((error) => {
-        console.error('VisualizerRenderer error:', error);
+        //console.log('VisualizerRenderer error:', error);
         onError(error);
     }, [onError]);
     // Apply global styles

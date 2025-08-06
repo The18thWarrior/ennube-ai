@@ -29,7 +29,7 @@ export function useIntegrationConnections() {
         setConnections(data);
         setError(null);
       } catch (err) {
-        console.error('Error fetching integration connections:', err);
+        console.log('Error fetching integration connections:', err);
         setError(err instanceof Error ? err : new Error('Unknown error occurred'));
       } finally {
         setIsLoading(false);

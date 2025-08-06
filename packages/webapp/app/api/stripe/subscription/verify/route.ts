@@ -52,7 +52,7 @@ export async function GET(req: NextRequest) {
       }
     });
   } catch (error: any) {
-    console.error('Error verifying subscription:', error);
+    console.log('Error verifying subscription:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to verify subscription' },
       { status: 500 }

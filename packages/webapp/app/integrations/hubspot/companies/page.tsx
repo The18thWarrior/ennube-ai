@@ -42,7 +42,7 @@ export default async function HubspotCompanies() {
     });
     companies = companiesResult.records || [];
   } catch (e) {
-    console.error("Failed to fetch HubSpot companies:", e);
+    console.log("Failed to fetch HubSpot companies:", e);
     error = e instanceof Error ? e.message : "Unknown error";
   }
   

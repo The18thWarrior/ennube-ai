@@ -44,14 +44,14 @@ export function useOnboardingStatus(): UseOnboardingStatusReturn {
       
       // If user doesn't have credentials, they're at the first stage
       if (!credentialResponse.ok) {
-        console.error('Failed to fetch credentials:', credentialResponse);
+        console.log('Failed to fetch credentials:', credentialResponse);
         setStage('needs_credential');
         return;
       }
 
       const credentials = await credentialResponse.json();
       if (!credentials || credentials.hasCredentials === false) {
-        console.error('Failed to fetch credentials:', credentials);
+        console.log('Failed to fetch credentials:', credentials);
         setStage('needs_credential');
         return;
       }
@@ -95,7 +95,7 @@ export function useOnboardingStatus(): UseOnboardingStatusReturn {
       // If all checks pass, the user has completed onboarding
       setStage('complete');
     } catch (err) {
-      console.error('Error checking onboarding status:', err);
+      console.log('Error checking onboarding status:', err);
       const errorMessage = err instanceof Error ? err.message : 'Failed to check onboarding status';
       setError(errorMessage);
       enqueueSnackbar('Error checking your onboarding status', { variant: 'error' });

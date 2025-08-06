@@ -23,7 +23,7 @@ const pool = new Pool({
 // Test the connection and log success or error
 // pool.query('SELECT NOW()', (err, res) => {
 //   if (err) {
-//     console.error('Error connecting to PostgreSQL database:', err);
+//     console.log('Error connecting to PostgreSQL database:', err);
 //   } else {
 //     console.log('PostgreSQL connected successfully');
 //   }
@@ -254,7 +254,7 @@ export async function storeUsageLog(
 
     return logId;
   } catch (error) {
-    console.error("Error storing usage log:", error);
+    console.log("Error storing usage log:", error);
     return null;
   }
 }
@@ -269,14 +269,14 @@ export async function getUserUsageLogs(
   try {
     const session = await auth();
     if (!session || !session.user || !session.user.auth0) {
-      console.error("No session found");
+      console.log("No session found");
       return [];
     }
     
     const userSub = session.user.auth0.sub;
     return await getUserUsageLogsBySub(userSub, limit, offset);
   } catch (error) {
-    console.error("Error retrieving user usage logs:", error);
+    console.log("Error retrieving user usage logs:", error);
     return [];
   }
 }
@@ -290,7 +290,7 @@ export async function getUserUsageLog(
   try {
     const session = await auth();
     if (!session || !session.user || !session.user.auth0) {
-      console.error("No session found");
+      console.log("No session found");
       return null;
     }
     
@@ -308,7 +308,7 @@ export async function getUserUsageLog(
 
     return null;
   } catch (error) {
-    console.error("Error retrieving user usage log:", error);
+    console.log("Error retrieving user usage log:", error);
     return null;
   }
 }
@@ -348,7 +348,7 @@ export async function getUserUsageLogsBySub(
     // Map the results to our interface format
     return result.rows.map(mapDbToUsageLogEntry);
   } catch (error) {
-    console.error("Error retrieving usage logs by sub:", error);
+    console.log("Error retrieving usage logs by sub:", error);
     return [];
   }
 }
@@ -368,14 +368,14 @@ export async function getUsageSummary(
   try {
     const session = await auth();
     if (!session || !session.user || !session.user.auth0) {
-      console.error("No session found");
+      console.log("No session found");
       return { recordsUpdated: 0, recordsCreated: 0, meetingsBooked: 0, queriesExecuted: 0 };
     }
     
     const userSub = session.user.auth0.sub;
     return await getUsageSummaryBySub(userSub, startTime, endTime);
   } catch (error) {
-    console.error("Error retrieving usage summary:", error);
+    console.log("Error retrieving usage summary:", error);
     return { recordsUpdated: 0, recordsCreated: 0, meetingsBooked: 0, queriesExecuted: 0 };
   }
 }
@@ -423,7 +423,7 @@ export async function getUsageSummaryBySub(
 
     return { recordsUpdated: 0, recordsCreated: 0, meetingsBooked: 0, queriesExecuted: 0, usage: 0 };
   } catch (error) {
-    console.error("Error retrieving usage summary by sub:", error);
+    console.log("Error retrieving usage summary by sub:", error);
     return { recordsUpdated: 0, recordsCreated: 0, meetingsBooked: 0, queriesExecuted: 0, usage: 0 };
   }
 }
@@ -435,14 +435,14 @@ export async function clearUserUsageLogs(): Promise<boolean> {
   try {
     const session = await auth();
     if (!session || !session.user || !session.user.auth0) {
-      console.error("No session found");
+      console.log("No session found");
       return false;
     }
     
     const userSub = session.user.auth0.sub;
     return await clearUserUsageLogsBySub(userSub);
   } catch (error) {
-    console.error("Error clearing user usage logs:", error);
+    console.log("Error clearing user usage logs:", error);
     return false;
   }
 }
@@ -459,7 +459,7 @@ export async function clearUserUsageLogsBySub(sub: string): Promise<boolean> {
     
     return true;
   } catch (error) {
-    console.error("Error clearing user usage logs by sub:", error);
+    console.log("Error clearing user usage logs by sub:", error);
     return false;
   }
 }
@@ -477,14 +477,14 @@ export async function getMonthlyRecordOperationsTotal(
   try {
     const session = await auth();
     if (!session || !session.user || !session.user.auth0) {
-      console.error("No session found");
+      console.log("No session found");
       return 0;
     }
     
     const userSub = session.user.auth0.sub;
     return await getMonthlyRecordOperationsTotalBySub(userSub, year, month);
   } catch (error) {
-    console.error("Error retrieving monthly record operations total:", error);
+    console.log("Error retrieving monthly record operations total:", error);
     return 0;
   }
 }
@@ -523,7 +523,7 @@ export async function getMonthlyRecordOperationsTotalBySub(
     // Return the result
     return Number(result.rows[0]?.total_operations || 0);
   } catch (error) {
-    console.error("Error retrieving monthly record operations total by sub:", error);
+    console.log("Error retrieving monthly record operations total by sub:", error);
     return 0;
   }
 }
@@ -559,7 +559,7 @@ export async function closeConnection(): Promise<void> {
     await pool.end();
     console.log('PostgreSQL connection pool closed');
   } catch (error) {
-    console.error('Error closing PostgreSQL connection pool:', error);
+    console.log('Error closing PostgreSQL connection pool:', error);
   }
 }
 

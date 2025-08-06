@@ -59,7 +59,7 @@ export function StripeProvider({ children }: { children: React.ReactNode }) {
 
       return { url: data.url, error: null };
     } catch (error: any) {
-      console.error('Error creating checkout session:', error);
+      console.log('Error creating checkout session:', error);
       return { url: null, error: error.message || 'Something went wrong' };
     } finally {
       setIsLoading(false);
@@ -89,7 +89,7 @@ export function StripeProvider({ children }: { children: React.ReactNode }) {
         setIsPrimary(true);
       }
     } catch (error) {
-      console.error('Error fetching subscription:', error);
+      console.log('Error fetching subscription:', error);
       setSubscription({ customer: '', status: 'incomplete', id: '' });
       setIsPrimary(true);
     } finally {
@@ -115,7 +115,7 @@ export function StripeProvider({ children }: { children: React.ReactNode }) {
 
       return { url: data.url, error: null };
     } catch (error: any) {
-      console.error('Error creating portal link:', error);
+      console.log('Error creating portal link:', error);
       return { url: null, error: error.message || 'Something went wrong' };
     } finally {
       setIsLoading(false);

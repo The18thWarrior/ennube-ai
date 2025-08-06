@@ -20,7 +20,7 @@ export const getPostgresDataTool = (subId: string) => {
       });
       if (!res.ok) {
         const errorText = await res.text();
-        console.error('Error fetching Postgres data:', errorText);
+        console.log('Error fetching Postgres data:', errorText);
         return { error: 'Failed to fetch data', details: errorText };
       }
       const data = await res.json();

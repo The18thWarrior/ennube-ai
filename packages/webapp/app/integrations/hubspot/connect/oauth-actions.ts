@@ -18,7 +18,7 @@ export async function oauthHubspotLogout() {
 
     return { success: true };
   } catch (error) {
-    console.error("HubSpot OAuth logout error:", error);
+    console.log("HubSpot OAuth logout error:", error);
     return {
       success: false,
       error: error instanceof Error ? error.message : "An unexpected error occurred"

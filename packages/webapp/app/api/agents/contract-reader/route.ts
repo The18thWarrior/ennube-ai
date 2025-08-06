@@ -63,7 +63,7 @@ export async function GET(request: NextRequest) {
     // Handle non-200 responses from the webhook
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(`Error from data steward webhook: ${errorText}`);
+      console.log(`Error from data steward webhook: ${errorText}`);
       return NextResponse.json(
         { 
           error: 'Error from contract reader service',
@@ -78,7 +78,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(data);
     
   } catch (error: any) {
-    console.error('Error accessing contract reader agent:', error);
+    console.log('Error accessing contract reader agent:', error);
     return NextResponse.json(
       { 
         error: 'Failed to access contract reader agent',

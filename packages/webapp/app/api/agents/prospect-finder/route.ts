@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
     // Handle non-200 responses from the webhook
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(`Error from prospect finder webhook: ${errorText}`);
+      console.log(`Error from prospect finder webhook: ${errorText}`);
       return NextResponse.json(
         {
           error: 'Error from prospect finder service',
@@ -76,7 +76,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(data);
     
   } catch (error: any) {
-    console.error('Error accessing prospect finder agent:', error);
+    console.log('Error accessing prospect finder agent:', error);
     return NextResponse.json(
       {
         error: 'Failed to access prospect finder agent',

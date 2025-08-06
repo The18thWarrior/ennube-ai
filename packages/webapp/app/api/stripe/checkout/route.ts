@@ -53,7 +53,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ url: stripeSession.url });
   } catch (error: any) {
-    console.error('Error creating checkout session:', error);
+    console.log('Error creating checkout session:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to create checkout session' },
       { status: 500 }

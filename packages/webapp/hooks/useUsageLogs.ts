@@ -30,7 +30,7 @@ export function useUsageLogs(itemsPerPage: number = 10, filter?: string): UseUsa
       
       if (!response.ok) {
         const errorData = await response.json();
-        console.error('Error fetching usage logs:', errorData);
+        console.log('Error fetching usage logs:', errorData);
         throw new Error(errorData.error || 'Failed to fetch usage logs');
       }
       
@@ -41,7 +41,7 @@ export function useUsageLogs(itemsPerPage: number = 10, filter?: string): UseUsa
       setError(null);
       
     } catch (err) {
-      console.error('Error fetching usage logs:', err);
+      console.log('Error fetching usage logs:', err);
       const errorMessage = err instanceof Error ? err.message : 'Failed to load usage logs';
       setError(errorMessage);
       enqueueSnackbar('Failed to load usage logs', { 

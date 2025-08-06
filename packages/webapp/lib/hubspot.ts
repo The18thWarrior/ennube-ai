@@ -138,7 +138,7 @@ export class HubSpotClient {
       console.log('Successfully refreshed HubSpot access token');
       return refreshResult;
     } catch (error) {
-      console.error('Error refreshing HubSpot access token:', error);
+      console.log('Error refreshing HubSpot access token:', error);
       return null;
     }
   }
@@ -226,7 +226,7 @@ export class HubSpotClient {
           portalId: data.hub_id
         };
       } catch (error) {
-        console.error('Error fetching HubSpot user info:');
+        console.log('Error fetching HubSpot user info:');
         throw new Error(`Failed to fetch user info: ${error instanceof Error ? error.message : String(error)}`);
       }
     });
@@ -270,7 +270,7 @@ export class HubSpotClient {
           nextPageToken: result.paging?.next?.after
         };
       } catch (error) {
-        console.error('Error executing HubSpot query:');
+        console.log('Error executing HubSpot query:');
         throw new Error(`Query failed: ${error instanceof Error ? error.message : String(error)}`);
       }
     });
@@ -308,7 +308,7 @@ export class HubSpotClient {
         
         return result.id;
       } catch (error) {
-        console.error(`Error creating ${objectType}:`, error);
+        console.log(`Error creating ${objectType}:`, error);
         throw new Error(`Failed to create ${objectType}: ${error instanceof Error ? error.message : String(error)}`);
       }
     });
@@ -351,7 +351,7 @@ export class HubSpotClient {
         
         return true;
       } catch (error) {
-        console.error(`Error updating ${objectType}:`);
+        console.log(`Error updating ${objectType}:`);
         throw new Error(`Failed to update ${objectType}: ${error instanceof Error ? error.message : String(error)}`);
       }
     });
@@ -391,7 +391,7 @@ export class HubSpotClient {
         
         return true;
       } catch (error) {
-        console.error(`Error deleting ${objectType}:`, error);
+        console.log(`Error deleting ${objectType}:`, error);
         throw new Error(`Failed to delete ${objectType}: ${error instanceof Error ? error.message : String(error)}`);
       }
     });
@@ -446,7 +446,7 @@ export class HubSpotClient {
         
         return result.id;
       } catch (error) {
-        console.error('Error creating note in HubSpot:', error);
+        console.log('Error creating note in HubSpot:', error);
         throw new Error(`Failed to create note: ${error instanceof Error ? error.message : String(error)}`);
       }
     });
@@ -482,7 +482,7 @@ export class HubSpotClient {
         
         return noteIds;
       } catch (error) {
-        console.error('Error adding notes:', error);
+        console.log('Error adding notes:', error);
         throw new Error(`Failed to add notes: ${error instanceof Error ? error.message : String(error)}`);
       }
     });
@@ -526,7 +526,7 @@ export class HubSpotClient {
         
         return record;
       } catch (error) {
-        console.error(`Error retrieving ${objectType}:`, error);
+        console.log(`Error retrieving ${objectType}:`, error);
         throw new Error(`Failed to retrieve ${objectType}: ${error instanceof Error ? error.message : String(error)}`);
       }
     });
@@ -633,7 +633,7 @@ export class HubSpotClient {
         
         return results;
       } catch (error) {
-        console.error(`Error in batch ${operation}:`, error);
+        console.log(`Error in batch ${operation}:`, error);
         throw new Error(`Batch ${operation} failed: ${error instanceof Error ? error.message : String(error)}`);
       }
     });
@@ -650,7 +650,7 @@ export class HubSpotClient {
         const result = await this.client.crm.schemas.coreApi.getById(objectType);
         return result;
       } catch (error) {
-        console.error(`Error describing ${objectType}:`, error);
+        console.log(`Error describing ${objectType}:`, error);
         throw new Error(`Failed to describe ${objectType}: ${error instanceof Error ? error.message : String(error)}`);
       }
     });
@@ -666,7 +666,7 @@ export class HubSpotClient {
         const result = await this.client.crm.schemas.coreApi.getAll();
         return result;
       } catch (error) {
-        console.error('Error retrieving global object descriptions:', error);
+        console.log('Error retrieving global object descriptions:', error);
         throw new Error(`Failed to retrieve object list: ${error instanceof Error ? error.message : String(error)}`);
       }
     });
@@ -694,7 +694,7 @@ export async function connectToHubSpotWithApiKey(
       credential: null
     };
   } catch (error) {
-    console.error('HubSpot authentication error:', error);
+    console.log('HubSpot authentication error:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : String(error),
@@ -814,7 +814,7 @@ export async function handleOAuthCallback(
       credential: null
     };
   } catch (error) {
-    console.error('Error handling OAuth callback:', error);
+    console.log('Error handling OAuth callback:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : String(error),
@@ -896,7 +896,7 @@ export async function refreshHubSpotToken(
       credential: null // No stored credentials in this case
     };
   } catch (error) {
-    console.error('Error refreshing HubSpot token:', error);
+    console.log('Error refreshing HubSpot token:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : String(error),

@@ -78,7 +78,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ subId: st
           status: userDetail.status || 'active'
         });
       } catch (error) {
-        console.error('Error fetching user details:', error);
+        console.log('Error fetching user details:', error);
         toast.error('Failed to load user details');
         router.push('/account/users');
       } finally {
@@ -140,7 +140,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ subId: st
       
       toast.success('User updated successfully');
     } catch (error: any) {
-      console.error('Error updating user:', error);
+      console.log('Error updating user:', error);
       toast.error(error.message || 'Failed to update user');
     } finally {
       setIsSaving(false);
@@ -167,7 +167,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ subId: st
       toast.success('User deleted successfully');
       router.push('/account/users');
     } catch (error) {
-      console.error('Error deleting user:', error);
+      console.log('Error deleting user:', error);
       toast.error('Failed to delete user');
       setIsDeleting(false);
     }

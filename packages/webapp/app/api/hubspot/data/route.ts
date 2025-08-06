@@ -109,7 +109,7 @@ export async function GET(request: NextRequest) {
     
     return NextResponse.json({ success: true, data: record });
   } catch (error) {
-    console.error('Error retrieving HubSpot record:', error);
+    console.log('Error retrieving HubSpot record:', error);
     return NextResponse.json(
       {
         error: error instanceof Error ? error.message : 'An unexpected error occurred'
@@ -141,7 +141,7 @@ export async function POST(request: NextRequest) {
     
     return NextResponse.json({ success: true, id });
   } catch (error) {
-    console.error('Error creating HubSpot record:', error);
+    console.log('Error creating HubSpot record:', error);
     return NextResponse.json(
       {
         error: error instanceof Error ? error.message : 'An unexpected error occurred'
@@ -197,7 +197,7 @@ export async function PUT(request: NextRequest) {
     
     return NextResponse.json({ success });
   } catch (error) {
-    console.error('Error updating HubSpot record:', error);
+    console.log('Error updating HubSpot record:', error);
     return NextResponse.json(
       {
         error: error instanceof Error ? error.message : 'An unexpected error occurred'
@@ -235,7 +235,7 @@ export async function DELETE(request: NextRequest) {
     
     return NextResponse.json({ success });
   } catch (error) {
-    console.error('Error deleting HubSpot record:', error);
+    console.log('Error deleting HubSpot record:', error);
     return NextResponse.json(
       {
         error: error instanceof Error ? error.message : 'An unexpected error occurred'
@@ -289,7 +289,7 @@ export async function PATCH(request: NextRequest) {
     
     return NextResponse.json({ success: true, results });
   } catch (error) {
-    console.error('Error executing HubSpot batch operation:', error);
+    console.log('Error executing HubSpot batch operation:', error);
     return NextResponse.json(
       {
         error: error instanceof Error ? error.message : 'An unexpected error occurred'

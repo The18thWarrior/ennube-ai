@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
         },
     })
   } catch (error: any) {
-    console.error('Error retrieving website:', error);
+    console.log('Error retrieving website:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to retrieve website' },
       { status: 500 }

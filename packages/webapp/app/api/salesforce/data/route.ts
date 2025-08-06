@@ -119,7 +119,7 @@ export async function POST(request: NextRequest) {
     });
     
   } catch (error) {
-    console.error('Error creating Salesforce record:', error);
+    console.log('Error creating Salesforce record:', error);
     return NextResponse.json(
       { 
         error: 'Failed to create Salesforce record',
@@ -193,7 +193,7 @@ export async function PUT(request: NextRequest) {
     });
     
   } catch (error) {
-    console.error('Error updating Salesforce record:', error);
+    console.log('Error updating Salesforce record:', error);
     return NextResponse.json(
       { 
         error: 'Failed to update Salesforce record',
@@ -254,7 +254,7 @@ export async function DELETE(request: NextRequest) {
     });
     
   } catch (error) {
-    console.error('Error deleting Salesforce record:', error);
+    console.log('Error deleting Salesforce record:', error);
     return NextResponse.json(
       { 
         error: 'Failed to delete Salesforce record',

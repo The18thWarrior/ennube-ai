@@ -71,7 +71,7 @@ export async function GET(request: NextRequest) {
     //   message: 'GSuite authentication successful'
     // });
   } catch (error) {
-    console.error('Error handling OAuth callback:', error);
+    console.log('Error handling OAuth callback:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

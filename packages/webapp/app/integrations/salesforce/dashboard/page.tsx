@@ -37,7 +37,7 @@ export default async function SalesforceDashboard() {
       userInfo = await salesforceClient.getUserInfo();
     } 
   } catch (e) {
-    console.error("Failed to fetch Salesforce user info:", e);
+    console.log("Failed to fetch Salesforce user info:", e);
     error = e instanceof Error ? e.message : "Unknown error";
   }
 
@@ -50,7 +50,7 @@ export default async function SalesforceDashboard() {
       isPackageInstalled = result || false;
     }
   } catch (e) {
-    console.error("Failed to check package installation:", e);
+    console.log("Failed to check package installation:", e);
   }
 
   return (

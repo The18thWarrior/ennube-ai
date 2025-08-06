@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { messages } = body;
     if (!messages) {
-      console.error('Missing messages in request body');
+      console.log('Missing messages in request body');
       return NextResponse.json({ error: 'Missing messages' }, { status: 400 });
     }
 
@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
     const session = await auth();
     
     if (!session || !session.user || !session.user.auth0) {
-      console.error('User is not authenticated');
+      console.log('User is not authenticated');
       return NextResponse.json(
         { error: 'You must be signed in to access the data steward agent' },
         { status: 401 }
@@ -81,7 +81,7 @@ export async function POST(req: NextRequest) {
       maxSteps: 10,
       toolCallStreaming: true,
       onError: (error) => {
-        console.error('Error during tool execution:', error);
+        console.log('Error during tool execution:', error);
       },
       onFinish: (response) => {
         console.log('Response finished:', response.text, response.toolCalls, response.finishReason);
@@ -95,7 +95,7 @@ export async function POST(req: NextRequest) {
     return result.toDataStreamResponse();
     //return NextResponse.json(result);
   } catch (error) {
-    console.error('Error in chat route:', error);
+    console.log('Error in chat route:', error);
     return NextResponse.json({ error: error instanceof Error ? error.message : String(error) }, { status: 500 });
   }
 }

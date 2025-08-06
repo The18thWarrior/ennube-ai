@@ -40,7 +40,7 @@ export default async function GSuiteDashboard() {
   try {
     userInfo = await gsuiteClient.getUserInfo();
   } catch (e) {
-    console.error("Failed to fetch Google user info:", e);
+    console.log("Failed to fetch Google user info:", e);
     error = e instanceof Error ? e.message : "Unknown error";
   }
   

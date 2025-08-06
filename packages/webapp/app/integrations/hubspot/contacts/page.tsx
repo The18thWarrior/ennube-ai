@@ -42,7 +42,7 @@ export default async function HubspotContacts() {
     });
     contacts = contactsResult.records || [];
   } catch (e) {
-    console.error("Failed to fetch HubSpot contacts:", e);
+    console.log("Failed to fetch HubSpot contacts:", e);
     error = e instanceof Error ? e.message : "Unknown error";
   }
   

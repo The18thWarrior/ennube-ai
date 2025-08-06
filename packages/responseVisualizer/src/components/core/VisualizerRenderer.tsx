@@ -233,7 +233,7 @@ export const VisualizerRenderer: React.FC<VisualizerProps> = ({
   components = {},
   handlers = {},
   dataProviders = {},
-  onError = console.error,
+  onError = console.log,
   onLoading
 }) => {
   const [validationError, setValidationError] = useState<string | null>(null);
@@ -266,7 +266,7 @@ export const VisualizerRenderer: React.FC<VisualizerProps> = ({
 
   // Handle errors
   const handleError = useCallback((error: Error) => {
-    console.error('VisualizerRenderer error:', error);
+    console.log('VisualizerRenderer error:', error);
     onError(error);
   }, [onError]);
 

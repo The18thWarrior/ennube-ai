@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
     const logs = await getUserUsageLogsBySub(userSub, Number(limit), Number(offset), filter);
     return NextResponse.json(logs);
   } catch (error: any) {
-    console.error('Error retrieving usage logs:', error);
+    console.log('Error retrieving usage logs:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to retrieve usage logs' },
       { status: 500 }
@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
     await storeUsageLog(params);
     return NextResponse.json({id: logId});
   } catch (error: any) {
-    console.error('Error storing usage log:', error);
+    console.log('Error storing usage log:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to store usage log' },
       { status: 500 }
@@ -120,7 +120,7 @@ export async function PUT(request: NextRequest) {
     
     return NextResponse.json({id});
   } catch (error: any) {
-    console.error('Error storing usage log:', error);
+    console.log('Error storing usage log:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to store usage log' },
       { status: 500 }
