@@ -69,6 +69,34 @@ export const callWorkflowToolProspectFinder = tool({
 	},
 });
 
-export const getWorkflowTool = (agent: 'data-steward' | 'prospect-finder') => {
-    return agent === 'data-steward' ? callWorkflowToolDataSteward : callWorkflowToolProspectFinder;
+export const callWorkflowToolContractReader = tool({
+	description: 'Call the execution workflow for Contract Reader. Contract Reader is used to read and analyze contracts. ALWAYS ask the user for permission before calling this tool.',
+	parameters: z.object({
+		limit: z.string().optional(),
+	}),
+	async execute({ limit }) {
+        const session = await auth();
+        if (!session || !session.user || !session.user.auth0) throw new Error('You must be signed in to call a workflow');
+        const subId = session.user.auth0.sub;
+		if (!subId) throw new Error('subId is required');
+		const usageId = nanoid();
+		const webhookUrl = process.env.CONTRACT_READER_WEBHOOK_URL;
+		if (!webhookUrl) throw new Error('Webhook URL is not configured for this agent');
+
+		const url = `${webhookUrl}?limit=${limit || '10'}&subId=${subId}&usageId=${usageId}`;
+		const response = await fetch(url, {
+			method: 'GET',
+			headers: { 'Content-Type': 'application/json' },
+		});
+		if (!response.ok) {
+			const errorText = await response.text();
+			throw new Error(`Error from agent webhook: ${errorText}`);
+		}
+		const data = await response.json();
+		return { ...data, usageId };
+	},
+});
+
+export const getWorkflowTool = (agent: 'data-steward' | 'prospect-finder' | 'contract-reader') => {
+    return agent === 'data-steward' ? callWorkflowToolDataSteward : agent === 'contract-reader' ? callWorkflowToolContractReader : callWorkflowToolProspectFinder;
 }   

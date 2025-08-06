@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
     const openrouter = createOpenRouter({
       apiKey: `${process.env.OPENROUTER_API_KEY}`,
     });
-    const systemPrompt = `${getPrompt(agent as 'data-steward' | 'prospect-finder')} Today's date is ${today}.`;
+    const systemPrompt = `${getPrompt(agent as 'data-steward' | 'prospect-finder' | 'contract-reader')} Today's date is ${today}.`;
     const model = openrouter('google/gemini-2.0-flash-001'); // openai/gpt-4.1-nano | google/gemini-2.0-flash-001
     // Set up the OpenAI model
     // Run the agent with tools
@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
       //model: openai('gpt-4.1-nano'),
       model: model,
       system: systemPrompt,
-      tools: await getTools(agent as 'data-steward' | 'prospect-finder', userSub),
+      tools: await getTools(agent as 'data-steward' | 'prospect-finder' | 'contract-reader', userSub),
       messages: messages,
       // messages: messages.map((msg: any) => {
       //   return {
