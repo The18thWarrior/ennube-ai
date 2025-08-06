@@ -79,8 +79,6 @@ export async function PUT(request: NextRequest) {
 
     const body = await request.json();
     const searchParams = request.nextUrl.searchParams;
-    console.log("body", body);
-    console.log("searchParams", searchParams);
     const sub = body.sub || searchParams.get('sub');
     const id = body.id || searchParams.get('id');
     const agent = body.agent || searchParams.get('agent');

@@ -58,9 +58,8 @@ interface SessionValidationResponse {
 
 export async function validateSession(req: NextRequest): Promise<SessionValidationResponse> {
     const session = await auth();
-    console.log(session);
     if (!session?.user?.auth0?.sub && !(await validateHeader(req))) {
-        console.log(session?.user?.auth0?.sub, 'Invalid session or header');
+        console.log( 'Invalid session or header');
         return { isValid: false, userId: null };
     }
 

@@ -185,6 +185,7 @@ const agentImageMap: Record<string, string> = {
   "ProspectFinder": "/prospect-finder.png",
   "MeetingsBooker": "/meetings-booker.png",
   "MarketNurturer": "/market-nurturer.png",
+  "ContractReader": "/contracts-reader.png"
 }
 
 const agentLinkMap: Record<string, string> = {
@@ -192,6 +193,7 @@ const agentLinkMap: Record<string, string> = {
   "ProspectFinder": "/agents/prospect-finder",
   "MeetingsBooker": "/agents/meetings-booker",
   "MarketNurturer": "/agents/market-nurturer",
+  "ContractReader": "/agents/contract-reader",
 }
 
 export const getAgentImage = (agentName: string) => {
