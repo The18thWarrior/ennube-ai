@@ -10,7 +10,7 @@ export default async function SalesforceContacts() {
   
   // If user is not connected to Salesforce, redirect to connect page
   if (!session?.user?.salesforce) {
-    redirect("/salesforce/connect")
+    redirect("/integrations/salesforce/connect")
   }
   
   // Get Salesforce client
@@ -28,7 +28,7 @@ export default async function SalesforceContacts() {
           </div>
         </div>
         <Button asChild>
-          <CustomLink href="/salesforce/connect">Reconnect to Salesforce</CustomLink>
+          <CustomLink href="/integrations/salesforce/connect">Reconnect to Salesforce</CustomLink>
         </Button>
       </div>
     )

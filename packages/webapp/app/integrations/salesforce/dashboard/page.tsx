@@ -18,14 +18,14 @@ export default async function SalesforceDashboard() {
   const salesforceCredentials = await getSalesforceCredentialsById()
   if (!salesforceCredentials) {
     console.log('No Salesforce credentials found, redirecting to connect page')
-    redirect("/salesforce/connect");
+    redirect("/integrations/salesforce/connect");
   }
   //console.log(salesforceCredentials);
   const salesforceClient = new SalesforceClient(salesforceCredentials.accessToken, salesforceCredentials.instanceUrl, salesforceCredentials.refreshToken);
   // If no Salesforce client available and no OAuth session, redirect to connect page
   if (!salesforceClient) {
     console.log('No Salesforce client found, redirecting to connect page')
-    redirect("/salesforce/connect");
+    redirect("/integrations/salesforce/connect");
   }
   
   // Fetch user information from Salesforce
