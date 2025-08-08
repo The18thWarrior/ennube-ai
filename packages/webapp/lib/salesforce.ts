@@ -114,10 +114,13 @@ export class SalesforceClient {
       console.log('Error during Salesforce API call:', error);
       // Check if the error is due to an expired session
       const errorMsg = error instanceof Error ? error.message : String(error);
+      console.log(errorMsg);
       const isSessionExpired = errorMsg.includes('INVALID_SESSION_ID') || 
                               errorMsg.includes('Session expired') ||
                               errorMsg.includes('invalid session') ||
-                              errorMsg.includes('Bad_OAuth_Token');
+                              errorMsg.includes('Bad_OAuth_Token') || 
+                              errorMsg.includes('expired access/refresh token') || 
+                              errorMsg.includes('expired');
       //('Is session expired:', isSessionExpired,  this.refreshToken);
       if (isSessionExpired && this.refreshToken) {
         console.log('Salesforce session expired. Attempting to refresh token...');

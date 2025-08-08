@@ -63,7 +63,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(queryResult);
     
   } catch (error) {
-    console.log('Error executing Salesforce query:', error);
+    console.log('Error executing Salesforce query:', error instanceof Error ? error.message : String(error));
     return NextResponse.json(
       { 
         error: 'Failed to execute Salesforce query',
