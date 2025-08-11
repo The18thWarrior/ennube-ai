@@ -8,6 +8,7 @@ import { cn, getAgentImage, getJsonData, isJson, parseAndValidateResponse } from
 import { z } from 'zod';
 import { ComponentConfigSchema } from '../custom-response';
 import { JsonView } from '@/components/ui/json-view';
+import { JsonRecord } from '../generalized-result';
 import CustomResponse from '@/components/custom-response';
 import { useChat } from '@ai-sdk/react';
 import { UIMessage, Message } from 'ai';
@@ -18,7 +19,7 @@ import ReactMarkdown from 'react-markdown';
 import { Card, CardContent } from '../ui';
 import { CrmRecordListTable } from './tools/crm-record-list-table';
 import { CrmRecordDetailCard } from './tools/crm-record-detail-card';
-import { Loader2, User } from 'lucide-react';
+import { Loader2, User, TriangleAlert, CircleCheck } from 'lucide-react';
 import { RecordIcon } from './tools/icon-map';
 import CrmResultCard from './tools/crm-result-card';
 import { CustomProfileToolResult } from './wrappers/custom-profile-tool-result';
@@ -76,7 +77,7 @@ export const renderMessage = (msg: Message, idx: number, agent: ReactNode, theme
                     ].join(' ')}
                     style={{ padding: 0, background: 'none', border: 'none' }}
                 >
-                    {RenderHtmlComponent( MessageComponentWrapper(<JsonView data={jsonData} />, msg.role, theme), msg, theme, agent)}
+                    {RenderHtmlComponent( MessageComponentWrapper(<JsonRecord data={jsonData} className='min-w-3/4' />, msg.role, theme), msg, theme, agent)}
                 </span>
             );
         }
@@ -90,7 +91,7 @@ export const renderMessage = (msg: Message, idx: number, agent: ReactNode, theme
                 ].join(' ')}
                 style={{ padding: 0, background: 'none', border: 'none' }}
             >
-                {RenderHtmlComponent( MessageComponentWrapper(<JsonView data={jsonData} />, msg.role, theme), msg, theme, agent)}
+                {RenderHtmlComponent( MessageComponentWrapper(<JsonRecord data={jsonData}  className='min-w-3/4' />, msg.role, theme), msg, theme, agent)}
             </span>
         );
         
@@ -166,6 +167,30 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: Message, theme
                                             }
                                             break;
                                         }
+                                        case 'getData': {
+                                            switch (part.toolInvocation.state) {
+                                                case 'result':                                                    
+                                                    return (
+                                                        <div key={callId}>
+                                                            {RenderGetDataToolCallComponent(part.toolInvocation.args, part.toolInvocation.result, theme)}
+                                                            {/* <JsonView data={part.toolInvocation.result} classNames={styles.jsonBubble} /> */}
+                                                        </div>
+                                                    );
+                                            }
+                                            break;
+                                        }
+                                        case 'getCredentials': {
+                                            switch (part.toolInvocation.state) {
+                                                case 'result':                                          
+                                                    return (
+                                                        <div key={callId} className="flex items-center gap-2 text-xs text-muted-foreground py-4 px-2 border rounded">
+                                                            {part.toolInvocation.result.hasCredentials ? <CircleCheck className="h-4 w-4 text-green-500" /> : <TriangleAlert className="h-4 w-4 text-red-500" />}
+                                                            <span>{part.toolInvocation.result.hasCredentials ? "Credentials Retrieved" : "No Credentials Found"}</span>
+                                                        </div>
+                                                    );
+                                            }
+                                            break;
+                                        }
                                         case 'getPostgresDataTool': {
                                             switch (part.toolInvocation.state) {
                                                 case 'result': 
@@ -173,7 +198,23 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: Message, theme
                                                     return (
                                                         <div key={callId}>
                                                             {/* {RenderGetDataToolCallComponent(part.toolInvocation.args, part.toolInvocation.result, theme)} */}
-                                                            <JsonView data={part.toolInvocation.result} classNames={styles.jsonBubble} />
+                                                            <JsonRecord rootLabel="Postgres Data" data={part.toolInvocation.result} className={`${styles.jsonBubble} min-w-3/4`} />
+                                                        </div>
+                                                    );
+                                            }
+                                            break;
+                                        }
+                                        case 'getPostgresDescribeTool': {
+                                            switch (part.toolInvocation.state) {
+                                                case 'result': 
+                                                    console.log( part.toolInvocation.result);                                                   
+                                                    return (
+                                                        <div key={callId}>
+                                                            {/* {RenderGetDataToolCallComponent(part.toolInvocation.args, part.toolInvocation.result, theme)} */}
+                                                            <div key={callId} className="flex items-center gap-2 text-xs text-muted-foreground py-4 px-2 border rounded">
+                                                                {part.toolInvocation.result.success ? <CircleCheck className="h-4 w-4 text-green-500" /> : <TriangleAlert className="h-4 w-4 text-red-500" />}
+                                                                <span>{part.toolInvocation.result.success ? "Schema Retrieved" : "No Schema Found"}</span>
+                                                            </div>
                                                         </div>
                                                     );
                                             }
@@ -202,7 +243,7 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: Message, theme
                                                     );
                                             }
                                             break;
-                                        }
+                                        }                                        
                                         case 'getCount': {
                                             switch (part.toolInvocation.state) {
                                                 case 'call':
@@ -220,7 +261,7 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: Message, theme
                                             // Fallback: render tool data as JSON
                                             return (
                                                 <div key={callId} style={{ margin: '8px 0' }}>
-                                                    <JsonView data={part.toolInvocation}  classNames={styles.jsonBubble}/>
+                                                    <JsonRecord data={part.toolInvocation} className={`${styles.jsonBubble} min-w-3/4`} />
                                                 </div>
                                             );
                                     }

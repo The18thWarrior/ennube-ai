@@ -92,7 +92,7 @@ export function CrmRecordListCard(data: CrmRecordListData) {
                       const secondFieldValue = record.fields.find(field => field.label.includes('OwnerId') || field.label.includes('owner')) ? record.fields.find(field => field.label.includes('OwnerId') || field.label.includes('owner'))?.value : record.fields[secondField].value || "-";
                       const thirdFieldValue = record.fields.find(field => field.label.includes('Type') || field.label.includes('type')) ? record.fields.find(field => field.label.includes('Type') || field.label.includes('type'))?.value : record.fields[thirdField].value || "-";
                       const thirdFieldLabel = record.fields[thirdField]?.label || "Type";
-                      console.log('Record:', record)
+                      
                       return (
                         <li key={record.id}>
                           <Button
