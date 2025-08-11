@@ -187,7 +187,7 @@ export const VisualizerRenderer = ({ config, components = {}, handlers = {}, dat
     }, [onLoading]);
     // Handle errors
     const handleError = useCallback((error) => {
-        //console.log('VisualizerRenderer error:', error);
+        console.log('VisualizerRenderer error:', error);
         onError(error);
     }, [onError]);
     // Apply global styles

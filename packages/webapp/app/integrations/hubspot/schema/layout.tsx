@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { getHubSpotCredentialsById } from "@/lib/db/hubspot-storage";

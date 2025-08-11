@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { auth } from "@/auth"
 import { Button } from "@/components/ui/button"
 import CustomLink from "@/components/custom-link"

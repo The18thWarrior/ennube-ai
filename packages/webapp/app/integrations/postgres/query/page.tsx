@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 // === query/page.tsx ===
 // Created: 2025-07-21 10:25
 // Purpose: PostgreSQL query execution page

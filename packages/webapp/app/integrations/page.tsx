@@ -1,10 +1,16 @@
+export const dynamic = "force-dynamic";
 import IntegrationCard from "@/components/integration-card"
 import { getGSuiteCredentialsById } from "@/lib/db/gsuite-storage";
 import { getSalesforceCredentialsById } from "@/lib/db/salesforce-storage"
 import { getHubSpotCredentialsById } from "@/lib/db/hubspot-storage"
 import { getPostgresUrlById } from "@/lib/db/postgres-storage"
 
-export default async function IntegrationsPage() {
+async function getServerData() : Promise<{
+    hasSalesforce: boolean,
+    hasGSuite: boolean,
+    hasHubSpot: boolean,
+    hasPostgres: boolean
+}> {
     const sf_credential = await getSalesforceCredentialsById()
     const hasSalesforce = Boolean(sf_credential && sf_credential.accessToken);
     const gs_credential = await getGSuiteCredentialsById();
@@ -14,6 +20,19 @@ export default async function IntegrationsPage() {
     const pg_credential = await getPostgresUrlById();
     const hasPostgres = Boolean(pg_credential && pg_credential.instanceUrl);
       
+  return new Promise((resolve) =>
+    
+      resolve({
+        hasSalesforce,
+        hasGSuite,
+        hasHubSpot,
+        hasPostgres
+      })
+  )
+}
+
+export default async function IntegrationsPage() {
+    const { hasSalesforce, hasGSuite, hasHubSpot, hasPostgres } = await getServerData();
     return (
         <div className="container mx-auto py-10 px-4">
             <h1 className="text-3xl font-bold mb-6">Integrations</h1>

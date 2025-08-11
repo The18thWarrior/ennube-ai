@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { auth } from "@/auth"
 import { getGSuiteCredentialsById } from "@/lib/db/gsuite-storage"
 import { redirect } from "next/navigation"
