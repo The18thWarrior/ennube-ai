@@ -110,7 +110,9 @@ export async function GET(request: Request) {
           
           // Call the appropriate agent API
           try {
-            const response = await fetch(`${url.origin}/api/agents/${setting.agent}`, {
+            const requestUrl = `${url.origin}/api/agents/${setting.agent}`;
+            console.log(`Calling agent API at ${requestUrl} with userId ${setting.userId} and batchSize ${safeBatchSize}`);
+            const response = await fetch(requestUrl, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
