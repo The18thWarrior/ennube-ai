@@ -36,9 +36,9 @@ export const getTools = async (agent: 'data-steward' | 'prospect-finder' | 'cont
             getCredentials: getCredentialsTool(userId),
             getSFDCFieldDescribeTool: getSFDCFieldsTool(userId),
             getSFDCDataTool: getSFDCDataTool(userId),
-            getPostgresDataTool: getPostgresDataTool(userId),
-            getPostgresDescribeTool: getPostgresDescribeTool(userId),
-            getCount: getCountTool(userId),
+            //getPostgresDataTool: getPostgresDataTool(userId),
+            //getPostgresDescribeTool: getPostgresDescribeTool(userId),
+            //getCount: getCountTool(userId),
             callWorkflowTool: getWorkflowTool(agent)
         };
     } else if (agent === 'prospect-finder') {
@@ -46,12 +46,12 @@ export const getTools = async (agent: 'data-steward' | 'prospect-finder' | 'cont
             getCredentials: getCredentialsTool(userId),
             getSFDCFieldDescribeTool: getSFDCFieldsTool(userId),
             getSFDCDataTool: getSFDCDataTool(userId),
-            getPostgresDataTool: getPostgresDataTool(userId),
-            getPostgresDescribeTool: getPostgresDescribeTool(userId),
+            // getPostgresDataTool: getPostgresDataTool(userId),
+            // getPostgresDescribeTool: getPostgresDescribeTool(userId),
             getCustomerProfilesTool: getCustomerProfilesTool(userId),
             createCustomerProfileTool: createCustomerProfileTool(userId),
             updateCustomerProfileTool: updateCustomerProfileTool(userId),
-            getCount: getCountTool(userId),
+            //getCount: getCountTool(userId),
             callWorkflowTool: getWorkflowTool(agent),
         };
     } else if (agent === 'contract-reader') {
@@ -59,9 +59,9 @@ export const getTools = async (agent: 'data-steward' | 'prospect-finder' | 'cont
             getCredentials: getCredentialsTool(userId),
             getSFDCFieldDescribeTool: getSFDCFieldsTool(userId),
             getSFDCDataTool: getSFDCDataTool(userId),
-            getPostgresDataTool: getPostgresDataTool(userId),
-            getPostgresDescribeTool: getPostgresDescribeTool(userId),
-            getCount: getCountTool(userId),
+            // getPostgresDataTool: getPostgresDataTool(userId),
+            // getPostgresDescribeTool: getPostgresDescribeTool(userId),
+            //getCount: getCountTool(userId),
             callWorkflowTool: getWorkflowTool(agent)
         };
     }
@@ -72,7 +72,7 @@ export const getTools = async (agent: 'data-steward' | 'prospect-finder' | 'cont
         getSFDCDataTool: getSFDCDataTool(userId),
         getPostgresDataTool: getPostgresDataTool(userId),
         getPostgresDescribeTool: getPostgresDescribeTool(userId),
-        getCount: getCountTool(userId)
+        //getCount: getCountTool(userId)
     };
 
 }   

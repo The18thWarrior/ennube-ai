@@ -19,7 +19,7 @@ import ReactMarkdown from 'react-markdown';
 import { Card, CardContent } from '../ui';
 import { CrmRecordListTable } from './tools/crm-record-list-table';
 import { CrmRecordDetailCard } from './tools/crm-record-detail-card';
-import { Loader2, User, TriangleAlert, CircleCheck } from 'lucide-react';
+import { Loader2, User, TriangleAlert, CircleCheck, Loader } from 'lucide-react';
 import { RecordIcon } from './tools/icon-map';
 import CrmResultCard from './tools/crm-result-card';
 import { CustomProfileToolResult } from './wrappers/custom-profile-tool-result';
@@ -148,7 +148,7 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: Message, theme
 
                                     if (part.toolInvocation.state === 'call') {
                                         return (
-                                            <div key={callId} className="flex items-center gap-2 text-xs text-muted-foreground py-2">
+                                            <div key={callId} className="flex items-center gap-2 text-xs text-muted-foreground my-2 py-4 px-2 border rounded">
                                                 <Loader2 className="h-4 w-4 animate-spin" />
                                                 <span>Calling {part.toolInvocation.toolName}...</span>
                                             </div>
@@ -291,7 +291,12 @@ const RenderGetDataToolCallComponent = (args: any, result: any, theme: 'dark' | 
     const {records } = result;
     //console.log(result)
     if (!records || records.length === 0) {
-        return <div>No data found</div>;
+        return <div>
+            <div className="flex items-center gap-2 text-xs text-muted-foreground my-2 py-4 px-2 border rounded">
+                {<TriangleAlert className="h-4 w-4 text-red-500" />}
+                <span>No data found</span>
+            </div>
+        </div>
     }
     if (records.length === 1) {
         const fields = Object.keys(records[0]).filter((key) => key !== 'Id' && records[0][key] && key !== 'attributes').map((key) => ({
@@ -332,7 +337,12 @@ const RenderGetDataToolCallComponent = (args: any, result: any, theme: 'dark' | 
 const RenderGetCustomProfileToolCallComponent = (args: any, result: any, theme: 'dark' | 'light' | 'system') => {
     const {profiles } = result;
     if (!profiles || profiles.length === 0) {
-        return <div>No data found</div>;
+        return <div>
+            <div className="flex items-center gap-2 text-xs text-muted-foreground my-2 py-4 px-2 border rounded">
+                {<TriangleAlert className="h-4 w-4 text-red-500" />}
+                <span>No data found</span>
+            </div>
+        </div>
     }
 
     return (
@@ -382,13 +392,23 @@ const RenderCallWorkflowToolCallComponent = ({result: {usageId}} : {result: {usa
     }, [usageId]);
 
     if (loading) {
-        return <div>Loading usage data...</div>;
+        return <div>
+            <div className="flex items-center gap-2 text-xs text-muted-foreground py-4 px-2 border rounded">
+                {<Loader className="h-4 w-4" />}
+                <span>Loading usage data...</span>
+            </div>
+        </div>;
     }
     if (error) {
         return <div>{error}</div>;
     }
     if (!log) {
-        return <div>No data found</div>;
+        return <div>
+            <div className="flex items-center gap-2 text-xs text-muted-foreground my-2 py-4 my-2 px-2 border rounded">
+                {<TriangleAlert className="h-4 w-4 text-red-500" />}
+                <span>No data found</span>
+            </div>
+        </div>;
     }
     const execution = {
         id: log.id,
