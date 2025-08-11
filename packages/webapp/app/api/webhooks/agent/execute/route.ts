@@ -5,7 +5,7 @@ import { getSubscriptionLimit } from '@/lib/stripe-context';
 import { NextResponse } from 'next/server';
 export async function GET(request: Request) {
   try {
-
+    console.log('api/webhooks/agent/execute called')
     if (request.headers.get('Authorization') !== `Bearer ${process.env.CRON_SECRET}`) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
