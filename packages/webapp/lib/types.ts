@@ -1,3 +1,4 @@
+import Stripe from "stripe";
 import { StoredHubSpotCredentials } from "./db/hubspot-storage";
 
 // Define RefreshTokenResponse type for jsforce
@@ -89,4 +90,14 @@ export interface Agent {
   systemPrompt: string
   description?: string
   avatar?: string
+}
+
+export interface SubscriptionStatus {
+  id: string;
+  customer: string;
+  items? : {
+    data: Stripe.SubscriptionItem[]
+  },
+  days_until_due?: number;
+  status: 'active' | 'canceled' | 'incomplete' | 'incomplete_expired' | 'past_due' | 'paused' | 'trialing' | 'unpaid';
 }

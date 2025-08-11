@@ -7,6 +7,7 @@ import {
   Node as HtmlNode
 } from 'node-html-parser';
 import z from "zod";
+import { SubscriptionStatus } from "./types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -214,4 +215,42 @@ const salesforceIdRegex = /^[a-zA-Z0-9]{15,18}$/;
 
 export function isValidSalesforceId(id: string): boolean {
   return salesforceIdRegex.test(id);
+}
+
+
+export function getSubscriptionLimit(subscription: SubscriptionStatus | null): {
+  usageLimit: number;
+  isPro: boolean;
+  isSubscribed: boolean;
+  licenseCount: number;
+} {
+  if (!subscription) return { usageLimit: 100, isPro: false, isSubscribed: false, licenseCount: 0 };
+  const isSubscribed = getIsSubscribed(subscription);
+  const isPro = getIsPro(subscription);
+  const usageLimit = isSubscribed ? (isPro ? 25000 : 2500) : 100;
+  const licenseCount = subscription.items?.data[0]?.quantity || 0;
+
+  return {
+    usageLimit,
+    isPro,
+    isSubscribed,
+    licenseCount
+  };
+}
+
+function getIsPro(subscription: SubscriptionStatus | null): boolean {
+  if (!subscription || !subscription.items || !subscription.items.data) return false;
+  //console.log('Checking if user is Pro:', subscription);
+  const isPro = subscription.items.data.some(item => {
+    if (!item.price || !item.price.id) return false;
+    return item.price?.id === process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO;
+  });
+  return isPro;
+}
+
+function getIsSubscribed(subscription: SubscriptionStatus | null): boolean {
+  if (!subscription) return false;
+
+  const status = subscription.status;
+  return status === 'active' || status === 'trialing';
 }

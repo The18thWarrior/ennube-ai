@@ -1,4 +1,5 @@
 import Stripe from 'stripe';
+import { SubscriptionStatus } from './types';
 
 // Initialize Stripe with your secret key
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
@@ -38,3 +39,4 @@ export async function getCustomerSubscription (sub: string) {
         return null;
     }
 };
+

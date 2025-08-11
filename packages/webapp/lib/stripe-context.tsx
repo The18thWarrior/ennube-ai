@@ -3,6 +3,8 @@
 import { useSession } from 'next-auth/react';
 import Stripe from 'stripe';
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { SubscriptionStatus } from './types';
+import { getSubscriptionLimit } from './utils';
 
 interface StripeContextType {
   createCheckoutSession: (pro?: boolean) => Promise<{ url: string | null; error: string | null }>;
@@ -18,15 +20,7 @@ interface StripeContextType {
   refetchSubscription: () => Promise<void>;
 }
 
-interface SubscriptionStatus {
-  id: string;
-  customer: string;
-  items? : {
-    data: Stripe.SubscriptionItem[]
-  },
-  days_until_due?: number;
-  status: 'active' | 'canceled' | 'incomplete' | 'incomplete_expired' | 'past_due' | 'paused' | 'trialing' | 'unpaid';
-}
+
 
 
 const StripeContext = createContext<StripeContextType | undefined>(undefined);
@@ -153,41 +147,4 @@ export function useStripe() {
     throw new Error('useStripe must be used within a StripeProvider');
   }
   return context;
-}
-
-export function getSubscriptionLimit(subscription: SubscriptionStatus | null): {
-  usageLimit: number;
-  isPro: boolean;
-  isSubscribed: boolean;
-  licenseCount: number;
-} {
-  if (!subscription) return { usageLimit: 100, isPro: false, isSubscribed: false, licenseCount: 0 };
-  const isSubscribed = getIsSubscribed(subscription);
-  const isPro = getIsPro(subscription);
-  const usageLimit = isSubscribed ? (isPro ? 25000 : 2500) : 100;
-  const licenseCount = subscription.items?.data[0]?.quantity || 0;
-
-  return {
-    usageLimit,
-    isPro,
-    isSubscribed,
-    licenseCount
-  };
-}
-
-function getIsPro(subscription: SubscriptionStatus | null): boolean {
-  if (!subscription || !subscription.items || !subscription.items.data) return false;
-  //console.log('Checking if user is Pro:', subscription);
-  const isPro = subscription.items.data.some(item => {
-    if (!item.price || !item.price.id) return false;
-    return item.price?.id === process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO;
-  });
-  return isPro;
-}
-
-function getIsSubscribed(subscription: SubscriptionStatus | null): boolean {
-  if (!subscription) return false;
-
-  const status = subscription.status;
-  return status === 'active' || status === 'trialing';
 }
