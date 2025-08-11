@@ -298,7 +298,8 @@ export async function getUserUsageLog(
     const result = await pool.query(
       `SELECT * FROM ${USAGE_LOG_TABLE} 
        WHERE user_sub = $1
-       AND id = $2`,
+       AND id = $2
+       AND archived = FALSE`,
       [userSub, usageId]
     );
 
@@ -328,7 +329,7 @@ export async function getUserUsageLogsBySub(
     if (filter && filter.length > 0) {
       const result = await pool.query(
         `SELECT * FROM ${USAGE_LOG_TABLE} 
-        WHERE user_sub = $1 AND agent = $4
+        WHERE user_sub = $1 AND agent = $4 AND archived = FALSE
         ORDER BY timestamp DESC
         LIMIT $2 OFFSET $3`,
         [sub, limit, offset, filter]
@@ -339,7 +340,7 @@ export async function getUserUsageLogsBySub(
     }
     const result = await pool.query(
       `SELECT * FROM ${USAGE_LOG_TABLE} 
-       WHERE user_sub = $1 
+       WHERE user_sub = $1 AND archived = FALSE
        ORDER BY timestamp DESC
        LIMIT $2 OFFSET $3`,
       [sub, limit, offset]
@@ -455,6 +456,23 @@ export async function clearUserUsageLogsBySub(sub: string): Promise<boolean> {
     await pool.query(
       `DELETE FROM ${USAGE_LOG_TABLE} WHERE user_sub = $1`,
       [sub]
+    );
+    
+    return true;
+  } catch (error) {
+    console.log("Error clearing user usage logs by sub:", error);
+    return false;
+  }
+}
+
+/**
+ * Clear all usage logs for a specific user by their sub ID
+ */
+export async function clearUserUsageLogBySub(id: string, sub: string): Promise<boolean> {
+  try {
+    await pool.query(
+      `UPDATE ${USAGE_LOG_TABLE} SET archived = TRUE WHERE id = $1 AND user_sub = $2`,
+      [id, sub]
     );
     
     return true;

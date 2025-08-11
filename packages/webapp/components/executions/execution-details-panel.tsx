@@ -35,9 +35,10 @@ interface ExecutionDetailsPanelProps {
   coloredBorder?: boolean
   collapsible?: boolean
   layout?: 'portrait' | 'landscape'
+  onDelete?: (id: string) => void
 }
 
-export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, collapsible, layout = 'portrait' }: ExecutionDetailsPanelProps) {
+export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, collapsible, layout = 'portrait', onDelete }: ExecutionDetailsPanelProps) {
   // Support collapsible state
   const [open, setOpen] = React.useState(collapsible ? false : true);
   
@@ -245,6 +246,14 @@ export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, colla
               </TabsContent>
             </Tabs>
           </div>
+
+          {onDelete && execution && (
+            <div className="flex justify-end pt-4">
+              <Button variant="destructive" size="sm" title="Delete Execution" onClick={() => onDelete(execution.id)}>
+                <XCircle className="h-4 w-4 mr-2" /> Delete Execution
+              </Button>
+            </div>
+          )}
         </CardContent>
       </Card>
     )

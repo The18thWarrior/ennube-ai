@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS usage_log (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     status VARCHAR(50),
+    archived BOOLEAN DEFAULT FALSE;
     -- JSON field for the responseData object
     response_data JSONB
 );
@@ -39,6 +40,7 @@ COMMENT ON COLUMN usage_log.created_at IS 'Timestamp when this log entry was cre
 COMMENT ON COLUMN usage_log.updated_at IS 'Timestamp when this log entry was last modified';
 COMMENT ON COLUMN usage_log.status IS 'Status of the operation (optional)';
 COMMENT ON COLUMN usage_log.response_data IS 'JSON data containing detailed response information including execution summary, counts, and record details';
+COMMENT ON COLUMN usage_log.archived IS 'Indicates if the usage log entry has been archived.';
 
 -- Example of a function to update the updated_at timestamp automatically
 CREATE OR REPLACE FUNCTION update_modified_column()

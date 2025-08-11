@@ -49,7 +49,7 @@ export default function ContractReaderExecuteButton() {
       setResult(data);
       
       // Display success toast message
-      enqueueSnackbar('Data Steward started', { 
+      enqueueSnackbar('Contract Reader started', { 
         variant: 'success',
         autoHideDuration: 4000
       });

@@ -21,10 +21,10 @@ function ExecutionsPageComponent() {
   const [selectedExecution, setSelectedExecution] = useState<string | null>(null)
   //const [executions, setExecutions] = useState(mockExecutions)
   const [isPanelOpen, setIsPanelOpen] = useState(false)
-  const { logs, refresh } = useUsageLogs(50);
+  const { logs, refresh, deleteUsageLogs } = useUsageLogs(50);
   const executions = logs.map((log) => {
     return {
-      id: log.signature + log.timestamp,
+      id: log.id,
       agent_name: log.agent,
       image_url: getAgentImage(log.agent),
       status: log.status || "unknown",
@@ -92,6 +92,18 @@ function ExecutionsPageComponent() {
   const handleExecutionSelect = (id: string) => {
     setSelectedExecution(id)
     setIsPanelOpen(true)
+  }
+
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteUsageLogs(id)
+      // Optionally refresh the logs after deletion
+      await refresh()
+      setSelectedExecution(null)
+      setIsPanelOpen(false)
+    } catch (error) {
+      console.error("Failed to delete usage logs:", error)
+    }
   }
 
   const handleClosePanel = () => {
@@ -178,7 +190,7 @@ function ExecutionsPageComponent() {
 
         {isPanelOpen && (
           <div className="lg:w-1/2 transition-all duration-300 ease-in-out">
-            <ExecutionDetailsPanel execution={selectedExecutionData} onClose={handleClosePanel} />
+            <ExecutionDetailsPanel onDelete={handleDelete} execution={selectedExecutionData} onClose={handleClosePanel} />
           </div>
         )}
       </div>
