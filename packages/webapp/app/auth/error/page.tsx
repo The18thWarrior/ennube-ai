@@ -1,18 +1,20 @@
+'use client'
 import Link from "next/link"
+import React, { Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 
-export default async function AuthErrorPage(params: Promise<{ searchParams?: { error?: string } }>) {
-  const {searchParams} = await params;
-  const error = searchParams?.error
+const AuthErrorPage: React.FC = () => {
+  const searchParams = useSearchParams();
+  const error = searchParams.get("error");
   return (
-    <div className="mx-auto max-w-lg space-y-4 py-10">
-      <h1 className="text-2xl font-semibold">Authentication error</h1>
-      <p className="text-muted-foreground">{friendlyError(error)}</p>
-      <div className="pt-4">
-        <Link href="/auth/login" className="underline">Back to sign in</Link>
-      </div>
+    <div className="flex flex-col items-center justify-center min-h-screen">
+      <h1 className="text-2xl font-bold mb-4">Authentication Error</h1>
+      {error && <p className="text-red-500 mb-2">{friendlyError(error)}</p>}
+      <p className="mb-4">There was a problem signing you in. Please try again or contact support.</p>
+      <a href="/auth" className="text-blue-500 underline">Back to Login</a>
     </div>
-  )
-}
+  );
+};
 
 function friendlyError(code?: string) {
   switch (code) {
@@ -25,4 +27,11 @@ function friendlyError(code?: string) {
     default:
       return "Something went wrong. Please try again."
   }
+}
+
+
+export default function LoginPageWrap() {
+  return (
+    <Suspense><AuthErrorPage /></Suspense>
+  )
 }

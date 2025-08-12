@@ -1,9 +1,9 @@
-import { signOut } from "@/auth"
+'use client'
+import { signOut } from "next-auth/react"
 import { Button } from "@/components/ui/button"
 
 export default function LogoutPage() {
   async function doLogout() {
-    "use server"
     await signOut({ redirectTo: "/auth/login" })
   }
 

@@ -1,27 +1,29 @@
+'use client'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader } from "@/components/ui/card"
 import Link from "next/link"
-import { signIn } from "@/auth"
+//import { signIn } from "@/auth"
+
+import { signIn } from "next-auth/react"
+import { useSearchParams } from "next/navigation"
+import { Suspense } from "react"
 
 type PageProps = {
   searchParams?: { callbackUrl?: string; error?: string }
 }
 
-export default async function LoginPage(params: Promise<PageProps>) {
-  const { searchParams: searchParams2 } = await params;
-  const searchParams = await searchParams2;
-  const callbackUrl = searchParams?.callbackUrl || "/"
-  const error = searchParams?.error
+function LoginPage() {
+  const searchParams = useSearchParams();
+  const error = searchParams.get("error");
+  const callbackUrl = searchParams.get("callbackUrl") || "/";
 
   async function signInWithGoogle() {
-    "use server"
     await signIn("auth0", { redirectTo: callbackUrl })
   }
 
   async function signInWithEmail(formData: FormData) {
-    "use server"
     const email = String(formData.get("email") || "").trim()
     if (!email) return
     await signIn("email", { email, redirectTo: callbackUrl })
@@ -110,4 +112,10 @@ function friendlyError(code?: string) {
     default:
       return "Something went wrong. Please try again."
   }
+}
+
+export default function LoginPageWrap() {
+  return (
+    <Suspense><LoginPage /></Suspense>
+  )
 }
