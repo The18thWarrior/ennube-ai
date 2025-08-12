@@ -110,20 +110,24 @@ export async function GET(request: Request) {
           
           // Call the appropriate agent API
           try {
-            const requestUrl = `${url.origin}/api/agents/${setting.agent}`;
-            console.log(`Calling agent API at ${requestUrl} with userId ${setting.userId} and batchSize ${safeBatchSize}`);
-            const response = await fetch(requestUrl, {
-              method: 'POST',
+            const webhookUrl = setting.agent === 'prospect-finder' ? process.env.PROSPECTFINDER_WEBHOOK_URL : process.env.DATASTEWARD_WEBHOOK_URL;
+            if (!webhookUrl) {
+              return NextResponse.json(
+                { error: `${setting.agent} webhook URL is not configured` },
+                { status: 500 }
+              );
+            }
+            
+            const url2 = `${webhookUrl}?limit=${safeBatchSize}&subId=${setting.userId}`;
+            console.log(`${setting.agent} webhook URL: ${url2}`);
+            // Make the request to the agent webhook
+            const response = await fetch(url2, {
+              method: 'GET',
               headers: {
                 'Content-Type': 'application/json',
               },
-              body: JSON.stringify({
-                userId: setting.userId,
-                batchSize: safeBatchSize,
-                automated: true,
-                frequency: frequency
-              })
             });
+            console.log(`Calling agent API at ${url2} with userId ${setting.userId} and batchSize ${safeBatchSize}`);
             
             if (!response.ok) {
               throw new Error(`Agent API returned ${response.status}: ${response.statusText}`);
