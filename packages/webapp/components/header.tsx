@@ -1,3 +1,5 @@
+
+import { auth } from "@/auth"
 import ExecuteButton from "./agents/data-steward/data-steward-execute-button"
 import UsageButton from "./agents/usage-button"
 import CustomLink from "./custom-link"
@@ -9,6 +11,9 @@ import Image from "next/image"
 
 
 export default async function Header() {
+
+  const session = await auth()
+  if (!session?.user) return <header className="sticky flex justify-center bg-transparent"><div className="mx-auto flex h-16 w-full items-center justify-between px-4 sm:px-6"></div></header>;
   return (
     <header className="sticky flex justify-center border-b bg-transparent">
       <div className="mx-auto flex h-16 w-full items-center justify-between px-4 sm:px-6">
