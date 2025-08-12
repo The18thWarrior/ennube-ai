@@ -1,6 +1,7 @@
 import Link from "next/link"
 
-export default function AuthErrorPage({ searchParams }: { searchParams?: { error?: string } }) {
+export default async function AuthErrorPage(params: Promise<{ searchParams?: { error?: string } }>) {
+  const {searchParams} = await params;
   const error = searchParams?.error
   return (
     <div className="mx-auto max-w-lg space-y-4 py-10">
