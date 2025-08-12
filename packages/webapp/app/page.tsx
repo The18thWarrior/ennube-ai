@@ -10,7 +10,7 @@ export default async function LandingPage() {
   if (session && session.accessToken) {
     redirect("/dashboard")
   } else {
-    redirect("/api/auth/signin?provider=auth0")
+    redirect("/auth/login")
   }
   return <></>
   // Define a button for signed-in users

@@ -23,7 +23,7 @@ export function SignOut(props: React.ComponentPropsWithRef<typeof Button>) {
     <form
       action={async () => {
         "use server"
-        await signOut({redirectTo: "/"})
+        await signOut({redirectTo: "/auth/login"})
 
       }}
       className="w-full"
