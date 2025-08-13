@@ -159,8 +159,7 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: Message, theme
                                     switch (part.toolInvocation.toolName) {
                                         case 'getSFDCDataTool': {
                                             switch (part.toolInvocation.state) {
-                                                case 'result':      
-                                                    console.log(part);                                              
+                                                case 'result':                                                 
                                                     return (
                                                         <div key={callId}>
                                                             {RenderGetDataToolCallComponent(part.toolInvocation.args, part.toolInvocation.result, theme)}
@@ -196,8 +195,7 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: Message, theme
                                         }
                                         case 'getPostgresDataTool': {
                                             switch (part.toolInvocation.state) {
-                                                case 'result': 
-                                                    console.log( part.toolInvocation.result);                                                   
+                                                case 'result':                                                
                                                     return (
                                                         <div key={callId}>
                                                             {/* {RenderGetDataToolCallComponent(part.toolInvocation.args, part.toolInvocation.result, theme)} */}
@@ -209,8 +207,7 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: Message, theme
                                         }
                                         case 'getPostgresDescribeTool': {
                                             switch (part.toolInvocation.state) {
-                                                case 'result': 
-                                                    console.log( part.toolInvocation.result);                                                   
+                                                case 'result':                                                  
                                                     return (
                                                         <div key={callId}>
                                                             {/* {RenderGetDataToolCallComponent(part.toolInvocation.args, part.toolInvocation.result, theme)} */}

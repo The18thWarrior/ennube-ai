@@ -68,6 +68,7 @@ export function CrmRecordDetailCard({
   const [open, setOpen] = React.useState(false)
   const FIELDS_SHOWN = 6
   const hasExtraFields = fields.length > FIELDS_SHOWN
+  console.log(fields)
   return (
     <Card className="my-2 border-purple-500 w-full max-w-md flex flex-col">
       <CardHeader className="pb-3">
@@ -98,7 +99,7 @@ export function CrmRecordDetailCard({
       <CardContent className="space-y-4 flex-1">
         <Collapsible open={open} onOpenChange={setOpen}>
           {/* Always show the first 6 fields */}
-          {fields.slice(0, FIELDS_SHOWN).map((field, index) => (
+          {fields.filter(field => typeof field.value !== 'object').slice(0, FIELDS_SHOWN).map((field, index) => (
             <EditableField key={index} icon={field.icon} label={field.label}>
               {field.value}
             </EditableField>
