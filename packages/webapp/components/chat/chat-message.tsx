@@ -16,7 +16,7 @@ import { nanoid } from 'nanoid';
 import ChatInput from './chat-input';
 import error from 'next/error';
 import ReactMarkdown from 'react-markdown';
-import { Avatar, AvatarImage, Card, CardContent } from '../ui';
+import { Avatar, AvatarImage, Button, Card, CardContent } from '../ui';
 import { CrmRecordListTable } from './tools/crm-record-list-table';
 import { CrmRecordDetailCard } from './tools/crm-record-detail-card';
 import { Loader2, User, TriangleAlert, CircleCheck, Loader } from 'lucide-react';
@@ -27,6 +27,7 @@ import { UsageLogEntry } from '@/lib/db/usage-logs';
 import dayjs from 'dayjs';
 import { ExecutionDetailsPanel } from '@/components/executions/execution-details-panel';
 import { Session } from 'next-auth';
+import { O } from '@upstash/redis/zmscore-CgRD7oFR';
 
 // Custom message rendering
 export const renderMessage = (msg: Message, idx: number, agent: ReactNode, theme: 'dark' | 'light' | 'system', session: Session | null) => {
@@ -282,17 +283,14 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: Message, theme
         
         </Card>
         {msg.role === 'user' &&
-            <div className="flex aspect-square size-12 items-center justify-center rounded-full overflow-hidden flex-shrink-0 mt-2 ">
+            <div className="flex size-12 items-center justify-center rounded-full overflow-hidden flex-shrink-0 mt-2 ">
               {session?.user?.image ? (
-                <Avatar className="h-10 w-10 border border-gray-300 p-1 rounded-full">
-                    <AvatarImage
-                        src={
-                        session?.user?.image ||
-                        `https://api.dicebear.com/9.x/thumbs/svg?seed=1`
+                <img height={35} width={35} className={" border border-gray-300 rounded-full"}
+                        src={session?.user?.image ||
+                        `/logo.png`
                         }
                         alt={session?.user?.name ?? "User"}
                     />
-                </Avatar>
               ) : <User className="h-5 w-5" />
               }
             </div>

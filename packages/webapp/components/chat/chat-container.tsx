@@ -64,8 +64,12 @@ const ChatContainer = ({
         api: `/api/chat?agent=${selectedAvatar}`,
         onFinish: (message) => {
             //console.log('onfinish', message, messages);
+            
             //setThread(threadId, [...messages, message], _name || '');
-            setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
+            setTimeout(() => {
+                setThread(threadId, [...messages], _name || '', selectedAvatar);
+                messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+            }, 100);
         },
         
         // experimental_prepareRequestBody({ messages, id }) {
@@ -90,7 +94,7 @@ const ChatContainer = ({
     useEffect(() => {
         if (mounted) {
             if (messages.length > 0) {
-                setThread(threadId, [...messages], _name || '', selectedAvatar);
+                //setThread(threadId, [...messages], _name || '', selectedAvatar);
             }
             //setThread(threadId, [...messages], _name || '');
         }
