@@ -37,6 +37,7 @@ type ThreadHistory = {
   messages: Message[];
   lastUpdated: number;
   name: string | null;
+  currentAgent?: string;
 };
 
 function ChatSidebar({
@@ -65,7 +66,7 @@ function ChatSidebar({
 
   const { toggleSidebar } = useSidebar()
   return (
-      <Sidebar className="min-h-50 " variant={'floating'} collapsible={'icon'}>
+      <Sidebar className="min-h-50 max-h-full " variant={'floating'} collapsible={'icon'}>
         <SidebarHeader>
           
           <div className="flex items-center justify-between">
@@ -86,7 +87,7 @@ function ChatSidebar({
                 </SidebarMenuButton>
               </SidebarMenuItem>
               { (
-                <div id="agent-select-section" className={`rounded transition-height duration-300 ease-in-out ${showAgentSelect ? 'h-auto p-2 mt-2' : 'h-0 overflow-hidden m-0 p-0'}`}>
+                <div id="agent-select-section" className={`rounded transition-height duration-300 ease-in-out ${showAgentSelect ? 'h-auto ' : 'h-0 overflow-hidden m-0 p-0'}`}>
                   {/* <div className="mb-2 text-xs font-semibold text-muted-foreground">Select an agent:</div> */}
                   <ul className="space-y-1">
                     {agents.map((agent) => (
@@ -123,7 +124,7 @@ function ChatSidebar({
                   aria-expanded={showAgentSelect}
                   aria-controls="open-threads-section"
                 >
-                 <History /> Threads
+                 <History /> History
             </SidebarMenuButton>
             <SidebarMenu>
               {threads.length === 0 && (
@@ -139,6 +140,7 @@ function ChatSidebar({
                       }
                     }}
                   >
+                    <Image src={agents.find((agent) => agent.apiName === thread.currentAgent)?.icon || '/logo.png'} alt={thread.currentAgent || 'Unknown Agent'} width={25} height={25} className="rounded-full" />
                     <span className="truncate flex-1 font-bold">
                       {thread.name || thread.messages[0]?.content?.slice(0, 30) || 'Untitled'}
                     </span>
@@ -199,6 +201,7 @@ export default function ChatLayout({ children }: { children: React.ReactNode }) 
     setLoading(true);
     try {
       const data = await getAll();
+      console.log('Fetched threads:', data);
       setThreads(Array.isArray(data) ? data : []);
     } catch {
       setThreads([]);
@@ -249,7 +252,7 @@ export default function ChatLayout({ children }: { children: React.ReactNode }) 
   return (
     <div className="">
       {/* <div className="flex"> */}
-        <SidebarProvider>
+        <SidebarProvider className={`flex items-stretch`}>
           <ChatSidebar
             threads={threads}
             onNewChat={() => setShowAgentSelect((v) => !v)}

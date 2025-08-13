@@ -22,6 +22,16 @@ export const avatarOptions = [
                 </Avatar>
             ),
         },
+        {
+            key: 'contract-reader',
+            label: 'Contract Reader',
+            avatar: (
+                <Avatar>
+                    <AvatarImage src="/contracts-reader.png" alt="Contract Reader Avatar" />
+                    <AvatarFallback>CR</AvatarFallback>
+                </Avatar>
+            ),
+        },
         // {
         //     key: 'market-nurturer',
         //     label: 'Market Nurturer',

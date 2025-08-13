@@ -20,7 +20,7 @@
 /* Chat container styles */
 .chatContainer {
   /* max-width: max-content; */
-  /* height: 600px; */
+  /*height: 600px;*/
   /* min-height: auto; */
   margin: 0 auto;
   border-radius: 8px;
@@ -159,7 +159,9 @@
 .wfill {
   width: -webkit-fill-available;
 }
-
+.hfill {
+  height: -webkit-fill-available;
+}
 .wcontent {
   width: fit-content;
 }

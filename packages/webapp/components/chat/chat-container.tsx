@@ -37,9 +37,10 @@ const ChatContainer = ({
   id,
   initialMessages,
   name,
-  agent = avatarOptions[0].key,
+  agent,
 }: { id?: string | undefined; initialMessages?: Message[]; name?: string | null; agent?: string | null } = {}) => {
     const { theme } = useTheme();
+    const { data: session } = useSession();
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const [mounted, setMounted] = React.useState(false);
     const [isEditingName, setIsEditingName] = React.useState(false);
@@ -62,7 +63,7 @@ const ChatContainer = ({
         initialMessages: initialMessages || [],        
         api: `/api/chat?agent=${selectedAvatar}`,
         onFinish: (message) => {
-            console.log('onfinish', message, messages);
+            //console.log('onfinish', message, messages);
             //setThread(threadId, [...messages, message], _name || '');
             setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
         },
@@ -88,7 +89,6 @@ const ChatContainer = ({
     }, [messages.length, mounted]);
     useEffect(() => {
         if (mounted) {
-            console.log(messages);
             if (messages.length > 0) {
                 setThread(threadId, [...messages], _name || '', selectedAvatar);
             }
@@ -98,6 +98,9 @@ const ChatContainer = ({
     useEffect(() => {
         if (name) setName(name);
     }, [name]);
+    useEffect(() => {
+        if (agent) setSelectedAvatar(agent);
+    }, [agent]);
     // EditableField for name, similar to crm-record-detail-card.tsx
 
     const handleNameSave = async () => {
@@ -106,14 +109,14 @@ const ChatContainer = ({
     };
 
     const Agent = avatarOptions.find(a => a.key === selectedAvatar)?.avatar;
-
+    
     if (!theme || !mounted) return <div />;
 
     return (
-        <div className="flex flex-col h-full shadow-lg relative" >
+        <div className="flex flex-col relative" >
             {/* EditableField for Name */}
-            <div className={'rounded-lg border border-gray-200 dark:border-gray-700 min-h-fit '} style={{minHeight: "calc(100vh - 240px)", scrollbarColor: 'transparent'}}>
-                <div className="flex justify-between items-start group mb-4 p-3 border-b">
+            <div className={'rounded-lg border border-gray-200 dark:border-gray-700 min-h-[80dvh] mb-15'} style={{ scrollbarColor: 'transparent'}}> {/*height: "calc(100vh - 240px)",*/}
+                <div className="flex justify-between items-start group mb-4 p-3 border-b ">
                     {/* <svg className="mr-3 h-4 w-4 text-muted-foreground mt-1 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /></svg> */}
                     <div className={'px-2'}>
                         <NameComponent isEditingName={isEditingName} _name={_name} setName={setName} handleNameSave={handleNameSave} setIsEditingName={setIsEditingName} />
@@ -128,7 +131,7 @@ const ChatContainer = ({
                 <div
                     className={[
                         styles.chatContainer,
-                    
+                        
                         //theme === 'dark' ? styles.dark : styles.light,
                     ].join(' ')}
                     style={{scrollbarColor: 'none'}}
@@ -142,14 +145,14 @@ const ChatContainer = ({
                                     msg.role === 'user' ? styles.userRow : styles.botRow,
                                 ].join(' ')}
                             >
-                                {renderMessage(msg, idx, Agent, theme)}
+                                {renderMessage(msg, idx, Agent, theme, session)}
                             </div>
                         ))}
                         <div ref={messagesEndRef}></div>
                     </div>
                 </div>
             </div>
-            <div className={`p-4 md:py-8 md:p-6 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 fixed bottom-0 ${styles.wfill}`}>
+            <div className={`py-4 h-[10dvh] bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 fixed bottom-0 max-w-[81vw] ${styles.wfill}`}>
                 {error && <div className="text-red-500 mb-2">Error: {error.message}</div>}
                 <ChatInput
                 input={input}

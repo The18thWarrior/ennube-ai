@@ -16,7 +16,7 @@ import { nanoid } from 'nanoid';
 import ChatInput from './chat-input';
 import error from 'next/error';
 import ReactMarkdown from 'react-markdown';
-import { Card, CardContent } from '../ui';
+import { Avatar, AvatarImage, Card, CardContent } from '../ui';
 import { CrmRecordListTable } from './tools/crm-record-list-table';
 import { CrmRecordDetailCard } from './tools/crm-record-detail-card';
 import { Loader2, User, TriangleAlert, CircleCheck, Loader } from 'lucide-react';
@@ -26,13 +26,14 @@ import { CustomProfileToolResult } from './wrappers/custom-profile-tool-result';
 import { UsageLogEntry } from '@/lib/db/usage-logs';
 import dayjs from 'dayjs';
 import { ExecutionDetailsPanel } from '@/components/executions/execution-details-panel';
+import { Session } from 'next-auth';
 
 // Custom message rendering
-export const renderMessage = (msg: Message, idx: number, agent: ReactNode, theme: 'dark' | 'light' | 'system') => {
-    //console.log(msg);
+export const renderMessage = (msg: Message, idx: number, agent: ReactNode, theme: 'dark' | 'light' | 'system', session: Session | null) => {
+    
     // If the message is from the user, always render as text
     if (msg.role === 'user') {
-        return RenderHtmlComponent(DefaultMessageComponent(msg, theme), msg, theme, agent);
+        return RenderHtmlComponent(DefaultMessageComponent(msg, theme), msg, theme, agent, session);
     }
 
     // Try to parse the message for custom-ui or json
@@ -48,7 +49,7 @@ export const renderMessage = (msg: Message, idx: number, agent: ReactNode, theme
                     ].join(' ')}
                     style={{ padding: 0, background: 'none', border: 'none' }}
                 >
-                    {RenderHtmlComponent(<CustomResponse config={getJsonData(msg.content)} />, msg, theme, agent)}
+                    {RenderHtmlComponent(<CustomResponse config={getJsonData(msg.content)} />, msg, theme, agent, session)}
                 </span>
             );
         }
@@ -63,7 +64,7 @@ export const renderMessage = (msg: Message, idx: number, agent: ReactNode, theme
                     ].join(' ')}
                     style={{ padding: 0, background: 'none', border: 'none' }}
                 >
-                    {RenderHtmlComponent(<CustomResponse config={jsonData.data} />, msg, theme, agent)}
+                    {RenderHtmlComponent(<CustomResponse config={jsonData.data} />, msg, theme, agent, session)}
                 </span>
             );
         }
@@ -77,7 +78,7 @@ export const renderMessage = (msg: Message, idx: number, agent: ReactNode, theme
                     ].join(' ')}
                     style={{ padding: 0, background: 'none', border: 'none' }}
                 >
-                    {RenderHtmlComponent( MessageComponentWrapper(<JsonRecord data={jsonData} className='min-w-3/4' />, msg.role, theme), msg, theme, agent)}
+                    {RenderHtmlComponent( MessageComponentWrapper(<JsonRecord data={jsonData} className='min-w-3/4' />, msg.role, theme), msg, theme, agent, session)}
                 </span>
             );
         }
@@ -91,14 +92,14 @@ export const renderMessage = (msg: Message, idx: number, agent: ReactNode, theme
                 ].join(' ')}
                 style={{ padding: 0, background: 'none', border: 'none' }}
             >
-                {RenderHtmlComponent( MessageComponentWrapper(<JsonRecord data={jsonData}  className='min-w-3/4' />, msg.role, theme), msg, theme, agent)}
+                {RenderHtmlComponent( MessageComponentWrapper(<JsonRecord data={jsonData}  className='min-w-3/4' />, msg.role, theme), msg, theme, agent, session)}
             </span>
         );
         
     }
 
     // Default: render as text
-    return RenderHtmlComponent(DefaultMessageComponent(msg, theme), msg, theme, agent);
+    return RenderHtmlComponent(DefaultMessageComponent(msg, theme), msg, theme, agent, session);
 };
 
 const DefaultMessageComponent = (msg: Message, theme: 'dark' | 'light' | 'system') => {
@@ -117,7 +118,7 @@ const MessageComponentWrapper = (Component: React.ReactElement, role:string, the
     </span>
 );
 
-const RenderHtmlComponent = (Component : React.ReactElement, msg: Message, theme: 'dark' | 'light' | 'system', agent: ReactNode) => (
+const RenderHtmlComponent = (Component : React.ReactElement, msg: Message, theme: 'dark' | 'light' | 'system', agent: ReactNode, session: Session | null) => (
     <div className={'flex items-start gap-2'}>
         {msg.role === 'assistant' && 
             <div className="flex aspect-square size-12 items-center justify-center rounded-full overflow-hidden flex-shrink-0 mt-2 ">
@@ -157,7 +158,8 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: Message, theme
                                     switch (part.toolInvocation.toolName) {
                                         case 'getSFDCDataTool': {
                                             switch (part.toolInvocation.state) {
-                                                case 'result':                                                    
+                                                case 'result':      
+                                                    console.log(part);                                              
                                                     return (
                                                         <div key={callId}>
                                                             {RenderGetDataToolCallComponent(part.toolInvocation.args, part.toolInvocation.result, theme)}
@@ -281,7 +283,18 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: Message, theme
         </Card>
         {msg.role === 'user' &&
             <div className="flex aspect-square size-12 items-center justify-center rounded-full overflow-hidden flex-shrink-0 mt-2 ">
-              <User className="h-5 w-5" />
+              {session?.user?.image ? (
+                <Avatar className="h-10 w-10 border border-gray-300 p-1 rounded-full">
+                    <AvatarImage
+                        src={
+                        session?.user?.image ||
+                        `https://api.dicebear.com/9.x/thumbs/svg?seed=1`
+                        }
+                        alt={session?.user?.name ?? "User"}
+                    />
+                </Avatar>
+              ) : <User className="h-5 w-5" />
+              }
             </div>
         }
     </div>

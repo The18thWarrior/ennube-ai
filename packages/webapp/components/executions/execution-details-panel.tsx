@@ -449,14 +449,14 @@ function StatusBadge({ status }: { status: string }) {
   switch (status) {
     case "success":
       return (
-        <Badge variant="success" className="flex items-center gap-1 text-green-700">
+        <Badge variant="success" className="flex items-center gap-1 bg-green-50 text-green-700 border-green-200">
           <CheckCircle className="h-3 w-3" />
           <span>Completed</span>
         </Badge>
       )
     case "failed":
       return (
-        <Badge variant="destructive" className="flex items-center gap-1 text-red-700">
+        <Badge variant="destructive" className="flex items-center gap-1 bg-red-50 text-red-700 border-red-200">
           <XCircle className="h-3 w-3" />
           <span>Failed</span>
         </Badge>

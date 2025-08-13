@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
       apiKey: `${process.env.OPENROUTER_API_KEY}`,
     });
     const systemPrompt = `${getPrompt(agent as 'data-steward' | 'prospect-finder' | 'contract-reader')} Today's date is ${today}.`;
-    const model = openrouter('google/gemini-2.0-flash-001'); // openai/gpt-4.1-nano | google/gemini-2.0-flash-001
+    const model = openrouter('deepseek/deepseek-chat-v3-0324'); // openai/gpt-4.1-nano | google/gemini-2.0-flash-001
     // Set up the OpenAI model
     // Run the agent with tools
     const result = await streamText({

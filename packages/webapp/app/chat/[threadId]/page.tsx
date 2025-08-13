@@ -28,7 +28,8 @@ export default function ChatPage(props: { params: Promise<{ threadId: string }> 
       const { threadId: _threadId } = await props.params; // get the chat ID from the URL
       setThreadId(_threadId);
       if (!_threadId) return;
-      const thread = await getThread(_threadId, agent as 'data-steward' | 'prospect-finder' | undefined);
+      const thread = await getThread(_threadId, agent as 'data-steward' | 'prospect-finder' | 'contract-reader' | undefined);
+      
       setThread(thread);
     };
     runAsync();
@@ -37,8 +38,8 @@ export default function ChatPage(props: { params: Promise<{ threadId: string }> 
   return (
     
         <ToastProvider>
-            <div className={'px-8 mb-8 '} style={{scrollbarColor: 'black'}}>
-                <Chat id={threadId} initialMessages={thread?.messages || undefined} name={thread?.name} agent={agent}/>
+            <div className={'px-5'} style={{scrollbarColor: 'black'}}>
+                <Chat id={threadId} initialMessages={thread?.messages || undefined} name={thread?.name} agent={thread?.currentAgent|| agent}/>
             </div>      
         </ToastProvider>
   );
