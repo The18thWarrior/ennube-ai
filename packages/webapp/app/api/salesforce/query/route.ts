@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
       refreshToken: credentials.refreshToken,
       userInfo: credentials.userInfo
     };
-    
+    console.log('Salesforce credentials:', credentials);
     const salesforceClient = createSalesforceClient(authResult);
     
     // Execute the SOQL query
