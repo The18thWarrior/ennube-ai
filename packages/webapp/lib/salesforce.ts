@@ -89,7 +89,7 @@ export class SalesforceClient {
       }
 
       const refreshResult = await this.oauth2.refreshToken(this.refreshToken);
-      console.log('Refresh result:', refreshResult);
+      console.log('Refresh result refreshAccessToken:', refreshResult);
       // Update the connection with the new access token
       this.connection.accessToken = refreshResult.access_token;
       
@@ -114,7 +114,7 @@ export class SalesforceClient {
       console.log('Error during Salesforce API call:', error);
       // Check if the error is due to an expired session
       const errorMsg = error instanceof Error ? error.message : String(error);
-      console.log(errorMsg);
+      console.log('withTokenRefresh errorMsg:', errorMsg);
       const isSessionExpired = errorMsg.includes('INVALID_SESSION_ID') || 
                               errorMsg.includes('Session expired') ||
                               errorMsg.includes('invalid session') ||
@@ -125,7 +125,7 @@ export class SalesforceClient {
       if (isSessionExpired && this.refreshToken) {
         console.log('Salesforce session expired. Attempting to refresh token...');
         const refreshResult = await this.refreshAccessToken();
-        console.log('Refresh result:', refreshResult);
+        console.log('Refresh result in withTokenRefresh:', refreshResult);
         if (refreshResult) {
           // Retry the API call with the new token
           return await apiCall();
