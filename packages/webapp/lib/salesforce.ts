@@ -87,8 +87,9 @@ export class SalesforceClient {
         console.log('Cannot refresh token: Missing OAuth2 configuration or refresh token');
         return null;
       }
-
-      const refreshResult = await this.oauth2.refreshToken(this.refreshToken);
+      console.log(this.oauth2, this.connection)
+      
+      const refreshResult = await this.connection.oauth2.refreshToken(this.refreshToken);
       console.log('Refresh result refreshAccessToken:', refreshResult);
       // Update the connection with the new access token
       this.connection.accessToken = refreshResult.access_token;
