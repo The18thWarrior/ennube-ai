@@ -52,6 +52,7 @@ export class SalesforceClient {
       this.oauth2 = new OAuth2({
         clientId: finalClientId,
         clientSecret: finalClientSecret,
+        loginUrl: instanceUrl.includes('sandbox') ? 'https://test.salesforce.com' : 'https://login.salesforce.com',
         redirectUri: undefined, // Not needed for refresh token flow
       });
     }
@@ -79,7 +80,8 @@ export class SalesforceClient {
         if (envClientId && envClientSecret) {
           this.oauth2 = new OAuth2({
             clientId: envClientId,
-            clientSecret: envClientSecret
+            clientSecret: envClientSecret,
+            loginUrl: this.connection.instanceUrl.includes('sandbox') ? 'https://test.salesforce.com' : 'https://login.salesforce.com',
           });
         }
       }
