@@ -32,6 +32,7 @@ export class SalesforceClient {
         clientSecret: clientSecret || process.env.SALESFORCE_CLIENT_SECRET,
         redirectUri : process.env.SALESFORCE_REDIRECT_URI,
       }),
+      loginUrl: instanceUrl.includes('sandbox') ? 'https://test.salesforce.com' : 'https://login.salesforce.com',
       instanceUrl: instanceUrl,
       accessToken: accessToken,
       refreshToken: _refreshToken,
