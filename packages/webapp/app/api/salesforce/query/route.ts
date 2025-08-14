@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
         { status: 404 }
       );
     }
-    
+    console.log('Retrieved Salesforce credentials:', credentials)
     // Create a Salesforce client from the stored credentials
     const authResult: SalesforceAuthResult = {
       success: true,
