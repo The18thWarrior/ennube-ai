@@ -7,9 +7,8 @@ import {
   Node as HtmlNode
 } from 'node-html-parser';
 import z from "zod";
-import { SubscriptionStatus, Execution } from "./types";
+import { SubscriptionStatus, Execution, UsageLogEntry } from "./types";
 import dayjs from "dayjs";
-import { UsageLogEntry } from "./db/usage-logs";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
