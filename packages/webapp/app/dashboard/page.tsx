@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useUsageLogs } from "@/hooks/useUsageLogs"
 import { nanoid } from "nanoid"
 import dayjs from "dayjs";
-import { getAgentImage } from "@/lib/utils"
+import { getAgentImage, mapUsageLogToExecution } from "@/lib/utils"
 
 function ExecutionsPageComponent() {
   const searchParams = useSearchParams()
@@ -23,19 +23,7 @@ function ExecutionsPageComponent() {
   const [isPanelOpen, setIsPanelOpen] = useState(false)
   const { logs, refresh, deleteUsageLogs } = useUsageLogs(50);
   const executions = logs.map((log) => {
-    return {
-      id: log.id,
-      agent_name: log.agent,
-      image_url: getAgentImage(log.agent),
-      status: log.status || "unknown",
-      execution_time: dayjs(log.updatedAt).diff(dayjs(log.createdAt), "seconds"),
-      created_at: log.createdAt || dayjs(log.timestamp).toISOString(),
-      response_data: log.responseData || {
-        execution_summary: `Created ${log.recordsCreated} records and updated ${log.recordsUpdated} records`,
-        error: null,
-        error_code: null,
-      },
-    }
+    return mapUsageLogToExecution(log)
   });
   // Check if there's an execution ID in the URL params
   useEffect(() => {

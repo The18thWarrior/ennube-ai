@@ -1,12 +1,18 @@
 'use client';
 
+
+import React from 'react';
+import { ExecutionDetailsPanel } from '@/components/executions/execution-details-panel';
+import { useUsageLogs } from '@/hooks/useUsageLogs';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
-import { useUsageLogs } from '@/hooks/useUsageLogs';
+import { UsageLogEntry } from '@/lib/types';
+import { mapUsageLogToExecution } from '@/lib/utils';
 
 interface UsageLogListProps {
   filter?: string;
 }
+
 
 export default function UsageLogsList({ filter }: UsageLogListProps) {
   const ITEMS_PER_PAGE = 10;
@@ -19,7 +25,8 @@ export default function UsageLogsList({ filter }: UsageLogListProps) {
     nextPage,
     prevPage
   } = useUsageLogs(ITEMS_PER_PAGE, filter);
-  console.log(logs);
+  const [selectedLog, setSelectedLog] = React.useState<UsageLogEntry | null>(null);
+  const selectedExecution = selectedLog ? mapUsageLogToExecution(selectedLog) : undefined;
   const formatTimestamp = (timestamp: number) => {
     if (!timestamp) return 'N/A';
     try {
@@ -30,16 +37,22 @@ export default function UsageLogsList({ filter }: UsageLogListProps) {
     }
   };
 
+  const handleRowClick = (log: any) => {
+    setSelectedLog(log);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedLog(null);
+  };
+
   return (
     <div className="container mx-auto py-8">
       <h1 className="text-2xl font-bold mb-6">Usage Logs</h1>
-      
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
           {error}
         </div>
       )}
-      
       <div className="overflow-x-auto bg-white dark:bg-gray-800 shadow-md rounded-lg">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
           <thead className="bg-gray-50 dark:bg-gray-700">
@@ -67,8 +80,12 @@ export default function UsageLogsList({ filter }: UsageLogListProps) {
                 </td>
               </tr>
             ) : (
-              logs.map((log, index) => (
-                <tr key={`${log.userSub}-${log.timestamp}-${index}`} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+              logs.map((log: UsageLogEntry, index: number) => (
+                <tr
+                  key={`${log.userSub}-${log.timestamp}-${index}`}
+                  className="hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+                  onClick={() => handleRowClick(log)}
+                >
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                     {formatTimestamp(log.timestamp)}
                   </td>
@@ -90,7 +107,6 @@ export default function UsageLogsList({ filter }: UsageLogListProps) {
           </tbody>
         </table>
       </div>
-      
       <div className="flex justify-between mt-4">
         <Button 
           onClick={prevPage} 
@@ -110,6 +126,15 @@ export default function UsageLogsList({ filter }: UsageLogListProps) {
           Next
         </Button>
       </div>
+
+      {/* Modal for Execution Details */}
+      {selectedLog && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className=" rounded-lg shadow-lg max-w-2xl w-full p-4 relative">
+            <ExecutionDetailsPanel className={"max-h-[80vh] scrollbar overflow-auto"} execution={selectedExecution} onClose={handleCloseModal} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

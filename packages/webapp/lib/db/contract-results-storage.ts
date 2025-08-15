@@ -13,6 +13,7 @@
 // Notes:
 //   - All queries require user_id for access control
 
+import dayjs from 'dayjs';
 import { Pool, QueryResult } from 'pg';
 import { z } from 'zod';
 //import { v4 as uuidv4 } from 'uuid';
@@ -139,7 +140,8 @@ export async function updateContractResult(id: string, user_id: string, patch: P
   const fields = [];
   const values: any[] = [];
   let idx = 3;
-  if (patch.updated_at) { fields.push(`updated_at = $${idx++}`); values.push(patch.updated_at); }
+  //if (patch.updated_at) { fields.push(`updated_at = $${idx++}`); values.push(patch.updated_at); }
+  fields.push(`updated_at = $${idx++}`); values.push(Date.now());
   if (patch.source_id) { fields.push(`source_id = $${idx++}`); values.push(patch.source_id); }
   if (patch.provider) { fields.push(`provider = $${idx++}`); values.push(ProviderEnum.parse(patch.provider as Provider)); }
   if (patch.contract_data) { fields.push(`contract_data = $${idx++}`); values.push(ContractResultSchema.parse(patch.contract_data)); }

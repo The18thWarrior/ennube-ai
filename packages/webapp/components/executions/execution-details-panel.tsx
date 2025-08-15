@@ -16,20 +16,9 @@ import ExecutionRecordDetailItem from "./execution-record-detail-item"
 import { Agent } from "http"
 import Link from "next/link"
 import { getAgentLink } from "@/lib/utils"
+import { Execution } from "@/lib/types"
 
-
-
-interface Execution {
-  id: string
-  agent_name: string
-  image_url: string
-  status: string
-  execution_time: number | null
-  created_at: string
-  response_data: any
-}
-
-interface ExecutionDetailsPanelProps {
+interface ExecutionDetailsPanelProps extends React.HTMLAttributes<HTMLDivElement> {
   execution: Execution | undefined
   onClose: (() => void) | null
   coloredBorder?: boolean
@@ -38,7 +27,7 @@ interface ExecutionDetailsPanelProps {
   onDelete?: (id: string) => void
 }
 
-export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, collapsible, layout = 'portrait', onDelete }: ExecutionDetailsPanelProps) {
+export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, collapsible, layout = 'portrait', className, onDelete }: ExecutionDetailsPanelProps) {
   // Support collapsible state
   const [open, setOpen] = React.useState(collapsible ? false : true);
   
@@ -128,7 +117,7 @@ export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, colla
   }
   const FrontCard = () => {
     return (
-      <Card className={`h-full ${coloredBorder ? "border-blue-500" : ""}`}>
+      <Card className={`${className ? className : "h-full"} ${coloredBorder ? "border-blue-500" : ""}`}>
         <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-xl flex items-center">
               <Workflow className="mr-2 h-6 w-6 text-blue-500 flex-shrink-0" />
@@ -262,7 +251,7 @@ export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, colla
   const FrontCardCollapsible = () => {
     return (
       <Collapsible open={open} onOpenChange={setOpen}>
-        <Card className={`h-full ${coloredBorder ? "border-blue-500" : ""}`}>
+        <Card className={`${className ? className : "h-full"} ${coloredBorder ? "border-blue-500" : ""}`}>
           <CardHeader className="flex flex-row items-center justify-between cursor-pointer select-none">
             <CardTitle className="text-xl flex items-center">
               <Workflow className="mr-2 h-6 w-6 text-blue-500 flex-shrink-0" />

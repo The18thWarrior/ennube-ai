@@ -24,7 +24,7 @@ import { isPlainObject } from "./object-summary";
  * - Future Improvements: Persist expanded state across navigation; search/filter fields.
  */
 
-export interface JsonRecordProps {
+export interface JsonRecordProps extends React.HTMLAttributes<HTMLDivElement> {
   data: any;
   rootLabel?: string;
   className?: string;
@@ -37,11 +37,12 @@ interface StackItem { label: string; data: any; }
 
 export const JsonRecord: React.FC<JsonRecordProps> = ({
   data,
-  rootLabel = "Root",
+  rootLabel = "Record",
   className,
   maxArrayPreview,
   onNavigatePathChange,
-  renderValue
+  renderValue,
+  style
 }) => {
   const [stack, setStack] = useState<StackItem[]>([{ label: rootLabel, data }]);
 
@@ -84,7 +85,7 @@ export const JsonRecord: React.FC<JsonRecordProps> = ({
   const isObjectLike = isPlainObject(active.data) || Array.isArray(active.data);
 
   return (
-    <Card className={`my-2 border-purple-500 w-full flex flex-col ${className || ''}`}>
+    <Card className={`my-2 border-purple-500 w-full flex flex-col scrollbar ${className || ''}`}>
       <CardHeader className="pb-3 space-y-2">
         <div className="flex items-center justify-between">
           {stack.length > 1 ? (

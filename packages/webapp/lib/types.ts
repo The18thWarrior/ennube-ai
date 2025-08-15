@@ -101,3 +101,39 @@ export interface SubscriptionStatus {
   days_until_due?: number;
   status: 'active' | 'canceled' | 'incomplete' | 'incomplete_expired' | 'past_due' | 'paused' | 'trialing' | 'unpaid';
 }
+
+export interface Execution {
+  id: string
+  agent_name: string
+  image_url: string
+  status: string
+  execution_time: number | null
+  created_at: string
+  response_data: any
+}
+
+export interface UsageLogEntry {
+  id: string;
+  timestamp: number;
+  userSub: string;
+  agent: string;
+  recordsUpdated: number;
+  recordsCreated: number;
+  meetingsBooked: number;
+  queriesExecuted: number;
+  signature: string;
+  nonce: number;
+  usage: number;
+  createdAt?: string;
+  updatedAt?: string;
+  status?: string;
+  responseData?: {
+    execution_summary?: string,
+    recordsUpdated?: number,
+    recordsCreated?: number,
+    meetingsBooked?: number,
+    queriesExecuted?: number,
+    errors?: number,
+    records?: string[]
+  };
+}

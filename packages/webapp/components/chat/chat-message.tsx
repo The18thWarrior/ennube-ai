@@ -23,7 +23,7 @@ import { Loader2, User, TriangleAlert, CircleCheck, Loader } from 'lucide-react'
 import { RecordIcon } from './tools/icon-map';
 import CrmResultCard from './tools/crm-result-card';
 import { CustomProfileToolResult } from './wrappers/custom-profile-tool-result';
-import { UsageLogEntry } from '@/lib/db/usage-logs';
+import { UsageLogEntry } from '@/lib/types';
 import dayjs from 'dayjs';
 import { ExecutionDetailsPanel } from '@/components/executions/execution-details-panel';
 import { Session } from 'next-auth';

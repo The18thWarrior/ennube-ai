@@ -7,7 +7,9 @@ import {
   Node as HtmlNode
 } from 'node-html-parser';
 import z from "zod";
-import { SubscriptionStatus } from "./types";
+import { SubscriptionStatus, Execution } from "./types";
+import dayjs from "dayjs";
+import { UsageLogEntry } from "./db/usage-logs";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -253,4 +255,21 @@ function getIsSubscribed(subscription: SubscriptionStatus | null): boolean {
 
   const status = subscription.status;
   return status === 'active' || status === 'trialing';
+}
+
+
+export const mapUsageLogToExecution = (log: UsageLogEntry): Execution => {
+  return {
+        id: log.id,
+        agent_name: log.agent,
+        image_url: getAgentImage(log.agent),
+        status: log.status || "unknown",
+        execution_time: dayjs(log.updatedAt).diff(dayjs(log.createdAt), "seconds"),
+        created_at: log.createdAt || dayjs(log.timestamp).toISOString(),
+        response_data: log.responseData || {
+          execution_summary: `Created ${log.recordsCreated} records and updated ${log.recordsUpdated} records`,
+          error: null,
+          error_code: null,
+        },
+  }
 }

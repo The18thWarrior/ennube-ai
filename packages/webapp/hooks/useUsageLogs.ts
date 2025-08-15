@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useSnackbar } from 'notistack';
-import { UsageLogEntry } from '@/lib/db/usage-logs';
+import { UsageLogEntry } from '@/lib/types';
 
 interface UseUsageLogsReturn {
   logs: UsageLogEntry[];

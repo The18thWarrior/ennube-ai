@@ -1,5 +1,5 @@
 import { getAllActiveSettings, FrequencyType } from '@/lib/db/agent-settings-storage';
-import { getUserUsageLogsBySub, UsageLogEntry } from '@/lib/db/usage-logs';
+import { getUserUsageLogsBySub } from '@/lib/db/usage-logs';
 import { getCustomerSubscription } from '@/lib/stripe';
 import { getSubscriptionLimit } from '@/lib/utils';
 import { NextResponse } from 'next/server';

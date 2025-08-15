@@ -4,6 +4,7 @@
 import { Pool } from 'pg';
 import { nanoid } from "nanoid";
 import { auth } from '@/auth';
+import { UsageLogEntry } from '../types';
 
 const AGENTNAMES = {
   prospectFinder: 'ProspectFinder',
@@ -31,32 +32,6 @@ const pool = new Pool({
 
 // Table name for usage logs
 const USAGE_LOG_TABLE = "usage_log";
-
-export interface UsageLogEntry {
-  id: string;
-  timestamp: number;
-  userSub: string;
-  agent: string;
-  recordsUpdated: number;
-  recordsCreated: number;
-  meetingsBooked: number;
-  queriesExecuted: number;
-  signature: string;
-  nonce: number;
-  usage: number;
-  createdAt?: string;
-  updatedAt?: string;
-  status?: string;
-  responseData?: {
-    execution_summary?: string,
-    recordsUpdated?: number,
-    recordsCreated?: number,
-    meetingsBooked?: number,
-    queriesExecuted?: number,
-    errors?: number,
-    records?: string[]
-  };
-}
 
 interface StoreUsageParams {
   userSub: string,
