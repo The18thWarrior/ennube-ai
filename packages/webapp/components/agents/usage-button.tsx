@@ -12,7 +12,7 @@ export default function UsageButton() {
     <>
         {hasSubscription && (
             <CustomLink href="/dashboard" className="w-full">
-              Usage
+              History
             </CustomLink>
         )}
     </>

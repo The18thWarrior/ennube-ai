@@ -47,7 +47,7 @@ export default function UsageLogsList({ filter }: UsageLogListProps) {
 
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-2xl font-bold mb-6">Usage Logs</h1>
+      <h1 className="text-2xl font-bold mb-6">History</h1>
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
           {error}
@@ -76,7 +76,7 @@ export default function UsageLogsList({ filter }: UsageLogListProps) {
             ) : logs.length === 0 ? (
               <tr>
                 <td colSpan={5} className="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
-                  No usage logs found
+                  No logs found
                 </td>
               </tr>
             ) : (

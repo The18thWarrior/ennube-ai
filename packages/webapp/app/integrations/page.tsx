@@ -54,6 +54,13 @@ export default async function IntegrationsPage() {
                     url={"/integrations/gsuite"}
                     connected={hasGSuite} isAddCard={false}        
                 /> }
+                <IntegrationCard
+                    title="Microsoft 365"
+                    description="Connect your Microsoft account to sync mail and calendars via Microsoft Graph."
+                    icon="/microsoft-logo.png"
+                    url={'/integrations/microsoft'}
+                    connected={false} isAddCard={false}
+                />
                 
                 <IntegrationCard
                     title="HubSpot"

@@ -60,7 +60,7 @@ export function MainNav() {
     },
     {
       href: "/dashboard",
-      title: "Usage",
+      title: "History",
       description: "Manage your applications",
     },
     // {
