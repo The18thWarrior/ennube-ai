@@ -9,6 +9,7 @@ import {
 import z from "zod";
 import { SubscriptionStatus, Execution, UsageLogEntry } from "./types";
 import dayjs from "dayjs";
+import crypto, { createHash } from "crypto";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -271,4 +272,33 @@ export const mapUsageLogToExecution = (log: UsageLogEntry): Execution => {
           error_code: null,
         },
   }
+}
+
+export function sha256(input: string): string {
+  // Create a new hash object using the 'sha256' algorithm
+  const hash = createHash('sha256');
+
+  // Update the hash object with the input data.
+  // It's crucial to specify the encoding of the input string,
+  // which is almost always 'utf-8'.
+  hash.update(input, 'utf-8');
+
+  // Calculate the digest of the data passed to the hash.
+  // 'hex' encoding is the most common and readable format for hashes.
+  return hash.digest('hex');
+}
+
+export function generateApiKey(prefix = 'ennube', length = 32) {
+  /**
+   * Generates a secure, random API key with a given prefix.
+   * The final key length will be prefix.length + 1 + length.
+   */
+  // Generate random bytes. We generate half the desired length because
+  // converting to hex doubles the size (1 byte = 2 hex characters).
+  const randomBytes = crypto.randomBytes(Math.ceil(length / 2));
+  
+  // Convert the bytes to a hexadecimal string and take the required length
+  const randomPart = randomBytes.toString('hex').slice(0, length);
+
+  return `${prefix}_${randomPart}`;
 }
