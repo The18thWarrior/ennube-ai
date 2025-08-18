@@ -10,13 +10,13 @@ export const getSFDCDataTool = (subId: string) => {
       async execute({ limit, sobject, filter }: { limit: number, sobject: string, filter: string }) {
         console.log('getDataTool called with:', { limit, sobject, filter, subId });
         if (!subId) throw new Error('subId is required');
-        const soql = `SELECT FIELDS(ALL) FROM ${sobject} WHERE ${filter} LIMIT ${limit}`;
+        const soql = `SELECT FIELDS(ALL) FROM ${sobject} ${filter.length > 0 ? `WHERE ${filter}` : ""} LIMIT ${limit}`;
         const baseUrl = await getBaseUrl();
         const url = `${baseUrl}/api/salesforce/query?sub=${encodeURIComponent(subId)}&soql=${encodeURIComponent(soql)}`;
         const res = await fetch(url);
         if (!res.ok) throw new Error('Failed to fetch data');
         const data = await res.json();
-        console.log('Data fetched:', data);
+        //console.log('Data fetched:', data);
         return data;
       },
       parameters: z.object({

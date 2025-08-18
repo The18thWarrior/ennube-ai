@@ -51,6 +51,11 @@ export default async function UserButton() {
               Account
             </Link>
           </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href="/account/api-key" className="cursor-pointer">
+              API Keys
+            </Link>
+          </DropdownMenuItem>
           {/* <DropdownMenuSeparator />          
           <DropdownMenuItem asChild>
             <Link href="/subscription" className="cursor-pointer">
