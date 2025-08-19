@@ -127,6 +127,46 @@ export async function storeSalesforceCredentials(authResult: SalesforceAuthResul
   }
 }
 
+export async function updateSalesforceCredentials(authResult: SalesforceAuthResult): Promise<string | null> {
+  if (!authResult.success || !authResult.accessToken || !authResult.instanceUrl) {
+    return null;
+  }
+
+  try {
+    const createdAt = Date.now();
+    const expiresAt = createdAt + 2 * 60 * 60 * 1000; // 2 hours
+
+    // Check if user already has credentials stored
+    const checkResult = await pool.query(
+      `SELECT COUNT(*) FROM ${CREDENTIALS_TABLE} WHERE user_id = $1 AND type = 'sfdc'`,
+      [authResult.userId]
+    );
+    
+    const exists = parseInt(checkResult.rows[0].count) > 0;
+    
+    if (exists) {
+      // Update existing credentials
+      await pool.query(
+        `UPDATE ${CREDENTIALS_TABLE} 
+         SET access_token = $1, expires_at = $2
+         WHERE user_id = $3 AND type = 'sfdc'`,
+        [
+          authResult.accessToken,
+          expiresAt,
+          authResult.userId
+        ]
+      );
+    } else {
+     return null;
+    }
+    
+    return null;
+  } catch (error) {
+    console.log("Error storing Salesforce credentials:", error);
+    return null;
+  }
+}
+
 /**
  * Retrieve Salesforce credentials from PostgreSQL for current user
  */

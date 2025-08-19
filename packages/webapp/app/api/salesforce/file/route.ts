@@ -47,6 +47,7 @@ export async function GET(
   // Create a Salesforce client from the stored credentials
   const authResult: SalesforceAuthResult = {
     success: true,
+    userId: sub,
     accessToken: credentials.accessToken,
     instanceUrl: credentials.instanceUrl,
     refreshToken: credentials.refreshToken,

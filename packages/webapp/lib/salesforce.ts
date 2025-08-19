@@ -3,6 +3,7 @@ import { Session } from "next-auth";
 import {Connection, SaveResult, OAuth2, Schema} from 'jsforce';
 import { RefreshTokenResponse, SalesforceAuthResult, SalesforceQueryResult, SalesforceUserInfo } from "./types";
 import { IngestJobV2Results, JobInfoV2, QueryJobInfoV2 } from "jsforce/lib/api/bulk2";
+import { storeSalesforceCredentials, updateSalesforceCredentials } from "./db/salesforce-storage";
 
 
 
@@ -16,16 +17,20 @@ export class SalesforceClient {
   private clientId?: string;
   private clientSecret?: string;
   private refreshToken?: string;
+  private userId: string;
 
   constructor(
     accessToken: string, 
     instanceUrl: string, 
+    _userId: string,
     _refreshToken?: string, 
     clientId?: string, 
-    clientSecret?: string
+    clientSecret?: string,
   ) {
     // Initialize jsforce connection with OAuth credentials
     //console.log(accessToken, instanceUrl, _refreshToken, clientId, clientSecret);
+    this.clientId = clientId || process.env.SALESFORCE_CLIENT_ID;
+    this.clientSecret = clientSecret || process.env.SALESFORCE_CLIENT_SECRET;
     const connectionData = {
       oauth2: new OAuth2({
         clientId: clientId || process.env.SALESFORCE_CLIENT_ID,
@@ -56,6 +61,8 @@ export class SalesforceClient {
         redirectUri: undefined, // Not needed for refresh token flow
       });
     }
+
+    this.userId = _userId;
   }
 
   /**
@@ -95,8 +102,25 @@ export class SalesforceClient {
       const refreshResult = await this.oauth2.refreshToken(this.refreshToken);
       console.log('Refresh result refreshAccessToken:', refreshResult);
       // Update the connection with the new access token
+      const oldAccessToken = this.connection.accessToken as string;
       this.connection.accessToken = refreshResult.access_token;
-      
+      const newCredentials : SalesforceAuthResult = {
+        success: true,
+        userId: this.userId,
+        accessToken: refreshResult.access_token,
+        instanceUrl: this.connection.instanceUrl,
+        refreshToken: refreshResult.refresh_token || this.refreshToken, // Use existing if not provided
+        clientId: this.clientId,
+        clientSecret: this.clientSecret,
+        userInfo: {
+          id: this.connection.userInfo?.id,
+          organization_id: this.connection.userInfo?.organizationId,
+        }
+      }
+      console.log('storeSalesforceCredentials newCredentials:', newCredentials.refreshToken, newCredentials.accessToken);
+      console.log('old value:', this.refreshToken, oldAccessToken);
+      await updateSalesforceCredentials(newCredentials);
+
       console.log('Successfully refreshed Salesforce access token');
       return refreshResult;
     } catch (error) {
@@ -514,6 +538,7 @@ export class SalesforceClient {
  * @returns Authentication result with access token and instance URL
  */
 export async function connectToSalesforce(
+  userId: string,
   username: string,
   password: string,
   securityToken: string = '',
@@ -532,6 +557,7 @@ export async function connectToSalesforce(
     
     return {
       success: true,
+      userId,
       accessToken: conn.accessToken as string,
       instanceUrl: conn.instanceUrl as string,
       refreshToken: conn.refreshToken as string,
@@ -546,6 +572,7 @@ export async function connectToSalesforce(
     console.log('Salesforce authentication error:', error);
     return {
       success: false,
+      userId,
       error: error instanceof Error ? error.message : String(error)
     };
   }
@@ -602,6 +629,15 @@ export async function handleOAuthCallback(
   redirectUri?: string,
   loginUrl: string = 'https://login.salesforce.com'
 ): Promise<SalesforceAuthResult> {
+  const session = await auth();
+  const userId = session?.user?.auth0?.sub;
+  if (!userId) {
+    return {
+      success: false,
+      userId: '',
+      error: 'No user ID found in session'
+    }
+  }
   try {
     // Use provided credentials or fall back to environment variables
     const finalClientId = clientId || process.env.SALESFORCE_CLIENT_ID;
@@ -625,6 +661,7 @@ export async function handleOAuthCallback(
     //console.log('User Info:', userInfo, conn.refreshToken, conn.accessToken);
     return {
       success: true,
+      userId,
       accessToken: conn.accessToken as string,
       refreshToken: conn.refreshToken as string,
       instanceUrl: conn.instanceUrl as string,
@@ -639,6 +676,7 @@ export async function handleOAuthCallback(
     console.log('Error handling OAuth callback:', error);
     return {
       success: false,
+      userId: '',
       error: error instanceof Error ? error.message : String(error)
     };
   }
@@ -659,53 +697,10 @@ export function createSalesforceClient(authResult: SalesforceAuthResult): Salesf
   return new SalesforceClient(
     authResult.accessToken,
     authResult.instanceUrl,
+    authResult.userId,
     authResult.refreshToken,
     authResult.clientId,
     authResult.clientSecret
   );
 }
 
-/**
- * Helper function to refresh a Salesforce access token directly
- * @param refreshToken The refresh token obtained during OAuth
- * @param clientId OAuth2 client ID (optional, will use env var if not provided)
- * @param clientSecret OAuth2 client secret (optional, will use env var if not provided)
- * @returns New auth result with refreshed tokens
- */
-export async function refreshSalesforceToken(
-  refreshToken: string,
-  clientId?: string,
-  clientSecret?: string
-): Promise<SalesforceAuthResult> {
-  try {
-    // Use provided credentials or fall back to environment variables
-    const finalClientId = clientId || process.env.SALESFORCE_CLIENT_ID;
-    const finalClientSecret = clientSecret || process.env.SALESFORCE_CLIENT_SECRET;
-    
-    if (!finalClientId || !finalClientSecret) {
-      throw new Error('Missing Salesforce OAuth credentials. Provide parameters or set environment variables.');
-    }
-    
-    const oauth2 = new OAuth2({
-      clientId: finalClientId,
-      clientSecret: finalClientSecret
-    });
-    
-    const refreshResult = await oauth2.refreshToken(refreshToken);
-    
-    return {
-      success: true,
-      accessToken: refreshResult.access_token,
-      refreshToken: refreshResult.refresh_token || refreshToken, // Use new one if provided, otherwise keep the old one
-      instanceUrl: refreshResult.instance_url,
-      clientId: finalClientId,
-      clientSecret: finalClientSecret
-    };
-  } catch (error) {
-    console.log('Error refreshing Salesforce token:', error);
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : String(error)
-    };
-  }
-}

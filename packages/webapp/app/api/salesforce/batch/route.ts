@@ -66,6 +66,7 @@ async function getSalesforceClientFromSub(request: NextRequest): Promise<{
   // Create a Salesforce client from the stored credentials
   const authResult: SalesforceAuthResult = {
     success: true,
+    userId,
     accessToken: credentials.accessToken,
     instanceUrl: credentials.instanceUrl,
     refreshToken: credentials.refreshToken,
