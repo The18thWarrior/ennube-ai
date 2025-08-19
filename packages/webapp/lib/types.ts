@@ -13,6 +13,7 @@ export interface RefreshTokenResponse {
 
 export interface SalesforceAuthResult {
   success: boolean;
+  userId: string;
   accessToken?: string;
   refreshToken?: string;
   instanceUrl?: string;
