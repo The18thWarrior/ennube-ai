@@ -111,6 +111,8 @@ export class SalesforceClient {
           organization_id: this.connection.userInfo?.organizationId,
         }
       }
+      console.log('storeSalesforceCredentials newCredentials:', newCredentials.refreshToken, newCredentials.accessToken);
+      console.log('old value:', this.refreshToken, this.connection.accessToken);
       await storeSalesforceCredentials(newCredentials);
 
       console.log('Successfully refreshed Salesforce access token');
