@@ -49,6 +49,7 @@ export async function GET(request: NextRequest) {
           instanceUrl: credentials.instanceUrl,
           refreshToken: credentials.refreshToken,
           success: true,
+          userId: session.user.auth0.sub,
           clientId: process.env.SALESFORCE_CLIENT_ID as string,
           clientSecret: process.env.SALESFORCE_CLIENT_SECRET as string,
         }
@@ -72,6 +73,7 @@ export async function GET(request: NextRequest) {
 
       await storeSalesforceCredentials({
         success: true,
+        userId: session.user.auth0.sub,
         accessToken: credentialsFinal.accessToken as string,
         refreshToken: credentialsFinal.refreshToken as string,
         instanceUrl: credentialsFinal.instanceUrl as string,
