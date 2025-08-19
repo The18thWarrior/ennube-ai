@@ -3,6 +3,7 @@ import { Session } from "next-auth";
 import {Connection, SaveResult, OAuth2, Schema} from 'jsforce';
 import { RefreshTokenResponse, SalesforceAuthResult, SalesforceQueryResult, SalesforceUserInfo } from "./types";
 import { IngestJobV2Results, JobInfoV2, QueryJobInfoV2 } from "jsforce/lib/api/bulk2";
+import { storeSalesforceCredentials } from "./db/salesforce-storage";
 
 
 
@@ -26,6 +27,8 @@ export class SalesforceClient {
   ) {
     // Initialize jsforce connection with OAuth credentials
     //console.log(accessToken, instanceUrl, _refreshToken, clientId, clientSecret);
+    this.clientId = clientId || process.env.SALESFORCE_CLIENT_ID;
+    this.clientSecret = clientSecret || process.env.SALESFORCE_CLIENT_SECRET;
     const connectionData = {
       oauth2: new OAuth2({
         clientId: clientId || process.env.SALESFORCE_CLIENT_ID,
@@ -96,7 +99,20 @@ export class SalesforceClient {
       console.log('Refresh result refreshAccessToken:', refreshResult);
       // Update the connection with the new access token
       this.connection.accessToken = refreshResult.access_token;
-      
+      const newCredentials : SalesforceAuthResult = {
+        success: true,
+        accessToken: refreshResult.access_token,
+        instanceUrl: this.connection.instanceUrl,
+        refreshToken: refreshResult.refresh_token || this.refreshToken, // Use existing if not provided
+        clientId: this.clientId,
+        clientSecret: this.clientSecret,
+        userInfo: {
+          id: this.connection.userInfo?.id,
+          organization_id: this.connection.userInfo?.organizationId,
+        }
+      }
+      await storeSalesforceCredentials(newCredentials);
+
       console.log('Successfully refreshed Salesforce access token');
       return refreshResult;
     } catch (error) {
