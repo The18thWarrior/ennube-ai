@@ -23,7 +23,7 @@ export default async function SalesforceDashboard() {
   }
   const instanceUrl = salesforceCredentials.instanceUrl || 'https://login.salesforce.com';
   //console.log(salesforceCredentials);
-  const salesforceClient = new SalesforceClient(salesforceCredentials.accessToken, salesforceCredentials.instanceUrl, salesforceCredentials.refreshToken);
+  const salesforceClient = new SalesforceClient(salesforceCredentials.accessToken, salesforceCredentials.instanceUrl, salesforceCredentials.refreshToken as string);
   // If no Salesforce client available and no OAuth session, redirect to connect page
   if (!salesforceClient) {
     console.log('No Salesforce client found, redirecting to connect page')
