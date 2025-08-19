@@ -23,11 +23,12 @@ interface ExecutionDetailsPanelProps extends React.HTMLAttributes<HTMLDivElement
   onClose: (() => void) | null
   coloredBorder?: boolean
   collapsible?: boolean
+  sticky?: boolean
   layout?: 'portrait' | 'landscape'
   onDelete?: (id: string) => void
 }
 
-export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, collapsible, layout = 'portrait', className, onDelete }: ExecutionDetailsPanelProps) {
+export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, collapsible, layout = 'portrait', className, onDelete, sticky = false }: ExecutionDetailsPanelProps) {
   // Support collapsible state
   const [open, setOpen] = React.useState(collapsible ? false : true);
   
@@ -116,8 +117,12 @@ export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, colla
     )
   }
   const FrontCard = () => {
+    // Keep the Card classes minimal and use a wrapper to apply sticky positioning when requested.
+    const cardInnerClass = `${className ? className : "h-full"} ${coloredBorder ? "border-blue-500" : ""}`;
+    const wrapperClass = sticky ? "sticky top-4 self-start z-10" : "";
     return (
-      <Card className={`${className ? className : "h-full"} ${coloredBorder ? "border-blue-500" : ""}`}>
+      <div className={wrapperClass}>
+        <Card className={cardInnerClass}>
         <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-xl flex items-center">
               <Workflow className="mr-2 h-6 w-6 text-blue-500 flex-shrink-0" />
@@ -244,14 +249,17 @@ export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, colla
             </div>
           )}
         </CardContent>
-      </Card>
+        </Card>
+      </div>
     )
   }
 
   const FrontCardCollapsible = () => {
     return (
       <Collapsible open={open} onOpenChange={setOpen}>
-        <Card className={`${className ? className : "h-full"} ${coloredBorder ? "border-blue-500" : ""}`}>
+        {/* Use a wrapper to apply sticky positioning so the Card's internal overflow isn't affected */}
+        <div className={sticky ? "sticky top-4 self-start z-10" : ""}>
+          <Card className={`${className ? className : "h-full"} ${coloredBorder ? "border-blue-500" : ""}`}>
           <CardHeader className="flex flex-row items-center justify-between cursor-pointer select-none">
             <CardTitle className="text-xl flex items-center">
               <Workflow className="mr-2 h-6 w-6 text-blue-500 flex-shrink-0" />
@@ -364,7 +372,8 @@ export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, colla
               </div>
             </CardContent>
           </CollapsibleContent>
-        </Card>
+  </Card>
+  </div>
       </Collapsible>
     )
   }

@@ -177,8 +177,8 @@ function ExecutionsPageComponent() {
         </div>
 
         {isPanelOpen && (
-          <div className="lg:w-1/2 transition-all duration-300 ease-in-out">
-            <ExecutionDetailsPanel onDelete={handleDelete} execution={selectedExecutionData} onClose={handleClosePanel} />
+          <div className="lg:w-1/2 transition-all duration-300 ease-in-out sticky top-4 self-start z-10">
+            <ExecutionDetailsPanel onDelete={handleDelete} execution={selectedExecutionData} onClose={handleClosePanel} sticky={false} className={`h-full max-h-[90vh] overflow-y-auto scrollbar`} />
           </div>
         )}
       </div>
