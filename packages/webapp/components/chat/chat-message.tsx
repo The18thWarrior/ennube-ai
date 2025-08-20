@@ -257,6 +257,18 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: Message, theme
                                             }
                                             break;
                                         }
+                                        case 'getSFDCFieldDescribeTool': {
+                                            switch (part.toolInvocation.state) {
+                                                case 'result':                                          
+                                                    return (
+                                                        <div key={callId} className="flex items-center gap-2 text-xs text-muted-foreground py-4 px-2 border rounded">
+                                                            {part.toolInvocation.result ? <CircleCheck className="h-4 w-4 text-green-500" /> : <TriangleAlert className="h-4 w-4 text-red-500" />}
+                                                            <span>{part.toolInvocation.result ? "Fields Retrieved" : "No Fields Found"}</span>
+                                                        </div>
+                                                    );
+                                            }
+                                            break;
+                                        }
                                         default:
                                             // Fallback: render tool data as JSON
                                             return (
