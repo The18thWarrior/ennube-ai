@@ -394,7 +394,7 @@ const TimestampWithCopy = ({ msg } : { msg: Message }) => {
 
     return (
         <div className={'align-middle flex flex-row items-center'}>
-            <span className="text-xs text-muted-foreground px-3">
+            <span className="text-xs text-muted-foreground px-2">
                 {msg.createdAt && formatDistanceToNow(msg.createdAt, { addSuffix: true })}
             </span>
             <button
@@ -402,7 +402,7 @@ const TimestampWithCopy = ({ msg } : { msg: Message }) => {
                 aria-label="Copy message"
                 title="Copy message"
                 onClick={handleCopy}
-                className="ml-1 inline-flex items-center justify-center p-1 text-muted-foreground hover:bg-muted rounded"
+                className=" inline-flex items-center justify-center p-1 text-muted-foreground hover:bg-muted rounded"
             >
                 <Copy className="h-4 w-4" />
             </button>

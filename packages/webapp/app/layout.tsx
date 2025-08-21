@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: React.PropsWithChildren<{}>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>          
+      <body className={`${inter.className} scrollbar`}>
         <ThemeProvider defaultTheme="system" storageKey="theme">
           <div className="flex h-full min-h-screen w-full flex-col justify-between">
             
