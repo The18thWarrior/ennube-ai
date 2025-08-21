@@ -166,8 +166,8 @@ export async function storeUsageLog(
             queriesExecuted: queriesExecuted,
             usage,
             errors: Number(responseData.errors || 0),
-            records: params.recordId 
-              ? [...(responseData.records || []), params.recordId] 
+            records: params.recordId
+              ? [...(responseData.records || []), ...(params.status !== 'failed' ? [params.recordId] : [])]
               : (responseData.records || []),
             errorMessages: [...(responseData.errorMessages || []), ...(params.errors ? [params.errors] : [])],
             errorRecords: [...(responseData.errorRecords || []), ...(params.recordId && params.status === "failed" ? [params.recordId] : [])],
