@@ -89,7 +89,18 @@ export async function storeUsageLog(
               ...responseData,
               usage,
               execution_summary: newMessage,
-              errors: errorCount
+              errors: errorCount,
+              errorMessages: [...(responseData.errorMessages || []), ...(params.errors ? [params.errors] : [])],
+              errorRecords: [...(responseData.errorRecords || []), ...(params.recordId ? [params.recordId] : [])],
+            };
+          } else if (params.status === "failed") {
+            updatedResponseData = {
+              ...responseData,
+              usage,
+              execution_summary: newMessage,
+              errors: Number(responseData.errors || 0) + 1,
+              errorMessages: [...(responseData.errorMessages || []), ...(params.errors ? [params.errors] : [])],
+              errorRecords: [...(responseData.errorRecords || []), ...(params.recordId ? [params.recordId] : [])],
             };
           } else {
             // Update response data with new values
@@ -100,10 +111,12 @@ export async function storeUsageLog(
               meetingsBooked: meetingsBooked,
               queriesExecuted: queriesExecuted,
               usage,
+              errorMessages: [...(responseData.errorMessages || [])],
               errors: Number(responseData.errors || 0),
               records: params.recordId 
                 ? [...(responseData.records || []), params.recordId] 
-                : (responseData.records || [])
+                : (responseData.records || []),
+              errorRecords: [...(responseData.errorRecords || [])]
             };
           }
           
@@ -155,7 +168,9 @@ export async function storeUsageLog(
             errors: Number(responseData.errors || 0),
             records: params.recordId 
               ? [...(responseData.records || []), params.recordId] 
-              : (responseData.records || [])
+              : (responseData.records || []),
+            errorMessages: [...(responseData.errorMessages || []), ...(params.errors ? [params.errors] : [])],
+            errorRecords: [...(responseData.errorRecords || []), ...(params.recordId && params.status === "failed" ? [params.recordId] : [])],
           };
           
           // Update the database record
@@ -179,7 +194,7 @@ export async function storeUsageLog(
               queriesExecuted,
               params.signature || existing.signature,
               params.nonce || existing.nonce,
-              params.status || existing.status,
+              existing.status === "success" ? existing.status : params.status,
               usage,
               JSON.stringify(updatedResponseData),
               logId
@@ -201,7 +216,9 @@ export async function storeUsageLog(
       queriesExecuted: params.queriesExecuted || 0,
       usage,
       errors: 0,
-      records: params.recordId ? [params.recordId] : []
+      records: params.recordId ? [params.recordId] : [],
+      errorMessages: [],
+      errorRecords: []
     };
 
     // Insert the new record

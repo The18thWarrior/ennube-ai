@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { ListChecks, User, Briefcase, ChevronRight } from "lucide-react"
 import { useState } from "react"
 import { Column, CrmRecordListTable } from "./crm-record-list-table"
+import { useTheme } from "@/components/theme-provider"
 
 export interface CrmRecordSummary {
   id: string
@@ -25,6 +26,7 @@ interface CrmRecordListData {
 
 export function CrmRecordListCard(data: CrmRecordListData) {
   const [viewTable, setViewTable] = useState(false)
+  const {theme} = useTheme() // Assuming you have a useTheme hook to get the current theme
   const FIELDS_SHOWN = 6
   const handleRecordClick = (recordId: string) => {
     // In a real app, this might trigger a new chat message like "Show details for record [recordId]"
@@ -63,7 +65,7 @@ export function CrmRecordListCard(data: CrmRecordListData) {
             <ListChecks className="mr-2 h-6 w-6 text-teal-500" />
             {`${data.objectType || "Records"}`}
           </span>
-          <Button variant="link" size="sm" onClick={() => setViewTable((prev) => !prev)}>
+          <Button variant={theme === 'dark' ? 'ghost' : 'outline_green'} size="sm" onClick={() => setViewTable((prev) => !prev)}>
             {viewTable ? "Card View" : "Table View"}
           </Button>
         </CardTitle>
@@ -94,9 +96,9 @@ export function CrmRecordListCard(data: CrmRecordListData) {
                       const thirdFieldLabel = record.fields[thirdField]?.label || "Type";
                       
                       return (
-                        <li key={record.id}>
+                        <li key={record.id} className={"py-1"}>
                           <Button
-                            variant="outline"
+                            variant="outline_neutral"
                             className="w-full justify-between items-center h-auto py-2 px-3 text-left"
                             onClick={() => handleRecordClick(record.id)}
                             title={`View details for ${record.fields.find(field => field.label.includes('Name') || field.label.includes('name') || field.label.includes('type') || field.label.includes('Type'))?.value}`}

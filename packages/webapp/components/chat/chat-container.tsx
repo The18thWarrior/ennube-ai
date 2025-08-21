@@ -76,6 +76,7 @@ const ChatContainer = ({
         //     return { message: messages[messages.length - 1], id };
         // },
     });
+    console.log(messages);
     const isLoading = status === 'submitted' || status === 'streaming';
 
     // Only render after mount to avoid hydration mismatch
@@ -119,7 +120,7 @@ const ChatContainer = ({
     return (
         <div className="flex flex-col relative" >
             {/* EditableField for Name */}
-            <div className={'rounded-lg border border-gray-200 dark:border-gray-700 min-h-[80dvh] mb-15'} style={{ scrollbarColor: 'transparent'}}> {/*height: "calc(100vh - 240px)",*/}
+            <div className={'rounded-lg border border-gray-200 dark:border-gray-700 min-h-[80dvh] mb-15 scrollbar'} > {/*height: "calc(100vh - 240px)",*/}
                 <div className="flex justify-between items-start group mb-4 p-3 border-b ">
                     {/* <svg className="mr-3 h-4 w-4 text-muted-foreground mt-1 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /></svg> */}
                     <div className={'px-2'}>
@@ -156,7 +157,7 @@ const ChatContainer = ({
                     </div>
                 </div>
             </div>
-            <div className={`py-4 h-[10dvh] bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 fixed bottom-0 max-w-[81vw] ${styles.wfill}`}>
+            <div className={`py-4 pr-6 h-[10dvh] bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 fixed bottom-0 ${styles.wfill}`}>
                 {error && <div className="text-red-500 mb-2">Error: {error.message}</div>}
                 <ChatInput
                 input={input}

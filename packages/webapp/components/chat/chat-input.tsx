@@ -39,7 +39,7 @@ export default function ChatInput({ input, handleInputChange, handleSubmit, isLo
         placeholder="Type your message..."
         //rows={2}
         disabled={isLoading}
-        className="flex-1"
+        className="flex-1 focus:border-purple-400"
       />
       <Button type="submit" disabled={isLoading || !input.trim()} size="icon" className={`${styles.sendButton} `}>
         <Send className={`h-4 w-4 text-white`} />

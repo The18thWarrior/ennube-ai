@@ -11,6 +11,7 @@ import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 import { ArrowLeft, Save, Trash } from 'lucide-react';
+import { useTheme } from '@/components/theme-provider';
 
 interface User {
   user_id: string;
@@ -30,7 +31,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ subId: st
   const router = useRouter();
   const {subId} = use(params);
   const userId = decodeURI(subId);
-  
+  const { theme } = useTheme();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -187,7 +188,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ subId: st
     <div className="p-6">
       <div className="flex items-center gap-4 mb-6">
         <Button
-          variant="ghost"
+          variant={theme === 'dark' ? 'ghost' : 'outline'}
           size="sm"
           onClick={() => router.push('/account/users')}
           className="flex items-center gap-2"

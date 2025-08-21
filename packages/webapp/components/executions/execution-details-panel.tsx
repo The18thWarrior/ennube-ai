@@ -17,6 +17,7 @@ import { Agent } from "http"
 import Link from "next/link"
 import { getAgentLink } from "@/lib/utils"
 import { Execution } from "@/lib/types"
+import { useTheme } from "../theme-provider"
 
 interface ExecutionDetailsPanelProps extends React.HTMLAttributes<HTMLDivElement> {
   execution: Execution | undefined
@@ -30,7 +31,7 @@ interface ExecutionDetailsPanelProps extends React.HTMLAttributes<HTMLDivElement
 export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, collapsible, layout = 'portrait', className, onDelete }: ExecutionDetailsPanelProps) {
   // Support collapsible state
   const [open, setOpen] = React.useState(collapsible ? false : true);
-  
+  const {theme} = useTheme();
   // Flip animation state
   const [selectedRecordId, setSelectedRecordId] = React.useState<string | null>(null);
   const [flip, setFlip] = React.useState(false);
@@ -127,7 +128,7 @@ export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, colla
             </CardTitle>
           <div className="flex items-center gap-2">
             {selectedRecordId && (
-              <Button variant="ghost" size="sm" onClick={handleGoToList}>
+              <Button variant={theme === 'dark' ? 'ghost' : 'outline'} size="sm" onClick={handleGoToList}>
                 ← Back to List
               </Button>
             )}
@@ -259,7 +260,7 @@ export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, colla
             </CardTitle>
             <div className="flex items-center gap-2">
               {selectedRecordId && (
-                <Button variant="ghost" size="sm" onClick={handleGoToList}>
+                <Button variant={theme === 'dark' ? 'ghost' : 'outline'} size="sm" onClick={handleGoToList}>
                   ← Back to List
                 </Button>
               )}
@@ -309,7 +310,7 @@ export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, colla
             )}
             <div className="flex justify-center pt-2">
               <CollapsibleTrigger asChild>
-                <Button variant="ghost" className={`${open ? "hidden" : ""}`} size="sm" aria-label={open ? "Collapse" : "Expand"} >
+                <Button variant={theme === 'dark' ? 'ghost' : 'outline'} className={`${open ? "hidden" : ""}`} size="sm" aria-label={open ? "Collapse" : "Expand"} >
                   {open ? "Show less" : `Show more`}
                 </Button>
               </CollapsibleTrigger>
@@ -357,7 +358,7 @@ export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, colla
               </div>
               <div className="flex justify-center pt-2">
                 <CollapsibleTrigger asChild>
-                  <Button variant="ghost" className={`${open ? "" : "hidden"}`} size="sm" aria-label={open ? "Collapse" : "Expand"}>
+                  <Button variant={theme === 'dark' ? 'ghost' : 'outline'} className={`${open ? "" : "hidden"}`} size="sm" aria-label={open ? "Collapse" : "Expand"}>
                     {open ? "Show less" : `Show more`}
                   </Button>
                 </CollapsibleTrigger>

@@ -135,6 +135,8 @@ export interface UsageLogEntry {
     meetingsBooked?: number,
     queriesExecuted?: number,
     errors?: number,
+    errorMessages?: string[],
+    errorRecords?: string[],
     records?: string[]
   };
 }

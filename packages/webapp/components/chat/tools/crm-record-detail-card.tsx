@@ -5,6 +5,7 @@ import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/component
 import styles from './crm-record-detail-card.module.css';
 import React from "react"
 import { Separator } from "@/components/ui/separator"
+import { useTheme } from "@/components/theme-provider";
 
 // A small sub-component for displaying an editable field
 const EditableField = ({
@@ -65,6 +66,7 @@ export function CrmRecordDetailCard({
   listButtonText,
   goToList
 }: CrmRecordDetailCardProps) {
+  const { theme } = useTheme();
   const [open, setOpen] = React.useState(false)
   const FIELDS_SHOWN = 6
   const filteredFields = fields.filter(field => typeof field.value !== 'object');
@@ -74,7 +76,7 @@ export function CrmRecordDetailCard({
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           {showListButton && 
-            <Button variant='ghost' size="sm" className={'w-fit'} onClick={goToList}>{listButtonText || 'Back to List'}</Button>
+            <Button variant={theme === 'dark' ? 'ghost' : 'outline'} size="sm" className={'w-fit'} onClick={goToList}>{listButtonText || 'Back to List'}</Button>
           }
           {/* {
             <CrmDataLoaderModal

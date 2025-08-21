@@ -17,6 +17,7 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Settings, FilterIcon, ChevronDown, GripVertical, X, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react"
 import { cn, truncateText } from "@/lib/utils"
+import { useTheme } from "@/components/theme-provider"
 
 interface CrmRecord {
   id: string
@@ -59,6 +60,7 @@ export function CrmRecordListTable({
   onRecordSelect,
   onRecordsSelect,
 }: CrmRecordListTableProps) {
+  const {theme} = useTheme();
   const [columns, setColumns] = useState<Column[]>(initialColumns)
   const [filters, setFilters] = useState<{ field: string; operator: string; value: string }[]>([])
   const [sortConfig, setSortConfig] = useState<SortConfig | null>(null)
@@ -246,7 +248,7 @@ export function CrmRecordListTable({
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm">
+                <Button variant={theme === 'dark' ? 'ghost' : 'outline_green'} size="sm">
                   <Settings className="h-4 w-4 mr-2" />
                   Columns
                 </Button>
