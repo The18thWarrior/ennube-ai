@@ -120,7 +120,7 @@ const ChatContainer = ({
     return (
         <div className="flex flex-col relative" >
             {/* EditableField for Name */}
-            <div className={'rounded-lg border border-gray-200 dark:border-gray-700 h-[80dvh] max-h-[80dvh] overflow-auto scrollbar'} > {/*height: "calc(100vh - 240px)",*/}
+            <div className={'rounded-lg border border-gray-200 dark:border-gray-700 h-[79dvh] max-h-[79dvh] overflow-auto scrollbar'} > {/*height: "calc(100vh - 240px)",*/}
                 <div className="flex justify-between items-start group mb-4 p-3 border-b ">
                     {/* <svg className="mr-3 h-4 w-4 text-muted-foreground mt-1 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /></svg> */}
                     <div className={'px-2'}>
