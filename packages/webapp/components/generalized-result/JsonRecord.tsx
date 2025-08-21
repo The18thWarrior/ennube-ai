@@ -89,7 +89,7 @@ export const JsonRecord: React.FC<JsonRecordProps> = ({
       <CardHeader className="pb-3 space-y-2">
         <div className="flex items-center justify-between">
           {stack.length > 1 ? (
-            <Button variant='ghost' size="sm" className='w-fit' onClick={goBack}>Back</Button>
+            <Button variant='outline' size="sm" className='w-fit' onClick={goBack}>Back</Button>
           ) : <span />}
         </div>
         <CardTitle className="text-xl flex items-center gap-2">

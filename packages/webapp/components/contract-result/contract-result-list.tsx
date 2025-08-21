@@ -12,6 +12,8 @@ import React, { useEffect } from 'react';
 import { useContractResult, ContractResult } from '@/hooks/useContractResult';
 import { ContractResultCard } from './contract-result-card';
 import { ContractResultCreateCard } from './contract-result-create-card';
+import dayjs from 'dayjs';
+import { formatDistanceToNow } from 'date-fns';
 
 interface ContractResultListProps {}
 
@@ -61,9 +63,9 @@ export const ContractResultList: React.FC<ContractResultListProps> = ({ }) => {
           <thead className="bg-gray-50 dark:bg-gray-700">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Provider</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Source ID</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Contract ID</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Result Id</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Created</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Updated</th>
             </tr>
           </thead>
           <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
@@ -95,10 +97,10 @@ export const ContractResultList: React.FC<ContractResultListProps> = ({ }) => {
                     {result.source_id}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-400 dark:text-gray-500">
-                    {result.created_at ? new Date(result.created_at).toLocaleDateString() : '\u2014'}
+                    {result.id}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-400 dark:text-gray-500">
-                    {result.updated_at ? new Date(result.updated_at).toLocaleDateString() : '\u2014'}
+                    {result.created_at ? formatDistanceToNow(dayjs(result.created_at).toDate(), { addSuffix: true }) : '\u2014'}
                   </td>
                 </tr>
               ))
