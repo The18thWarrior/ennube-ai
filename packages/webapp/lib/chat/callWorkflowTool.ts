@@ -27,7 +27,7 @@ export const callWorkflowToolDataSteward = tool({
 		const webhookUrl = process.env.DATASTEWARD_WEBHOOK_URL;
 		if (!webhookUrl) throw new Error('Webhook URL is not configured for this agent');
 
-		const url = `${webhookUrl}?limit=${limit || '10'}&subId=${subId}&usageId=${usageId}${accountId ? `&accountId=${accountId}` : ''}`;
+		const url = `${webhookUrl}?limit=${limit || '10'}&subId=${subId}&usageId=${usageId}${accountId ? `&accountIds=${accountId}` : ''}`;
 		const response = await fetch(url, {
 			method: 'GET',
 			headers: { 'Content-Type': 'application/json' },

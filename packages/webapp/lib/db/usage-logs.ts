@@ -45,7 +45,7 @@ interface StoreUsageParams {
   logId: string | null,
   isNew: boolean | null,
   status: string | null,
-  errors: string | null,
+  errors: string[] | null,
   recordId: string | null,
 }
 
@@ -79,18 +79,18 @@ export async function storeUsageLog(
           const recordsCreated = Number(params.recordsCreated || 0) + Number(existing.recordsCreated);
           const meetingsBooked = Number(params.meetingsBooked || 0) + Number(existing.meetingsBooked);
           const queriesExecuted = Number(params.queriesExecuted || 0) + Number(existing.queriesExecuted);
-
           const responseData = existing.responseData || {};
+          const errorCount = Number(params.errors ? params.errors.length : 0) + Number(responseData.errorMessages ? responseData.errorMessages.length : 0);
+          
           let updatedResponseData;
           const usage = recordsCreated + recordsUpdated + meetingsBooked + queriesExecuted;
           if (params.status === "failed" && (existing.recordsCreated > 0 || existing.recordsUpdated > 0)) {
-            const errorCount = responseData.errors ? responseData.errors + 1 : 1;
             updatedResponseData = {
               ...responseData,
               usage,
               execution_summary: newMessage,
               errors: errorCount,
-              errorMessages: [...(responseData.errorMessages || []), ...(params.errors ? [params.errors] : [])],
+              errorMessages: [...(responseData.errorMessages || []), ...(params.errors ? [...params.errors] : [])],
               errorRecords: [...(responseData.errorRecords || []), ...(params.recordId ? [params.recordId] : [])],
             };
           } else if (params.status === "failed") {
@@ -98,8 +98,8 @@ export async function storeUsageLog(
               ...responseData,
               usage,
               execution_summary: newMessage,
-              errors: Number(responseData.errors || 0) + 1,
-              errorMessages: [...(responseData.errorMessages || []), ...(params.errors ? [params.errors] : [])],
+              errors: errorCount,
+              errorMessages: [...(responseData.errorMessages || []), ...(params.errors ? [...params.errors] : [])],
               errorRecords: [...(responseData.errorRecords || []), ...(params.recordId ? [params.recordId] : [])],
             };
           } else {
@@ -169,7 +169,7 @@ export async function storeUsageLog(
             records: params.recordId
               ? [...(responseData.records || []), ...(params.status !== 'failed' ? [params.recordId] : [])]
               : (responseData.records || []),
-            errorMessages: [...(responseData.errorMessages || []), ...(params.errors ? [params.errors] : [])],
+            errorMessages: [...(responseData.errorMessages || []), ...(params.errors ? [...params.errors] : [])],
             errorRecords: [...(responseData.errorRecords || []), ...(params.recordId && params.status === "failed" ? [params.recordId] : [])],
           };
           

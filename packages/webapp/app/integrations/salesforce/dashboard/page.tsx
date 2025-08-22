@@ -12,18 +12,18 @@ export default async function SalesforceDashboard() {
   // Check if we have a NextAuth session with Salesforce OAuth data
   const session = await auth()
   const displayQuickActions = true;
-
+  console.log(session?.user?.auth0)
   //console.log('Session:', session?.user?.auth0)
   // Check if we have a Salesforce client from either OAuth or direct authentication
   const salesforceCredentials = await getSalesforceCredentialsById()
-  console.log(salesforceCredentials);
+  //console.log(salesforceCredentials);
   if (!salesforceCredentials) {
     console.log('No Salesforce credentials found, redirecting to connect page')
     redirect("/integrations/salesforce/connect");
   }
   const instanceUrl = salesforceCredentials.instanceUrl || 'https://login.salesforce.com';
   //console.log(salesforceCredentials);
-  const salesforceClient = new SalesforceClient(salesforceCredentials.accessToken, salesforceCredentials.instanceUrl, salesforceCredentials.refreshToken as string);
+  const salesforceClient = new SalesforceClient(salesforceCredentials.accessToken, salesforceCredentials.instanceUrl, session?.user?.auth0?.sub as string,salesforceCredentials.refreshToken as string);
   // If no Salesforce client available and no OAuth session, redirect to connect page
   if (!salesforceClient) {
     console.log('No Salesforce client found, redirecting to connect page')
@@ -129,20 +129,12 @@ export default async function SalesforceDashboard() {
                 </CustomLink>
               </Button> */}
 
-              {!isPackageInstalled && <Button asChild variant="outline" className="h-auto py-4 px-6 flex flex-col items-center justify-center gap-2 text-center">
-                <Link href={`${salesforceCredentials.instanceUrl}/${process.env.NEXT_PUBLIC_SFDC_MANAGED_PACKAGE_QUERY as string}`} rel="noopener noreferrer" className="flex flex-col items-center justify-center gap-2 w-full">
+              {<Button asChild variant="outline" className="h-auto py-4 px-6 flex flex-col items-center justify-center gap-2 text-center">
+                <Link href={`${salesforceCredentials.instanceUrl}/${process.env.NEXT_PUBLIC_SFDC_MANAGED_PACKAGE_QUERY as string}`} rel="noopener noreferrer" className="flex flex-col items-center justify-center gap-2 w-full" target="_blank" >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
                   </svg>
-                  <span>Install Managed Package</span>
-                </Link>
-              </Button>}
-              {isPackageInstalled && <Button asChild variant="outline" disabled={true} className="h-auto py-4 cursor-not-allowed px-6 flex flex-col items-center justify-center gap-2 text-center">
-                <Link href={''} rel="noopener noreferrer" className="flex flex-col items-center justify-center gap-2 w-full">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
-                  </svg>
-                  <span>Managed Package is installed</span>
+                  <span>{!isPackageInstalled ? "Install Managed Package" : "Managed Package is installed"}</span>
                 </Link>
               </Button>}
               
