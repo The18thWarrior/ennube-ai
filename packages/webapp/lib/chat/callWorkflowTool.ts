@@ -16,9 +16,9 @@ export const callWorkflowToolDataSteward = tool({
 	description: 'Call the execution workflow for the Data Steward agent. Data Steward is used to enrich Account and Contact data in Salesforce. ALWAYS ask the user for permission before calling this tool.',
 	parameters: z.object({
 		limit: z.string().optional(),
-		accountId: z.string().optional().describe('The Salesforce Account ID to enrich. If not provided, the tool will enrich all Accounts.'),
+		accountIds: z.array(z.string()).optional().describe('The Salesforce Account IDs to enrich. If not provided, the tool will enrich all Accounts.'),
 	}),
-	async execute({ limit, accountId }) {
+	async execute({ limit, accountIds }) {
         const session = await auth();
         if (!session || !session.user || !session.user.auth0) throw new Error('You must be signed in to call a workflow');
         const subId = session.user.auth0.sub;
@@ -27,7 +27,7 @@ export const callWorkflowToolDataSteward = tool({
 		const webhookUrl = process.env.DATASTEWARD_WEBHOOK_URL;
 		if (!webhookUrl) throw new Error('Webhook URL is not configured for this agent');
 
-		const url = `${webhookUrl}?limit=${limit || '10'}&subId=${subId}&usageId=${usageId}${accountId ? `&accountIds=${accountId}` : ''}`;
+		const url = `${webhookUrl}?limit=${limit || '10'}&subId=${subId}&usageId=${usageId}${accountIds ? `&accountIds=${accountIds.join(',')}` : ''}`;
 		const response = await fetch(url, {
 			method: 'GET',
 			headers: { 'Content-Type': 'application/json' },

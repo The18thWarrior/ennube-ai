@@ -1,0 +1,1460 @@
+{
+    "PermissionsCanAccessCE": {
+        "name": "PermissionsCanAccessCE",
+        "label": "Access Conversation Entries",
+        "description": "Grants users access to Conversation Entries",
+        "checked": false
+    },
+    "PermissionsEditCaseComments": {
+        "name": "PermissionsEditCaseComments",
+        "label": "Edit Case Comments",
+        "description": "Edit their own case comments but not other user's comments.",
+        "checked": false
+    },
+    "PermissionsSolutionImport": {
+        "name": "PermissionsSolutionImport",
+        "label": "Import Solutions",
+        "description": "Import solutions for the organization.",
+        "checked": false
+    },
+    "PermissionsManageBusinessHourHolidays": {
+        "name": "PermissionsManageBusinessHourHolidays",
+        "label": "Manage Business Hours Holidays",
+        "description": "Create, edit, and delete business holidays.",
+        "checked": false
+    },
+    "PermissionsManageCallCenters": {
+        "name": "PermissionsManageCallCenters",
+        "label": "Manage Call Centers",
+        "description": "Create, import, edit, and delete a call center configuration.",
+        "checked": false
+    },
+    "PermissionsManageCases": {
+        "name": "PermissionsManageCases",
+        "label": "Manage Cases",
+        "description": "Administer case settings, including Email-to-Case and mass transfer of cases.",
+        "checked": false
+    },
+    "PermissionsManageCategories": {
+        "name": "PermissionsManageCategories",
+        "label": "Manage Categories",
+        "description": "Define and modify solution categories settings.",
+        "checked": false
+    },
+    "PermissionsSubmitMacrosAllowed": {
+        "name": "PermissionsSubmitMacrosAllowed",
+        "label": "Manage Macros Users Can't Undo",
+        "description": "Create, update, and run macros that include irreversible instructions.",
+        "checked": false
+    },
+    "PermissionsManageSolutions": {
+        "name": "PermissionsManageSolutions",
+        "label": "Manage Published Solutions",
+        "description": "Create, edit, and delete publicly accessible solutions.",
+        "checked": false
+    },
+    "PermissionsBulkMacrosAllowed": {
+        "name": "PermissionsBulkMacrosAllowed",
+        "label": "Run Macros on Multiple Records",
+        "description": "Run macros on multiple records at the same time.",
+        "checked": false
+    },
+    "PermissionsTransferAnyCase": {
+        "name": "PermissionsTransferAnyCase",
+        "label": "Transfer Cases",
+        "description": "Change a case's owner.",
+        "checked": false
+    },
+    "PermissionsManageContentPermissions": {
+        "name": "PermissionsManageContentPermissions",
+        "label": "Manage Content Permissions",
+        "description": "Create, edit, and delete library permissions in Salesforce CRM Content.",
+        "checked": false
+    },
+    "PermissionsManageContentProperties": {
+        "name": "PermissionsManageContentProperties",
+        "label": "Manage Content Properties",
+        "description": "Create, edit, and delete custom fields in Salesforce CRM Content.",
+        "checked": false
+    },
+    "PermissionsManageContentTypes": {
+        "name": "PermissionsManageContentTypes",
+        "label": "Manage record types and layouts for Files",
+        "description": "Create, edit, and delete content types in Salesforce CRM Content..",
+        "checked": false
+    },
+    "PermissionsContentAdministrator": {
+        "name": "PermissionsContentAdministrator",
+        "label": "Manage Salesforce CRM Content",
+        "description": "Create, edit, and delete libraries and library memberships.",
+        "checked": false
+    },
+    "PermissionsQueryAllFiles": {
+        "name": "PermissionsQueryAllFiles",
+        "label": "Query All Files",
+        "description": "Allows View All Data users to SOQL query all files in the org.",
+        "checked": false
+    },
+    "PermissionsAllowViewKnowledge": {
+        "name": "PermissionsAllowViewKnowledge",
+        "label": "Allow View Knowledge",
+        "description": "Allow user to view knowledge articles",
+        "checked": false
+    },
+    "PermissionsAllowUniversalSearch": {
+        "name": "PermissionsAllowUniversalSearch",
+        "label": "Knowledge One",
+        "description": "Replaces the Articles tab with the Knowledge tab.",
+        "checked": false
+    },
+    "PermissionsEditKnowledge": {
+        "name": "PermissionsEditKnowledge",
+        "label": "Manage Articles",
+        "description": "Create, edit, assign, publish, delete, and archive Salesforce Knowledge articles.",
+        "checked": false
+    },
+    "PermissionsManageKnowledgeImportExport": {
+        "name": "PermissionsManageKnowledgeImportExport",
+        "label": "Manage Knowledge Article Import/Export",
+        "description": "Allows user to manage all the Knowledge Article Import/Export",
+        "checked": false
+    },
+    "PermissionsManageKnowledge": {
+        "name": "PermissionsManageKnowledge",
+        "label": "Manage Salesforce Knowledge",
+        "description": "Manage Salesforce Knowledge settings, and create, edit, and delete article types.",
+        "checked": false
+    },
+    "PermissionsShareInternalArticles": {
+        "name": "PermissionsShareInternalArticles",
+        "label": "Share internal Knowledge articles externally",
+        "description": "Allow user to share internal Knowledge articles externally",
+        "checked": false
+    },
+    "PermissionsIPRestrictRequests": {
+        "name": "PermissionsIPRestrictRequests",
+        "label": "IP Restrict Requests",
+        "description": "Restrict what IP addresses can access in the PRM Portal.",
+        "checked": false
+    },
+    "PermissionsViewDataAssessment": {
+        "name": "PermissionsViewDataAssessment",
+        "label": "Access to view Data Assessment",
+        "description": "Access to view Data Assessment. Data Assessment provides a summary of the state and quality of the org's CRM data",
+        "checked": false
+    },
+    "PermissionsActivateContract": {
+        "name": "PermissionsActivateContract",
+        "label": "Activate Contracts",
+        "description": "Change contract status to Activated.",
+        "checked": false
+    },
+    "PermissionsActivateOrder": {
+        "name": "PermissionsActivateOrder",
+        "label": "Activate Orders",
+        "description": "Change order status to Activated.",
+        "checked": false
+    },
+    "PermissionsConvertLeads": {
+        "name": "PermissionsConvertLeads",
+        "label": "Convert Leads",
+        "description": "Convert leads into accounts, contacts, and opportunities.",
+        "checked": false
+    },
+    "PermissionsDeleteActivatedContract": {
+        "name": "PermissionsDeleteActivatedContract",
+        "label": "Delete Activated Contracts",
+        "description": "Delete contracts, regardless of their status.",
+        "checked": false
+    },
+    "PermissionsEditActivatedOrders": {
+        "name": "PermissionsEditActivatedOrders",
+        "label": "Edit Activated Orders",
+        "description": "Edit an order record once it is activated.",
+        "checked": false
+    },
+    "PermissionsEditOppLineItemUnitPrice": {
+        "name": "PermissionsEditOppLineItemUnitPrice",
+        "label": "Edit Opportunity Product Sales Price",
+        "description": "Change the sales price on opportunity line items.",
+        "checked": false
+    },
+    "PermissionsImportLeads": {
+        "name": "PermissionsImportLeads",
+        "label": "Import Leads",
+        "description": "Import leads and update campaign history.",
+        "checked": false
+    },
+    "PermissionsImportPersonal": {
+        "name": "PermissionsImportPersonal",
+        "label": "Import Personal Contacts",
+        "description": "Import personal accounts and contacts.",
+        "checked": false
+    },
+    "PermissionsManageLeads": {
+        "name": "PermissionsManageLeads",
+        "label": "Manage Leads",
+        "description": "Change the status of multiple leads in a list view.",
+        "checked": false
+    },
+    "PermissionsSendSitRequests": {
+        "name": "PermissionsSendSitRequests",
+        "label": "Send Stay-in-Touch Requests",
+        "description": "Send Stay-in-Touch update emails.",
+        "checked": false
+    },
+    "PermissionsTransferAnyLead": {
+        "name": "PermissionsTransferAnyLead",
+        "label": "Transfer Leads",
+        "description": "Change a lead's owner.",
+        "checked": false
+    },
+    "PermissionsUseTeamReassignWizards": {
+        "name": "PermissionsUseTeamReassignWizards",
+        "label": "Use Team Reassignment Wizards",
+        "description": "Mass reassign account team and opportunity team members.",
+        "checked": false
+    },
+    "PermissionsAllowViewEditConvertedLeads": {
+        "name": "PermissionsAllowViewEditConvertedLeads",
+        "label": "View and Edit Converted Leads",
+        "description": "View and edit converted lead records.",
+        "checked": false
+    },
+    "PermissionsActivitiesAccess": {
+        "name": "PermissionsActivitiesAccess",
+        "label": "Access Activities",
+        "description": "Access tasks, events, calendar, and email.",
+        "checked": false
+    },
+    "PermissionsLifecycleManagementAPIUser": {
+        "name": "PermissionsLifecycleManagementAPIUser",
+        "label": "Access Customer Asset Lifecycle Management APIs",
+        "description": "Use APIs to manage lifecycle-managed assets.",
+        "checked": false
+    },
+    "PermissionsAccessContentBuilder": {
+        "name": "PermissionsAccessContentBuilder",
+        "label": "Access drag-and-drop content builder",
+        "description": "Create and manage email templates and content in a drag-and-drop builder.",
+        "checked": false
+    },
+    "PermissionsAccessCMC": {
+        "name": "PermissionsAccessCMC",
+        "label": "Access Experience Management",
+        "description": "Access pages and dashboards available in Experience Management. ",
+        "checked": false
+    },
+    "PermissionsContentWorkspaces": {
+        "name": "PermissionsContentWorkspaces",
+        "label": "Access Libraries",
+        "description": "Access libraries.",
+        "checked": false
+    },
+    "PermissionsTraceXdsQueries": {
+        "name": "PermissionsTraceXdsQueries",
+        "label": "Access Tracer for External Data Sources",
+        "description": "Access the Tracer tool for testing queries to External Data Sources.",
+        "checked": false
+    },
+    "PermissionsAddDirectMessageMembers": {
+        "name": "PermissionsAddDirectMessageMembers",
+        "label": "Add People to Direct Messages",
+        "description": "Lets a user add others to direct messages the user is in.",
+        "checked": false
+    },
+    "PermissionsUseWebLink": {
+        "name": "PermissionsUseWebLink",
+        "label": "Allow Access to Customized Actions",
+        "description": "Unsupported. Use the page layout editor to customize which actions show up in Salesforce and in the Salesforce mobile app.",
+        "checked": false
+    },
+    "PermissionsEnableIPFSUpload": {
+        "name": "PermissionsEnableIPFSUpload",
+        "label": "Allow blockchain data upload",
+        "description": "Let the user upload blockchain data",
+        "checked": false
+    },
+    "PermissionsClientSecretRotation": {
+        "name": "PermissionsClientSecretRotation",
+        "label": "Allow consumer key and secret rotation",
+        "description": "Allows a user to rotate a connected app\u2019s consumer key and secret.",
+        "checked": false
+    },
+    "PermissionsChatterComposeUiCodesnippet": {
+        "name": "PermissionsChatterComposeUiCodesnippet",
+        "label": "Allow Inclusion of Code Snippets from UI",
+        "description": "Allow users to post code snippets from the UI where available.",
+        "checked": false
+    },
+    "PermissionsListEmailSend": {
+        "name": "PermissionsListEmailSend",
+        "label": "Allow sending of List Emails",
+        "description": "Allow users to create, edit and send List Emails",
+        "checked": false
+    },
+    "PermissionsViewMLModels": {
+        "name": "PermissionsViewMLModels",
+        "label": "Allow users to view MLModels and related Entities",
+        "description": "Allow api read only access for Unified Model Tree for an AI Application, namely MLModels, MLModelFactors, MLModelMetrics, MLModelFactorComponents",
+        "checked": false
+    },
+    "PermissionsPrivacyDataAccess": {
+        "name": "PermissionsPrivacyDataAccess",
+        "label": "Allow user to access privacy data",
+        "description": "Allow user to access privacy data.",
+        "checked": false
+    },
+    "PermissionsManageExternalConnections": {
+        "name": "PermissionsManageExternalConnections",
+        "label": "Allow user to modify Private Connections",
+        "description": "Allow users to modify Private Connections through the Metadata, Tooling, and Connect APIs.",
+        "checked": false
+    },
+    "PermissionsApexRestServices": {
+        "name": "PermissionsApexRestServices",
+        "label": "Apex REST Services",
+        "description": "Allow access to Apex REST services",
+        "checked": false
+    },
+    "PermissionsApiEnabled": {
+        "name": "PermissionsApiEnabled",
+        "label": "API Enabled",
+        "description": "Access any Salesforce.com API.",
+        "checked": false
+    },
+    "PermissionsAssignTopics": {
+        "name": "PermissionsAssignTopics",
+        "label": "Assign Topics",
+        "description": "Assign existing topics to feed items. Remove topics from feed items.",
+        "checked": false
+    },
+    "PermissionsAuthorApex": {
+        "name": "PermissionsAuthorApex",
+        "label": "Author Apex",
+        "description": "Create Apex classes and triggers.",
+        "checked": false
+    },
+    "PermissionsBulkApiHardDelete": {
+        "name": "PermissionsBulkApiHardDelete",
+        "label": "Bulk API Hard Delete",
+        "description": "Delete records in the Bulk API without storing them in the Recycle Bin.",
+        "checked": false
+    },
+    "PermissionsCanApproveFeedPost": {
+        "name": "PermissionsCanApproveFeedPost",
+        "label": "Can Approve Feed Post and Comment",
+        "description": "Lets users control the visibility of content to other users by updating the status of a feed item or comment from pending review to published or from published to pending review. ",
+        "checked": false
+    },
+    "PermissionsChangeDashboardColors": {
+        "name": "PermissionsChangeDashboardColors",
+        "label": "Change Dashboard Colors",
+        "description": "Choose dashboard color theme and palette.",
+        "checked": false
+    },
+    "PermissionsChatterInternalUser": {
+        "name": "PermissionsChatterInternalUser",
+        "label": "Chatter Internal User",
+        "description": "Use all Chatter features.",
+        "checked": false
+    },
+    "PermissionsCloseConversations": {
+        "name": "PermissionsCloseConversations",
+        "label": "Close Conversation Threads",
+        "description": "Close conversation threads in profile, group, and topic feeds in Experience Cloud sites.",
+        "checked": false
+    },
+    "PermissionsConfigCustomRecs": {
+        "name": "PermissionsConfigCustomRecs",
+        "label": "Configure Custom Recommendations",
+        "description": "Add custom recommendations in the feed, motivating users to get engaged and take action.",
+        "checked": false
+    },
+    "PermissionsConnectOrgToEnvironmentHub": {
+        "name": "PermissionsConnectOrgToEnvironmentHub",
+        "label": "Connect Organization to Environment Hub",
+        "description": "Allows a user to connect this organization to an Environment Hub.",
+        "checked": false
+    },
+    "PermissionsManageHubConnections": {
+        "name": "PermissionsManageHubConnections",
+        "label": "Connect Org to Customer 360 Data Manager",
+        "description": "Allows a user to connect the org to Customer 360 Data Manager.",
+        "checked": false
+    },
+    "PermissionsManageC360AConnections": {
+        "name": "PermissionsManageC360AConnections",
+        "label": "Connect Org to Customer Data Platform",
+        "description": "Allows a user to connect the org to Customer Data Platform.",
+        "checked": false
+    },
+    "PermissionsAICreateInsightObjects": {
+        "name": "PermissionsAICreateInsightObjects",
+        "label": "Create AI Insight Objects",
+        "description": "Create objects associated with AI record insights, including the insight, value, reason, and feedback.",
+        "checked": false
+    },
+    "PermissionsCreateCustomizeDashboards": {
+        "name": "PermissionsCreateCustomizeDashboards",
+        "label": "Create and Customize Dashboards",
+        "description": "Create, edit, and delete dashboards in personal folders.",
+        "checked": false
+    },
+    "PermissionsCreateCustomizeFilters": {
+        "name": "PermissionsCreateCustomizeFilters",
+        "label": "Create and Customize List Views",
+        "description": "Create list views; modify and delete own list views.",
+        "checked": false
+    },
+    "PermissionsCreateCustomizeReports": {
+        "name": "PermissionsCreateCustomizeReports",
+        "label": "Create and Customize Reports",
+        "description": "Create, edit, and delete reports in personal folders.",
+        "checked": false
+    },
+    "PermissionsChatterOwnGroups": {
+        "name": "PermissionsChatterOwnGroups",
+        "label": "Create and Own New Chatter Groups",
+        "description": "Create and own new Chatter groups.",
+        "checked": false
+    },
+    "PermissionsManageNetworks": {
+        "name": "PermissionsManageNetworks",
+        "label": "Create and Set Up Experiences",
+        "description": "Create Experience Cloud sites, manage settings, membership, login and registration, branding, and associated Site.com site.",
+        "checked": false
+    },
+    "PermissionsPackaging2": {
+        "name": "PermissionsPackaging2",
+        "label": "Create and Update Second-Generation Packages",
+        "description": "Create and update these packages using the command-line interface.",
+        "checked": false
+    },
+    "PermissionsCreatePackaging": {
+        "name": "PermissionsCreatePackaging",
+        "label": "Create AppExchange Packages",
+        "description": "Create packages that can be distributed through AppExchange.",
+        "checked": false
+    },
+    "PermissionsManageCMS": {
+        "name": "PermissionsManageCMS",
+        "label": "Create CMS Workspaces and Channels",
+        "description": "Create Workspaces and Channels in Salesforce CMS.",
+        "checked": false
+    },
+    "PermissionsDistributeFromPersWksp": {
+        "name": "PermissionsDistributeFromPersWksp",
+        "label": "Create Content Deliveries",
+        "description": "Create content delivery links to share files that aren't managed by a library. To let a user create content deliveries for files in a library, enable Deliver Content for that user in the library.",
+        "checked": false
+    },
+    "PermissionsCreateDashboardFolders": {
+        "name": "PermissionsCreateDashboardFolders",
+        "label": "Create Dashboard Folders",
+        "description": "Create dashboard folders and manage these folders if sharing rights allow.",
+        "checked": false
+    },
+    "PermissionsCreateLtngTempFolder": {
+        "name": "PermissionsCreateLtngTempFolder",
+        "label": "Create Folders for Lightning Email Templates",
+        "description": "Create Folders for Lightning Email Templates",
+        "checked": false
+    },
+    "PermissionsCreateWorkspaces": {
+        "name": "PermissionsCreateWorkspaces",
+        "label": "Create Libraries",
+        "description": "Create libraries.",
+        "checked": false
+    },
+    "PermissionsChatterFileLink": {
+        "name": "PermissionsChatterFileLink",
+        "label": "Create Public Links",
+        "description": "Let users create links to share files externally. Unlike content deliveries, public links can't be password protected. To let a user create links to files in a library, enable Deliver Content for that user in the library.",
+        "checked": false
+    },
+    "PermissionsCreateReportFolders": {
+        "name": "PermissionsCreateReportFolders",
+        "label": "Create Report Folders",
+        "description": "Create report folders and manage these folders if sharing rights allow.",
+        "checked": false
+    },
+    "PermissionsCreateTopics": {
+        "name": "PermissionsCreateTopics",
+        "label": "Create Topics",
+        "description": "Create new topics by assigning them to feed items.",
+        "checked": false
+    },
+    "PermissionsCustomizeApplication": {
+        "name": "PermissionsCustomizeApplication",
+        "label": "Customize Application",
+        "description": "Customize the organization using App Setup menu options.",
+        "checked": false
+    },
+    "PermissionsPackaging2Delete": {
+        "name": "PermissionsPackaging2Delete",
+        "label": "Delete Second-Generation Packages",
+        "description": "Delete packages and package versions.",
+        "checked": false
+    },
+    "PermissionsDeleteTopics": {
+        "name": "PermissionsDeleteTopics",
+        "label": "Delete Topics",
+        "description": "Delete topics and remove all corresponding topic assignments from feed items.",
+        "checked": false
+    },
+    "PermissionsInstallPackaging": {
+        "name": "PermissionsInstallPackaging",
+        "label": "Download AppExchange Packages",
+        "description": "Install or uninstall AppExchange packages as system administrators.",
+        "checked": false
+    },
+    "PermissionsCanUseNewDashboardBuilder": {
+        "name": "PermissionsCanUseNewDashboardBuilder",
+        "label": "Drag-and-Drop Dashboard Builder",
+        "description": "Create, edit, and delete dashboards through the drag-and-drop dashboard builder interface.",
+        "checked": false
+    },
+    "PermissionsEditEvent": {
+        "name": "PermissionsEditEvent",
+        "label": "Edit Events",
+        "description": "Create, edit, and delete events.",
+        "checked": false
+    },
+    "PermissionsEditHtmlTemplates": {
+        "name": "PermissionsEditHtmlTemplates",
+        "label": "Edit HTML Templates",
+        "description": "Edit Classic HTML Email Templates.",
+        "checked": false
+    },
+    "PermissionsEditMyDashboards": {
+        "name": "PermissionsEditMyDashboards",
+        "label": "Edit My Dashboards",
+        "description": "Edit, move, save, and delete user's own dashboards in shared folders.",
+        "checked": false
+    },
+    "PermissionsChatterEditOwnPost": {
+        "name": "PermissionsChatterEditOwnPost",
+        "label": "Edit My Own Posts",
+        "description": "Allow users to edit their own feed items.",
+        "checked": false
+    },
+    "PermissionsEditMyReports": {
+        "name": "PermissionsEditMyReports",
+        "label": "Edit My Reports",
+        "description": "Edit, move, save, and delete user's own reports in shared folders.",
+        "checked": false
+    },
+    "PermissionsChatterEditOwnRecordPost": {
+        "name": "PermissionsChatterEditOwnRecordPost",
+        "label": "Edit Posts on Records I Own",
+        "description": "Allow users to edit feed items they manage.",
+        "checked": false
+    },
+    "PermissionsEditReadonlyFields": {
+        "name": "PermissionsEditReadonlyFields",
+        "label": "Edit Read Only Fields",
+        "description": "Edit fields that are read only due to page layouts or field-level security.",
+        "checked": false
+    },
+    "PermissionsEditTask": {
+        "name": "PermissionsEditTask",
+        "label": "Edit Tasks",
+        "description": "Create, edit, and delete tasks.",
+        "checked": false
+    },
+    "PermissionsEditTopics": {
+        "name": "PermissionsEditTopics",
+        "label": "Edit Topics",
+        "description": "Edit topic names and descriptions.",
+        "checked": false
+    },
+    "PermissionsAllowEmailIC": {
+        "name": "PermissionsAllowEmailIC",
+        "label": "Email-Based Identity Verification Option",
+        "description": "Provides an option to use email to verify identity, even if the user has a verified phone number.",
+        "checked": false
+    },
+    "PermissionsEnableBCTransactionPolling": {
+        "name": "PermissionsEnableBCTransactionPolling",
+        "label": "Enable blockchain transaction polling API",
+        "description": "Enable blockchain transaction polling API",
+        "checked": false
+    },
+    "PermissionsWorkCalibrationUser": {
+        "name": "PermissionsWorkCalibrationUser",
+        "label": "Enable WDC Calibration",
+        "description": "Allow WDC users to access WDC Calibration functionality.",
+        "checked": false
+    },
+    "PermissionsTransactionSecurityExempt": {
+        "name": "PermissionsTransactionSecurityExempt",
+        "label": "Exempt from Transaction Security",
+        "description": "Prevent a user\u2019s actions from triggering Transaction Security policies. Be careful in delegating this permission. Assign it only to essential users whose actions, such as automated or bulk API calls, are likely to block critical business processes.",
+        "checked": false
+    },
+    "PermissionsExportReport": {
+        "name": "PermissionsExportReport",
+        "label": "Export Reports",
+        "description": "Use Export Details and Printable View to export reports.",
+        "checked": false
+    },
+    "PermissionsContentHubUser": {
+        "name": "PermissionsContentHubUser",
+        "label": "Files Connect Cloud",
+        "description": "Access cloud-based external content sources, such as SharePoint Online.",
+        "checked": false
+    },
+    "PermissionsGiveRecognitionBadge": {
+        "name": "PermissionsGiveRecognitionBadge",
+        "label": "Give Recognition Badges in Experience Builder Sites",
+        "description": "Lets members give recognition badges to other members.",
+        "checked": false
+    },
+    "PermissionsPreventClassicExperience": {
+        "name": "PermissionsPreventClassicExperience",
+        "label": "Hide Option to Switch to Salesforce Classic",
+        "description": "Always use Lightning Experience; removes the Switcher so it's not possible to switch to Salesforce Classic.",
+        "checked": false
+    },
+    "PermissionsHideReadByList": {
+        "name": "PermissionsHideReadByList",
+        "label": "Hide the Seen By List",
+        "description": "Increases privacy in a private group by hiding the count and names of those who view its posts.",
+        "checked": false
+    },
+    "PermissionsImportCustomObjects": {
+        "name": "PermissionsImportCustomObjects",
+        "label": "Import Custom Objects",
+        "description": "Allows non-admin users to import Custom Objects using Data Import Wizard.",
+        "checked": false
+    },
+    "PermissionsCanInsertFeedSystemFields": {
+        "name": "PermissionsCanInsertFeedSystemFields",
+        "label": "Insert System Field Values for Chatter Feeds",
+        "description": "Set the author or creation date for a Chatter post or comment.",
+        "checked": false
+    },
+    "PermissionsChatterInviteExternalUsers": {
+        "name": "PermissionsChatterInviteExternalUsers",
+        "label": "Invite Customers To Chatter",
+        "description": "Invite Customers To Chatter",
+        "checked": false
+    },
+    "PermissionsLightningConsoleAllowedForUser": {
+        "name": "PermissionsLightningConsoleAllowedForUser",
+        "label": "Lightning Console User",
+        "description": "Gives the user access to Lightning console apps.",
+        "checked": false
+    },
+    "PermissionsLightningExperienceUser": {
+        "name": "PermissionsLightningExperienceUser",
+        "label": "Lightning Experience User",
+        "description": "Access Lightning Experience and switch between Lightning Experience and Salesforce Classic.",
+        "checked": false
+    },
+    "PermissionsAllowLightningLogin": {
+        "name": "PermissionsAllowLightningLogin",
+        "label": "Lightning Login User",
+        "description": "Use Lightning Login for Salesforce logins, which allows authentication with Salesforce Authenticator instead of a password. Users can individually enroll or cancel their enrollment in Lightning Login.",
+        "checked": false
+    },
+    "PermissionsManagePvtRptsAndDashbds": {
+        "name": "PermissionsManagePvtRptsAndDashbds",
+        "label": "Manage All Private Reports and Dashboards",
+        "description": "Allows full access to reports and dashboards in all other users' private folders (API only).",
+        "checked": false
+    },
+    "PermissionsManageAuthProviders": {
+        "name": "PermissionsManageAuthProviders",
+        "label": "Manage Auth. Providers",
+        "description": "Create and edit Auth. Providers",
+        "checked": false
+    },
+    "PermissionsEditBillingInfo": {
+        "name": "PermissionsEditBillingInfo",
+        "label": "Manage Billing",
+        "description": "Purchase additional licenses and features.",
+        "checked": false
+    },
+    "PermissionsBotManageBots": {
+        "name": "PermissionsBotManageBots",
+        "label": "Manage Bots",
+        "description": "Manage bot configuration.",
+        "checked": false
+    },
+    "PermissionsBotManageBotsTrainingData": {
+        "name": "PermissionsBotManageBotsTrainingData",
+        "label": "Manage Bots Training Data",
+        "description": "View and manage bot training data.",
+        "checked": false
+    },
+    "PermissionsManageCertificates": {
+        "name": "PermissionsManageCertificates",
+        "label": "Manage Certificates",
+        "description": "Ability to manage certificates",
+        "checked": false
+    },
+    "PermissionsManageChatterMessages": {
+        "name": "PermissionsManageChatterMessages",
+        "label": "Manage Chatter Messages and Direct Messages",
+        "description": "Access all users' messages sent in Chatter.",
+        "checked": false
+    },
+    "PermissionsManageRemoteAccess": {
+        "name": "PermissionsManageRemoteAccess",
+        "label": "Manage Connected Apps",
+        "description": "Manage, create, edit, and delete connected applications.",
+        "checked": false
+    },
+    "PermissionsManageSubscriptions": {
+        "name": "PermissionsManageSubscriptions",
+        "label": "Manage CRM Analytics Subscriptions",
+        "description": "Read and delete user subscriptions in Lightning Experience.",
+        "checked": false
+    },
+    "PermissionsManageCustomPermissions": {
+        "name": "PermissionsManageCustomPermissions",
+        "label": "Manage Custom Permissions",
+        "description": "Create, edit, and delete custom permissions.",
+        "checked": false
+    },
+    "PermissionsManageCustomReportTypes": {
+        "name": "PermissionsManageCustomReportTypes",
+        "label": "Manage Custom Report Types",
+        "description": "Create, edit, and delete custom report types.",
+        "checked": false
+    },
+    "PermissionsManageDashbdsInPubFolders": {
+        "name": "PermissionsManageDashbdsInPubFolders",
+        "label": "Manage Dashboards in Public Folders",
+        "description": "Create, edit, delete dashboards, and manage their sharing in all public folders.",
+        "checked": false
+    },
+    "PermissionsManageDataCategories": {
+        "name": "PermissionsManageDataCategories",
+        "label": "Manage Data Categories",
+        "description": "Create, edit, and delete data categories.",
+        "checked": false
+    },
+    "PermissionsManageDataIntegrations": {
+        "name": "PermissionsManageDataIntegrations",
+        "label": "Manage Data Integrations",
+        "description": "Monitor or abort Bulk API jobs.",
+        "checked": false
+    },
+    "PermissionsManageDynamicDashboards": {
+        "name": "PermissionsManageDynamicDashboards",
+        "label": "Manage Dynamic Dashboards",
+        "description": "Create, edit, and delete dynamic dashboards.",
+        "checked": false
+    },
+    "PermissionsManageEmailClientConfig": {
+        "name": "PermissionsManageEmailClientConfig",
+        "label": "Manage Email Client Configurations",
+        "description": "Create, edit, and delete Outlook configurations for Salesforce for Outlook.",
+        "checked": false
+    },
+    "PermissionsManageEncryptionKeys": {
+        "name": "PermissionsManageEncryptionKeys",
+        "label": "Manage Encryption Keys",
+        "description": "Manage tenant secrets.",
+        "checked": false
+    },
+    "PermissionsGovernNetworks": {
+        "name": "PermissionsGovernNetworks",
+        "label": "Manage Experiences",
+        "description": "Access Experience Management to view site dashboards and set up Reputation point system and levels.",
+        "checked": false
+    },
+    "PermissionsManageInteraction": {
+        "name": "PermissionsManageInteraction",
+        "label": "Manage Flow",
+        "description": "Create and edit Flows.",
+        "checked": false
+    },
+    "PermissionsManageHealthCheck": {
+        "name": "PermissionsManageHealthCheck",
+        "label": "Manage Health Check",
+        "description": "Ability to create new custom health check baselines",
+        "checked": false
+    },
+    "PermissionsLearningManager": {
+        "name": "PermissionsLearningManager",
+        "label": "Manage Learning",
+        "description": "Gives user permission to create Learning items.",
+        "checked": false
+    },
+    "PermissionsManageLearningReporting": {
+        "name": "PermissionsManageLearningReporting",
+        "label": "Manage Learning Reporting",
+        "description": "Create reports with associated objects for Learning Paths.",
+        "checked": false
+    },
+    "PermissionsEditBrandTemplates": {
+        "name": "PermissionsEditBrandTemplates",
+        "label": "Manage Letterheads",
+        "description": "Create, edit, and delete letterheads for HTML emails.",
+        "checked": false
+    },
+    "PermissionsManageExchangeConfig": {
+        "name": "PermissionsManageExchangeConfig",
+        "label": "Manage Lightning Sync",
+        "description": "Gives access to Lightning Sync Setup, Configurations, and Status pages in Salesforce Setup.",
+        "checked": false
+    },
+    "PermissionsManageMobile": {
+        "name": "PermissionsManageMobile",
+        "label": "Manage Mobile Configurations",
+        "description": "Access Salesforce Classic features.",
+        "checked": false
+    },
+    "PermissionsManageTwoFactor": {
+        "name": "PermissionsManageTwoFactor",
+        "label": "Manage Multi-Factor Authentication in API",
+        "description": "Use the API to manage user identity verification methods for multi-factor authentication.",
+        "checked": false
+    },
+    "PermissionsDelegatedTwoFactor": {
+        "name": "PermissionsDelegatedTwoFactor",
+        "label": "Manage Multi-Factor Authentication in User Interface",
+        "description": "Use tools in the user interface to manage and provide user support for multi-factor authentication.",
+        "checked": false
+    },
+    "PermissionsManagePropositions": {
+        "name": "PermissionsManagePropositions",
+        "label": "Manage Next Best Action Recommendations",
+        "description": "Create, update, and delete recommendations. Recommendations represent offers and actions that are recommended to users and customers as part of Next Best Action functionality. They are used with action strategies.",
+        "checked": false
+    },
+    "PermissionsManageRecommendationStrategies": {
+        "name": "PermissionsManageRecommendationStrategies",
+        "label": "Manage Next Best Action Strategies",
+        "description": "Create, update, and delete action strategies. Action strategies determine which recommendations are presented to users as Next Best Actions.",
+        "checked": false
+    },
+    "PermissionsManageOrchInstsAndWorkItems": {
+        "name": "PermissionsManageOrchInstsAndWorkItems",
+        "label": "Manage Orchestration Runs and Work Items",
+        "description": "Cancel and debug orchestration runs and reassign orchestration work items.",
+        "checked": false
+    },
+    "PermissionsManagePackageLicenses": {
+        "name": "PermissionsManagePackageLicenses",
+        "label": "Manage Package Licenses",
+        "description": "Manage package licenses in subscriber organizations.",
+        "checked": false
+    },
+    "PermissionsManageSearchPromotionRules": {
+        "name": "PermissionsManageSearchPromotionRules",
+        "label": "Manage Promoted Search Terms",
+        "description": "Create, edit, and delete promoted search terms.",
+        "checked": false
+    },
+    "PermissionsCanEditPrompts": {
+        "name": "PermissionsCanEditPrompts",
+        "label": "Manage Prompts",
+        "description": "Create, edit, and delete prompts for Lightning Experience in-app guidance.",
+        "checked": false
+    },
+    "PermissionsEditPublicTemplates": {
+        "name": "PermissionsEditPublicTemplates",
+        "label": "Manage Public Classic Email Templates",
+        "description": "Create, edit, and delete text emails, mail merge templates, and folders for public email templates.",
+        "checked": false
+    },
+    "PermissionsEditPublicDocuments": {
+        "name": "PermissionsEditPublicDocuments",
+        "label": "Manage Public Documents",
+        "description": "Create, edit, and delete folders for public documents.",
+        "checked": false
+    },
+    "PermissionsCreateLtngTempInPub": {
+        "name": "PermissionsCreateLtngTempInPub",
+        "label": "Manage Public Lightning Email Templates",
+        "description": "Manage Lightning email templates in the public folder.",
+        "checked": false
+    },
+    "PermissionsEditPublicFilters": {
+        "name": "PermissionsEditPublicFilters",
+        "label": "Manage Public List Views",
+        "description": "Create, edit, and delete public list views.",
+        "checked": false
+    },
+    "PermissionsManageReleaseUpdates": {
+        "name": "PermissionsManageReleaseUpdates",
+        "label": "Manage Release Updates",
+        "description": "Apply release updates and enable or disable test runs.",
+        "checked": false
+    },
+    "PermissionsManageAnalyticSnapshots": {
+        "name": "PermissionsManageAnalyticSnapshots",
+        "label": "Manage Reporting Snapshots",
+        "description": "Create, edit, and delete reporting snapshots.",
+        "checked": false
+    },
+    "PermissionsManageReportsInPubFolders": {
+        "name": "PermissionsManageReportsInPubFolders",
+        "label": "Manage Reports in Public Folders",
+        "description": "Create, edit, delete reports, and manage their sharing in all public folders.",
+        "checked": false
+    },
+    "PermissionsManageSecurityCommandCenter": {
+        "name": "PermissionsManageSecurityCommandCenter",
+        "label": "Manage Security Center",
+        "description": "View all Security Center pages and manage app configurations.",
+        "checked": false
+    },
+    "PermissionsManageSessionPermissionSets": {
+        "name": "PermissionsManageSessionPermissionSets",
+        "label": "Manage Session Permission Set Activations",
+        "description": "Add or remove activation records for session-based permission sets.",
+        "checked": false
+    },
+    "PermissionsManageSynonyms": {
+        "name": "PermissionsManageSynonyms",
+        "label": "Manage Synonyms",
+        "description": "Create, edit, and delete synonym groups.",
+        "checked": false
+    },
+    "PermissionsManageUnlistedGroups": {
+        "name": "PermissionsManageUnlistedGroups",
+        "label": "Manage Unlisted Groups",
+        "description": "View and moderate unlisted Chatter groups.",
+        "checked": false
+    },
+    "PermissionsMassInlineEdit": {
+        "name": "PermissionsMassInlineEdit",
+        "label": "Mass Edits from Lists",
+        "description": "Edit multiple records simultaneously from a list with inline editing.",
+        "checked": false
+    },
+    "PermissionsEmailMass": {
+        "name": "PermissionsEmailMass",
+        "label": "Mass Email",
+        "description": "Send mass emails to contacts and leads.",
+        "checked": false
+    },
+    "PermissionsMergeTopics": {
+        "name": "PermissionsMergeTopics",
+        "label": "Merge Topics",
+        "description": "Merge one or more topics.",
+        "checked": false
+    },
+    "PermissionsModerateChatter": {
+        "name": "PermissionsModerateChatter",
+        "label": "Moderate Chatter",
+        "description": "Deactivate Chatter Free users, assign moderator privileges to Chatter Free users, and remove posts.",
+        "checked": false
+    },
+    "PermissionsModerateNetworkUsers": {
+        "name": "PermissionsModerateNetworkUsers",
+        "label": "Moderate Experience Cloud Site Users",
+        "description": "Allows users to manage Experience Cloud site member access, such as freezing a user.",
+        "checked": false
+    },
+    "PermissionsModifyAllData": {
+        "name": "PermissionsModifyAllData",
+        "label": "Modify All Data",
+        "description": "Create, edit, and delete all organization data, regardless of sharing settings.",
+        "checked": false
+    },
+    "PermissionsModifyDataClassification": {
+        "name": "PermissionsModifyDataClassification",
+        "label": "Modify Data Classification",
+        "description": "View and modify field-level data classification metadata.",
+        "checked": false
+    },
+    "PermissionsModifyMetadata": {
+        "name": "PermissionsModifyMetadata",
+        "label": "Modify Metadata Through Metadata API Functions",
+        "description": "Create, read, edit, and delete org metadata. Users must have appropriate access rights to the metadata they're trying to modify. Be careful if delegating this permission. Some metadata executes in system context, when object permissions, field-level security, and sharing rules that apply to the user are ignored. For example, Apex executes in system context.",
+        "checked": false
+    },
+    "PermissionsTwoFactorApi": {
+        "name": "PermissionsTwoFactorApi",
+        "label": "Multi-Factor Authentication for API Logins",
+        "description": "Require users to enter a code from a time-based one-time password (TOTP) authenticator app instead of the emailed security token in the API.",
+        "checked": false
+    },
+    "PermissionsForceTwoFactor": {
+        "name": "PermissionsForceTwoFactor",
+        "label": "Multi-Factor Authentication for User Interface Logins",
+        "description": "Require users to provide an additional verification method in addition to their username and password when logging in to Salesforce orgs.",
+        "checked": false
+    },
+    "PermissionsOmnichannelInventorySync": {
+        "name": "PermissionsOmnichannelInventorySync",
+        "label": "Omnichannel Inventory Sync",
+        "description": "Sync inventory using the Omnichannel Inventory Service APIs.",
+        "checked": false
+    },
+    "PermissionsPasswordNeverExpires": {
+        "name": "PermissionsPasswordNeverExpires",
+        "label": "Password Never Expires",
+        "description": "Prevent the user's password from expiring.",
+        "checked": false
+    },
+    "PermissionsFeedPinning": {
+        "name": "PermissionsFeedPinning",
+        "label": "Pin Posts in Feeds",
+        "description": "Assign permission to pin a post in this org and your Experience Cloud sites.",
+        "checked": false
+    },
+    "PermissionsQuipMetricsAccess": {
+        "name": "PermissionsQuipMetricsAccess",
+        "label": "Quip Metrics",
+        "description": "Allows users to access Quip metrics.",
+        "checked": false
+    },
+    "PermissionsQuipUserEngagementMetrics": {
+        "name": "PermissionsQuipUserEngagementMetrics",
+        "label": "Quip User Engagement Metrics",
+        "description": "Allow users to access Quip user engagement metrics.",
+        "checked": false
+    },
+    "PermissionsLtngPromoReserved01UserPerm": {
+        "name": "PermissionsLtngPromoReserved01UserPerm",
+        "label": "Remain in Salesforce Classic",
+        "description": "Gives the user ability to remain in Salesforce Classic instead of being switched to Lightning Experience automatically.",
+        "checked": false
+    },
+    "PermissionsRemoveDirectMessageMembers": {
+        "name": "PermissionsRemoveDirectMessageMembers",
+        "label": "Remove People from Direct Messages",
+        "description": "Lets a user remove others from direct messages the user is in.",
+        "checked": false
+    },
+    "PermissionsNewReportBuilder": {
+        "name": "PermissionsNewReportBuilder",
+        "label": "Report Builder",
+        "description": "Create, edit, and delete reports using the classic report builder interface.",
+        "checked": false
+    },
+    "PermissionsCreateReportInLightning": {
+        "name": "PermissionsCreateReportInLightning",
+        "label": "Report Builder (Lightning Experience)",
+        "description": "Create, edit, and delete reports using the enhanced report builder interface. Only available in Lightning Experience.",
+        "checked": false
+    },
+    "PermissionsRunFlow": {
+        "name": "PermissionsRunFlow",
+        "label": "Run Flows",
+        "description": "In this org, run any active flow. In Experience Builder sites, run any active flow that\u2019s distributed with the Flow Lightning component.",
+        "checked": false
+    },
+    "PermissionsRunReports": {
+        "name": "PermissionsRunReports",
+        "label": "Run Reports",
+        "description": "Run reports and dashboards.",
+        "checked": false
+    },
+    "PermissionsIsotopeLEX": {
+        "name": "PermissionsIsotopeLEX",
+        "label": "Salesforce Anywhere in Lightning Experience",
+        "description": "Use Salesforce Anywhere in Lightning Experience",
+        "checked": false
+    },
+    "PermissionsIsotopeAccess": {
+        "name": "PermissionsIsotopeAccess",
+        "label": "Salesforce Anywhere on Mobile",
+        "description": "Use the Salesforce Anywhere mobile app",
+        "checked": false
+    },
+    "PermissionsNativeWebviewScrolling": {
+        "name": "PermissionsNativeWebviewScrolling",
+        "label": "Salesforce Mobile App: Native scrolling on webviews",
+        "description": "Replace ui:scroller with native scrolling on webviews. Users experience smoother scrolling.",
+        "checked": false
+    },
+    "PermissionsScheduleReports": {
+        "name": "PermissionsScheduleReports",
+        "label": "Schedule Reports",
+        "description": "Schedule report refreshes in Salesforce Classic, and send email notifications that include refreshed reports in HTML format. Your organization's data may be saved and/or processed by third-party services, and Salesforce is not responsible for data users choose to send outside of Salesforce.",
+        "checked": false
+    },
+    "PermissionsSelectFilesFromSalesforce": {
+        "name": "PermissionsSelectFilesFromSalesforce",
+        "label": "Select Files from Salesforce",
+        "description": "Selecting a Salesforce file is an option when attaching a file.",
+        "checked": false
+    },
+    "PermissionsSendAnnouncementEmails": {
+        "name": "PermissionsSendAnnouncementEmails",
+        "label": "Send announcement emails",
+        "description": "Allows email notifications to be sent when a user posts an announcement.",
+        "checked": false
+    },
+    "PermissionsSendCustomNotifications": {
+        "name": "PermissionsSendCustomNotifications",
+        "label": "Send Custom Notifications",
+        "description": "Trigger the Send Custom Notification action in flows that run in user context, REST API calls, and Apex callouts.",
+        "checked": false
+    },
+    "PermissionsEmailSingle": {
+        "name": "PermissionsEmailSingle",
+        "label": "Send Email",
+        "description": "Send email to a single contact or lead.",
+        "checked": false
+    },
+    "PermissionsTransactionalEmailSend": {
+        "name": "PermissionsTransactionalEmailSend",
+        "label": "Send Non-Commercial Email",
+        "description": "Send non-commercial end-user emails to contacts, leads, and person accounts who opt out of email or who choose Don't Market in data privacy records. This permission doesn't apply to the Cases email action, Lightning Experience list email, or Salesforce Classic mass email.",
+        "checked": false
+    },
+    "PermissionsEnableNotifications": {
+        "name": "PermissionsEnableNotifications",
+        "label": "Send Outbound Messages",
+        "description": "Send outbound messages to an external Web service API.",
+        "checked": false
+    },
+    "PermissionsEnableCommunityAppLauncher": {
+        "name": "PermissionsEnableCommunityAppLauncher",
+        "label": "Show App Launcher in Experience Cloud Sites",
+        "description": "Display the App Launcher icon in Experience Cloud sites.",
+        "checked": false
+    },
+    "PermissionsShowCompanyNameAsUserBadge": {
+        "name": "PermissionsShowCompanyNameAsUserBadge",
+        "label": "Show Company Name as Site Role",
+        "description": "Allow users to see other users' company name in site role.",
+        "checked": false
+    },
+    "PermissionsCustomSidebarOnAllPages": {
+        "name": "PermissionsCustomSidebarOnAllPages",
+        "label": "Show Custom Sidebar On All Pages",
+        "description": "Display a custom sidebar on all pages in Salesforce.com.",
+        "checked": false
+    },
+    "PermissionsSkipIdentityConfirmation": {
+        "name": "PermissionsSkipIdentityConfirmation",
+        "label": "Skip Device Activation at Login",
+        "description": "Allow a Salesforce Customer Support representative to log in to this org without verifying their identity in order to troubleshoot an issue.",
+        "checked": false
+    },
+    "PermissionsSubscribeToLightningDashboards": {
+        "name": "PermissionsSubscribeToLightningDashboards",
+        "label": "Subscribe to Dashboards",
+        "description": "Subscribe to dashboards in Lightning Experience to schedule dashboard refreshes and send notifications by email. Your organization's data may be saved and/or processed by third-party services, and Salesforce is not responsible for data users choose to send outside of Salesforce.",
+        "checked": false
+    },
+    "PermissionsSubscribeDashboardToOtherUsers": {
+        "name": "PermissionsSubscribeDashboardToOtherUsers",
+        "label": "Subscribe to Dashboards: Add Recipients",
+        "description": "Specify recipients of email notifications from dashboard subscriptions in Lightning Experience. All recipient email addresses appear in the subscription email's \"to:\" field, so subscription email recipients will be able to see each other's email addresses regardless of User Sharing settings.",
+        "checked": false
+    },
+    "PermissionsSubscribeDashboardRolesGrps": {
+        "name": "PermissionsSubscribeDashboardRolesGrps",
+        "label": "Subscribe to Dashboards: Send to Groups and Roles",
+        "description": "Set public groups and roles as recipients of dashboard subscriptions in Lightning Experience.",
+        "checked": false
+    },
+    "PermissionsSubscribeToLightningReports": {
+        "name": "PermissionsSubscribeToLightningReports",
+        "label": "Subscribe to Reports",
+        "description": "Subscribe to reports in Lightning Experience to schedule report refreshes and send notifications by email. Your organization's data may be saved and/or processed by third-party services, and Salesforce is not responsible for data users choose to send outside of Salesforce.",
+        "checked": false
+    },
+    "PermissionsSubscribeReportToOtherUsers": {
+        "name": "PermissionsSubscribeReportToOtherUsers",
+        "label": "Subscribe to Reports: Add Recipients",
+        "description": "Specify recipients of email notifications from report subscriptions in Lightning Experience. All recipient email addresses appear in the subscription email's \"to:\" field, so subscription email recipients will be able to see other's email addresses regardless of User Sharing settings.",
+        "checked": false
+    },
+    "PermissionsSubscribeReportRolesGrps": {
+        "name": "PermissionsSubscribeReportRolesGrps",
+        "label": "Subscribe to Reports: Send to Groups and Roles",
+        "description": "Set public groups and roles as recipients of report subscriptions in Lightning Experience.",
+        "checked": false
+    },
+    "PermissionsSubscribeReportsRunAsUser": {
+        "name": "PermissionsSubscribeReportsRunAsUser",
+        "label": "Subscribe to Reports: Set Running User",
+        "description": "Specify who report subscription recipients see report data as. The specified person's data access determines what data the report displays.",
+        "checked": false
+    },
+    "PermissionsSandboxTestingInCommunityApp": {
+        "name": "PermissionsSandboxTestingInCommunityApp",
+        "label": "Test Sandboxes in Mobile Publisher for Experience Cloud",
+        "description": "Allows testing a sandbox experience in the mobile publisher for Experience Cloud.",
+        "checked": false
+    },
+    "PermissionsTransferAnyEntity": {
+        "name": "PermissionsTransferAnyEntity",
+        "label": "Transfer Record",
+        "description": "Change the owner of most records.",
+        "checked": false
+    },
+    "PermissionsConsentApiUpdate": {
+        "name": "PermissionsConsentApiUpdate",
+        "label": "Update Consent Preferences Using REST API",
+        "description": "Use the PATCH method on the Consent REST API resource to update consent preferences.",
+        "checked": false
+    },
+    "PermissionsPublishPackaging": {
+        "name": "PermissionsPublishPackaging",
+        "label": "Upload AppExchange Packages",
+        "description": "Upload packages to AppExchange for distribution.",
+        "checked": false
+    },
+    "PermissionsIdentityEnabled": {
+        "name": "PermissionsIdentityEnabled",
+        "label": "Use Identity Features",
+        "description": "Gives the user access to Identity features such as App Launcher.",
+        "checked": false
+    },
+    "PermissionsUseOmnichannelInventoryAPIs": {
+        "name": "PermissionsUseOmnichannelInventoryAPIs",
+        "label": "Use Omnichannel Inventory APIs",
+        "description": "Manage inventory using the Omnichannel Inventory Service APIs.",
+        "checked": false
+    },
+    "PermissionsUseAddOrderItemSummaryAPIs": {
+        "name": "PermissionsUseAddOrderItemSummaryAPIs",
+        "label": "Use Order Management Add Order Item Summary APIs",
+        "description": "Call the Order Management Add Order Item Summary APIs. Required for product exchanges.",
+        "checked": false
+    },
+    "PermissionsUseReturnOrderAPIs": {
+        "name": "PermissionsUseReturnOrderAPIs",
+        "label": "Use Order Management Return APIs",
+        "description": "Allows a user to call the Order Management Return Order APIs.",
+        "checked": false
+    },
+    "PermissionsUseReturnOrder": {
+        "name": "PermissionsUseReturnOrder",
+        "label": "Use Order Management Return Order",
+        "description": "Allows a user to access the Order Management Return Order Objects.",
+        "checked": false
+    },
+    "PermissionsUseRepricing": {
+        "name": "PermissionsUseRepricing",
+        "label": "Use Repricing Objects and APIs",
+        "description": "Allow access to order product repricing features.",
+        "checked": false
+    },
+    "PermissionsCanVerifyComment": {
+        "name": "PermissionsCanVerifyComment",
+        "label": "Verify Answers to Chatter Questions",
+        "description": "Mark answers to Chatter questions as verified.",
+        "checked": false
+    },
+    "PermissionsAIViewInsightObjects": {
+        "name": "PermissionsAIViewInsightObjects",
+        "label": "View AI Insight Objects",
+        "description": "View objects associated with AI record insights, including the insight, value, reason, and feedback.",
+        "checked": false
+    },
+    "PermissionsViewAllCustomSettings": {
+        "name": "PermissionsViewAllCustomSettings",
+        "label": "View All Custom Settings",
+        "description": "Let users view all custom setting data directly and via the API.",
+        "checked": false
+    },
+    "PermissionsViewAllData": {
+        "name": "PermissionsViewAllData",
+        "label": "View All Data",
+        "description": "View all organizational data, regardless of sharing settings.",
+        "checked": false
+    },
+    "PermissionsViewAllForeignKeyNames": {
+        "name": "PermissionsViewAllForeignKeyNames",
+        "label": "View All Lookup Record Names",
+        "description": "View the record names in lookup fields regardless of sharing settings. Lookup fields include system fields, such as Created By and Last Modified By.",
+        "checked": false
+    },
+    "PermissionsViewUserPII": {
+        "name": "PermissionsViewUserPII",
+        "label": "View Concealed Field Data",
+        "description": "View field data, such as sensitive or personally identifiable information, that is concealed from other users.",
+        "checked": false
+    },
+    "PermissionsViewPublicDashboards": {
+        "name": "PermissionsViewPublicDashboards",
+        "label": "View Dashboards in Public Folders",
+        "description": "View and access dashboards in public folders, which does not include others\u2019 personal folders.",
+        "checked": false
+    },
+    "PermissionsViewDataCategories": {
+        "name": "PermissionsViewDataCategories",
+        "label": "View Data Categories in Setup",
+        "description": "View the Data Categories page.",
+        "checked": false
+    },
+    "PermissionsViewDeveloperName": {
+        "name": "PermissionsViewDeveloperName",
+        "label": "View DeveloperName",
+        "description": "View the DeveloperName field via the API.",
+        "checked": false
+    },
+    "PermissionsViewEncryptedData": {
+        "name": "PermissionsViewEncryptedData",
+        "label": "View Encrypted Data",
+        "description": "View the value of encrypted fields in plain text.",
+        "checked": false
+    },
+    "PermissionsViewEventLogFiles": {
+        "name": "PermissionsViewEventLogFiles",
+        "label": "View Event Log Files",
+        "description": "Get CSV event log files via the API.",
+        "checked": false
+    },
+    "PermissionsViewFlowUsageAndFlowEventData": {
+        "name": "PermissionsViewFlowUsageAndFlowEventData",
+        "label": "View Flow Usage and Flow Event Data",
+        "description": "Unsupported. Use the View Setup and Configuration permission to let users access flow usage data and flow standard platform event data.",
+        "checked": false
+    },
+    "PermissionsViewHealthCheck": {
+        "name": "PermissionsViewHealthCheck",
+        "label": "View Health Check",
+        "description": "View Security Health Check Page",
+        "checked": false
+    },
+    "PermissionsViewHelpLink": {
+        "name": "PermissionsViewHelpLink",
+        "label": "View Help Link",
+        "description": "Allow user to view help link.",
+        "checked": false
+    },
+    "PermissionsViewPlatformEvents": {
+        "name": "PermissionsViewPlatformEvents",
+        "label": "View Login Forensics Events",
+        "description": "Query Login Forensics events using the API.",
+        "checked": false
+    },
+    "PermissionsViewMyTeamsDashboards": {
+        "name": "PermissionsViewMyTeamsDashboards",
+        "label": "View My Team's Dashboards",
+        "description": "View dashboards owned by people under them in the role hierarchy.",
+        "checked": false
+    },
+    "PermissionsViewDataLeakageEvents": {
+        "name": "PermissionsViewDataLeakageEvents",
+        "label": "View Real-Time Event Monitoring Data",
+        "description": "Query Real-Time Event Monitoring Data using the API.",
+        "checked": false
+    },
+    "PermissionsViewPublicReports": {
+        "name": "PermissionsViewPublicReports",
+        "label": "View Reports in Public Folders",
+        "description": "View and access reports in public folders, which does not include others\u2019 personal folders.",
+        "checked": false
+    },
+    "PermissionsViewRestrictionAndScopingRules": {
+        "name": "PermissionsViewRestrictionAndScopingRules",
+        "label": "View Restriction and Scoping Rules",
+        "description": "View Restriction and Scoping Rules.",
+        "checked": false
+    },
+    "PermissionsViewRoles": {
+        "name": "PermissionsViewRoles",
+        "label": "View Roles and Role Hierarchy",
+        "description": "Allow user to view roles and role hierarchy.",
+        "checked": false
+    },
+    "PermissionsViewSecurityCommandCenter": {
+        "name": "PermissionsViewSecurityCommandCenter",
+        "label": "View Security Center pages",
+        "description": "View the Security Health check page, and all pages in Security Center except the Connected Tenants page.",
+        "checked": false
+    },
+    "PermissionsViewSetup": {
+        "name": "PermissionsViewSetup",
+        "label": "View Setup and Configuration",
+        "description": "View the App Setup and Administrative Settings pages.",
+        "checked": false
+    },
+    "PermissionsViewAnomalyEvents": {
+        "name": "PermissionsViewAnomalyEvents",
+        "label": "View Threat Detection Events",
+        "description": "Allows user to view the threat detection events.",
+        "checked": false
+    },
+    "PermissionsBypassMFAForUiLogins": {
+        "name": "PermissionsBypassMFAForUiLogins",
+        "label": "Waive Multi-Factor Authentication for Exempt Users",
+        "description": " Disable MFA challenges on direct UI logins for users or orgs that aren\u2019t required by Salesforce to use multi-factor authentication, per the Salesforce Trust and Compliance Documentation. This permission overrides the Multi-Factor Authentication for User Interface Logins user permission and the Require multi-factor authentication (MFA) for all direct UI logins to your Salesforce org setting.",
+        "checked": false
+    },
+    "PermissionsDataExport": {
+        "name": "PermissionsDataExport",
+        "label": "Weekly Data Export",
+        "description": "Run the weekly data export service.",
+        "checked": false
+    },
+    "PermissionsAssignPermissionSets": {
+        "name": "PermissionsAssignPermissionSets",
+        "label": "Assign Permission Sets",
+        "description": "Assign permission sets to users.",
+        "checked": false
+    },
+    "PermissionsManageInternalUsers": {
+        "name": "PermissionsManageInternalUsers",
+        "label": "Manage Internal Users",
+        "description": "Create and edit internal users.",
+        "checked": false
+    },
+    "PermissionsManageIpAddresses": {
+        "name": "PermissionsManageIpAddresses",
+        "label": "Manage IP Addresses",
+        "description": "Create, edit, and delete trusted IP ranges.",
+        "checked": false
+    },
+    "PermissionsManageLoginAccessPolicies": {
+        "name": "PermissionsManageLoginAccessPolicies",
+        "label": "Manage Login Access Policies",
+        "description": "Specify the login access policies that apply to administrators and support organizations.",
+        "checked": false
+    },
+    "PermissionsManagePasswordPolicies": {
+        "name": "PermissionsManagePasswordPolicies",
+        "label": "Manage Password Policies",
+        "description": "Set password restrictions and login lockout policies for all users.",
+        "checked": false
+    },
+    "PermissionsManageProfilesPermissionsets": {
+        "name": "PermissionsManageProfilesPermissionsets",
+        "label": "Manage Profiles and Permission Sets",
+        "description": "Create, edit, and delete profiles and permission sets.",
+        "checked": false
+    },
+    "PermissionsManageRoles": {
+        "name": "PermissionsManageRoles",
+        "label": "Manage Roles",
+        "description": "Create, edit, and delete roles.",
+        "checked": false
+    },
+    "PermissionsManageSharing": {
+        "name": "PermissionsManageSharing",
+        "label": "Manage Sharing",
+        "description": "Create, edit, and recalculate sharing rules, edit organization-wide defaults, and enable the external sharing model.",
+        "checked": false
+    },
+    "PermissionsManageUsers": {
+        "name": "PermissionsManageUsers",
+        "label": "Manage Users",
+        "description": "Create, edit, and deactivate users, and manage security settings, including profiles and roles.",
+        "checked": false
+    },
+    "PermissionsResetPasswords": {
+        "name": "PermissionsResetPasswords",
+        "label": "Reset User Passwords and Unlock Users",
+        "description": "Unlock users whose accounts are locked, and reset user passwords.",
+        "checked": false
+    },
+    "PermissionsViewAllProfiles": {
+        "name": "PermissionsViewAllProfiles",
+        "label": "View All Profiles",
+        "description": "View all user profiles, regardless of profile filtering setting.",
+        "checked": false
+    },
+    "PermissionsViewAllUsers": {
+        "name": "PermissionsViewAllUsers",
+        "label": "View All Users",
+        "description": "View all users, regardless of sharing settings.",
+        "checked": false
+    }
+}
