@@ -27,7 +27,7 @@
     "jsforce": "^3.8.1",
     "form-data": "^4.0.0",
     "mime-types": "^2.1.35",
-    "zod": "catalog:"
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

@@ -98,7 +98,7 @@
     "tailwindcss-animate": "^1.0.7",
     "unstorage": "^1.10.1",
     "vaul": "^1.1.2",
-    "zod": "catalog:"
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@types/jsforce": "^1.11.5",
