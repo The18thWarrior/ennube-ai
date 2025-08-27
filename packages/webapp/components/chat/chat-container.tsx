@@ -17,7 +17,7 @@ import { ComponentConfigSchema } from '../custom-response';
 import { JsonView } from '@/components/ui/json-view';
 import CustomResponse from '@/components/custom-response';
 import { useChat } from '@ai-sdk/react';
-import { UIMessage, Message } from 'ai';
+import { DefaultChatTransport, UIMessage } from 'ai';
 import { nanoid } from 'nanoid';
 import ChatInput from './chat-input';
 import error from 'next/error';
@@ -25,6 +25,7 @@ import { renderMessage } from './chat-message';
 import { useMessageHistory } from '@/hooks/useMessageHistory';
 import {avatarOptions, AgentSelector} from '@/components/chat/agents';
 import NameComponent from './chat-name';
+import MarkdownEditor from './overtype-input';
 
 /**
  * Simple chat container using n8n/chat (embed mode)
@@ -38,8 +39,9 @@ const ChatContainer = ({
   initialMessages,
   name,
   agent,
-}: { id?: string | undefined; initialMessages?: Message[]; name?: string | null; agent?: string | null } = {}) => {
+}: { id?: string | undefined; initialMessages?: UIMessage[]; name?: string | null; agent?: string | null } = {}) => {
     const { theme } = useTheme();
+    const [input, handleInputChange] = React.useState('');
     const { data: session } = useSession();
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const [mounted, setMounted] = React.useState(false);
@@ -50,35 +52,52 @@ const ChatContainer = ({
     // Use the ai-sdk/react chat hook
     const {
         messages,
-        input,
-        setInput,
         status,
-        handleInputChange,
-        handleSubmit,
-        append,
+        sendMessage,
         error,
         id: threadId
     } = useChat({
         id,
-        initialMessages: initialMessages || [],        
-        api: `/api/chat?agent=${selectedAvatar}`,
+        messages: initialMessages || [],   
+        transport: new DefaultChatTransport({
+            api: `/api/chat?agent=${selectedAvatar}`,
+        }),
+        
         onFinish: (message) => {
-            //console.log('onfinish', message, messages);
+            console.log('onfinish', message, messages);
             
             //setThread(threadId, [...messages, message], _name || '');
             setTimeout(() => {
-                setThread(threadId, [...messages], _name || '', selectedAvatar);
+                setThread(threadId, [...messages, message.message], _name || '', selectedAvatar);
                 messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
             }, 100);
         },
-        
+        onError: (err) => {
+            console.error('Chat error:', err);
+        },
         // experimental_prepareRequestBody({ messages, id }) {
         //     return { message: messages[messages.length - 1], id };
         // },
     });
-    console.log(messages);
+    console.log('Chat container initialized', messages, initialMessages);
     const isLoading = status === 'submitted' || status === 'streaming';
-
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        //console.log(e)
+        //e.currentTarget.preventDefault();
+        setThread(threadId, [...messages, {
+            id: nanoid(),
+            role: 'user',
+            parts: [
+                {
+                    id: nanoid(),
+                    type: 'text',
+                    text: input,
+                },
+            ],
+        }], _name || '', selectedAvatar);
+        sendMessage({ text: input });
+        handleInputChange('');
+    };
     // Only render after mount to avoid hydration mismatch
     useEffect(() => {
         setMounted(true);
@@ -157,13 +176,13 @@ const ChatContainer = ({
                     </div>
                 </div>
             </div>
-            <div className={`py-4 h-[10dvh] bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60  ${styles.wfill}`}>
+            <div className={`pt-2 h-[10dvh] bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60  ${styles.wfill}`}>
                 {error && <div className="text-red-500 mb-2">Error: {error.message}</div>}
-                <ChatInput
-                input={input}
-                handleInputChange={handleInputChange}
-                handleSubmit={handleSubmit}
-                isLoading={isLoading}
+                <MarkdownEditor
+                    input={input}
+                    handleInputChange={handleInputChange}
+                    handleSubmit={handleSubmit}
+                    isLoading={isLoading}
                 />
             </div>
         </div>

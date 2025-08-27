@@ -8,7 +8,7 @@ import z from "zod";
 export const getCredentialsTool = (subId: string) => {
     return tool({
         description: 'Retrieve Salesforce credentials for a user, should be used to retrieve the running user Id. Is necessary as for any queries relative to ownership.',
-        async execute() {
+        execute: async ({}) => {
             if (!subId) throw new Error('subId is required');
             const credentials = await getSalesforceCredentialsBySub(subId);
                 
@@ -36,8 +36,6 @@ export const getCredentialsTool = (subId: string) => {
 
             return sanitizedCredentials;
         },
-        parameters: z.object({
-            
-        }),
+        inputSchema: z.object({})
     });
 }

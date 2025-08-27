@@ -12,7 +12,7 @@ import { JsonView } from '@/components/ui/json-view';
 import { JsonRecord } from '../generalized-result';
 import CustomResponse from '@/components/custom-response';
 import { useChat } from '@ai-sdk/react';
-import { UIMessage, Message } from 'ai';
+import { UIMessage, UIDataTypes, UIMessagePart, UITools, ToolUIPart, isToolUIPart } from 'ai';
 import { nanoid } from 'nanoid';
 import ChatInput from './chat-input';
 import error from 'next/error';
@@ -31,98 +31,20 @@ import { ExecutionDetailsPanel } from '@/components/executions/execution-details
 import { Session } from 'next-auth';
 import { O } from '@upstash/redis/zmscore-CgRD7oFR';
 import { formatDistanceToNow } from 'date-fns';
+import { CustomerProfile } from '@/hooks/useCustomerProfile';
 
 // Custom message rendering
-export const renderMessage = (msg: Message, idx: number, agent: ReactNode, theme: 'dark' | 'light' | 'system', session: Session | null) => {
+export const renderMessage = (msg: UIMessage, idx: number, agent: ReactNode, theme: 'dark' | 'light' | 'system', session: Session | null) => {
     
     // If the message is from the user, always render as text
     if (msg.role === 'user') {
         return RenderHtmlComponent(DefaultMessageComponent(msg, theme), msg, theme, agent, session);
     }
-
-    // Try to parse the message for custom-ui or json
-    if (isJson(msg.content)) {
-        if (parseAndValidateResponse(msg.content, ComponentConfigSchema)) {
-            return (
-                
-                <span
-                    className={[
-                        styles.messageBubble,
-                        styles.botBubble,
-                        theme === 'dark' ? styles.darkBubble : styles.lightBubble,
-                    ].join(' ')}
-                    style={{ padding: 0, background: 'none', border: 'none' }}
-                >
-                    {RenderHtmlComponent(<CustomResponse config={getJsonData(msg.content)} />, msg, theme, agent, session)}
-                </span>
-            );
-        }
-        const jsonData = getJsonData(msg.content);
-        if (jsonData && parseAndValidateResponse(jsonData.data, ComponentConfigSchema)) {
-            return (
-                <span
-                    className={[
-                        styles.messageBubble,
-                        styles.botBubble,
-                        theme === 'dark' ? styles.darkBubble : styles.lightBubble,
-                    ].join(' ')}
-                    style={{ padding: 0, background: 'none', border: 'none' }}
-                >
-                    {RenderHtmlComponent(<CustomResponse config={jsonData.data} />, msg, theme, agent, session)}
-                </span>
-            );
-        }
-        if (jsonData) {
-            return (
-                <span
-                    className={[
-                        styles.messageBubble,
-                        styles.botBubble,
-                        theme === 'dark' ? styles.darkBubble : styles.lightBubble,
-                    ].join(' ')}
-                    style={{ padding: 0, background: 'none', border: 'none' }}
-                >
-                    {RenderHtmlComponent( MessageComponentWrapper(<JsonRecord data={jsonData} className='min-w-3/4' />, msg.role, theme), msg, theme, agent, session)}
-                </span>
-            );
-        }
-
-        return (
-            <span
-                className={[
-                    styles.messageBubble,
-                    styles.botBubble,
-                    theme === 'dark' ? styles.darkBubble : styles.lightBubble,
-                ].join(' ')}
-                style={{ padding: 0, background: 'none', border: 'none' }}
-            >
-                {RenderHtmlComponent( MessageComponentWrapper(<JsonRecord data={jsonData}  className='min-w-3/4' />, msg.role, theme), msg, theme, agent, session)}
-            </span>
-        );
-        
-    }
-
     // Default: render as text
     return RenderHtmlComponent(DefaultMessageComponent(msg, theme), msg, theme, agent, session);
 };
 
-const DefaultMessageComponent = (msg: Message, theme: 'dark' | 'light' | 'system') => {
-    return MessageComponentWrapper( <span >{msg.content}</span>, msg.role, theme);
-};
-
-const MessageComponentWrapper = (Component: React.ReactElement, role:string, theme: 'dark' | 'light' | 'system') => (
-    <span
-        className={[
-            styles.messageBubble,
-            role === 'user' ? null : styles.botBubble,
-            theme === 'dark' ? styles.darkBubble : styles.lightBubble,
-        ].join(' ')}
-    >
-        {Component}
-    </span>
-);
-
-const RenderHtmlComponent = (Component : React.ReactElement, msg: Message, theme: 'dark' | 'light' | 'system', agent: ReactNode, session: Session | null) => (
+const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, theme: 'dark' | 'light' | 'system', agent: ReactNode, session: Session | null) => (
     <div className={'flex items-start gap-2'}>
         {msg.role === 'assistant' ? 
             <div className="flex aspect-square size-12 items-center justify-center rounded-full overflow-hidden flex-shrink-0 mt-2 ">
@@ -137,7 +59,7 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: Message, theme
                 className={cn("mx-2", msg.role === "user" ? "bg-blue-500 text-white" : "bg-card", "")}
             >
                 <CardContent className="px-4 py-2 text-base">
-                    {msg.parts && msg.parts.filter(part => part.type === 'tool-invocation'  /*&& (part.toolInvocation.toolName === 'getSFDCDataTool' || part.toolInvocation.toolName === 'getPostgresDataTool' || part.toolInvocation.toolName === 'getCount' || part.toolInvocation.toolName === 'callWorkflowTool')*/).map((part) => (
+                    {msg.parts && msg.parts.filter(part => isToolUIPart(part)  /*&& (part.toolInvocation.toolName === 'getSFDCDataTool' || part.toolInvocation.toolName === 'getPostgresDataTool' || part.toolInvocation.toolName === 'getCount' || part.toolInvocation.toolName === 'callWorkflowTool')*/).map((part) => (
                         <span
                             className={[
                                 styles.messageBubble,
@@ -145,160 +67,149 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: Message, theme
                                 
                             ].join(' ')}
                             style={{ padding: 0, background: 'none', border: 'none' }}
-                            key={part.type === 'tool-invocation' ? part.toolInvocation.toolCallId || nanoid() : nanoid()}
+                            key={isToolUIPart(part) ? part.toolCallId || nanoid() : nanoid()}
                         >
-                            {[part].map((part: any, i: number) => {
-                                switch (part.type) {
-                                    case 'text':
-                                        return <ReactMarkdown key={i}>{part.text}</ReactMarkdown>;
-                                    case 'tool-invocation': {
-                                        const callId = part.toolInvocation.toolCallId;
-                                        //console.log(part.toolInvocation)
-
-                                        if (part.toolInvocation.state === 'call') {
+                            {[part].map((part: UIMessagePart<UIDataTypes, UITools>, i: number) => {
+                                // ensure callId is available before any early returns (loader/UI streaming)
+                                const callId = (part as any).toolCallId || `call-${i}`;
+                                // Narrow to a tool part that contains toolInvocation and toolCallId
+                                if (isToolUIPart(part)) {
+                                    
+                                    if (part.state === 'input-streaming' || part.state === 'input-available') {
+                                        return (
+                                            <div key={callId} className="flex items-center gap-2 text-xs text-muted-foreground my-2 py-4 px-2 border rounded">
+                                                <Loader2 className="h-4 w-4 animate-spin" />
+                                                <span>Calling {part.type || 'tool'}...</span>
+                                            </div>
+                                        );
+                                    }
+                                    if (part.state === 'output-error') {
+                                        <div key={callId} className="flex items-center gap-2 text-xs text-muted-foreground py-4 px-2 border rounded">
+                                            <TriangleAlert className="h-4 w-4 text-red-500" />
+                                            <span>{part.errorText}</span>
+                                        </div>
+                                    }
+                                    // Render based on tool name and state
+                                        //console.log(_part.toolInvocation)
+                                        
+                                    
+                                    switch (part.type) {
+                                        case 'tool-getSFDCDataTool': {                                             
                                             return (
-                                                <div key={callId} className="flex items-center gap-2 text-xs text-muted-foreground my-2 py-4 px-2 border rounded">
-                                                    <Loader2 className="h-4 w-4 animate-spin" />
-                                                    <span>Calling {part.toolInvocation.toolName}...</span>
+                                                <div key={callId}>
+                                                    {RenderGetDataToolCallComponent({}, part.output, theme)}
+                                                    {/* <JsonView data={part.toolInvocation.result} classNames={styles.jsonBubble} /> */}
                                                 </div>
                                             );
                                         }
-                                        switch (part.toolInvocation.toolName) {
-                                            case 'getSFDCDataTool': {
-                                                switch (part.toolInvocation.state) {
-                                                    case 'result':                                                 
-                                                        return (
-                                                            <div key={callId}>
-                                                                {RenderGetDataToolCallComponent(part.toolInvocation.args, part.toolInvocation.result, theme)}
-                                                                {/* <JsonView data={part.toolInvocation.result} classNames={styles.jsonBubble} /> */}
-                                                            </div>
-                                                        );
-                                                }
-                                                break;
-                                            }
-                                            case 'getData': {
-                                                switch (part.toolInvocation.state) {
-                                                    case 'result':                                                    
-                                                        return (
-                                                            <div key={callId}>
-                                                                {RenderGetDataToolCallComponent(part.toolInvocation.args, part.toolInvocation.result, theme)}
-                                                                {/* <JsonView data={part.toolInvocation.result} classNames={styles.jsonBubble} /> */}
-                                                            </div>
-                                                        );
-                                                }
-                                                break;
-                                            }
-                                            case 'getCredentials': {
-                                                switch (part.toolInvocation.state) {
-                                                    case 'result':                                          
-                                                        return (
-                                                            <div key={callId} className="flex items-center gap-2 text-xs text-muted-foreground py-4 px-2 border rounded">
-                                                                {part.toolInvocation.result.hasCredentials ? <CircleCheck className="h-4 w-4 text-green-500" /> : <TriangleAlert className="h-4 w-4 text-red-500" />}
-                                                                <span>{part.toolInvocation.result.hasCredentials ? "Credentials Retrieved" : "No Credentials Found"}</span>
-                                                            </div>
-                                                        );
-                                                }
-                                                break;
-                                            }
-                                            case 'getPostgresDataTool': {
-                                                switch (part.toolInvocation.state) {
-                                                    case 'result':                                                
-                                                        return (
-                                                            <div key={callId}>
-                                                                {/* {RenderGetDataToolCallComponent(part.toolInvocation.args, part.toolInvocation.result, theme)} */}
-                                                                <JsonRecord rootLabel="Postgres Data" data={part.toolInvocation.result} className={`${styles.jsonBubble} min-w-3/4`} />
-                                                            </div>
-                                                        );
-                                                }
-                                                break;
-                                            }
-                                            case 'getPostgresDescribeTool': {
-                                                switch (part.toolInvocation.state) {
-                                                    case 'result':                                                  
-                                                        return (
-                                                            <div key={callId}>
-                                                                {/* {RenderGetDataToolCallComponent(part.toolInvocation.args, part.toolInvocation.result, theme)} */}
-                                                                <div key={callId} className="flex items-center gap-2 text-xs text-muted-foreground py-4 px-2 border rounded">
-                                                                    {part.toolInvocation.result.success ? <CircleCheck className="h-4 w-4 text-green-500" /> : <TriangleAlert className="h-4 w-4 text-red-500" />}
-                                                                    <span>{part.toolInvocation.result.success ? "Schema Retrieved" : "No Schema Found"}</span>
-                                                                </div>
-                                                            </div>
-                                                        );
-                                                }
-                                                break;
-                                            }
-                                            case 'callWorkflowTool': {
-                                                switch (part.toolInvocation.state) {
-                                                    case 'result':                                                    
-                                                        return (
-                                                            <div key={callId}>
-                                                                <RenderCallWorkflowToolCallComponent result={part.toolInvocation.result} />
-                                                                {/* <JsonView data={part.toolInvocation.result} classNames={styles.jsonBubble} /> */}
-                                                            </div>
-                                                        );
-                                                }
-                                                break;
-                                            }
-                                            case 'getCustomerProfilesTool': {
-                                                switch (part.toolInvocation.state) {
-                                                    case 'result':                                                    
-                                                        return (
-                                                            <div key={callId}>
-                                                                {RenderGetCustomProfileToolCallComponent(part.toolInvocation.args, part.toolInvocation.result, theme)}
-                                                                {/* <JsonView data={part.toolInvocation.result} classNames={styles.jsonBubble} /> */}
-                                                            </div>
-                                                        );
-                                                }
-                                                break;
-                                            }                                        
-                                            case 'getCount': {
-                                                switch (part.toolInvocation.state) {
-                                                    case 'call':
-                                                        return <div key={callId}>Getting count...</div>;
-                                                    case 'result':
-                                                        return (
-                                                            <div key={callId}>
-                                                                <JsonView data={part.toolInvocation.result} classNames={styles.jsonBubble}/>
-                                                            </div>
-                                                        );
-                                                }
-                                                break;
-                                            }
-                                            case 'getSFDCFieldDescribeTool': {
-                                                switch (part.toolInvocation.state) {
-                                                    case 'result':                                          
-                                                        return (
-                                                            <div key={callId} className="flex items-center gap-2 text-xs text-muted-foreground py-4 px-2 border rounded">
-                                                                {part.toolInvocation.result ? <CircleCheck className="h-4 w-4 text-green-500" /> : <TriangleAlert className="h-4 w-4 text-red-500" />}
-                                                                <span>{part.toolInvocation.result ? "Fields Retrieved" : "No Fields Found"}</span>
-                                                            </div>
-                                                        );
-                                                }
-                                                break;
-                                            }
-                                            default:
-                                                // Fallback: render tool data as JSON
-                                                
-                                                // <div key={callId} style={{ margin: '8px 0' }}>
-                                                //     <JsonRecord data={part.toolInvocation} className={`${styles.jsonBubble} min-w-3/4`} />
-                                                // </div>
-                                                switch (part.toolInvocation.state) {
-                                                    case 'result':                                          
-                                                        return (
-                                                            <div key={callId} className="flex items-center gap-2 text-xs text-muted-foreground py-4 px-2 border rounded">
-                                                                {part.toolInvocation.result ? <CircleCheck className="h-4 w-4 text-green-500" /> : <TriangleAlert className="h-4 w-4 text-red-500" />}
-                                                                <span>{part.toolInvocation.result ? `${part.toolInvocation.toolName} Complete` : `${part.toolInvocation.toolName} Failed`}</span>
-                                                            </div>
-                                                        );
-                                                }
-                                                break;
-                                                
+                                        case 'tool-getCredentials': {
+                                            return (
+                                                <div key={callId} className="flex items-center gap-2 text-xs text-muted-foreground py-4 px-2 border rounded">
+                                                    {part.output ? <CircleCheck className="h-4 w-4 text-green-500" /> : <TriangleAlert className="h-4 w-4 text-red-500" />}
+                                                    <span>{part.output ? "Credentials Retrieved" : "No Credentials Found"}</span>
+                                                </div>
+                                            );
                                         }
+                                        case 'tool-getPostgresDataTool': {
+                                            return (
+                                                <div key={callId}>
+                                                    {/* {RenderGetDataToolCallComponent(_part.toolInvocation.args, _part.toolInvocation.result, theme)} */}
+                                                    <JsonRecord rootLabel="Postgres Data" data={part.output} className={`${styles.jsonBubble} min-w-3/4`} />
+                                                </div>
+                                            );
+                                        }
+                                        case 'tool-getPostgresDescribeTool': {
+                                            return (
+                                                <div key={callId}>
+                                                    {/* {RenderGetDataToolCallComponent(_part.toolInvocation.args, _part.toolInvocation.result, theme)} */}
+                                                    <div key={callId} className="flex items-center gap-2 text-xs text-muted-foreground py-4 px-2 border rounded">
+                                                        {(part.output as any)?.success ? <CircleCheck className="h-4 w-4 text-green-500" /> : <TriangleAlert className="h-4 w-4 text-red-500" />}
+                                                        <span>{(part.output as any)?.success ? "Schema Retrieved" : "No Schema Found"}</span>
+                                                    </div>
+                                                </div>
+                                            );
+                                        }
+                                        case 'tool-callWorkflowTool': {
+                                            return (
+                                                <div key={callId}>
+                                                    <RenderCallWorkflowToolCallComponent result={part.output as { usageId : string}} />
+                                                    {/* <JsonView data={_part.toolInvocation.result} classNames={styles.jsonBubble} /> */}
+                                                </div>
+                                            );
+                                        }
+                                        case 'tool-getCustomerProfilesTool': {
+                                            return (
+                                                <div key={callId}>
+                                                    {RenderGetCustomProfileToolCallComponent({}, part.output as {profiles: CustomerProfile[]}, theme)}
+                                                    {/* <JsonView data={_part.toolInvocation.result} classNames={styles.jsonBubble} /> */}
+                                                </div>
+                                            )
+                                        }                                        
+                                        case 'tool-getCount': {
+                                            return (
+                                                <div key={callId}>
+                                                    <JsonRecord rootLabel="Get Count" data={part.output} className={`${styles.jsonBubble} min-w-3/4`} />
+                                                </div>
+                                            );
+                                        }
+                                        case 'tool-getSFDCFieldDescribeTool': {
+                                            return (
+                                                <div key={callId}>
+                                                    {/* {RenderGetDataToolCallComponent(_part.toolInvocation.args, _part.toolInvocation.result, theme)} */}
+                                                    <div key={callId} className="flex items-center gap-2 text-xs text-muted-foreground py-4 px-2 border rounded">
+                                                        {part.output ? <CircleCheck className="h-4 w-4 text-green-500" /> : <TriangleAlert className="h-4 w-4 text-red-500" />}
+                                                        <span>{part.output ? "Fields Retrieved" : "No Fields Found"}</span>
+                                                    </div>
+                                                </div>
+                                            )
+                                        }
+                                        case 'tool-getSFDCObjectDescribeTool': {
+                                            return (
+                                                <div key={callId}>
+                                                    {/* {RenderGetDataToolCallComponent(_part.toolInvocation.args, _part.toolInvocation.result, theme)} */}
+                                                    <div key={callId} className="flex items-center gap-2 text-xs text-muted-foreground py-4 px-2 border rounded">
+                                                        {part.output ? <CircleCheck className="h-4 w-4 text-green-500" /> : <TriangleAlert className="h-4 w-4 text-red-500" />}
+                                                        <span>{part.output ? "Objects Retrieved" : "No Objects Found"}</span>
+                                                    </div>
+                                                </div>
+                                            )
+                                        }
+                                        default:
+                                            // Fallback: render tool data as JSON
+                                            
+                                            return (
+                                                <div key={callId}>
+                                                    {/* {RenderGetDataToolCallComponent(_part.toolInvocation.args, _part.toolInvocation.result, theme)} */}
+                                                    <div key={callId} className="flex items-center gap-2 text-xs text-muted-foreground py-4 px-2 border rounded">
+                                                        {part.output ? <CircleCheck className="h-4 w-4 text-green-500" /> : <TriangleAlert className="h-4 w-4 text-red-500" />}
+                                                        <span>{part.output ? `${part.type} Complete` : `${part.type} Failed`}</span>
+                                                    </div>
+                                                </div>
+                                            )
+                                            
                                     }
+                                }
+                                
+                                switch (part.type) {
+                                    case 'text':
+                                        return <Streamdown key={i}>{part.text}</Streamdown>;
+                                    case 'reasoning': 
+                                        return <Streamdown key={i}>{'Reasoning...'}</Streamdown>;
+                                    case 'dynamic-tool': 
+                                        return <>TODO</>
+                                    case 'file': 
+                                        return <>TODO</>
+                                    case 'source-document': 
+                                        return <>TODO</>
+                                    case 'source-url': 
+                                        return <>TODO</>
+                                    case 'step-start': 
+                                        return <>TODO</>
                                     default:
                                         // Fallback: render part as Markdown
                                         //return <JsonView key={i} data={part} classNames={styles.jsonBubble}/>;
-                                        return <Streamdown key={i}>{part.text || JSON.stringify(part)}</Streamdown>;
+                                        //return <Streamdown key={i}>{part.text || JSON.stringify(part)}</Streamdown>;
+                                        return null;
                                 }
                             })}
                         </span>                    
@@ -327,6 +238,26 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: Message, theme
         }
     </div>
 )
+
+const DefaultMessageComponent = (msg: UIMessage, theme: 'dark' | 'light' | 'system') => {
+    console.log(msg);
+    const _msg = msg.parts ? msg.parts.at(msg.parts.length - 1) as UIMessagePart<UIDataTypes, UITools> : null;
+    const value = _msg && _msg.type === 'text' ? _msg.text : '';
+
+    return MessageComponentWrapper( <span >{value}</span>, msg.role, theme);
+};
+
+const MessageComponentWrapper = (Component: React.ReactElement, role:string, theme: 'dark' | 'light' | 'system') => (
+    <span
+        className={[
+            styles.messageBubble,
+            role === 'user' ? null : styles.botBubble,
+            theme === 'dark' ? styles.darkBubble : styles.lightBubble,
+        ].join(' ')}
+    >
+        {Component}
+    </span>
+);
 
 const RenderGetDataToolCallComponent = (args: any, result: any, theme: 'dark' | 'light' | 'system') => {
     const {records } = result;
@@ -376,15 +307,17 @@ const RenderGetDataToolCallComponent = (args: any, result: any, theme: 'dark' | 
 }
 
 // Timestamp display with copy-to-clipboard button
-const TimestampWithCopy = ({ msg } : { msg: Message }) => {
+const TimestampWithCopy = ({ msg } : { msg: UIMessage }) => {
     const { enqueueSnackbar } = useSnackbar();
     const handleCopy = async () => {
         try {
-            if (!msg?.content) {
+            if (!msg.parts) {
                 enqueueSnackbar('Nothing to copy', { variant: 'warning', preventDuplicate: true, autoHideDuration: 3000 });
                 return;
             }
-            await navigator.clipboard.writeText(String(msg.content));
+            const _msg = msg.parts.at(-1) as UIMessagePart<UIDataTypes, UITools>;
+            const value = _msg.type === 'text' ? _msg.text : '';
+            await navigator.clipboard.writeText(value);
             enqueueSnackbar('Message copied to clipboard', { variant: 'success', preventDuplicate: true, autoHideDuration: 3000 });
         } catch (err) {
             console.error('Copy failed', err);
@@ -395,7 +328,8 @@ const TimestampWithCopy = ({ msg } : { msg: Message }) => {
     return (
         <div className={'align-middle flex flex-row items-center'}>
             <span className="text-xs text-muted-foreground px-2">
-                {msg.createdAt && formatDistanceToNow(msg.createdAt, { addSuffix: true })}
+                {/* {msg.createdAt && formatDistanceToNow(msg.createdAt, { addSuffix: true })} */}
+                TODO : Fill date
             </span>
             <button
                 type="button"
@@ -410,7 +344,7 @@ const TimestampWithCopy = ({ msg } : { msg: Message }) => {
     );
 }
 
-const RenderGetCustomProfileToolCallComponent = (args: any, result: any, theme: 'dark' | 'light' | 'system') => {
+const RenderGetCustomProfileToolCallComponent = (args: any, result: {profiles: CustomerProfile[]}, theme: 'dark' | 'light' | 'system') => {
     const {profiles } = result;
     if (!profiles || profiles.length === 0) {
         return <div>
@@ -505,3 +439,8 @@ const RenderCallWorkflowToolCallComponent = ({result: {usageId}} : {result: {usa
         </div>
     );
 }
+
+const isToolType = (t: string): t is `tool-${string}` => typeof t === 'string' && t.startsWith('tool-');
+const isToolPart = (p: UIMessagePart<UIDataTypes, UITools>): p is UIMessagePart<ToolUIPart, UITools> => {
+    return !!(p && typeof p === 'object' && 'toolInvocation' in p && 'toolCallId' in p);
+};

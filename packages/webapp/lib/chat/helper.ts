@@ -10,6 +10,7 @@ import { getPostgresDataTool } from './postgres/getDataTool';
 import { getCredentialsTool } from './sfdc/getCredentialsTool';
 import { getSFDCDataTool } from './sfdc/getDataTool';
 import { getFieldsTool as getSFDCFieldsTool} from '@/lib/chat/sfdc/getFieldsTool';
+import { getObjectsTool as getSFDCObjectTool} from '@/lib/chat/sfdc/getObjectsTool';
 import { getDescribeTool as getPostgresDescribeTool } from '@/lib/chat/postgres/getDescribeTool';
 import { getCustomerProfilesTool } from './internal/getCustomerProfiles';
 import { createCustomerProfileTool } from './internal/createCustomerProfile';
@@ -36,6 +37,7 @@ export const getTools = async (agent: 'data-steward' | 'prospect-finder' | 'cont
             getCredentials: getCredentialsTool(userId),
             getSFDCFieldDescribeTool: getSFDCFieldsTool(userId),
             getSFDCDataTool: getSFDCDataTool(userId),
+            getSFDCObjectDescribeTool: getSFDCObjectTool(userId),
             //getPostgresDataTool: getPostgresDataTool(userId),
             //getPostgresDescribeTool: getPostgresDescribeTool(userId),
             //getCount: getCountTool(userId),

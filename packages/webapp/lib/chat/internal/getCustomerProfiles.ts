@@ -27,8 +27,8 @@ import { buildCalloutWithHeader } from "@/lib/n8n/utils";
 export const getCustomerProfilesTool = (userId: string) => {
     return tool({
       description: "Retrieve all customer profiles for a user by userId.",
-      parameters: z.object({}),
-      async execute({ }) {
+      inputSchema: z.object({}),
+      execute: async ({ }) => {
         if (!userId) {
           return { success: false, message: "Unauthorized: userId is required" };
         }

@@ -27,7 +27,7 @@ import { buildCalloutWithHeader } from "@/lib/n8n/utils";
 export const createCustomerProfileTool = (userId: string) => {
     return tool({
         description: "Create a new customer profile. Requires userId, customerProfileName, commonIndustries, frequentlyPurchasedProducts, geographicRegions, averageDaysToClose, and active.",
-        parameters: z.object({
+        inputSchema: z.object({
             customerProfileName: z.string().min(1, "customerProfileName is required"),
             commonIndustries: z.string().min(1, "commonIndustries is required"),
             frequentlyPurchasedProducts: z.string().min(1, "frequentlyPurchasedProducts is required"),
@@ -40,7 +40,7 @@ export const createCustomerProfileTool = (userId: string) => {
             accountEmployeeSize: z.string().optional(),
             accountLifecycle: z.string().optional()
         }),
-        async execute(profile) {
+        execute: async (profile) => {
             // Get userId from session (if needed) or expect it to be provided elsewhere
             try {
                 const res = await buildCalloutWithHeader(`/api/customer-profile?subId=${encodeURIComponent(userId)}`, profile);

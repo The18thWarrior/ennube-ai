@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { generateText, Output, streamText, tool, ToolExecutionOptions } from 'ai';
+import { convertToModelMessages, generateText, Output, stepCountIs, streamText, tool } from 'ai';
 import { openai } from '@ai-sdk/openai';
 import { createOpenRouter } from '@openrouter/ai-sdk-provider';
 import { z } from 'zod';
@@ -16,7 +16,6 @@ import { nanoid } from 'nanoid';
 import { setThread } from '@/lib/cache/message-history';
 import { getPrompt, getTools } from '@/lib/chat/helper';
 import dayjs from 'dayjs';
-
 
 export const maxDuration = 30;
 // The main agent route
@@ -49,25 +48,31 @@ export async function POST(req: NextRequest) {
       apiKey: `${process.env.OPENROUTER_API_KEY}`,
     });
     const systemPrompt = `${getPrompt(agent as 'data-steward' | 'prospect-finder' | 'contract-reader')} Today's date is ${today}.`;
-    const model = openrouter('deepseek/deepseek-chat-v3-0324'); // openai/gpt-4.1-nano | google/gemini-2.0-flash-001
+    const model = openrouter('deepseek/deepseek-chat-v3.1'); // deepseek/deepseek-chat-v3-0324 | google/gemini-2.0-flash-001
     // Set up the OpenAI model
     // Run the agent with tools
     const result = await streamText({
       //model: openai('gpt-4.1-nano'),
       model: model,
       system: systemPrompt,
-      tools: await getTools(agent as 'data-steward' | 'prospect-finder' | 'contract-reader', userSub),
-      // messages: messages,
-      messages: messages.map((msg: any) => {
-        return {
-          role: msg.role,
-          content: msg.content,
-          toolCalls: msg.toolCalls?.result ? msg.toolCalls : [],
-          // If the message has tool calls, we need to include them in the response
-          // so that the agent can use them in its next step
-          ...(msg.toolCalls?.result ? { toolCalls: msg.toolCalls } : {}),
+      providerOptions: {
+        openrouter: {
+          parallelToolCalls: false
         }
-      }), 
+      },
+      tools: await getTools(agent as 'data-steward' | 'prospect-finder' | 'contract-reader', userSub),
+       messages: convertToModelMessages(messages),
+      // messages: convertToModelMessages(messages.map((msg: any) => {
+      //   return {
+      //     role: msg.role,
+      //     content: msg.content,
+      //     toolCalls: msg.toolCalls?.result ? msg.toolCalls : [],
+      //     // If the message has tool calls, we need to include them in the response
+      //     // so that the agent can use them in its next step
+      //     ...(msg.toolCalls?.result ? { toolCalls: msg.toolCalls } : {}),
+      //   }
+      // })),
+       
       // experimental_output: Output.object({
       //   schema: z.object({
       //     message: z.string().describe('The message to return to the user.'),
@@ -78,21 +83,23 @@ export async function POST(req: NextRequest) {
       // messages: [
       //   { role: 'user', content: messages.map((msg: any) => msg.content).join('\n') },
       // ],
-      maxSteps: 10,
-      toolCallStreaming: true,
+      //maxSteps: 10,
+      stopWhen: stepCountIs(10),
+      //toolCallStreaming: true,
       onError: (error) => {
         console.log('Error during tool execution:', error);
       },
       onFinish: (response) => {
-        console.log('Response finished:', response.text, response.toolCalls, response.finishReason);
+        console.log('Response finished:', response.text, response.finishReason);
       },
       onStepFinish: (step) => {
-        console.log('Step finished');
+        console.log('Step finished', step.finishReason);
       },
+      
       //metadata: { subId: metadata.subId },
     });
 
-    return result.toDataStreamResponse();
+    return result.toUIMessageStreamResponse();
     //return NextResponse.json(result);
   } catch (error) {
     console.log('Error in chat route:', error);

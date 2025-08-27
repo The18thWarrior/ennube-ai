@@ -5,6 +5,8 @@ import { SalesforceClient, createSalesforceClient } from '@/lib/salesforce';
 import { SalesforceAuthResult } from '@/lib/types';
 import { auth } from '@/auth';
 
+const STANDARD_OBJECTS = ['Account', 'Contact', 'Lead', 'Opportunity', 'Case', 'User', 'Campaign', 'Task', 'Event', 'Contract', 'Order', 'ContentVersion', 'Attachment', 'Note'];
+
 // GET /api/salesforce/describe?sub=...&sobjectType=...
 export async function GET(request: NextRequest) {
   try {
@@ -37,12 +39,19 @@ export async function GET(request: NextRequest) {
 
     if (sobjectType) {
       // Describe a specific object
+      console.log('Describing object:', sobjectType);
       const describe = await client.describe(sobjectType);
+      console.log(describe);
       return NextResponse.json({ describe });
     } else {
       // Describe all objects (describeGlobal)
       const describeGlobal = await client.describeGlobal();
-      return NextResponse.json({ describeGlobal });
+      const objectResult = describeGlobal.sobjects.filter(obj => obj.custom || STANDARD_OBJECTS.includes(obj.name)).map((obj) => ({
+        name: obj.name,
+        label: obj.label,
+        keyPrefix: obj.keyPrefix
+      }));
+      return NextResponse.json({ objectResult });
     }
   } catch (error) {
     return NextResponse.json({ error: error instanceof Error ? error.message : String(error) }, { status: 500 });

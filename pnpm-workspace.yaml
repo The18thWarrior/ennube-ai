@@ -5,3 +5,7 @@ packages:
   - 'packages/webapp'
   - 'packages/ennube-salesforce'
   - 'packages/contractReader'
+
+catalog:
+  react: ^18.3.1
+  zod: ^3.25.76
