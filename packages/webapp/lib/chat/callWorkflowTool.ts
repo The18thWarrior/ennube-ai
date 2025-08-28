@@ -42,10 +42,10 @@ export const callWorkflowToolDataSteward = tool({
 
 export const callWorkflowToolProspectFinder = tool({
 	description: 'Call the execution workflow for Prospect Finder. Prospect Finder is used to find new prospects. ALWAYS ask the user for permission before calling this tool.',
-	parameters: z.object({
+	inputSchema: z.object({
 		limit: z.string().optional(),
 	}),
-	async execute({ limit }) {
+	execute: async ({ limit }) => {
         const session = await auth();
         if (!session || !session.user || !session.user.auth0) throw new Error('You must be signed in to call a workflow');
         const subId = session.user.auth0.sub;
@@ -70,10 +70,10 @@ export const callWorkflowToolProspectFinder = tool({
 
 export const callWorkflowToolContractReader = tool({
 	description: 'Call the execution workflow for Contract Reader. Contract Reader is used to read and analyze contracts. ALWAYS ask the user for permission before calling this tool.',
-	parameters: z.object({
+	inputSchema: z.object({
 		limit: z.string().optional(),
 	}),
-	async execute({ limit }) {
+	execute: async ({ limit }) => {
         const session = await auth();
         if (!session || !session.user || !session.user.auth0) throw new Error('You must be signed in to call a workflow');
         const subId = session.user.auth0.sub;

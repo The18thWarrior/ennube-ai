@@ -29,8 +29,8 @@ export const updateCustomerProfileTool = (userId: string) => {
         description: "Update a customer profile by ID. Accepts partial fields to update.",
         inputSchema: z.object({
             id: z.string().min(1, "id is required"),
-            updates: z.record(z.any()).refine(obj => Object.keys(obj).length > 0, {
-            message: "At least one field to update is required."
+            updates: z.object().refine(obj => Object.keys(obj).length > 0, {
+                message: "At least one field to update is required."
             })
         }),
         execute: async ({ id, updates }) => {

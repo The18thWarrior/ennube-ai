@@ -5,7 +5,6 @@ import { DATA_STEWARD_SYSTEM_PROMPT } from '@/lib/prompts/data-steward-system-pr
 import { PROSPECT_FINDER_SYSTEM_PROMPT } from '../prompts/prospect-finder-system-prompt';
 import { getWorkflowTool } from './callWorkflowTool';
 import { getCountTool } from './getCountTool';
-import { getDataVisualizerTool } from './getDataVisualizerTool';
 import { getPostgresDataTool } from './postgres/getDataTool';
 import { getCredentialsTool } from './sfdc/getCredentialsTool';
 import { getSFDCDataTool } from './sfdc/getDataTool';

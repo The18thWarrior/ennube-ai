@@ -1,6 +1,6 @@
 // === embeddings.ts ===
 // Created: 2025-08-27 00:00
-// Purpose: Embedding utilities for Salesforce field metadata using @themaximalist/embeddings.js
+// Purpose: Embedding utilities for Salesforce field metadata using HuggingFaceTransformersEmbeddings
 // Exports:
 //   - embedText: Convert text to embedding vector
 //   - EmbeddingConfig: Configuration interface
@@ -8,11 +8,8 @@
 // Interactions:
 //   - Used by: generateQueryTool, vectorStore for semantic search
 // Notes:
-//   - Uses @themaximalist/embeddings.js with @xenova/transformers backend
-//   - Caches embeddings model for performance
-
-// Note: we lazy-load @themaximalist/embeddings.js at runtime to avoid ESM import errors
-// when Jest loads the test environment. The module is imported inside initialize().
+//   - Uses @langchain/community's HuggingFaceTransformersEmbeddings with Xenova transformers backend
+//   - Lazy-loads the LangChain community embedding class to avoid ESM import issues in some test environments
 
 /**
  * Configuration for embedding operations
@@ -27,7 +24,7 @@ export interface EmbeddingConfig {
  * Default embedding configuration
  */
 const DEFAULT_CONFIG: EmbeddingConfig = {
-  model: 'all-MiniLM-L6-v2', // Lightweight but effective model
+  model: 'Xenova/all-MiniLM-L6-v2', // recommended Xenova variant of MiniLM
   maxLength: 512,
   normalize: true
 };
@@ -51,66 +48,18 @@ export class SalesforceEmbedder {
     if (this.isInitialized) return;
 
     try {
-      // Dynamic import to avoid ESM parsing issues during test discovery
+      // Lazy-load LangChain's HuggingFaceTransformersEmbeddings to avoid ESM import/time issues
+      // We import dynamically so tests or environments that can't resolve the module at parse time won't fail.
       // @ts-ignore
-      const mod = await import('@themaximalist/embeddings.js');
+      const mod = await import('@langchain/community/embeddings/huggingface_transformers');
 
-      // The embeddings package may export different shapes depending on version / bundler:
-      // - a constructor/class (new Embeddings()) with an instance.embed(text)
-      // - an object with an embed function (exports.embed)
-      // - a default function that directly embeds (async function embed(text))
-      // Normalize all possibilities into an object with an async embed(text) method.
-      const candidate = mod && (mod.default || mod.Embeddings || mod);
+  // Prefer the explicit named export
+  const HF = mod && mod.HuggingFaceTransformersEmbeddings;
+  if (!HF) throw new Error('HuggingFaceTransformersEmbeddings not found in @langchain/community package');
 
-      const makeAdapter = (impl: any) => {
-        const wrap = (fn: Function, ctx?: any) => ({ embed: async (text: string) => {
-          // Normalize return shapes: single vector or { embedding: [...]} or array
-          const res = await fn.call(ctx, text);
-          return Array.isArray(res) ? res : (res && Array.isArray(res.embedding) ? res.embedding : (res && Array.isArray(res.data) ? res.data : res));
-        }});
-        // If already an object with embed-like methods
-        if (impl && typeof impl === 'object') {
-          if (typeof impl.embed === 'function') return { embed: impl.embed.bind(impl) };
-          if (typeof impl.embedText === 'function') return { embed: impl.embedText.bind(impl) };
-          if (typeof impl.encode === 'function') return { embed: impl.encode.bind(impl) };
-          if (typeof impl.embed_many === 'function') return { embed: async (text: string) => { const r = await impl.embed_many([text]); return Array.isArray(r) ? r[0] : r; } };
-          if (typeof impl.embedTexts === 'function') return { embed: async (text: string) => { const r = await impl.embedTexts([text]); return Array.isArray(r) ? r[0] : r; } };
-        }
+  // Instantiate with model name from config. The LangChain wrapper exposes embedQuery/embedDocuments.
+  this.embeddings = new HF({ model: this.config.model });
 
-        // If it's a constructor/class
-        if (typeof impl === 'function') {
-          // Try to instantiate
-          try {
-            const instance = new impl({ normalize: this.config.normalize });
-            if (instance && typeof instance.embed === 'function') {
-              return { embed: instance.embed.bind(instance) };
-            }
-            if (instance && typeof instance.embedText === 'function') {
-              return { embed: instance.embedText.bind(instance) };
-            }
-            if (instance && typeof instance.encode === 'function') {
-              return { embed: instance.encode.bind(instance) };
-            }
-          } catch (e) {
-            // Not constructable; treat as plain function
-          }
-
-          // If the function itself performs embedding (async fn text => vector)
-          try {
-            return wrap(impl as Function, null);
-          } catch (e) {
-            // fallthrough
-          }
-        }
-
-        // Check module-level named exports
-        if (mod && typeof mod.embed === 'function') return { embed: mod.embed.bind(mod) };
-        if (mod && typeof mod.embedText === 'function') return { embed: mod.embedText.bind(mod) };
-
-        throw new Error('Unsupported embeddings module shape');
-      };
-
-      this.embeddings = makeAdapter(candidate as any);
       this.isInitialized = true;
     } catch (error) {
       throw new Error(`Failed to initialize embeddings: ${error instanceof Error ? error.message : String(error)}`);
@@ -126,29 +75,29 @@ export class SalesforceEmbedder {
     if (!text || text.trim().length === 0) {
       throw new Error('Text cannot be empty');
     }
-
     await this.initialize();
 
     try {
       // Truncate text if too long
-      const truncatedText = this.config.maxLength 
-        ? text.slice(0, this.config.maxLength) 
+      const truncatedText = this.config.maxLength
+        ? text.slice(0, this.config.maxLength)
         : text;
 
-  // Resolve available embed function on the embeddings implementation.
-  const embedFn = this.getEmbedFunction();
-  const result = await embedFn(truncatedText);
-      
-      // Handle different response formats from embeddings.js
-      if (Array.isArray(result)) {
-        return result;
-      } else if (result && Array.isArray(result.embedding)) {
-        return result.embedding;
-      } else if (result && Array.isArray(result.data)) {
-        return result.data;
-      } else {
-        throw new Error('Unexpected embedding result format');
+      // Prefer embedQuery if available (single input). Fall back to embedDocuments with single element.
+      if (this.embeddings && typeof this.embeddings.embedQuery === 'function') {
+        const res = await this.embeddings.embedQuery(truncatedText);
+        if (Array.isArray(res)) return res;
+        // Some implementations may return {embedding: [...]}
+        if (res && Array.isArray(res.embedding)) return res.embedding;
+        throw new Error('Unexpected embedding result format from embedQuery');
       }
+
+      if (this.embeddings && typeof this.embeddings.embedDocuments === 'function') {
+        const r = await this.embeddings.embedDocuments([truncatedText]);
+        if (Array.isArray(r) && r.length > 0) return r[0];
+      }
+
+      throw new Error('Embeddings instance does not expose embedQuery or embedDocuments');
     } catch (error) {
       throw new Error(`Failed to embed text: ${error instanceof Error ? error.message : String(error)}`);
     }
@@ -158,22 +107,8 @@ export class SalesforceEmbedder {
    * Resolve a callable embed function from the normalized embeddings object.
    */
   private getEmbedFunction(): (text: string) => Promise<any> {
-    const e = this.embeddings as any;
-    if (!e) throw new Error('Embeddings implementation is not available');
-
-    if (typeof e.embed === 'function') return (t: string) => Promise.resolve(e.embed(t));
-    if (typeof e.embedText === 'function') return (t: string) => Promise.resolve(e.embedText(t));
-    if (typeof e.encode === 'function') return (t: string) => Promise.resolve(e.encode(t));
-    if (typeof e.embedTexts === 'function') return async (t: string) => {
-      const r = await e.embedTexts([t]);
-      return Array.isArray(r) ? r[0] : r;
-    };
-    if (typeof e.embed_many === 'function') return async (t: string) => {
-      const r = await e.embed_many([t]);
-      return Array.isArray(r) ? r[0] : r;
-    };
-
-    throw new Error('No embed function found on embeddings implementation');
+  // Legacy adapter removed. This method is retained for backwards compatibility but now errors.
+  throw new Error('getEmbedFunction is no longer used — embedQuery/embedDocuments are used instead');
   }
 
   /**
@@ -182,20 +117,32 @@ export class SalesforceEmbedder {
    * @returns Promise resolving to array of embedding vectors
    */
   async embedTexts(texts: string[]): Promise<number[][]> {
-    const embeddings: number[][] = [];
-    
-    for (const text of texts) {
-      try {
-        const embedding = await this.embedText(text);
-        embeddings.push(embedding);
-      } catch (error) {
-        console.warn(`Failed to embed text "${text.slice(0, 50)}...":`, error);
-        // Use zero vector as fallback
-        embeddings.push([]);
+    if (!texts || texts.length === 0) return [];
+
+    await this.initialize();
+
+    try {
+      if (this.embeddings && typeof this.embeddings.embedDocuments === 'function') {
+        const res = await this.embeddings.embedDocuments(texts);
+        if (Array.isArray(res)) return res as number[][];
+        // Unexpected format
+        throw new Error('Unexpected response from embedDocuments');
       }
+
+      // Fallback to embedding one-by-one
+      const out: number[][] = [];
+      for (const t of texts) {
+        try {
+          out.push(await this.embedText(t));
+        } catch (e) {
+          console.warn(`Failed to embed text chunk: ${String(e)}`);
+          out.push([]);
+        }
+      }
+      return out;
+    } catch (error) {
+      throw new Error(`Failed to embed texts: ${error instanceof Error ? error.message : String(error)}`);
     }
-    
-    return embeddings;
   }
 
   /**

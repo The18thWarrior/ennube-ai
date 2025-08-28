@@ -9,7 +9,6 @@ import { getSFDCDataTool } from '@/lib/chat/sfdc/getDataTool';
 import { getFieldsTool } from '@/lib/chat/sfdc/getFieldsTool';
 import { getCredentialsTool } from '@/lib/chat/sfdc/getCredentialsTool';
 import { openai } from '@ai-sdk/openai';
-import { getDataVisualizerTool } from '@/lib/chat/getDataVisualizerTool';
 import { validateApiKey } from "@/lib/db/api-keys-storage";
 
 // Helper: resolve sub from bearer token (placeholder)
@@ -142,19 +141,6 @@ const handler = createMcpHandler(
       }
     );
 
-    // visualize_data
-    // server.tool(
-    //   'visualize_data',
-    //   { data: z.any() },
-    //   { description: 'Call this tool when you have a database result that you want to generate a rendered output for the user.' },
-    //   async (args: any, extra: any) => {
-    //     const params = args || {};
-    //     const model = openai('gpt-4o');
-    //     const visualizerTool = getDataVisualizerTool(model);
-    //     const result = await visualizerTool.execute(params || {}, extra);
-    //     return { content: [{ type: 'text', text: JSON.stringify(result) }] };
-    //   }
-    // );
   },
   {
     capabilities: {
