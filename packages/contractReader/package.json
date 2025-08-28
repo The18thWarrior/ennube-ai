@@ -27,6 +27,8 @@
     "jsforce": "^3.8.1",
     "form-data": "^4.0.0",
     "mime-types": "^2.1.35",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "zod": "^3.25.76"
   },
   "devDependencies": {
@@ -36,10 +38,6 @@
     "jest": "^29.0.0",
     "ts-jest": "^29.0.0",
     "typescript": "^5.0.0"
-  },
-  "peerDependencies": {
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0"
   },
   "files": [
     "dist",

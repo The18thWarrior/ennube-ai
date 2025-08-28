@@ -6,7 +6,7 @@ import {
   TextNode,
   Node as HtmlNode
 } from 'node-html-parser';
-import z from "zod";
+import z from "zod/v4";
 import { SubscriptionStatus, Execution, UsageLogEntry } from "./types";
 import dayjs from "dayjs";
 import crypto, { createHash } from "crypto";

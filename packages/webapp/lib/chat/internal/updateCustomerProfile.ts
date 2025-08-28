@@ -10,7 +10,7 @@
 
 // import { updateCustomerProfile } from "@/lib/db/customer-profile-storage";
 import { tool } from "ai";
-import z from "zod";
+import z from "zod/v4";
 import { getBaseUrl } from "../helper";
 import { buildCalloutWithHeader } from "@/lib/n8n/utils";
 

@@ -1,7 +1,7 @@
 import { getSalesforceCredentialsBySub } from "@/lib/db/salesforce-storage";
 import { Tool, tool } from "ai";
 import { id } from "date-fns/locale";
-import z from "zod";
+import z from "zod/v4";
 
 
 // Tool: Get Credentials

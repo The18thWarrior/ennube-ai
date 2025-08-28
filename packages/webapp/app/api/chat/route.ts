@@ -1,17 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { convertToModelMessages, generateText, Output, stepCountIs, streamText, tool } from 'ai';
-import { openai } from '@ai-sdk/openai';
+import { convertToModelMessages, stepCountIs, streamText } from 'ai';
 import { createOpenRouter } from '@openrouter/ai-sdk-provider';
-import { z } from 'zod';
 import { auth } from '@/auth';
-import { getFieldsTool as getSFDCFieldsTool} from '@/lib/chat/sfdc/getFieldsTool';
-import { getSFDCDataTool } from '@/lib/chat/sfdc/getDataTool';
-import { getPostgresDataTool } from '@/lib/chat/postgres/getDataTool';
-import { getDescribeTool as getPostgresDescribeTool } from '@/lib/chat/postgres/getDescribeTool';
-import { getDataVisualizerTool } from '@/lib/chat/getDataVisualizerTool';
-import { getCountTool } from '@/lib/chat/getCountTool';
-import { getCredentialsTool } from '@/lib/chat/sfdc/getCredentialsTool';
-import { getWorkflowTool } from '@/lib/chat/callWorkflowTool';
 import { nanoid } from 'nanoid';
 import { setThread } from '@/lib/cache/message-history';
 import { getPrompt, getTools } from '@/lib/chat/helper';
@@ -90,7 +80,7 @@ export async function POST(req: NextRequest) {
         console.log('Error during tool execution:', error);
       },
       onFinish: (response) => {
-        console.log('Response finished:', response.text, response.finishReason);
+        console.log('Response finished:', response.finishReason);
       },
       onStepFinish: (step) => {
         console.log('Step finished', step.finishReason);

@@ -4,10 +4,10 @@ import { getBaseUrl } from "../helper";
 
 
 // Tool: Get Fields
-export const getFieldsTool = (subId: string) => {
+export const generateQueryTool = (subId: string) => {
     return tool({
         description: 'Introspect a Salesforce sObject and return a JSON payload listing every valid field available for use.',
-        execute : async ({ sobjectType, limit = 1 }) => {
+        execute : async ({ sobjectType }) => {
             if (!subId) throw new Error('subId is required');
             if (!sobjectType) throw new Error('sobjectType is required');
             const baseUrl = await getBaseUrl();
@@ -15,11 +15,13 @@ export const getFieldsTool = (subId: string) => {
             const res = await fetch(url);
             if (!res.ok) return false;//throw new Error('Failed to fetch fields');
             const data = await res.json();
-            return data;
+
+
+            return false;
         },
         inputSchema: z.object({
             sobjectType: z.string().describe('The Salesforce sObject type to introspect'),
-            limit: z.number().optional().default(1).describe('Optional limit on the number of fields to return'),
+            description: z.string().describe('Description of what data the user is looking for. Should describe any related objects that should also be retrieved.'),
         }),
     });
 }

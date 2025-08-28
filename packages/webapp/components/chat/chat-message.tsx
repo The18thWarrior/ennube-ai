@@ -1,24 +1,13 @@
 'use client'
 
-import React, { useRef, useEffect, useState, ReactNode } from 'react';
-import { useSession } from 'next-auth/react';
-import { useTheme } from '../theme-provider';
+import React, { useEffect, useState, ReactNode } from 'react';
 import styles from './chat-container.module.css';
 import { Streamdown } from 'streamdown';
-import { cn, getAgentImage, getJsonData, isJson, parseAndValidateResponse } from '@/lib/utils';
-import { z } from 'zod';
-import { ComponentConfigSchema } from '../custom-response';
-import { JsonView } from '@/components/ui/json-view';
+import { cn, getAgentImage } from '@/lib/utils';
 import { JsonRecord } from '../generalized-result';
-import CustomResponse from '@/components/custom-response';
-import { useChat } from '@ai-sdk/react';
-import { UIMessage, UIDataTypes, UIMessagePart, UITools, ToolUIPart, isToolUIPart } from 'ai';
+import { UIMessage, UIDataTypes, UIMessagePart, UITools, isToolUIPart } from 'ai';
 import { nanoid } from 'nanoid';
-import ChatInput from './chat-input';
-import error from 'next/error';
-import ReactMarkdown from 'react-markdown';
-import { Avatar, AvatarImage, Button, Card, CardContent } from '../ui';
-import { CrmRecordListTable } from './tools/crm-record-list-table';
+import { Button, Card, CardContent } from '../ui';
 import { CrmRecordDetailCard } from './tools/crm-record-detail-card';
 import { Loader2, User, TriangleAlert, CircleCheck, Loader, Copy } from 'lucide-react';
 import { useSnackbar } from 'notistack';
@@ -29,8 +18,6 @@ import { UsageLogEntry } from '@/lib/types';
 import dayjs from 'dayjs';
 import { ExecutionDetailsPanel } from '@/components/executions/execution-details-panel';
 import { Session } from 'next-auth';
-import { O } from '@upstash/redis/zmscore-CgRD7oFR';
-import { formatDistanceToNow } from 'date-fns';
 import { CustomerProfile } from '@/hooks/useCustomerProfile';
 
 // Custom message rendering
@@ -75,20 +62,20 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, the
                                 // Narrow to a tool part that contains toolInvocation and toolCallId
                                 if (isToolUIPart(part)) {
                                     
-                                    if (part.state === 'input-streaming' || part.state === 'input-available') {
-                                        return (
-                                            <div key={callId} className="flex items-center gap-2 text-xs text-muted-foreground my-2 py-4 px-2 border rounded">
-                                                <Loader2 className="h-4 w-4 animate-spin" />
-                                                <span>Calling {part.type || 'tool'}...</span>
-                                            </div>
-                                        );
-                                    }
-                                    if (part.state === 'output-error') {
-                                        <div key={callId} className="flex items-center gap-2 text-xs text-muted-foreground py-4 px-2 border rounded">
-                                            <TriangleAlert className="h-4 w-4 text-red-500" />
-                                            <span>{part.errorText}</span>
-                                        </div>
-                                    }
+                                    // if (part.state === 'input-streaming' || part.state === 'input-available') {
+                                    //     return (
+                                    //         <div key={callId} className="flex items-center gap-2 text-xs text-muted-foreground my-2 py-4 px-2 border rounded">
+                                    //             <Loader2 className="h-4 w-4 animate-spin" />
+                                    //             <span>Calling {part.type || 'tool'}...</span>
+                                    //         </div>
+                                    //     );
+                                    // }
+                                    // if (part.state === 'output-error') {
+                                    //     <div key={callId} className="flex items-center gap-2 text-xs text-muted-foreground py-4 px-2 border rounded">
+                                    //         <TriangleAlert className="h-4 w-4 text-red-500" />
+                                    //         <span>{part.errorText}</span>
+                                    //     </div>
+                                    // }
                                     // Render based on tool name and state
                                         //console.log(_part.toolInvocation)
                                         
@@ -97,50 +84,99 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, the
                                         case 'tool-getSFDCDataTool': {                                             
                                             return (
                                                 <div key={callId}>
-                                                    {RenderGetDataToolCallComponent({}, part.output, theme)}
+                                                    {
+                                                        <MessageStateComponent
+                                                            Component={RenderGetDataToolCallComponent({}, part.output, theme)}
+                                                            state={part.state}
+                                                            theme={theme}
+                                                            successMessage="Data Retrieved"
+                                                            errorMessage={part.errorText || "Error retrieving data"}
+                                                            toolName="Salesforce Data Tool"
+                                                        />
+                                                    }
                                                     {/* <JsonView data={part.toolInvocation.result} classNames={styles.jsonBubble} /> */}
                                                 </div>
                                             );
                                         }
                                         case 'tool-getCredentials': {
                                             return (
-                                                <div key={callId} className="flex items-center gap-2 text-xs text-muted-foreground py-4 px-2 border rounded">
-                                                    {part.output ? <CircleCheck className="h-4 w-4 text-green-500" /> : <TriangleAlert className="h-4 w-4 text-red-500" />}
-                                                    <span>{part.output ? "Credentials Retrieved" : "No Credentials Found"}</span>
+                                                <div key={callId}>
+                                                {
+                                                    <MessageStateComponent
+                                                        Component={null}
+                                                        state={part.state}
+                                                        theme={theme}
+                                                        successMessage="Credentials Retrieved"
+                                                        errorMessage={part.errorText || "Error retrieving credentials"}
+                                                        toolName="Get Credentials Tool"
+                                                    />
+                                                }
                                                 </div>
                                             );
                                         }
                                         case 'tool-getPostgresDataTool': {
                                             return (
                                                 <div key={callId}>
-                                                    {/* {RenderGetDataToolCallComponent(_part.toolInvocation.args, _part.toolInvocation.result, theme)} */}
-                                                    <JsonRecord rootLabel="Postgres Data" data={part.output} className={`${styles.jsonBubble} min-w-3/4`} />
+                                                    {
+                                                        <MessageStateComponent
+                                                            Component={<JsonRecord rootLabel="Postgres Data" data={part.output} className={`${styles.jsonBubble} min-w-3/4`} />}
+                                                            state={part.state}
+                                                            theme={theme}
+                                                            successMessage="Data Retrieved"
+                                                            errorMessage={part.errorText || "Error retrieving data"}
+                                                            toolName="Postgres Data Tool"
+                                                        />
+                                                    }
+                                                   
                                                 </div>
                                             );
                                         }
                                         case 'tool-getPostgresDescribeTool': {
                                             return (
                                                 <div key={callId}>
-                                                    {/* {RenderGetDataToolCallComponent(_part.toolInvocation.args, _part.toolInvocation.result, theme)} */}
-                                                    <div key={callId} className="flex items-center gap-2 text-xs text-muted-foreground py-4 px-2 border rounded">
-                                                        {(part.output as any)?.success ? <CircleCheck className="h-4 w-4 text-green-500" /> : <TriangleAlert className="h-4 w-4 text-red-500" />}
-                                                        <span>{(part.output as any)?.success ? "Schema Retrieved" : "No Schema Found"}</span>
-                                                    </div>
+                                                    {
+                                                        <MessageStateComponent
+                                                            Component={null}
+                                                            state={part.state}
+                                                            theme={theme}
+                                                            successMessage="Schema Retrieved"
+                                                            errorMessage={part.errorText || "Error retrieving schema"}
+                                                            toolName="Postgres Describe Tool"
+                                                        />
+                                                    }
                                                 </div>
                                             );
                                         }
                                         case 'tool-callWorkflowTool': {
                                             return (
                                                 <div key={callId}>
-                                                    <RenderCallWorkflowToolCallComponent result={part.output as { usageId : string}} />
-                                                    {/* <JsonView data={_part.toolInvocation.result} classNames={styles.jsonBubble} /> */}
+                                                    
+                                                    {
+                                                        <MessageStateComponent
+                                                            Component={part.output ? <RenderCallWorkflowToolCallComponent result={part.output as { usageId : string}} /> : null}
+                                                            state={part.state}
+                                                            theme={theme}
+                                                            successMessage="Workflow Executed"
+                                                            errorMessage={part.errorText || "Error executing workflow"}
+                                                            toolName="Call Workflow Tool"
+                                                        />
+                                                    }
                                                 </div>
                                             );
                                         }
                                         case 'tool-getCustomerProfilesTool': {
                                             return (
                                                 <div key={callId}>
-                                                    {RenderGetCustomProfileToolCallComponent({}, part.output as {profiles: CustomerProfile[]}, theme)}
+                                                    {
+                                                        <MessageStateComponent
+                                                            Component={part.output ? RenderGetCustomProfileToolCallComponent({}, part.output as {profiles: CustomerProfile[]}, theme) : null}
+                                                            state={part.state}
+                                                            theme={theme}
+                                                            successMessage="Profiles Retrieved"
+                                                            errorMessage={part.errorText || "Error retrieving profiles"}
+                                                            toolName="Get Customer Profiles Tool"
+                                                        />
+                                                    }
                                                     {/* <JsonView data={_part.toolInvocation.result} classNames={styles.jsonBubble} /> */}
                                                 </div>
                                             )
@@ -148,29 +184,48 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, the
                                         case 'tool-getCount': {
                                             return (
                                                 <div key={callId}>
-                                                    <JsonRecord rootLabel="Get Count" data={part.output} className={`${styles.jsonBubble} min-w-3/4`} />
+                                                    {
+                                                        <MessageStateComponent
+                                                            Component={<JsonRecord rootLabel="Get Count" data={part.output} className={`${styles.jsonBubble} min-w-3/4`} />}
+                                                            state={part.state}
+                                                            theme={theme}
+                                                            successMessage="Count Retrieved"
+                                                            errorMessage={part.errorText || "Error retrieving count"}
+                                                            toolName="Get Count Tool"
+                                                        />
+                                                    }
                                                 </div>
                                             );
                                         }
                                         case 'tool-getSFDCFieldDescribeTool': {
                                             return (
                                                 <div key={callId}>
-                                                    {/* {RenderGetDataToolCallComponent(_part.toolInvocation.args, _part.toolInvocation.result, theme)} */}
-                                                    <div key={callId} className="flex items-center gap-2 text-xs text-muted-foreground py-4 px-2 border rounded">
-                                                        {part.output ? <CircleCheck className="h-4 w-4 text-green-500" /> : <TriangleAlert className="h-4 w-4 text-red-500" />}
-                                                        <span>{part.output ? "Fields Retrieved" : "No Fields Found"}</span>
-                                                    </div>
+                                                    {
+                                                        <MessageStateComponent
+                                                            Component={null}
+                                                            state={part.state}
+                                                            theme={theme}
+                                                            successMessage="Fields Retrieved"
+                                                            errorMessage={part.errorText || "Error retrieving fields"}
+                                                            toolName="Describe Fields Tool"
+                                                        />
+                                                    }
                                                 </div>
                                             )
                                         }
                                         case 'tool-getSFDCObjectDescribeTool': {
                                             return (
                                                 <div key={callId}>
-                                                    {/* {RenderGetDataToolCallComponent(_part.toolInvocation.args, _part.toolInvocation.result, theme)} */}
-                                                    <div key={callId} className="flex items-center gap-2 text-xs text-muted-foreground py-4 px-2 border rounded">
-                                                        {part.output ? <CircleCheck className="h-4 w-4 text-green-500" /> : <TriangleAlert className="h-4 w-4 text-red-500" />}
-                                                        <span>{part.output ? "Objects Retrieved" : "No Objects Found"}</span>
-                                                    </div>
+                                                    {
+                                                        <MessageStateComponent
+                                                            Component={null}
+                                                            state={part.state}
+                                                            theme={theme}
+                                                            successMessage="Objects Retrieved"
+                                                            errorMessage={part.errorText || "Error retrieving objects"}
+                                                            toolName="Describe Objects Tool"
+                                                        />
+                                                    }
                                                 </div>
                                             )
                                         }
@@ -179,11 +234,16 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, the
                                             
                                             return (
                                                 <div key={callId}>
-                                                    {/* {RenderGetDataToolCallComponent(_part.toolInvocation.args, _part.toolInvocation.result, theme)} */}
-                                                    <div key={callId} className="flex items-center gap-2 text-xs text-muted-foreground py-4 px-2 border rounded">
-                                                        {part.output ? <CircleCheck className="h-4 w-4 text-green-500" /> : <TriangleAlert className="h-4 w-4 text-red-500" />}
-                                                        <span>{part.output ? `${part.type} Complete` : `${part.type} Failed`}</span>
-                                                    </div>
+                                                    {
+                                                        <MessageStateComponent
+                                                            Component={part.output ? <JsonRecord rootLabel="Tool Output" data={part.output} className={`${styles.jsonBubble} min-w-3/4`} /> : null}
+                                                            state={part.state}
+                                                            theme={theme}
+                                                            successMessage="Tool Output Retrieved"
+                                                            errorMessage={part.errorText || "Error retrieving tool output"}
+                                                            toolName={part.type || "Tool"}
+                                                        />
+                                                    }
                                                 </div>
                                             )
                                             
@@ -196,15 +256,15 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, the
                                     case 'reasoning': 
                                         return <Streamdown key={i}>{'Reasoning...'}</Streamdown>;
                                     case 'dynamic-tool': 
-                                        return <>TODO</>
+                                        return null
                                     case 'file': 
-                                        return <>TODO</>
+                                        return null
                                     case 'source-document': 
-                                        return <>TODO</>
+                                        return null
                                     case 'source-url': 
-                                        return <>TODO</>
+                                        return null
                                     case 'step-start': 
-                                        return <>TODO</>
+                                        return null
                                     default:
                                         // Fallback: render part as Markdown
                                         //return <JsonView key={i} data={part} classNames={styles.jsonBubble}/>;
@@ -240,9 +300,12 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, the
 )
 
 const DefaultMessageComponent = (msg: UIMessage, theme: 'dark' | 'light' | 'system') => {
-    console.log(msg);
     const _msg = msg.parts ? msg.parts.at(msg.parts.length - 1) as UIMessagePart<UIDataTypes, UITools> : null;
     const value = _msg && _msg.type === 'text' ? _msg.text : '';
+
+    if (!value || value.trim() === '') {
+        return MessageComponentWrapper( <span className="text-xs text-muted-foreground italic">No response</span>, msg.role, theme);
+    }
 
     return MessageComponentWrapper( <span >{value}</span>, msg.role, theme);
 };
@@ -326,11 +389,11 @@ const TimestampWithCopy = ({ msg } : { msg: UIMessage }) => {
     };
 
     return (
-        <div className={'align-middle flex flex-row items-center'}>
-            <span className="text-xs text-muted-foreground px-2">
-                {/* {msg.createdAt && formatDistanceToNow(msg.createdAt, { addSuffix: true })} */}
+        <div className={`align-middle flex flex-row items-center ${msg.role === 'user' ? 'justify-end' : 'justify-start'} gap-2 mt-1 mx-2`}>
+            {/* <span className="text-xs text-muted-foreground px-2">
+                {msg.createdAt && formatDistanceToNow(msg.createdAt, { addSuffix: true })}
                 TODO : Fill date
-            </span>
+            </span> */}
             <button
                 type="button"
                 aria-label="Copy message"
@@ -440,7 +503,33 @@ const RenderCallWorkflowToolCallComponent = ({result: {usageId}} : {result: {usa
     );
 }
 
-const isToolType = (t: string): t is `tool-${string}` => typeof t === 'string' && t.startsWith('tool-');
-const isToolPart = (p: UIMessagePart<UIDataTypes, UITools>): p is UIMessagePart<ToolUIPart, UITools> => {
-    return !!(p && typeof p === 'object' && 'toolInvocation' in p && 'toolCallId' in p);
-};
+const MessageStateComponent = ({Component, state, theme, successMessage, errorMessage, toolName}:{Component : React.ReactElement | null, state: "input-streaming" | "input-available" | "output-error" | "output-available", theme: 'dark' | 'light' | 'system', successMessage: string, errorMessage: string, toolName: string}) => {
+    const [open, setOpen] = useState(false);
+    if (state === 'input-streaming' || state === 'input-available') {
+        return (
+            <div className="flex items-center gap-2 text-xs text-muted-foreground my-2 py-4 px-2 border rounded my-2">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>{`Calling ${toolName}...`}</span>
+            </div>
+        );
+    }
+    if (state === 'output-error') {
+        return (
+            <div className="flex items-center gap-2 text-xs text-muted-foreground py-4 px-2 border rounded my-2">
+                <TriangleAlert className="h-4 w-4 text-red-500" />
+                <span>{errorMessage}</span>
+            </div>
+        );
+    }
+    if (state === 'output-available' && !open) {
+        return (
+            <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground py-4 px-2 border rounded my-2">
+                <CircleCheck className="h-4 w-4 text-green-500" />
+                <span>{successMessage}</span>
+                {Component && <Button variant="outline" size="sm" className="ml-5" onClick={() => setOpen(true)}>View Details</Button>}
+            </div>
+        );
+    }
+    // Default: output available
+    return Component;
+}

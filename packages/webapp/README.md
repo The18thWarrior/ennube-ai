@@ -191,3 +191,9 @@ Follow the [Deployment documentation](https://authjs.dev/getting-started/deploym
 ## License
 
 ISC
+
+
+## Adding a task
+Help me develop a project plan for this sprint. Create a design and task list document for each to do item. Add the documents to the `packages/webapp/docs/sprint-8-26` directory. 
+
+To Do Tools :

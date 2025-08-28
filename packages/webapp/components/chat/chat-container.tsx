@@ -3,24 +3,11 @@
 import React, { useRef, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useTheme } from '../theme-provider';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem
-} from '@/components/ui/dropdown-menu';
 import styles from './chat-container.module.css';
-import { getJsonData, isJson, parseAndValidateResponse } from '@/lib/utils';
 import { z } from 'zod';
 import { ComponentConfigSchema } from '../custom-response';
-import { JsonView } from '@/components/ui/json-view';
-import CustomResponse from '@/components/custom-response';
 import { useChat } from '@ai-sdk/react';
-import { DefaultChatTransport, UIMessage } from 'ai';
-import { nanoid } from 'nanoid';
-import ChatInput from './chat-input';
-import error from 'next/error';
+import { DefaultChatTransport, UIDataTypes, UIMessage, UITools } from 'ai';
 import { renderMessage } from './chat-message';
 import { useMessageHistory } from '@/hooks/useMessageHistory';
 import {avatarOptions, AgentSelector} from '@/components/chat/agents';
@@ -39,14 +26,15 @@ const ChatContainer = ({
   initialMessages,
   name,
   agent,
-}: { id?: string | undefined; initialMessages?: UIMessage[]; name?: string | null; agent?: string | null } = {}) => {
+}: { id?: string | undefined; initialMessages?: UIMessage[]; name?: string | null; agent?: string | null }) => {
     const { theme } = useTheme();
     const [input, handleInputChange] = React.useState('');
     const { data: session } = useSession();
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const setThreadTimerRef = useRef<number | null>(null);
     const [mounted, setMounted] = React.useState(false);
     const [isEditingName, setIsEditingName] = React.useState(false);
-    const [ _name, setName ] = React.useState<string>("");
+    const [ _name, setName ] = React.useState<string>(name || '');
     const { getThread, setThread } = useMessageHistory();
     const [selectedAvatar, setSelectedAvatar] = React.useState(agent ? agent : avatarOptions[0].key);
     // Use the ai-sdk/react chat hook
@@ -64,13 +52,12 @@ const ChatContainer = ({
         }),
         
         onFinish: (message) => {
-            console.log('onfinish', message, messages);
+            //console.log('onfinish', message, 'previous', messages);
             
             //setThread(threadId, [...messages, message], _name || '');
-            setTimeout(() => {
-                setThread(threadId, [...messages, message.message], _name || '', selectedAvatar);
-                messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-            }, 100);
+            // setTimeout(() => {
+            //     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+            // }, 100);
         },
         onError: (err) => {
             console.error('Chat error:', err);
@@ -79,25 +66,26 @@ const ChatContainer = ({
         //     return { message: messages[messages.length - 1], id };
         // },
     });
-    console.log('Chat container initialized', messages, initialMessages);
+    //console.log('Chat container initialized', messages, initialMessages);
     const isLoading = status === 'submitted' || status === 'streaming';
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         //console.log(e)
         //e.currentTarget.preventDefault();
-        setThread(threadId, [...messages, {
-            id: nanoid(),
-            role: 'user',
-            parts: [
-                {
-                    id: nanoid(),
-                    type: 'text',
-                    text: input,
-                },
-            ],
-        }], _name || '', selectedAvatar);
+        // setThread(threadId, [...messages, {
+        //     id: nanoid(),
+        //     role: 'user',
+        //     parts: [
+        //         {
+        //             type: 'text',
+        //             text: input,
+        //         },
+        //     ],
+        // } as UIMessage<unknown, UIDataTypes, UITools>], _name || '', selectedAvatar);
         sendMessage({ text: input });
         handleInputChange('');
     };
+
+
     // Only render after mount to avoid hydration mismatch
     useEffect(() => {
         setMounted(true);
@@ -112,12 +100,29 @@ const ChatContainer = ({
         }
     }, [messages.length, mounted]);
     useEffect(() => {
-        if (mounted) {
-            if (messages.length > 0) {
-                //setThread(threadId, [...messages], _name || '', selectedAvatar);
-            }
-            //setThread(threadId, [...messages], _name || '');
+        if (!mounted) return;
+
+        // Clear any existing timer so we debounce
+        if (setThreadTimerRef.current) {
+            clearTimeout(setThreadTimerRef.current);
+            setThreadTimerRef.current = null;
         }
+
+        // Set a new timer to call setThread after 2 seconds
+        setThreadTimerRef.current = window.setTimeout(() => {
+            if (messages.length > 0) {
+                setThread(threadId, [...messages], _name || '', selectedAvatar);
+            }
+            setThreadTimerRef.current = null;
+        }, 2000);
+
+        // Cleanup on dependency change or unmount
+        return () => {
+            if (setThreadTimerRef.current) {
+                clearTimeout(setThreadTimerRef.current);
+                setThreadTimerRef.current = null;
+            }
+        };
     }, [messages, mounted]);
     useEffect(() => {
         if (name) setName(name);

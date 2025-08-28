@@ -1,5 +1,5 @@
 import { Tool, tool } from "ai";
-import z from "zod";
+import z from "zod/v4";
 import { getBaseUrl } from "../helper";
 
 // Tool: Get Objects

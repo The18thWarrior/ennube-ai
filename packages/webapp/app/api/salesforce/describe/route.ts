@@ -13,6 +13,8 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const _sub = searchParams.get('sub');
     const sobjectType = searchParams.get('sobjectType');
+    const addFields = searchParams.get('addFields') as string === 'false' ? false : true;
+    const addRelationships = searchParams.get('addRelationships') as string === 'false' ? false : true;
 
     const session = await auth();
     const sub = _sub || session?.user?.auth0?.sub;
@@ -41,8 +43,35 @@ export async function GET(request: NextRequest) {
       // Describe a specific object
       console.log('Describing object:', sobjectType);
       const describe = await client.describe(sobjectType);
-      console.log(describe);
-      return NextResponse.json({ describe });
+      //console.log(describe);
+      const describeResult = {
+        name: describe.name,
+        label: describe.label,
+        keyPrefix: describe.keyPrefix,
+        fields: addFields ? describe.fields.map((field: { calculatedFormula: any; digits: any; externalId: any; inlineHelpText: any; label: any; length: any; name: any; picklistValues: any; precision: any; relationshipName: any; type: any; }) => {
+          return {
+            calculatedFormula: field.calculatedFormula,
+            digits: field.digits,
+            externalId: field.externalId,
+            inlineHelpText: field.inlineHelpText,
+            label: field.label,
+            length: field.length,
+            name: field.name,
+            picklistValues: field.picklistValues,
+            precision: field.precision,
+            relationshipName: field.relationshipName,
+            type: field.type
+          }
+        }) : [],
+        childRelationships: addRelationships ? describe.childRelationships.filter((child: { deprecatedAndHidden: boolean; relationshipName: any; field: any; childSObject: any; }) => child.deprecatedAndHidden === false && child.relationshipName).map((child: { childSObject: any; field: any; relationshipName: any; }) => {
+          return {
+            childSObject: child.childSObject,
+            field: child.field,
+            relationshipName: child.relationshipName
+          }
+        }) : []
+      }
+      return NextResponse.json({ describe: describeResult });
     } else {
       // Describe all objects (describeGlobal)
       const describeGlobal = await client.describeGlobal();

@@ -1,6 +1,6 @@
 import { ComponentConfigSchema } from "@/components/custom-response";
 import { tool, generateObject, ToolExecutionOptions } from "ai";
-import z from "zod";
+import z from "zod/v4";
 
 
 // Tool: Get Fields
