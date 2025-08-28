@@ -49,7 +49,6 @@ export function CrmResultCard(props: CrmRecordListData) {
         setTimeout(() => {setFlip(false); setTimeout(() => { setSelectedId(null);setFlipping(false) }, 500);}, 50)
          // wait for flip animation
     }, [])
-
     return (
         <div
         className={`flip-card ${flip ? "flipped" : ""} ${flipping ? "overflow-hidden" : ""}`}

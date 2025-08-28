@@ -327,7 +327,7 @@ const DefaultMessageComponent = (msg: UIMessage, theme: 'dark' | 'light' | 'syst
         return MessageComponentWrapper( <span className="text-xs text-muted-foreground italic">No response</span>, msg.role, theme);
     }
 
-    return MessageComponentWrapper( <Streamdown className={`${state === 'streaming' ? 'text-muted-foreground' : ''} ${msg.role === 'user' ? '' : 'p-2'}`}>{value}</Streamdown>, msg.role, theme);
+    return MessageComponentWrapper( <span className={`${state === 'streaming' ? 'text-muted-foreground' : ''} ${msg.role === 'user' ? '' : 'p-2'}`}>{value}</span>, msg.role, theme);
 };
 
 const MessageComponentWrapper = (Component: React.ReactElement, role:string, theme: 'dark' | 'light' | 'system') => (
@@ -345,9 +345,19 @@ const MessageComponentWrapper = (Component: React.ReactElement, role:string, the
 const RenderGetDataToolCallComponent = ({args, result, theme}: {args: any, result: any, theme: 'dark' | 'light' | 'system'}) => {
     const {records } = result;
     const [hide, setHide] = useState(false);
-    setTimeout(() => setHide(true), 5000);
-    //console.log(result)
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => {
+      setMounted(true);
+
+      setTimeout(() => {
+        if (mounted) setHide(true);
+      }, 5000);
+      return () => {
+        setMounted(false);
+      };
+    }, []);
     
+  
     if (!records || records.length === 0) {
         return (
             <div className={`flex items-center gap-2 text-xs text-muted-foreground border rounded  transition-all duration-3000 ease-in-out transition-discrete ${hide ? 'h-0 opacity-0' : 'block py-4 px-2 my-2'}`}>
@@ -371,14 +381,18 @@ const RenderGetDataToolCallComponent = ({args, result, theme}: {args: any, resul
     }
     
     const convertedRecords = records.map((record: { [x: string]: any; Id?: any; attributes?: any; }) => ({
-        id: record.Id,
+        id: record.Id || nanoid(),
         fields: Object.keys(record).filter((key) => record[key] && key !== 'attributes').map((key) => ({
             label: key,
-            value: record[key],
+            value: typeof record[key] === 'object' ? Object.keys(record[key]).filter((key2) => record[key] && key2 !== 'attributes').reduce((acc, key2) => {
+              return {...acc, [key2]: record[key][key2]};
+            }, {}) : record[key],
             icon: RecordIcon.getIcon('default'),
         })),
         objectType: record.attributes.type,
     }));
+    // console.log(`RenderGetDataToolCallComponent`,records)
+    console.log(`RenderGetDataToolCallComponent`,convertedRecords)
     return (
         <div className="transition-all duration-300 ease-in-out" style={{ transitionProperty: 'width' }}>
             {/* <CrmRecordListView records={records} /> */}

@@ -37,8 +37,6 @@ export function CrmRecordListCard(data: CrmRecordListData) {
     data.selectRecord(recordId)
   }
 
-  
-
   const renderListTable = () => {
     let initialColumns: Column[] = [];
     if (data.records.length > 0) {
@@ -90,9 +88,9 @@ export function CrmRecordListCard(data: CrmRecordListData) {
                     {data2.records.map((record) => {
                       const FirstItemIcon = record.fields[firstField].icon || Briefcase;
                       const SecondItemIcon = record.fields[secondField].icon || User;
-                      const firstFieldValue = record.fields.find(field => field.label.includes('Name') || field.label.includes('name')) ? record.fields.find(field => field.label.includes('Name') || field.label.includes('name'))?.value : record.fields[firstField].value || "-";
-                      const secondFieldValue = record.fields.find(field => field.label.includes('OwnerId') || field.label.includes('owner')) ? record.fields.find(field => field.label.includes('OwnerId') || field.label.includes('owner'))?.value : record.fields[secondField].value || "-";
-                      const thirdFieldValue = record.fields.find(field => field.label.includes('Type') || field.label.includes('type')) ? record.fields.find(field => field.label.includes('Type') || field.label.includes('type'))?.value : record.fields[thirdField].value || "-";
+                      const firstFieldValue = record.fields.find(field => field.label.includes('Name') || field.label.includes('name')) ? record.fields.find(field => field.label.includes('Name') || field.label.includes('name'))?.value : typeof record.fields[firstField].value !== 'object' ? record.fields[firstField].value || "-" : record.fields[firstField].value ? Object.values(record.fields[firstField].value).at(0): '-';
+                      const secondFieldValue = record.fields.find(field => field.label.includes('OwnerId') || field.label.includes('owner')) ? record.fields.find(field => field.label.includes('OwnerId') || field.label.includes('owner'))?.value : typeof record.fields[secondField].value !== 'object' ? record.fields[secondField].value || "-" : record.fields[secondField].value ? Object.values(record.fields[secondField].value).at(0): '-';
+                      const thirdFieldValue = record.fields.find(field => field.label.includes('Type') || field.label.includes('type')) ? record.fields.find(field => field.label.includes('Type') || field.label.includes('type'))?.value :  typeof record.fields[thirdField].value !== 'object' ? record.fields[thirdField].value || "-" : record.fields[thirdField].value ? Object.values(record.fields[thirdField].value).at(0): '-';
                       const thirdFieldLabel = record.fields[thirdField]?.label || "Type";
                       
                       return (
@@ -108,7 +106,7 @@ export function CrmRecordListCard(data: CrmRecordListData) {
                                 {FirstItemIcon && <FirstItemIcon className="mr-2 h-3 w-3 text-muted-foreground flex-shrink-0" />} {firstFieldValue}
                               </p>
                               <p className="text-xs text-muted-foreground truncate flex items-center">
-                                {SecondItemIcon && <SecondItemIcon className="mr-2 h-4 w-4 text-muted-foreground flex-shrink-0" />} {secondFieldValue}
+                                {false && SecondItemIcon && <SecondItemIcon className="mr-2 h-4 w-4 text-muted-foreground flex-shrink-0" />} {secondFieldValue}
                               </p>
                               <p className="text-xs text-muted-foreground">{thirdFieldLabel}: {thirdFieldValue}</p>
                             </div>

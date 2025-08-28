@@ -216,7 +216,7 @@ Requirements:
 - Use proper SOQL syntax
 - Focus on fields most relevant to the user's request
 - Include appropriate WHERE clauses if filtering is implied
-- Limit results to a reasonable number (e.g., LIMIT 100)
+- Limit results to a reasonable number (e.g., LIMIT 200)
 
 Return a well-formed SOQL query that addresses the user's needs.`;
 
