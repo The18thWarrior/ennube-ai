@@ -3,6 +3,8 @@
 import React, { useEffect, useState, ReactNode } from 'react';
 import styles from './chat-container.module.css';
 import { Streamdown } from 'streamdown';
+import Markdown from 'markdown-to-jsx'
+import ReactMarkdown from 'react-markdown'
 import { cn, getAgentImage } from '@/lib/utils';
 import { JsonRecord } from '../generalized-result';
 import { UIMessage, UIDataTypes, UIMessagePart, UITools, isToolUIPart } from 'ai';
@@ -81,12 +83,29 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, the
                                         
                                     
                                     switch (part.type) {
-                                        case 'tool-getSFDCDataTool': {                                             
+                                      case 'tool-generateQueryTool': {                                             
                                             return (
                                                 <div key={callId}>
                                                     {
                                                         <MessageStateComponent
-                                                            Component={RenderGetDataToolCallComponent({}, part.output, theme)}
+                                                            Component={<RenderGetDataToolCallComponent args={{}} result={part.output || {records: []}} theme={theme} />}
+                                                            state={part.state}
+                                                            theme={theme}
+                                                            successMessage="Data Retrieved"
+                                                            errorMessage={part.errorText || "Error retrieving data"}
+                                                            toolName="Salesforce Data Tool"
+                                                        />
+                                                    }
+                                                    {/* <JsonView data={part.toolInvocation.result} classNames={styles.jsonBubble} /> */}
+                                                </div>
+                                            );
+                                        }  
+                                      case 'tool-getSFDCDataTool': {                                             
+                                            return (
+                                                <div key={callId}>
+                                                    {
+                                                        <MessageStateComponent
+                                                            Component={<RenderGetDataToolCallComponent args={{}} result={part.output} theme={theme} />}
                                                             state={part.state}
                                                             theme={theme}
                                                             successMessage="Data Retrieved"
@@ -252,9 +271,9 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, the
                                 
                                 switch (part.type) {
                                     case 'text':
-                                        return <Streamdown key={i}>{part.text}</Streamdown>;
+                                        return <Markdown key={i}>{part.text}</Markdown>;
                                     case 'reasoning': 
-                                        return <Streamdown key={i}>{'Reasoning...'}</Streamdown>;
+                                        return <Markdown key={i}>{'Reasoning...'}</Markdown>;
                                     case 'dynamic-tool': 
                                         return null
                                     case 'file': 
@@ -302,12 +321,13 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, the
 const DefaultMessageComponent = (msg: UIMessage, theme: 'dark' | 'light' | 'system') => {
     const _msg = msg.parts ? msg.parts.at(msg.parts.length - 1) as UIMessagePart<UIDataTypes, UITools> : null;
     const value = _msg && _msg.type === 'text' ? _msg.text : '';
+    const state = _msg && _msg.type === 'text' ? _msg.state : 'done';
 
     if (!value || value.trim() === '') {
         return MessageComponentWrapper( <span className="text-xs text-muted-foreground italic">No response</span>, msg.role, theme);
     }
 
-    return MessageComponentWrapper( <span >{value}</span>, msg.role, theme);
+    return MessageComponentWrapper( <Streamdown className={`${state === 'streaming' ? 'text-muted-foreground' : ''} ${msg.role === 'user' ? '' : 'p-2'}`}>{value}</Streamdown>, msg.role, theme);
 };
 
 const MessageComponentWrapper = (Component: React.ReactElement, role:string, theme: 'dark' | 'light' | 'system') => (
@@ -322,16 +342,19 @@ const MessageComponentWrapper = (Component: React.ReactElement, role:string, the
     </span>
 );
 
-const RenderGetDataToolCallComponent = (args: any, result: any, theme: 'dark' | 'light' | 'system') => {
+const RenderGetDataToolCallComponent = ({args, result, theme}: {args: any, result: any, theme: 'dark' | 'light' | 'system'}) => {
     const {records } = result;
+    const [hide, setHide] = useState(false);
+    setTimeout(() => setHide(true), 5000);
     //console.log(result)
+    
     if (!records || records.length === 0) {
-        return <div>
-            <div className="flex items-center gap-2 text-xs text-muted-foreground my-2 py-4 px-2 border rounded">
+        return (
+            <div className={`flex items-center gap-2 text-xs text-muted-foreground border rounded  transition-all duration-3000 ease-in-out transition-discrete ${hide ? 'h-0 opacity-0' : 'block py-4 px-2 my-2'}`}>
                 {<TriangleAlert className="h-4 w-4 text-red-500" />}
                 <span>No data found</span>
             </div>
-        </div>
+        )
     }
     if (records.length === 1) {
         const fields = Object.keys(records[0]).filter((key) => key !== 'Id' && records[0][key] && key !== 'attributes').map((key) => ({
@@ -505,6 +528,7 @@ const RenderCallWorkflowToolCallComponent = ({result: {usageId}} : {result: {usa
 
 const MessageStateComponent = ({Component, state, theme, successMessage, errorMessage, toolName}:{Component : React.ReactElement | null, state: "input-streaming" | "input-available" | "output-error" | "output-available", theme: 'dark' | 'light' | 'system', successMessage: string, errorMessage: string, toolName: string}) => {
     const [open, setOpen] = useState(false);
+    const [hide, setHide] = useState(false);
     if (state === 'input-streaming' || state === 'input-available') {
         return (
             <div className="flex items-center gap-2 text-xs text-muted-foreground my-2 py-4 px-2 border rounded my-2">
@@ -514,16 +538,19 @@ const MessageStateComponent = ({Component, state, theme, successMessage, errorMe
         );
     }
     if (state === 'output-error') {
+        if (errorMessage.includes('Model tried to call unavailable tool')) setTimeout(() => setHide(true), 5000);
         return (
-            <div className="flex items-center gap-2 text-xs text-muted-foreground py-4 px-2 border rounded my-2">
+            <div className={`flex items-center gap-2 text-xs text-muted-foreground border rounded transition-all duration-3000 ease-in-out transition-discrete ${hide ? 'h-0 opacity-0' : 'block py-4 px-2 my-2'}`}>
                 <TriangleAlert className="h-4 w-4 text-red-500" />
                 <span>{errorMessage}</span>
             </div>
         );
     }
     if (state === 'output-available' && !open) {
+        if (!Component) setTimeout(() => setHide(true), 5000); // auto-open after 5 seconds
+        //if (hide) return null;
         return (
-            <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground py-4 px-2 border rounded my-2">
+            <div className={`flex items-center gap-2 text-xs text-muted-foreground border rounded transition-all duration-3000 ease-in-out transition-discrete ${hide ? 'h-0 opacity-0' : 'block py-4 px-2 my-2'}`}>
                 <CircleCheck className="h-4 w-4 text-green-500" />
                 <span>{successMessage}</span>
                 {Component && <Button variant="outline" size="sm" className="ml-5" onClick={() => setOpen(true)}>View Details</Button>}

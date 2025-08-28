@@ -40,7 +40,7 @@ export default function ChatPage(props: { params: Promise<{ threadId: string }> 
       setHasThreadLoaded(true);
     };
     runAsync();
-  }, [props.params]);
+  }, []);
   if (!threadId) return null;
   return (
     
