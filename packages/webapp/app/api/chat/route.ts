@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
       apiKey: `${process.env.OPENROUTER_API_KEY}`,
     });
     const systemPrompt = `${getPrompt(agent as 'data-steward' | 'prospect-finder' | 'contract-reader')} Today's date is ${today}.`;
-    const model = openrouter('deepseek/deepseek-chat-v3.1'); // deepseek/deepseek-chat-v3-0324 | google/gemini-2.0-flash-001
+    const model = openrouter('openai/gpt-oss-120b'); // deepseek/deepseek-chat-v3.1 deepseek/deepseek-chat-v3-0324 | google/gemini-2.0-flash-001
     // Set up the OpenAI model
     // Run the agent with tools
     const result = await streamText({

@@ -55,7 +55,7 @@ export function CrmResultCard(props: CrmRecordListData) {
         style={{ perspective: "1000px"}}
         >
             <div
-                className={`flip-card-inner w-full h-full  relative transition-transform duration-500`}
+                className={`flip-card-inner w-full h-full min-w-[50vw] relative transition-transform duration-500`}
                 style={{ transformStyle: "preserve-3d", transform: flip ? "rotateY(180deg)" : "rotateY(0deg)", position: 'relative' }}
             >
                 {/* Front: List */}

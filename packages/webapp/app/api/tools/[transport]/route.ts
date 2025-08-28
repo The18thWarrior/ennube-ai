@@ -36,6 +36,9 @@ const handler = createMcpHandler(
         const params = args || {};
         
         let subId = extra.authInfo?.clientId;
+        if (typeof callWorkflowToolDataSteward.execute !== 'function') {
+          throw new Error('callWorkflowToolDataSteward.execute is not defined');
+        }
         const result = await callWorkflowToolDataSteward.execute({ ...params, subId } as any, extra);
         return { content: [{ type: 'text', text: JSON.stringify(result) }] };
       }
@@ -50,6 +53,9 @@ const handler = createMcpHandler(
         const params = args || {};
         
         let subId = extra.authInfo?.clientId;
+        if (typeof callWorkflowToolProspectFinder.execute !== 'function') {
+          throw new Error('callWorkflowToolProspectFinder.execute is not defined');
+        }
         const result = await callWorkflowToolProspectFinder.execute({ ...params, subId } as any, extra);
         return { content: [{ type: 'text', text: JSON.stringify(result) }] };
       }
@@ -92,6 +98,9 @@ const handler = createMcpHandler(
         
         const dataTool = getSFDCDataTool(subId);
         const execParams = { ...params, limit: params.limit ?? 100, filter: params.filter ?? "" } as any;
+        if (!dataTool || typeof dataTool.execute !== 'function') {
+          throw new Error('getSFDCDataTool did not return a valid tool with an execute method');
+        }
         const result = await dataTool.execute(execParams, extra);
         return { content: [{ type: 'text', text: JSON.stringify(result) }] };
       }
@@ -108,6 +117,9 @@ const handler = createMcpHandler(
         let subId = extra.authInfo?.clientId;
         const fieldsTool = getFieldsTool(subId);
         const execParams = { ...params, limit: params.limit ?? 200 } as any;
+        if (!fieldsTool || typeof fieldsTool.execute !== 'function') {
+          throw new Error('getFieldsTool did not return a valid tool with an execute method');
+        }
         const result = await fieldsTool.execute(execParams, extra);
         return { content: [{ type: 'text', text: JSON.stringify(result) }] };
       }
@@ -122,6 +134,9 @@ const handler = createMcpHandler(
         
         let subId = extra.authInfo?.clientId;
         const credentialsTool = getCredentialsTool(subId);
+        if (!credentialsTool || typeof credentialsTool.execute !== 'function') {
+          throw new Error('getCredentialsTool did not return a valid tool with an execute method');
+        }
         const result = await credentialsTool.execute({}, extra);
         return { content: [{ type: 'text', text: JSON.stringify(result) }] };
       }
