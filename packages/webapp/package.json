@@ -17,13 +17,7 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage"
   },
-  "author": "Iain Collins <me@iaincollins.com>",
-  "contributors": [
-    "Balázs Orbán <info@balazsorban.com>",
-    "Nico Domino <yo@ndo.dev>",
-    "Lluis Agusti <hi@llu.lu>",
-    "Thang Huu Vu <hi@thvu.dev>"
-  ],
+  "author": "Jordan Paul",
   "dependencies": {
     "@ai-sdk/openai": "^2.0.22",
     "@ai-sdk/react": "^2.0.25",
