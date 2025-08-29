@@ -9,7 +9,7 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -132,6 +132,23 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
   const [connectedUserId, setConnectedUserId] = React.useState<string>(DEFAULT_ID)
 
+  const router = useRouter()
+
+  const handleLogout = React.useCallback(async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' })
+    } catch (e) {
+      // ignore network errors
+    }
+    // Redirect to auth page after logout
+    try {
+      router.push('/auth')
+    } catch (e) {
+      // fallback
+      window.location.href = '/auth'
+    }
+  }, [router])
+
   React.useEffect(() => {
     try {
       const v = localStorage.getItem(STORAGE_KEY)
@@ -221,9 +238,9 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           </div>
 
           <div className="flex items-center gap-4">
-            
-
             <ThemeSwitcher />
+            |
+            <Button size="sm" variant="primary" onClick={handleLogout}>Logout</Button>
           </div>
         </div>
 
