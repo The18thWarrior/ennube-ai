@@ -240,7 +240,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           <div className="flex items-center gap-4">
             <ThemeSwitcher />
             |
-            <Button size="sm" variant="primary" onClick={handleLogout}>Logout</Button>
+            <Button size="sm" variant="secondary" onClick={handleLogout}>Logout</Button>
           </div>
         </div>
 
