@@ -181,6 +181,21 @@ For detailed setup instructions and implementation details, see [Stripe Integrat
 
 Follow the [Deployment documentation](https://authjs.dev/getting-started/deployment)
 
+## Documentation: Generate Query Tool
+
+This project contains an AI-powered Generate Query Tool for producing SELECT-only SOQL from natural language. See:
+
+- `packages/webapp/docs/generate-query-tool.md` — full design, usage, server endpoints, testing notes, and production recommendations.
+
+Quick start (tests):
+
+```bash
+pnpm install
+pnpm --filter @ennube/webapp test
+```
+
+Notes: Unit tests mock heavy ESM dependencies; for integration tests that use the real embedding/vector libraries, run them in an environment prepared for ESM modules.
+
 ## Acknowledgements
 
 <a href="https://vercel.com?utm_source=nextauthjs&utm_campaign=oss">
@@ -191,3 +206,9 @@ Follow the [Deployment documentation](https://authjs.dev/getting-started/deploym
 ## License
 
 ISC
+
+
+## Adding a task
+Help me develop a project plan for this sprint. Create a design and task list document for each to do item. Add the documents to the `packages/webapp/docs/sprint-8-26` directory. 
+
+To Do Tools :

@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { ListChecks, User, Briefcase, ChevronRight } from "lucide-react"
 import { useState } from "react"
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible"
 import { Column, CrmRecordListTable } from "./crm-record-list-table"
 import { useTheme } from "@/components/theme-provider"
 
@@ -26,8 +27,10 @@ interface CrmRecordListData {
 
 export function CrmRecordListCard(data: CrmRecordListData) {
   const [viewTable, setViewTable] = useState(false)
+  const [openRecords, setOpenRecords] = useState(false)
   const {theme} = useTheme() // Assuming you have a useTheme hook to get the current theme
   const FIELDS_SHOWN = 6
+  const RECORDS_SHOWN = 5
   const handleRecordClick = (recordId: string) => {
     // In a real app, this might trigger a new chat message like "Show details for record [recordId]"
     // or open a modal, or navigate to a record page.
@@ -36,8 +39,6 @@ export function CrmRecordListCard(data: CrmRecordListData) {
     // This would typically involve a more complex state management or callback prop.
     data.selectRecord(recordId)
   }
-
-  
 
   const renderListTable = () => {
     let initialColumns: Column[] = [];
@@ -58,7 +59,7 @@ export function CrmRecordListCard(data: CrmRecordListData) {
   }
 
   return (
-    <Card className="my-2 border-teal-500 max-w-5xl" style={{scrollbarWidth: 'none'}}>
+    <Card className="my-2 border-teal-500 min-w-[50vw]" style={{scrollbarWidth: 'none'}}>
       <CardHeader className="pb-3">
         <CardTitle className="text-xl flex items-center justify-between">
           <span className="justify-start flex">
@@ -85,14 +86,16 @@ export function CrmRecordListCard(data: CrmRecordListData) {
                 const firstField = 0; // Ensure we have at least one field
                 const secondField = data2.records[0].fields.length > 2 ? 1 : 0; // Ensure we have a second field if possible
                 const thirdField = data2.records[0].fields.length > 3 ? 2 : 0; // Ensure we have a third field if possible
+                const displayed = data2.records.slice(0, RECORDS_SHOWN)
+                const extra = data2.records.slice(RECORDS_SHOWN)
                 return (
-                  <div key={Math.random()}>
-                    {data2.records.map((record) => {
+                  <div key={`record-list`}>
+                    {displayed.map((record) => {
                       const FirstItemIcon = record.fields[firstField].icon || Briefcase;
                       const SecondItemIcon = record.fields[secondField].icon || User;
-                      const firstFieldValue = record.fields.find(field => field.label.includes('Name') || field.label.includes('name')) ? record.fields.find(field => field.label.includes('Name') || field.label.includes('name'))?.value : record.fields[firstField].value || "-";
-                      const secondFieldValue = record.fields.find(field => field.label.includes('OwnerId') || field.label.includes('owner')) ? record.fields.find(field => field.label.includes('OwnerId') || field.label.includes('owner'))?.value : record.fields[secondField].value || "-";
-                      const thirdFieldValue = record.fields.find(field => field.label.includes('Type') || field.label.includes('type')) ? record.fields.find(field => field.label.includes('Type') || field.label.includes('type'))?.value : record.fields[thirdField].value || "-";
+                      const firstFieldValue = record.fields.find(field => field.label.includes('Name') || field.label.includes('name')) ? record.fields.find(field => field.label.includes('Name') || field.label.includes('name'))?.value : typeof record.fields[firstField].value !== 'object' ? record.fields[firstField].value || "-" : record.fields[firstField].value ? Object.values(record.fields[firstField].value).at(0): '-';
+                      const secondFieldValue = record.fields.find(field => field.label.includes('OwnerId') || field.label.includes('owner')) ? record.fields.find(field => field.label.includes('OwnerId') || field.label.includes('owner'))?.value : typeof record.fields[secondField].value !== 'object' ? record.fields[secondField].value || "-" : record.fields[secondField].value ? Object.values(record.fields[secondField].value).at(0): '-';
+                      const thirdFieldValue = record.fields.find(field => field.label.includes('Type') || field.label.includes('type')) ? record.fields.find(field => field.label.includes('Type') || field.label.includes('type'))?.value :  typeof record.fields[thirdField].value !== 'object' ? record.fields[thirdField].value || "-" : record.fields[thirdField].value ? Object.values(record.fields[thirdField].value).at(0): '-';
                       const thirdFieldLabel = record.fields[thirdField]?.label || "Type";
                       
                       return (
@@ -108,7 +111,7 @@ export function CrmRecordListCard(data: CrmRecordListData) {
                                 {FirstItemIcon && <FirstItemIcon className="mr-2 h-3 w-3 text-muted-foreground flex-shrink-0" />} {firstFieldValue}
                               </p>
                               <p className="text-xs text-muted-foreground truncate flex items-center">
-                                {SecondItemIcon && <SecondItemIcon className="mr-2 h-4 w-4 text-muted-foreground flex-shrink-0" />} {secondFieldValue}
+                                {false && SecondItemIcon && <SecondItemIcon className="mr-2 h-4 w-4 text-muted-foreground flex-shrink-0" />} {secondFieldValue}
                               </p>
                               <p className="text-xs text-muted-foreground">{thirdFieldLabel}: {thirdFieldValue}</p>
                             </div>
@@ -116,6 +119,48 @@ export function CrmRecordListCard(data: CrmRecordListData) {
                           </Button>
                         </li>
                       )}
+                    )}
+                    {extra.length > 0 && (
+                      <Collapsible open={openRecords} onOpenChange={setOpenRecords}>
+                        <CollapsibleContent>
+                          {extra.map((record) => {
+                            const FirstItemIcon = record.fields[firstField].icon || Briefcase;
+                            const SecondItemIcon = record.fields[secondField].icon || User;
+                            const firstFieldValue = record.fields.find(field => field.label.includes('Name') || field.label.includes('name')) ? record.fields.find(field => field.label.includes('Name') || field.label.includes('name'))?.value : typeof record.fields[firstField].value !== 'object' ? record.fields[firstField].value || "-" : record.fields[firstField].value ? Object.values(record.fields[firstField].value).at(0): '-';
+                            const secondFieldValue = record.fields.find(field => field.label.includes('OwnerId') || field.label.includes('owner')) ? record.fields.find(field => field.label.includes('OwnerId') || field.label.includes('owner'))?.value : typeof record.fields[secondField].value !== 'object' ? record.fields[secondField].value || "-" : record.fields[secondField].value ? Object.values(record.fields[secondField].value).at(0): '-';
+                            const thirdFieldValue = record.fields.find(field => field.label.includes('Type') || field.label.includes('type')) ? record.fields.find(field => field.label.includes('Type') || field.label.includes('type'))?.value :  typeof record.fields[thirdField].value !== 'object' ? record.fields[thirdField].value || "-" : record.fields[thirdField].value ? Object.values(record.fields[thirdField].value).at(0): '-';
+                            const thirdFieldLabel = record.fields[thirdField]?.label || "Type";
+                            return (
+                              <li key={`extra-${record.id}`} className={"py-1"}>
+                                <Button
+                                  variant="outline_neutral"
+                                  className="w-full justify-between items-center h-auto py-2 px-3 text-left"
+                                  onClick={() => handleRecordClick(record.id)}
+                                  title={`View details for ${record.fields.find(field => field.label.includes('Name') || field.label.includes('name') || field.label.includes('type') || field.label.includes('Type'))?.value}`}
+                                >
+                                  <div className="flex-1 min-w-0">
+                                    <p className="font-semibold text-sm truncate flex items-center">
+                                      {FirstItemIcon && <FirstItemIcon className="mr-2 h-3 w-3 text-muted-foreground flex-shrink-0" />} {firstFieldValue}
+                                    </p>
+                                    <p className="text-xs text-muted-foreground truncate flex items-center">
+                                      {false && SecondItemIcon && <SecondItemIcon className="mr-2 h-4 w-4 text-muted-foreground flex-shrink-0" />} {secondFieldValue}
+                                    </p>
+                                    <p className="text-xs text-muted-foreground">{thirdFieldLabel}: {thirdFieldValue}</p>
+                                  </div>
+                                  <ChevronRight className="ml-2 h-4 w-4 text-muted-foreground flex-shrink-0" />
+                                </Button>
+                              </li>
+                            )
+                          })}
+                        </CollapsibleContent>
+                        <div className="flex justify-center pt-2">
+                          <CollapsibleTrigger asChild>
+                            <Button variant="ghost" size="sm">
+                              {openRecords ? "Show less" : `Show ${extra.length} more`}
+                            </Button>
+                          </CollapsibleTrigger>
+                        </div>
+                      </Collapsible>
                     )}
                   </div>
                 )

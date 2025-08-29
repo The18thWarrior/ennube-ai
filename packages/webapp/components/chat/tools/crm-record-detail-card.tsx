@@ -6,6 +6,7 @@ import styles from './crm-record-detail-card.module.css';
 import React from "react"
 import { Separator } from "@/components/ui/separator"
 import { useTheme } from "@/components/theme-provider";
+import { LucideIcon } from "lucide-react";
 
 // A small sub-component for displaying an editable field
 const EditableField = ({
@@ -13,7 +14,7 @@ const EditableField = ({
   label,
   children,
 }: {
-  icon: React.ElementType
+  icon: LucideIcon
   label: string
   children: React.ReactNode
 }) => (
@@ -36,12 +37,12 @@ const EditableField = ({
 
 // Main component props
 interface CrmRecordDetailCardProps {
-  icon: React.ElementType
+  icon: LucideIcon
   recordType: string
   title: string
   subtitle?: string
   fields: {
-    icon: React.ElementType
+    icon: LucideIcon
     label: string
     value: React.ReactNode
   }[]

@@ -49,14 +49,13 @@ export function CrmResultCard(props: CrmRecordListData) {
         setTimeout(() => {setFlip(false); setTimeout(() => { setSelectedId(null);setFlipping(false) }, 500);}, 50)
          // wait for flip animation
     }, [])
-
     return (
         <div
         className={`flip-card ${flip ? "flipped" : ""} ${flipping ? "overflow-hidden" : ""}`}
         style={{ perspective: "1000px"}}
         >
             <div
-                className={`flip-card-inner w-full h-full  relative transition-transform duration-500`}
+                className={`flip-card-inner w-full h-full min-w-[50vw] relative transition-transform duration-500`}
                 style={{ transformStyle: "preserve-3d", transform: flip ? "rotateY(180deg)" : "rotateY(0deg)", position: 'relative' }}
             >
                 {/* Front: List */}

@@ -1,5 +1,5 @@
 import { tool } from "ai";
-import z from "zod";
+import z from "zod/v4";
 import { getBaseUrl } from "../helper";
 import { error } from "console";
 
@@ -7,7 +7,7 @@ import { error } from "console";
 export const getPostgresDataTool = (subId: string) => {
   return tool({
     description: 'Query a connected PostgreSQL database for data using SQL.',
-    async execute({ sql, params }: { sql: string, params?: unknown[] }) {
+    execute: async ({ sql, params }: { sql: string, params?: unknown[] }) => {
       console.log('getPostgresDataTool called with:', { sql, params, subId });
       if (!subId) return { error: 'subId is required'};
       if (!sql) return { error: 'SQL query is required' };
@@ -27,7 +27,7 @@ export const getPostgresDataTool = (subId: string) => {
       console.log('Postgres data fetched:', data);
       return data;
     },
-    parameters: z.object({
+    inputSchema: z.object({
       sql: z.string().describe('The SQL query to execute. Use parameterized queries with $1, $2, etc. for values.'),
       params: z.array(z.any()).optional().describe('Array of parameters for the SQL query, if any.'),
     }),
