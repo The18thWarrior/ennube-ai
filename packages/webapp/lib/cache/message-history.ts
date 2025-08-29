@@ -1,6 +1,6 @@
 
 import { Redis } from '@upstash/redis';
-import type { Message } from 'ai';
+import type { UIMessage } from 'ai';
 
 // Configure your Upstash Redis connection here or via env vars
 const redisUrl = process.env.KV_REST_API_URL || '';
@@ -15,7 +15,7 @@ const USER_THREADS_PREFIX = 'chat:user:'; // chat:user:<subId>
 
 export interface ThreadHistory {
   threadId: string;
-  messages: Message[];
+  messages: UIMessage[];
   lastUpdated: number;
   currentAgent?: string;
   name: string | null;
@@ -32,9 +32,10 @@ export async function getThread(threadId: string): Promise<ThreadHistory | null>
   }
 }
 
-export async function setThread(threadId: string, subId: string, messages: Message[], name: string | null, currentAgent: string): Promise<void> {
+export async function setThread(threadId: string, subId: string, messages: UIMessage[], name: string | null, currentAgent: string): Promise<void> {
   let existingThread = await getThread(threadId);
   if (existingThread) {
+    console.log('updating existing thread', messages.length, 'existing thread',existingThread.messages.length)
     if (messages.length > 0) existingThread.messages = [...messages];
     existingThread.lastUpdated = Date.now();
     existingThread.currentAgent = currentAgent;
@@ -42,6 +43,7 @@ export async function setThread(threadId: string, subId: string, messages: Messa
     if (name) existingThread.name = name;
     await redis.set(THREAD_PREFIX + threadId, JSON.stringify(existingThread));
   } else {
+    console.log('creating a new thread')
     await redis.set(THREAD_PREFIX + threadId, JSON.stringify({ threadId, messages, lastUpdated: Date.now(), name, currentAgent }));
   }
   

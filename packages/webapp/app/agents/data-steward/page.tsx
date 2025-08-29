@@ -3,8 +3,17 @@
 import DataStewardExecuteButton from '@/components/agents/data-steward/data-steward-execute-button';
 import DataStewardHeader from '@/components/agents/data-steward/data-steward-header';
 import UsageLogsList from '@/components/agents/usage-logs-list';
+import { Button } from '@/components/ui';
+import { nanoid } from 'nanoid';
+import { useRouter } from 'next/navigation';
+import { agents } from '@/resources/agent-defintion';
 
 export default function DataStewardDashboard() {
+  const router = useRouter();
+  const openAgent = () => {
+    const newId = nanoid();
+    router.push(`/chat/${newId}?agent=${`data-steward`}`);
+  }
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <DataStewardHeader />
@@ -13,7 +22,10 @@ export default function DataStewardDashboard() {
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold">Data Steward Overview</h2>
             {/* Inline Data Steward Execute Button */}
-            <DataStewardExecuteButton />
+            <div className={'flex space-x-2'}>
+              <Button variant={'outline_green'} onClick={openAgent}>Chat with Agent</Button>
+              <DataStewardExecuteButton />
+            </div>
           </div>
           <p className="text-gray-600 dark:text-gray-300 mb-4">
             The Data Steward agent keeps your CRM data clean, accurate, and up-to-date. 

@@ -54,6 +54,11 @@ export function MainNav() {
 
   const navigationList = [
     {
+      href: "/chat",
+      title: "Chat",
+      description: "Manage your chat conversations",
+    },
+    {
       href: "/apps",
       title: "Apps",
       description: "Manage your applications",
@@ -61,7 +66,7 @@ export function MainNav() {
     {
       href: "/dashboard",
       title: "Usage",
-      description: "Manage your applications",
+      description: "View your usage statistics",
     },
     // {
     //   href: "/agents",

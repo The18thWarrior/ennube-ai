@@ -3,8 +3,6 @@
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import AgentCard from '@/components/agents/agent-card';
-import DataStewardExecuteButton from '@/components/agents/data-steward/data-steward-execute-button';
-import ProspectFinderExecuteButton from '@/components/agents/prospect-finder/prospect-finder-execute-button';
 import { agents } from '@/resources/agent-defintion'; // Import the agents definition
 import { Button } from '@/components/ui';
 import { Agent } from 'http';
@@ -33,7 +31,6 @@ export default function Agents() {
     console.log('Agent API Name:', agent.apiName); // Log the agent's API name for debugging
     switch (agent.apiName) {
       case 'data-steward':
-        // agentButton = <DataStewardExecuteButton />;
         agentButton = <AgentButton apiName={agent.apiName} />;
         break;
       case 'prospect-finder':

@@ -5,8 +5,16 @@ import UsageLogsList from '@/components/agents/usage-logs-list';
 import { ContractResultList } from '@/components/contract-result/contract-result-list';
 import { AgentProfileHeader } from '@/components/agents/agent-profile-header';
 import ContractReaderExecuteButton from '@/components/agents/contract-reader/contract-reader-execute-button';
+import { useRouter } from 'next/navigation';
+import { nanoid } from 'nanoid';
+import { Button } from '@/components/ui';
 
 export default function ContractReaderDashboard() {
+  const router = useRouter();
+  const openAgent = () => {
+    const newId = nanoid();
+    router.push(`/chat/${newId}?agent=${`contract-reader`}`);
+  }
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <AgentProfileHeader
@@ -22,8 +30,10 @@ export default function ContractReaderDashboard() {
             <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-semibold">Contract Reader Overview</h2>
                 {/* Inline Prospect Finder Execute Button */}
-                <ContractReaderExecuteButton />
-                
+                <div className={'flex space-x-2'}>
+                  <Button variant={'outline_green'} onClick={openAgent}>Chat with Agent</Button>
+                  <ContractReaderExecuteButton />
+                </div>
             </div>
           <p className="text-gray-600 dark:text-gray-300 mb-4">
             📄 <span className={"ml-2"}></span> I'm your AI contract assistant. I help your business stay compliant, your CRM stay updated, and your contracts stay organized. With me on your team, your agreements are no longer buried—they're live, accurate, and ready to act on.

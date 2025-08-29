@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { Session } from "next-auth";
-import {Connection, SaveResult, OAuth2, Schema} from 'jsforce';
+import {Connection, SaveResult, OAuth2, Schema, DescribeGlobalResult} from 'jsforce';
 import { RefreshTokenResponse, SalesforceAuthResult, SalesforceQueryResult, SalesforceUserInfo } from "./types";
 import { IngestJobV2Results, JobInfoV2, QueryJobInfoV2 } from "jsforce/lib/api/bulk2";
 import { storeSalesforceCredentials, updateSalesforceCredentials } from "./db/salesforce-storage";
@@ -452,7 +452,7 @@ export class SalesforceClient {
   /**
    * Get a list of all available objects in the org
    */
-  async describeGlobal(): Promise<any> {
+  async describeGlobal(): Promise<DescribeGlobalResult> {
     return this.withTokenRefresh(async () => {
       try {
         const result = await this.connection.describeGlobal();

@@ -5,12 +5,16 @@ import { SalesforceClient, createSalesforceClient } from '@/lib/salesforce';
 import { SalesforceAuthResult } from '@/lib/types';
 import { auth } from '@/auth';
 
+const STANDARD_OBJECTS = ['Account', 'Contact', 'Lead', 'Opportunity', 'Case', 'User', 'Campaign', 'Task', 'Event', 'Contract', 'Order', 'ContentVersion', 'Attachment', 'Note'];
+
 // GET /api/salesforce/describe?sub=...&sobjectType=...
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
     const _sub = searchParams.get('sub');
     const sobjectType = searchParams.get('sobjectType');
+    const addFields = searchParams.get('addFields') as string === 'false' ? false : true;
+    const addRelationships = searchParams.get('addRelationships') as string === 'false' ? false : true;
 
     const session = await auth();
     const sub = _sub || session?.user?.auth0?.sub;
@@ -37,12 +41,46 @@ export async function GET(request: NextRequest) {
 
     if (sobjectType) {
       // Describe a specific object
+      console.log('Describing object:', sobjectType);
       const describe = await client.describe(sobjectType);
-      return NextResponse.json({ describe });
+      //console.log(describe);
+      const describeResult = {
+        name: describe.name,
+        label: describe.label,
+        keyPrefix: describe.keyPrefix,
+        fields: addFields ? describe.fields.map((field: { calculatedFormula: any; digits: any; externalId: any; inlineHelpText: any; label: any; length: any; name: any; picklistValues: any; precision: any; relationshipName: any; type: any; }) => {
+          return {
+            calculatedFormula: field.calculatedFormula,
+            digits: field.digits,
+            externalId: field.externalId,
+            inlineHelpText: field.inlineHelpText,
+            label: field.label,
+            length: field.length,
+            name: field.name,
+            picklistValues: field.picklistValues,
+            precision: field.precision,
+            relationshipName: field.relationshipName,
+            type: field.type
+          }
+        }) : [],
+        childRelationships: addRelationships ? describe.childRelationships.filter((child: { deprecatedAndHidden: boolean; relationshipName: any; field: any; childSObject: any; }) => child.deprecatedAndHidden === false && child.relationshipName).map((child: { childSObject: any; field: any; relationshipName: any; }) => {
+          return {
+            childSObject: child.childSObject,
+            field: child.field,
+            relationshipName: child.relationshipName
+          }
+        }) : []
+      }
+      return NextResponse.json({ describe: describeResult });
     } else {
       // Describe all objects (describeGlobal)
       const describeGlobal = await client.describeGlobal();
-      return NextResponse.json({ describeGlobal });
+      const objectResult = describeGlobal.sobjects.filter(obj => obj.custom || STANDARD_OBJECTS.includes(obj.name)).map((obj) => ({
+        name: obj.name,
+        label: obj.label,
+        keyPrefix: obj.keyPrefix
+      }));
+      return NextResponse.json({ objectResult });
     }
   } catch (error) {
     return NextResponse.json({ error: error instanceof Error ? error.message : String(error) }, { status: 500 });

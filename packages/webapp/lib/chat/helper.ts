@@ -5,11 +5,11 @@ import { DATA_STEWARD_SYSTEM_PROMPT } from '@/lib/prompts/data-steward-system-pr
 import { PROSPECT_FINDER_SYSTEM_PROMPT } from '../prompts/prospect-finder-system-prompt';
 import { getWorkflowTool } from './callWorkflowTool';
 import { getCountTool } from './getCountTool';
-import { getDataVisualizerTool } from './getDataVisualizerTool';
 import { getPostgresDataTool } from './postgres/getDataTool';
 import { getCredentialsTool } from './sfdc/getCredentialsTool';
 import { getSFDCDataTool } from './sfdc/getDataTool';
 import { getFieldsTool as getSFDCFieldsTool} from '@/lib/chat/sfdc/getFieldsTool';
+import { getObjectsTool as getSFDCObjectTool} from '@/lib/chat/sfdc/getObjectsTool';
 import { getDescribeTool as getPostgresDescribeTool } from '@/lib/chat/postgres/getDescribeTool';
 import { getCustomerProfilesTool } from './internal/getCustomerProfiles';
 import { createCustomerProfileTool } from './internal/createCustomerProfile';
@@ -17,6 +17,7 @@ import { updateCustomerProfile } from '../db/customer-profile-storage';
 import { updateCustomerProfileTool } from './internal/updateCustomerProfile';
 import { Tool } from 'ai';
 import { CONTRACT_READER_SYSTEM_PROMPT } from '../prompts/contract-reader-system-prompt';
+import { generateQueryTool } from './sfdc/generateQueryTool';
 
 export const getPrompt = (agent: 'data-steward' | 'prospect-finder' | 'contract-reader') => {
     return agent === 'data-steward' ? DATA_STEWARD_SYSTEM_PROMPT : agent === 'contract-reader' ? CONTRACT_READER_SYSTEM_PROMPT : PROSPECT_FINDER_SYSTEM_PROMPT;
@@ -35,7 +36,9 @@ export const getTools = async (agent: 'data-steward' | 'prospect-finder' | 'cont
         return {
             getCredentials: getCredentialsTool(userId),
             getSFDCFieldDescribeTool: getSFDCFieldsTool(userId),
-            getSFDCDataTool: getSFDCDataTool(userId),
+            //getSFDCDataTool: getSFDCDataTool(userId),
+            getSFDCObjectDescribeTool: getSFDCObjectTool(userId),
+            generateQueryTool: generateQueryTool(userId),
             //getPostgresDataTool: getPostgresDataTool(userId),
             //getPostgresDescribeTool: getPostgresDescribeTool(userId),
             //getCount: getCountTool(userId),

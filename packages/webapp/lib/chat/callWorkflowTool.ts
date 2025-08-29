@@ -1,8 +1,7 @@
-
 import { auth } from "@/auth";
 import { tool } from "ai";
 import { nanoid } from "nanoid";
-import z from "zod";
+import z from "zod/v4";
 
 /**
  * Tool: Call Workflow
@@ -14,11 +13,11 @@ import z from "zod";
  */
 export const callWorkflowToolDataSteward = tool({
 	description: 'Call the execution workflow for the Data Steward agent. Data Steward is used to enrich Account and Contact data in Salesforce. ALWAYS ask the user for permission before calling this tool.',
-	parameters: z.object({
+	inputSchema: z.object({
 		limit: z.string().optional(),
 		accountIds: z.array(z.string()).optional().describe('The Salesforce Account IDs to enrich. If not provided, the tool will enrich all Accounts.'),
 	}),
-	async execute({ limit, accountIds }) {
+	execute: async ({ limit, accountIds }) => {
         const session = await auth();
         if (!session || !session.user || !session.user.auth0) throw new Error('You must be signed in to call a workflow');
         const subId = session.user.auth0.sub;
@@ -43,10 +42,10 @@ export const callWorkflowToolDataSteward = tool({
 
 export const callWorkflowToolProspectFinder = tool({
 	description: 'Call the execution workflow for Prospect Finder. Prospect Finder is used to find new prospects. ALWAYS ask the user for permission before calling this tool.',
-	parameters: z.object({
+	inputSchema: z.object({
 		limit: z.string().optional(),
 	}),
-	async execute({ limit }) {
+	execute: async ({ limit }) => {
         const session = await auth();
         if (!session || !session.user || !session.user.auth0) throw new Error('You must be signed in to call a workflow');
         const subId = session.user.auth0.sub;
@@ -71,10 +70,10 @@ export const callWorkflowToolProspectFinder = tool({
 
 export const callWorkflowToolContractReader = tool({
 	description: 'Call the execution workflow for Contract Reader. Contract Reader is used to read and analyze contracts. ALWAYS ask the user for permission before calling this tool.',
-	parameters: z.object({
+	inputSchema: z.object({
 		limit: z.string().optional(),
 	}),
-	async execute({ limit }) {
+	execute: async ({ limit }) => {
         const session = await auth();
         if (!session || !session.user || !session.user.auth0) throw new Error('You must be signed in to call a workflow');
         const subId = session.user.auth0.sub;
