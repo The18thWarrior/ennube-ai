@@ -41,11 +41,18 @@ export default function ContractResultsPage() {
       })
 
       const res = await fetch(`/api/contract-results?${searchParams}`)
-      const result: ApiResponse<PaginatedResponse<ContractResult>> = await res.json()
-      console.log(result);
+      // API may return either a PaginatedResponse<T> or a plain T[] in `data`.
+      const result: ApiResponse<PaginatedResponse<ContractResult> | ContractResult[]> = await res.json()
       if (!result.success) throw new Error(result.error || 'Failed to fetch')
 
-      const items = (result).data || []
+      // Normalize items to ContractResult[] regardless of response shape.
+      let items: ContractResult[] = []
+      if (Array.isArray(result.data)) {
+        items = result.data
+      } else if (result.data && Array.isArray((result.data as PaginatedResponse<ContractResult>).data)) {
+        items = (result.data as PaginatedResponse<ContractResult>).data
+      }
+
       setData(items)
 
       const paginationFromRoot = (result as any).pagination
