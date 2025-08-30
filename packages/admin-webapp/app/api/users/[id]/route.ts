@@ -27,7 +27,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const body = { error: err?.message ?? 'Unknown error', details: err?.details ?? null };
   return NextResponse.json(body, { status: err?.status ?? 500 });
   }
-}
+} 
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
