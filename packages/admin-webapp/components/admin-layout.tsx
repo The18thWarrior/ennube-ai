@@ -25,6 +25,7 @@ import {
   FileText,
   Activity,
   Menu,
+  Aperture,
   X
 } from "lucide-react"
 import { ThemeSwitcher } from "@/components/theme-switcher"
@@ -56,9 +57,16 @@ const navigation: NavigationItem[] = [
     active: true
   },
   {
+    name: "Users",
+    href: "/admin/users",
+    icon: Users,
+    description: "Manage users",
+    active: true
+  },
+  {
     name: "User Profiles",
     href: "/admin/user-profiles",
-    icon: Users,
+    icon: Award,
     description: "Manage user profile information",
     active: true
   },
@@ -93,7 +101,7 @@ const navigation: NavigationItem[] = [
   {
     name: "Licenses",
     href: "/admin/licenses",
-    icon: Award,
+    icon: Aperture,
     description: "License management",
     active: false
   },

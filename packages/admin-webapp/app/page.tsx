@@ -24,10 +24,17 @@ import {
 export default function Dashboard() {
   const quickActions = [
     {
+      name: "Users",
+      description: "Manage users",
+      href: "/admin/users",
+      icon: Users,
+      color: "bg-red-500"
+    },
+    {
       name: "User Profiles",
       description: "Manage user information and profiles",
       href: "/admin/user-profiles",
-      icon: Users,
+      icon: Award,
       color: "bg-blue-500"
     },
     {
