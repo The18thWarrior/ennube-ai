@@ -1,37 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
-        <members></members>
+        <members>Account</members>
+        <members>Contract</members>
+        <members>*</members>
         <name>CustomObject</name>
     </types>
     <types>
-        <members>Account.Account_Blog_Website__c</members>
-        <members>Account.Account_Careers_Website__c</members>
-        <members>Account.Account_Contact_Us_Form__c</members>
-        <members>Account.Account_Email__c</members>
-        <members>Account.Account_Facebook_URL__c</members>
-        <members>Account.Account_Keywords__c</members>
-        <members>Account.Account_Linkedin_URL__c</members>
-        <members>Account.Account_Other_URLs__c</members>
-        <members>Account.Account_Rating__c</members>
-        <members>Account.Account_Strategy__c</members>
-        <members>Account.Account_Team_Page__c</members>
-        <members>Account.Account_Web_Data__c</members>
-        <members>Account.Account_Youtube_URL__c</members>
-        <members>Account.Acount_X_URL__c</members>
-        <members>Account.Active__c</members>
-        <members>Account.AI_Agent_Account_Step__c</members>
-        <members>Account.AI_Agent_Enrich_Account__c</members>
-        <members>Account.CustomerPriority__c</members>
-        <members>Account.NumberofLocations__c</members>
-        <members>Account.SLA__c</members>
-        <members>Account.SLAExpirationDate__c</members>
-        <members>Account.SLASerialNumber__c</members>
-        <members>Account.UpsellOpportunity__c</members>
-        <members>Contact.Contact_Linkedin_URL__c</members>
-        <members>Contact.Languages__c</members>
-        <members>Contact.Level__c</members>
-        <members>Contract.Contract_Reader_Processed__c</members>
+        <members>*</members>
         <name>CustomField</name>
     </types>
     <version>64.0</version>
