@@ -503,7 +503,7 @@ export class SalesforceClient {
    *   const pkg = await client.isPackageInstalled('my_ns');
    *   if (pkg) { ... }
    */
-  async isPackageInstalled(namespacePrefix: string): Promise<boolean | null> {
+  async isPackageInstalled(namespacePrefix: string): Promise<{installed: boolean, validVersion: boolean} | null> {
     return this.withTokenRefresh(async () => {
       try {
         // Query the Tooling API for InstalledSubscriberPackage by NamespacePrefix
@@ -516,14 +516,17 @@ export class SalesforceClient {
             }
           });
           if (_package) {
-            return true;
+            return {
+              installed: true,
+              validVersion: _package.SubscriberPackageVersionId === process.env.NEXT_PUBLIC_SFDC_MANAGED_PACKAGE_VERSION
+            };
           }
         }
-        return false;
+        return { installed: false, validVersion: false };
       } catch (error) {
         console.log(`Error checking package installation for namespace '${namespacePrefix}':`, error);
         //throw new Error(`Failed to check package installation: ${error instanceof Error ? error.message : String(error)}`);
-        return false;
+        return { installed: false, validVersion: false };
       }
     });
   }

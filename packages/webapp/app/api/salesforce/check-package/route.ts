@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
 
     // Fetch Salesforce record by URL
     const isPackageInstalled = await client.isPackageInstalled(PACKAGE_NAMESPACE);
-    return NextResponse.json({ isPackageInstalled });
+    return NextResponse.json({ ...isPackageInstalled });
 
   } catch (error) {
     return NextResponse.json({ error: error instanceof Error ? error.message : String(error) }, { status: 500 });
