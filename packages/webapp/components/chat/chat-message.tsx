@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState, ReactNode } from 'react';
+import React, { useEffect, useState, ReactNode, useRef } from 'react';
 import styles from './chat-container.module.css';
 import { Streamdown } from 'streamdown';
 import Markdown from 'markdown-to-jsx'
@@ -540,37 +540,106 @@ const RenderCallWorkflowToolCallComponent = ({result: {usageId}} : {result: {usa
     );
 }
 
-const MessageStateComponent = ({Component, state, theme, successMessage, errorMessage, toolName}:{Component : React.ReactElement | null, state: "input-streaming" | "input-available" | "output-error" | "output-available", theme: 'dark' | 'light' | 'system', successMessage: string, errorMessage: string, toolName: string}) => {
-    const [open, setOpen] = useState(false);
-    const [hide, setHide] = useState(false);
-    if (state === 'input-streaming' || state === 'input-available') {
-        return (
-            <div className="flex items-center gap-2 text-xs text-muted-foreground my-2 py-4 px-2 border rounded my-2">
-                <Loader2 className="h-4 w-4 animate-spin" />
-                <span>{`Calling ${toolName}...`}</span>
-            </div>
-        );
+const MessageStateComponent = ({
+  Component,
+  state,
+  theme,
+  successMessage,
+  errorMessage,
+  toolName,
+}: {
+  Component: React.ReactElement | null;
+  state: "input-streaming" | "input-available" | "output-error" | "output-available";
+  theme: "dark" | "light" | "system";
+  successMessage: string;
+  errorMessage: string;
+  toolName: string;
+}) => {
+  const [open, setOpen] = useState(false);
+  const [hide, setHide] = useState(false);
+
+  // Sentinel: true only on the very first paint.
+  const firstRender = useRef(true);
+
+  // Flip the sentinel after the first mount.
+  useEffect(() => {
+    firstRender.current = false;
+  }, []);
+
+  // Auto-dismiss error banner (kept from your logic, moved to an effect).
+  useEffect(() => {
+    if (state === "output-error" && errorMessage.includes("Model tried to call unavailable tool")) {
+      const t = setTimeout(() => setHide(true), 5000);
+      return () => clearTimeout(t);
     }
-    if (state === 'output-error') {
-        if (errorMessage.includes('Model tried to call unavailable tool')) setTimeout(() => setHide(true), 5000);
-        return (
-            <div className={`flex items-center gap-2 text-xs text-muted-foreground border rounded transition-all duration-3000 ease-in-out transition-discrete ${hide ? 'h-0 opacity-0' : 'block py-4 px-2 my-2'}`}>
-                <TriangleAlert className="h-4 w-4 text-red-500" />
-                <span>{errorMessage}</span>
-            </div>
-        );
+  }, [state, errorMessage]);
+
+  // Auto-close success banner after 5s ONLY on non-initial renders
+  // when output is available but there's no details Component to show.
+  useEffect(() => {
+    if (state !== "output-available") return;
+
+    // Reset hide whenever we enter output-available (so it can re-animate in)
+    setHide(false);
+
+    // If there's no Component AND this is not the first render,
+    // show the banner now and auto-hide after 5s.
+    if (!Component && !firstRender.current && !open) {
+      const t = setTimeout(() => setHide(true), 5000);
+      return () => clearTimeout(t);
     }
-    if (state === 'output-available' && !open) {
-        if (!Component) setTimeout(() => setHide(true), 5000); // auto-open after 5 seconds
-        //if (hide) return null;
-        return (
-            <div className={`flex items-center gap-2 text-xs text-muted-foreground border rounded transition-all duration-3000 ease-in-out transition-discrete ${hide ? 'h-0 opacity-0' : 'block py-4 px-2 my-2'}`}>
-                <CircleCheck className="h-4 w-4 text-green-500" />
-                <span>{successMessage}</span>
-                {Component && <Button variant="outline" size="sm" className="ml-5" onClick={() => setOpen(true)}>View Details</Button>}
-            </div>
-        );
+  }, [state, Component, open]);
+
+  // Loading states
+  if (state === "input-streaming" || state === "input-available") {
+    return (
+      <div className="flex items-center gap-2 text-xs text-muted-foreground my-2 py-4 px-2 border rounded">
+        <Loader2 className="h-4 w-4 animate-spin" />
+        <span>{`Calling ${toolName}...`}</span>
+      </div>
+    );
+  }
+
+  // Error state
+  if (state === "output-error") {
+    return (
+      <div
+        className={`flex items-center gap-2 text-xs text-muted-foreground border rounded transition-all duration-3000 ease-in-out transition-discrete ${
+          hide ? "h-0 opacity-0" : "block py-4 px-2 my-2"
+        }`}
+      >
+        <TriangleAlert className="h-4 w-4 text-red-500" />
+        <span>{errorMessage}</span>
+      </div>
+    );
+  }
+
+  // Success state banner
+  if (state === "output-available" && !open) {
+    // ✨ Key behavior:
+    // If we're on the very first render AND there's no Component, render nothing (hide).
+    if (!Component && firstRender.current) {
+      return null; // hide on initial load
     }
-    // Default: output available
-    return Component;
-}
+
+    // Otherwise show the success banner (even if Component is null).
+    return (
+      <div
+        className={`flex items-center gap-2 text-xs text-muted-foreground border rounded transition-all duration-3000 ease-in-out transition-discrete ${
+          hide ? "h-0 opacity-0" : "block py-4 px-2 my-2"
+        }`}
+      >
+        <CircleCheck className="h-4 w-4 text-green-500" />
+        <span>{successMessage}</span>
+        {Component && (
+          <Button variant="outline" size="sm" className="ml-5" onClick={() => setOpen(true)}>
+            View Details
+          </Button>
+        )}
+      </div>
+    );
+  }
+
+  // Default: render the details when opened, or just the Component if present.
+  return Component;
+};
