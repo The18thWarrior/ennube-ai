@@ -215,8 +215,10 @@ export default function ChatLayout({ children }: { children: React.ReactNode }) 
     setLoading(true);
     try {
       const data = await getAll();
+      const _threads = Array.isArray(data) ? data as ThreadHistory[] : [];
+      const sortedThreads = _threads.sort((a, b) => b.lastUpdated - a.lastUpdated);
       //console.log('Fetched threads:', data);
-      setThreads(Array.isArray(data) ? data : []);
+      setThreads(sortedThreads);
     } catch {
       setThreads([]);
     } finally {
