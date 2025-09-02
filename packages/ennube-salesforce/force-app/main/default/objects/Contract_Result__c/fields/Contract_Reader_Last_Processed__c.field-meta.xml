@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Contract_Reader_Last_Processed__c</fullName>
+    <description>Field used with the Ennube.ai Contract Reader agent to determine if a contract has been processed.</description>
+    <inlineHelpText>The last time the Contract Reader agent processed the File data attached to this Contract.</inlineHelpText>
+    <label>Contract Reader Last Processed</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>DateTime</type>
+</CustomField>
