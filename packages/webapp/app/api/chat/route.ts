@@ -47,33 +47,12 @@ export async function POST(req: NextRequest) {
       system: systemPrompt,
       providerOptions: {
         openrouter: {
+          transforms: ["middle-out"],
           parallelToolCalls: false
         }
       },
       tools: await getTools(agent as 'data-steward' | 'prospect-finder' | 'contract-reader', userSub),
        messages: convertToModelMessages(messages),
-      // messages: convertToModelMessages(messages.map((msg: any) => {
-      //   return {
-      //     role: msg.role,
-      //     content: msg.content,
-      //     toolCalls: msg.toolCalls?.result ? msg.toolCalls : [],
-      //     // If the message has tool calls, we need to include them in the response
-      //     // so that the agent can use them in its next step
-      //     ...(msg.toolCalls?.result ? { toolCalls: msg.toolCalls } : {}),
-      //   }
-      // })),
-       
-      // experimental_output: Output.object({
-      //   schema: z.object({
-      //     message: z.string().describe('The message to return to the user.'),
-      //     data: z.any().optional().describe('If available, the data to visualize or render for the user'),
-      //     directOutput: z.boolean().optional().describe('If true, the agent should return the data as-is without formatting'),
-      //   }),
-      // }),
-      // messages: [
-      //   { role: 'user', content: messages.map((msg: any) => msg.content).join('\n') },
-      // ],
-      //maxSteps: 10,
       stopWhen: stepCountIs(10),
       //toolCallStreaming: true,
       onError: (error) => {
