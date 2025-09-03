@@ -7,7 +7,7 @@ import Link from "next/link"
 //import { signIn } from "@/auth"
 
 import { signIn } from "next-auth/react"
-import { useSearchParams } from "next/navigation"
+import { useSearchParams, redirect} from "next/navigation"
 import { Suspense } from "react"
 
 type PageProps = {
@@ -47,6 +47,11 @@ function LoginPage() {
         <form action={signInWithGoogle} className="space-y-4">
           <Button type="submit" variant="default" className="w-full">
             Login
+          </Button>
+        </form>
+        <form action={signInWithGoogle} className="space-y-4">
+          <Button type="submit" variant="default" className="w-full">
+            Sign Up
           </Button>
         </form>
         {/* 
