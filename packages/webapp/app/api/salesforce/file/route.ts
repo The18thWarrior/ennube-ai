@@ -3,7 +3,6 @@ import { getSalesforceCredentialsBySub } from "@/lib/db/salesforce-storage";
 import { Readable } from "node:stream";
 import { createSalesforceClient } from "@/lib/salesforce";
 import { SalesforceAuthResult } from "@/lib/types";
-import { r } from "@upstash/redis/zmscore-CgRD7oFR";
 import { Buffer } from "node:buffer";
 import { NextRequest, NextResponse } from "next/server";
 

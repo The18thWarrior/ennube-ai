@@ -7,6 +7,7 @@ import SalesforceSignOut from "./SalesforceSignOut"
 import { getSalesforceCredentialsById } from "@/lib/db/salesforce-storage"
 import { SalesforceClient } from "@/lib/salesforce"
 import Link from "next/link"
+import EmbedMetadataButton from '@/components/integrations/salesforce/embed-metadata'
 
 export default async function SalesforceDashboard() {
   // Check if we have a NextAuth session with Salesforce OAuth data
@@ -138,6 +139,8 @@ export default async function SalesforceDashboard() {
                   <span>{!isPackageInstalled ? "Install Managed Package" : isPackageOutOfDate ? "Managed Package is out of date (reinstall)" : "Managed Package is installed"}</span>
                 </Link>
               </Button>}
+              {/* Embed metadata quick action */}
+              <EmbedMetadataButton instanceUrl={salesforceCredentials.instanceUrl} />
               
             </div>
           </div> }

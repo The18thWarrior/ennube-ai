@@ -16,14 +16,6 @@ export default function ChatPage(props: { params: Promise<{ threadId: string }> 
   const searchParams = useSearchParams();
   const agent = searchParams.get('agent') || undefined; // get the agent from the URL params
   const { getThread } = useMessageHistory();
-  // useEffect(() => {
-  //   const fetchThread = async () => {
-  //     if (!threadId) return;
-  //     const thread = await getThread(threadId);
-  //     setThread(thread);
-  //   };
-  //   fetchThread();
-  // }, [threadId]);
 
   useEffect(() => {
     const runAsync = async () => {

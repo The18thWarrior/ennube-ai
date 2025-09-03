@@ -1,7 +1,5 @@
 // Client component for agent cards and selection
 "use client";
-import { setThread } from '@/lib/cache/message-history';
-import { nanoid } from 'nanoid';
 import { redirect } from 'next/navigation';
 import { useTransition } from 'react';
 import Image from 'next/image';

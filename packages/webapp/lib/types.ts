@@ -19,6 +19,7 @@ export interface SalesforceAuthResult {
   instanceUrl?: string;
   clientId?: string;
   clientSecret?: string;
+  describeEmbedUrl?: string;
   userInfo?: {
     id?: string;
     organization_id?: string;
