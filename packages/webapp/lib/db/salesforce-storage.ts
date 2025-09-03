@@ -293,6 +293,33 @@ export async function removeSalesforceCredentials(): Promise<boolean> {
 }
 
 /**
+ * Update the describe_embed_url column for a specific user and credential type
+ * @param userId - the user's auth0 sub or identifier stored in user_id column
+ * @param type - credential type (e.g. 'sfdc')
+ * @param describeEmbedUrl - the new describe embed URL to set (or null to clear)
+ * @returns boolean - true if a row was updated, false otherwise
+ */
+export async function updateDescribeEmbedUrlByUserAndType(
+  userId: string,
+  describeEmbedUrl: string | null
+): Promise<boolean> {
+  try {
+    const result = await pool.query(
+      `UPDATE ${CREDENTIALS_TABLE}
+       SET describe_embed_url = $1
+       WHERE user_id = $2 AND type = 'sfdc'`,
+      [describeEmbedUrl, userId]
+    );
+
+    // rowCount > 0 means at least one row was updated
+    return (result.rowCount ?? 0) > 0;
+  } catch (error) {
+    console.log('Error updating describe_embed_url:', error);
+    return false;
+  }
+}
+
+/**
  * Close database connections when the application is shutting down
  */
 export async function closeConnection(): Promise<void> {

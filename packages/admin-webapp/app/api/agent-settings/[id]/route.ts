@@ -4,9 +4,9 @@
 // Exports: GET, PUT, DELETE handlers
 
 import { NextRequest, NextResponse } from 'next/server'
-import { agentSettingsService } from '@/lib/database'
-import { getErrorMessage } from '@/lib/utils'
-import type { CreateAgentSettingsData } from '@/lib/types'
+import { agentSettingsService } from '#/lib/database'
+import { getErrorMessage } from '#/lib/utils'
+import type { CreateAgentSettingsData } from '#/lib/types'
 
 // GET /api/agent-settings/[id]
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {

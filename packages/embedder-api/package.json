@@ -1,0 +1,19 @@
+{
+  "name": "@ennube/embedder-api",
+  "version": "0.1.0",
+  "type" : "module",
+  "private": true,
+  "scripts": {
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "langchain": "^0.3.32",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@types/node": "^20",
+    "eslint": "^9",
+    "typescript": "^5"
+  }
+}

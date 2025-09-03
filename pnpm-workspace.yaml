@@ -5,6 +5,7 @@ packages:
   - 'packages/webapp'
   - 'packages/ennube-salesforce'
   - 'packages/contractReader'
+  - 'packages/embedder-api'
 
 catalog:
   zod: ^3.25.76

@@ -6,9 +6,9 @@
 // Notes: Implements full CRUD with validation and error handling
 
 import { NextRequest, NextResponse } from 'next/server'
-import { userProfileService } from '@/lib/database'
-import { getErrorMessage } from '@/lib/utils'
-import type { CreateUserProfileData, PaginationParams } from '@/lib/types'
+import { userProfileService } from '#/lib/database'
+import { getErrorMessage } from '#/lib/utils'
+import type { CreateUserProfileData, PaginationParams } from '#/lib/types'
 
 /**
  * OVERVIEW

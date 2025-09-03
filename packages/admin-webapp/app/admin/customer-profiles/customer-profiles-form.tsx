@@ -11,8 +11,8 @@ import * as React from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { Button } from "#/components/ui/button"
+import { Input } from "#/components/ui/input"
 import {
   Dialog,
   DialogContent,
@@ -20,7 +20,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
+} from "#/components/ui/dialog"
 import {
   Form,
   FormControl,
@@ -28,8 +28,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import type { CustomerProfile, CreateCustomerProfileData } from "@/lib/types"
+} from "#/components/ui/form"
+import type { CustomerProfile, CreateCustomerProfileData } from "#/lib/types"
 
 const customerProfileSchema = z.object({
   customer_profile_name: z.string().min(1, "Name is required").max(255),

@@ -7,11 +7,11 @@
 'use client'
 
 import * as React from 'react'
-import { AdminLayout } from '@/components/admin-layout'
-import { DataTable, type Column } from '@/components/data-table'
+import { AdminLayout } from '#/components/admin-layout'
+import { DataTable, type Column } from '#/components/data-table'
 import { ContractResultsForm } from './contract-results-form'
-import type { ContractResult, CreateContractResultData, PaginatedResponse, ApiResponse } from '@/lib/types'
-import { formatDate, getErrorMessage } from '@/lib/utils'
+import type { ContractResult, CreateContractResultData, PaginatedResponse, ApiResponse } from '#/lib/types'
+import { formatDate, getErrorMessage } from '#/lib/utils'
 
 export default function ContractResultsPage() {
   const [data, setData] = React.useState<ContractResult[]>([])

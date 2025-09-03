@@ -6,10 +6,10 @@
 'use client'
 
 import * as React from 'react'
-import { AdminLayout } from '@/components/admin-layout'
-import { DataTable, type Column } from '@/components/data-table'
+import { AdminLayout } from '#/components/admin-layout'
+import { DataTable, type Column } from '#/components/data-table'
 import { UsersForm } from './users-form'
-import { formatDate, getErrorMessage } from '@/lib/utils'
+import { formatDate, getErrorMessage } from '#/lib/utils'
 
 type Auth0User = {
   user_id?: string

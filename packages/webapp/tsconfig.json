@@ -22,7 +22,6 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["*"],
-      "auth": ["auth"],
       "@ennube/data-validation": ["../dataValidation/dist/index.js"],
       "@ennube/data-validation/*": ["../dataValidation/dist/*"]
     }

@@ -3,9 +3,9 @@
 // Purpose: API routes for credentials list and create
 
 import { NextRequest, NextResponse } from 'next/server'
-import { credentialService } from '@/lib/database'
-import { getErrorMessage } from '@/lib/utils'
-import type { CreateCredentialData, PaginationParams } from '@/lib/types'
+import { credentialService } from '#/lib/database'
+import { getErrorMessage } from '#/lib/utils'
+import type { CreateCredentialData, PaginationParams } from '#/lib/types'
 
 // GET /api/credentials - List credentials with pagination
 export async function GET(request: NextRequest) {

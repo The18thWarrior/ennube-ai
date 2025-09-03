@@ -5,8 +5,8 @@
 // Interactions: Entry point for admin interface
 // Notes: Provides overview and quick links to all admin functions
 'use client'
-import { AdminLayout } from "@/components/admin-layout"
-import { Button } from "@/components/ui/button"
+import { AdminLayout } from "#/components/admin-layout"
+import { Button } from "#/components/ui/button"
 import Link from "next/link"
 import {
   Users,

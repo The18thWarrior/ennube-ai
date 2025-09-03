@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { Sun, Moon } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Button } from "#/components/ui/button"
 import { useTheme } from "./theme-provider"
 
 export function ThemeSwitcher() {

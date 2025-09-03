@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { put } from "@vercel/blob";
-import { getSalesforceCredentialsBySub, updateSalesforceCredentials } from '@/lib/db/salesforce-storage';
+import { getSalesforceCredentialsBySub, updateDescribeEmbedUrlByUserAndType, updateSalesforceCredentials } from '@/lib/db/salesforce-storage';
 import { createSalesforceClient } from '@/lib/salesforce';
 import { SalesforceAuthResult } from '@/lib/types';
 import { auth } from '@/auth';
@@ -31,18 +31,16 @@ export async function GET(request: NextRequest) {
 		if (!credentials) {
 			return NextResponse.json({ error: 'No Salesforce credentials found for this user' }, { status: 404 });
 		}
+    if (!credentials.describeEmbedUrl) {
+			return NextResponse.json({ error: 'No Salesforce embedding found for this user' }, { status: 404 });
+		}
 
-		// Build an auth result and create a client (placeholder - not used further here)
-		const authResult: SalesforceAuthResult = {
-			success: true,
-			userId: sub,
-			accessToken: credentials.accessToken,
-			instanceUrl: credentials.instanceUrl,
-			refreshToken: credentials.refreshToken,
-			userInfo: credentials.userInfo
-		};
-		const client = createSalesforceClient(authResult);
+    // console.log('Memory Usage getting credentials:', process.memoryUsage());
+    
+    // const embedding_file = await fetch(credentials.describeEmbedUrl || '').then(res => res.ok ? res.text() : null).catch(() => null);
+    // console.log('Memory Usage getting credentials:', process.memoryUsage());
 
+    return NextResponse.json({url: credentials.describeEmbedUrl})
 		// Placeholder response - replace with real embed logic
 		return NextResponse.json({ message: 'Placeholder GET for salesforce/embed', sub, hasCredentials: !!credentials });
 	} catch (error) {
@@ -124,7 +122,7 @@ export async function POST(request: NextRequest) {
 			.filter((obj: any) => obj.custom)
 			.map((obj: any) => obj.name)
 			.concat(STANDARD_OBJECTS);
-
+    console.log('Memory Usage after global describe:', process.memoryUsage());
 		// Describe each sobject in parallel; tolerate per-sobject failures
 		const describePromises = sobjects.map(async (sobject: string) => {
 			try {
@@ -138,6 +136,7 @@ export async function POST(request: NextRequest) {
 
 		const describeResults = await Promise.all(describePromises);
 
+    console.log('Memory Usage after describe results:', process.memoryUsage());
 		// Build VectorStoreEntry records using the same pattern as generateQueryTool
 		const entries: VectorStoreEntry[] = [];
 		for (const res of describeResults) {
@@ -176,6 +175,7 @@ export async function POST(request: NextRequest) {
 				console.warn(`Embedding failed for ${sobjectType}:`, err);
 				continue;
 			}
+      //console.log(`vector length`, vectors.at(0)?.length);
 
 			// Fields
 			for (let i = 0; i < fieldTexts.length; i++) {
@@ -214,6 +214,7 @@ export async function POST(request: NextRequest) {
 			}
 		}
 
+    console.log('Memory Usage after embedding:', process.memoryUsage());
     const { url } = await put(`sfdc:${sub}:embed.txt`, JSON.stringify(entries), { access: 'public', allowOverwrite: true });
     const credentials2 = await getSalesforceCredentialsBySub(sub);
     if (!credentials2) {
@@ -228,7 +229,7 @@ export async function POST(request: NextRequest) {
 			userInfo: credentials2.userInfo,
       describeEmbedUrl: url
 		};
-    await updateSalesforceCredentials(authResult2);
+    await updateDescribeEmbedUrlByUserAndType(authResult2.userId, authResult2.describeEmbedUrl || null);
     console.log('successfully embedded', url)
 		// Upsert entries into the in-memory vector store
 		// const store = createSalesforceVectorStore();

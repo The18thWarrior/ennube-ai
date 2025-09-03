@@ -10,9 +10,9 @@
 import * as React from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { cn } from "#/lib/utils"
+import { Button } from "#/components/ui/button"
+import { Input } from "#/components/ui/input"
 import {
   Users,
   UserCheck,
@@ -28,7 +28,7 @@ import {
   Aperture,
   X
 } from "lucide-react"
-import { ThemeSwitcher } from "@/components/theme-switcher"
+import { ThemeSwitcher } from "#/components/theme-switcher"
 
 /**
  * OVERVIEW
