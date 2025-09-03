@@ -34,7 +34,7 @@ function LoginPage() {
       {/* Left: Login form */}
       <div className="flex w-full max-w-xl flex-col justify-center gap-6 p-8 sm:p-10">
         <div className="mb-2">
-          <h1 className="text-2xl font-semibold tracking-tight">Welcome back</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Welcome</h1>
           <p className="text-muted-foreground mt-1 text-sm">Sign in to continue to Ennube.ai</p>
         </div>
 
@@ -46,14 +46,14 @@ function LoginPage() {
 
         <form action={signInWithGoogle} className="space-y-4">
           <Button type="submit" variant="default" className="w-full">
-            Login
+            Get Started
           </Button>
         </form>
-        <form action={signInWithGoogle} className="space-y-4">
+        {/* <form action={signInWithGoogle} className="space-y-4">
           <Button type="submit" variant="default" className="w-full">
             Sign Up
           </Button>
-        </form>
+        </form> */}
         {/* 
           <div className="flex items-center gap-3">
             <div className="h-px flex-1 bg-border" />
