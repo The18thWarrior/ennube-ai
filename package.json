@@ -73,7 +73,6 @@
     "next": "latest",
     "next-auth": "beta",
     "next-themes": "^0.4.6",
-    "node-fetch": "^3.3.2",
     "node-html-parser": "^7.0.1",
     "notistack": "^3.0.2",
     "overtype": "^1.2.3",

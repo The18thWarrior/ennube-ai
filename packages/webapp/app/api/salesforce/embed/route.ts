@@ -215,7 +215,13 @@ export async function POST(request: NextRequest) {
 		}
 
     console.log('Memory Usage after embedding:', process.memoryUsage());
-    const { url } = await put(`sfdc:${sub}:embed.txt`, JSON.stringify(entries), { access: 'public', allowOverwrite: true });
+    const prunedEntries = entries.reduce((acc, entry) => {
+      if (entry.id && !acc.some(e => e.id === entry.id)) {
+        acc.push(entry);
+      }
+      return acc;
+    }, [] as VectorStoreEntry[]);
+    const { url } = await put(`sfdc:${sub}:embed.txt`, JSON.stringify(prunedEntries), { access: 'public', allowOverwrite: true });
     const credentials2 = await getSalesforceCredentialsBySub(sub);
     if (!credentials2) {
 			return NextResponse.json({ error: 'No Salesforce credentials found for this user' }, { status: 404 });
