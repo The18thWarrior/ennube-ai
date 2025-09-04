@@ -90,7 +90,7 @@ app.post('/query', requireApiToken, async (req: Request, res: Response) => {
   }
 });
 
-const port = Number(process.env.PORT ?? 443);
+const port = Number(process.env.PORT ?? 80);
 app.listen(port, () => {
   // eslint-disable-next-line no-console
   console.log(`embedder-api server listening on http://localhost:${port}`);
