@@ -44,3 +44,13 @@ node bin/smoke-vector-store.mjs
 Notes:
 - The project contains a `bin/smoke-vector-store.mjs` script that compiles and runs a small add+query run.
 - Running `pnpm -w exec tsc --noEmit` at the repository root will type-check the entire monorepo and may surface unrelated package path/alias errors if your environment expects TypeScript path mappings or per-package builds; prefer per-package `pnpm tsc` when validating a single package.
+
+
+Running in Droplet: 
+- Connect to digital ocean
+- cd /ennube-ai
+- git pull origin main
+- pnpm install
+- pm2 start packages/embedder-api/script.sh
+- pm2 logs script --lines 100
+- pm2 startup ubuntu
