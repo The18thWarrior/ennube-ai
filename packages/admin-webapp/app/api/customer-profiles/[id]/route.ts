@@ -6,9 +6,9 @@
 // Notes: Handles single customer profile operations with proper validation
 
 import { NextRequest, NextResponse } from 'next/server'
-import { customerProfileService } from '@/lib/database'
-import { getErrorMessage } from '@/lib/utils'
-import type { CreateCustomerProfileData } from '@/lib/types'
+import { customerProfileService } from '#/lib/database'
+import { getErrorMessage } from '#/lib/utils'
+import type { CreateCustomerProfileData } from '#/lib/types'
 
 // GET /api/customer-profiles/[id] - Get single customer profile
 export async function GET(

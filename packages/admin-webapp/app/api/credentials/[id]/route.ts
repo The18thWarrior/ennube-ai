@@ -3,9 +3,9 @@
 // Purpose: API routes for individual credential operations
 
 import { NextRequest, NextResponse } from 'next/server'
-import { credentialService } from '@/lib/database'
-import { getErrorMessage } from '@/lib/utils'
-import type { CreateCredentialData } from '@/lib/types'
+import { credentialService } from '#/lib/database'
+import { getErrorMessage } from '#/lib/utils'
+import type { CreateCredentialData } from '#/lib/types'
 
 // GET /api/credentials/[id]
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {

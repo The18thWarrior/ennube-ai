@@ -4,8 +4,10 @@ import { getSalesforceCredentialsBySub } from '@/lib/db/salesforce-storage';
 import { SalesforceClient, createSalesforceClient } from '@/lib/salesforce';
 import { SalesforceAuthResult } from '@/lib/types';
 import { auth } from '@/auth';
+import { getDescribe, setDescribe, getGlobalDescribe, setGlobalDescribe } from '@/lib/cache/salesforce/describe-history';
+import { DescribeGlobalResult, DescribeSObjectResult } from 'jsforce';
 
-const STANDARD_OBJECTS = ['Account', 'Contact', 'Lead', 'Opportunity', 'Case', 'User', 'Campaign', 'Task', 'Event', 'Contract', 'Order', 'ContentVersion', 'Attachment', 'Note'];
+const STANDARD_OBJECTS = ['Account', 'Contact', 'Lead', 'Opportunity', 'OpportunityLineItem', 'Product2', 'Quote', 'Case', 'User', 'Campaign', 'Task', 'Event', 'Contract', 'Order', 'ContentVersion', 'Attachment', 'Note'];
 
 // GET /api/salesforce/describe?sub=...&sobjectType=...
 export async function GET(request: NextRequest) {
@@ -42,7 +44,16 @@ export async function GET(request: NextRequest) {
     if (sobjectType) {
       // Describe a specific object
       console.log('Describing object:', sobjectType);
-      const describe = await client.describe(sobjectType);
+      // Try cache first
+      let describe: DescribeSObjectResult | null = await getDescribe(sub, sobjectType);
+      if (!describe) {
+        describe = await client.describe(sobjectType);
+        // Save to cache for subsequent requests
+        if (!describe) return NextResponse.json({ error: 'Failed to describe object' }, { status: 500 });
+        await setDescribe(sub, sobjectType, describe);
+      } else {
+        console.log('Using cached describe result');
+      }
       //console.log(describe);
       const describeResult = {
         name: describe.name,
@@ -74,8 +85,15 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ describe: describeResult });
     } else {
       // Describe all objects (describeGlobal)
-      const describeGlobal = await client.describeGlobal();
-      const objectResult = describeGlobal.sobjects.filter(obj => obj.custom || STANDARD_OBJECTS.includes(obj.name)).map((obj) => ({
+      let describeGlobal: DescribeGlobalResult | null = await getGlobalDescribe(sub);
+      if (!describeGlobal) {
+        describeGlobal = await client.describeGlobal();
+        if (!describeGlobal) return NextResponse.json({ error: 'Failed to describe global objects' }, { status: 500 });
+        await setGlobalDescribe(sub, describeGlobal);
+      } else {
+        console.log('Using cached describe global result');
+      }
+      const objectResult = describeGlobal.sobjects.filter((obj: any) => obj.custom || STANDARD_OBJECTS.includes(obj.name)).map((obj: any) => ({
         name: obj.name,
         label: obj.label,
         keyPrefix: obj.keyPrefix

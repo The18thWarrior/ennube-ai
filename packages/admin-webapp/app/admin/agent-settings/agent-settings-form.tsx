@@ -10,8 +10,8 @@ import * as React from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { Button } from '#/components/ui/button'
+import { Input } from '#/components/ui/input'
 import {
   Dialog,
   DialogContent,
@@ -19,7 +19,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
+} from '#/components/ui/dialog'
 import {
   Form,
   FormControl,
@@ -27,9 +27,9 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import type { AgentSettings, CreateAgentSettingsData, FrequencyType, ProviderType } from '@/lib/types'
-import { getErrorMessage } from '@/lib/utils'
+} from '#/components/ui/form'
+import type { AgentSettings, CreateAgentSettingsData, FrequencyType, ProviderType } from '#/lib/types'
+import { getErrorMessage } from '#/lib/utils'
 
 const schema = z.object({
   agent: z.string().min(1, 'Agent is required'),

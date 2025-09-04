@@ -5,9 +5,9 @@
 // Interactions: Used by agent settings admin pages
 
 import { NextRequest, NextResponse } from 'next/server'
-import { agentSettingsService } from '@/lib/database'
-import { getErrorMessage } from '@/lib/utils'
-import type { CreateAgentSettingsData, PaginationParams } from '@/lib/types'
+import { agentSettingsService } from '#/lib/database'
+import { getErrorMessage } from '#/lib/utils'
+import type { CreateAgentSettingsData, PaginationParams } from '#/lib/types'
 
 // GET /api/agent-settings - List agent settings with pagination
 export async function GET(request: NextRequest) {

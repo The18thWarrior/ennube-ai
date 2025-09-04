@@ -15,7 +15,7 @@ import { openai } from '@ai-sdk/openai';
 import z from "zod/v4";
 // Delay importing helper at runtime to avoid loading heavy modules during test-time
 import { createSalesforceVectorStore, VectorStoreEntry } from "./vectorStore";
-import { embedText, createFieldText } from "./embeddings";
+import { embedText, createFieldText, createChildRelationshipText } from "./embeddings";
 import { getBaseUrl } from "../helper";
 import { openrouter } from "@openrouter/ai-sdk-provider";
 
@@ -116,7 +116,6 @@ async function fetchAndProcessDescribe(subId: string, sobjectType: string): Prom
   }
   
   const entries: VectorStoreEntry[] = [];
-  
   for (const field of data.describe.fields) {
     try {
       // Create text representation for embedding
@@ -126,12 +125,15 @@ async function fetchAndProcessDescribe(subId: string, sobjectType: string): Prom
         label: field.label,
         type: field.type,
         helpText: field.inlineHelpText,
+        relationshipName: field.relationshipName,
         picklistValues: field.picklistValues?.map(pv => pv.value)
       });
       
       // Generate embedding
       const vector = await embedText(fieldText);
-      
+      if (!vector || vector.length === 0) {
+        throw new Error('Failed to generate embedding');
+      }
       // Create vector store entry
       const entry: VectorStoreEntry = {
         id: `${data.describe.name}:${field.name}`,
@@ -142,6 +144,7 @@ async function fetchAndProcessDescribe(subId: string, sobjectType: string): Prom
           label: field.label,
           type: field.type,
           helpText: field.inlineHelpText,
+          relationshipName: field.relationshipName,
           picklistValues: field.picklistValues?.map(pv => pv.value)
         }
       };
@@ -156,7 +159,40 @@ async function fetchAndProcessDescribe(subId: string, sobjectType: string): Prom
       // Continue processing other fields for non-embedding related errors
     }
   }
+
+  for (const child of data.describe.childRelationships) {
+    try {
+      // Create text representation for embedding
+      const childText = createChildRelationshipText({
+        childSObject: child.childSObject,
+        field: child.field,
+        relationshipName: child.relationshipName
+      });
+      // Generate embedding
+      const vector = await embedText(childText);
+      if (!vector || vector.length === 0) {
+        throw new Error('Failed to generate embedding');
+      }
+      // Create vector store entry
+      const entry: VectorStoreEntry = {
+        id: `${data.describe.name}:${child.relationshipName}`,
+        vector,
+        payload: {
+          sobjectType: child.childSObject,
+          fieldName: child.field,
+          parentSobjectType: data.describe.name,
+          relationshipName: child.relationshipName
+        }
+      };
+      
+      entries.push(entry);
+    } catch (err) {
+      console.warn(`Failed to process child relationship ${child.relationshipName} for ${sobjectType}:`, err);
+    }
+  }
   
+  
+
   return entries;
 }
 

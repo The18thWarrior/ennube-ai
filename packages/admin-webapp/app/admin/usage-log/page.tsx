@@ -8,10 +8,10 @@
 'use client'
 
 import * as React from "react"
-import { AdminLayout } from "@/components/admin-layout"
-import { DataTable, type Column } from "@/components/data-table"
-import type { UsageLog, PaginatedResponse, ApiResponse } from "@/lib/types"
-import { formatTimestamp, getErrorMessage } from "@/lib/utils"
+import { AdminLayout } from "#/components/admin-layout"
+import { DataTable, type Column } from "#/components/data-table"
+import type { UsageLog, PaginatedResponse, ApiResponse } from "#/lib/types"
+import { formatTimestamp, getErrorMessage } from "#/lib/utils"
 
 export default function UsageLogPage() {
   const [data, setData] = React.useState<UsageLog[]>([])

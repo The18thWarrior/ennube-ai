@@ -7,8 +7,10 @@
     "build:webapp": "pnpm --filter @ennube/webapp build",
     "build:contractReader": "pnpm --filter @ennube/contract-reader build",
     "build": "pnpm -r build",
+    "typecheck": "pnpm -r --parallel --filter \"./packages/**\" exec tsc --noEmit",
     "start": "pnpm --filter @ennube/webapp start",
     "start-admin": "pnpm --filter @ennube/admin-webapp start",
+    "start-embedder": "pnpm --filter @ennube/embedder-api start",
     "start:mpc": "pnpm --filter @ennube/mcp exec mpc-server"
   },
   "author": "Jordan Paul",
@@ -71,7 +73,6 @@
     "next": "latest",
     "next-auth": "beta",
     "next-themes": "^0.4.6",
-    "node-fetch": "^3.3.2",
     "node-html-parser": "^7.0.1",
     "notistack": "^3.0.2",
     "overtype": "^1.2.3",

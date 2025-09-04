@@ -8,11 +8,11 @@
 'use client'
 
 import * as React from "react"
-import { AdminLayout } from "@/components/admin-layout"
-import { DataTable, type Column } from "@/components/data-table"
+import { AdminLayout } from "#/components/admin-layout"
+import { DataTable, type Column } from "#/components/data-table"
 import { CustomerProfilesForm } from "./customer-profiles-form"
-import type { CustomerProfile, CreateCustomerProfileData, PaginatedResponse, ApiResponse } from "@/lib/types"
-import { formatDate, getErrorMessage } from "@/lib/utils"
+import type { CustomerProfile, CreateCustomerProfileData, PaginatedResponse, ApiResponse } from "#/lib/types"
+import { formatDate, getErrorMessage } from "#/lib/utils"
 
 /**
  * OVERVIEW

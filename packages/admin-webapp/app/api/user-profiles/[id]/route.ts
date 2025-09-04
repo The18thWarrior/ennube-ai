@@ -6,9 +6,9 @@
 // Notes: Handles single user profile operations with proper validation
 
 import { NextRequest, NextResponse } from 'next/server'
-import { userProfileService } from '@/lib/database'
-import { getErrorMessage } from '@/lib/utils'
-import type { CreateUserProfileData } from '@/lib/types'
+import { userProfileService } from '#/lib/database'
+import { getErrorMessage } from '#/lib/utils'
+import type { CreateUserProfileData } from '#/lib/types'
 
 // GET /api/user-profiles/[id] - Get single user profile
 export async function GET(

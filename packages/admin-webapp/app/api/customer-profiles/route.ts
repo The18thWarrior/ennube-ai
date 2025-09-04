@@ -6,9 +6,9 @@
 // Notes: Implements full CRUD with user filtering
 
 import { NextRequest, NextResponse } from 'next/server'
-import { customerProfileService } from '@/lib/database'
-import { getErrorMessage } from '@/lib/utils'
-import type { CreateCustomerProfileData, PaginationParams } from '@/lib/types'
+import { customerProfileService } from '#/lib/database'
+import { getErrorMessage } from '#/lib/utils'
+import type { CreateCustomerProfileData, PaginationParams } from '#/lib/types'
 
 // Default user ID for demo purposes
 const DEFAULT_USER_ID = 'user-293475nkk2n3y23n'

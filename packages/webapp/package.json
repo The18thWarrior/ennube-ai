@@ -57,6 +57,7 @@
     "@simplewebauthn/server": "^9.0.3",
     "@upstash/redis": "^1.35.3",
     "@vercel/analytics": "^1.5.0",
+    "@vercel/blob": "^1.1.1",
     "@vercel/kv": "^1.0.1",
     "ai": "^5.0.25",
     "auth0": "^4.28.0",

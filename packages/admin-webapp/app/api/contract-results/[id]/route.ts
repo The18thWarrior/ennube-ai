@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { contractResultService } from '@/lib/database'
-import { getErrorMessage } from '@/lib/utils'
-import type { CreateContractResultData } from '@/lib/types'
+import { contractResultService } from '#/lib/database'
+import { getErrorMessage } from '#/lib/utils'
+import type { CreateContractResultData } from '#/lib/types'
 
 export async function GET(
   request: NextRequest,

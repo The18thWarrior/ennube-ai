@@ -11,8 +11,8 @@ import * as React from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { Button } from "#/components/ui/button"
+import { Input } from "#/components/ui/input"
 import {
   Dialog,
   DialogContent,
@@ -20,7 +20,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
+} from "#/components/ui/dialog"
 import {
   Form,
   FormControl,
@@ -28,9 +28,9 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import type { UserProfile, CreateUserProfileData } from "@/lib/types"
-import { getErrorMessage } from "@/lib/utils"
+} from "#/components/ui/form"
+import type { UserProfile, CreateUserProfileData } from "#/lib/types"
+import { getErrorMessage } from "#/lib/utils"
 
 const userProfileSchema = z.object({
   name: z.string().min(1, "Name is required").max(255, "Name must be less than 255 characters"),

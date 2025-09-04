@@ -8,8 +8,8 @@
 'use client'
 
 import * as React from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { Button } from "#/components/ui/button"
+import { Input } from "#/components/ui/input"
 import {
   Table,
   TableBody,
@@ -17,7 +17,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "#/components/ui/table"
 import {
   Dialog,
   DialogContent,
@@ -25,9 +25,9 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
+} from "#/components/ui/dialog"
 import { ChevronLeft, ChevronRight, Plus, Edit, Trash, Search } from "lucide-react"
-import { cn, debounce } from "@/lib/utils"
+import { cn, debounce } from "#/lib/utils"
 
 /**
  * OVERVIEW

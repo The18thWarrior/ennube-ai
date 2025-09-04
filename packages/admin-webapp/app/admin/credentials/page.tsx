@@ -7,11 +7,11 @@
 'use client'
 
 import * as React from "react"
-import { AdminLayout } from "@/components/admin-layout"
-import { DataTable, type Column } from "@/components/data-table"
+import { AdminLayout } from "#/components/admin-layout"
+import { DataTable, type Column } from "#/components/data-table"
 import { CredentialsForm } from "./credentials-form"
-import type { Credential, CreateCredentialData, PaginatedResponse, ApiResponse } from "@/lib/types"
-import { formatDate, getErrorMessage } from "@/lib/utils"
+import type { Credential, CreateCredentialData, PaginatedResponse, ApiResponse } from "#/lib/types"
+import { formatDate, getErrorMessage } from "#/lib/utils"
 
 export default function CredentialsPage() {
   const [data, setData] = React.useState<Credential[]>([])
