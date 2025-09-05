@@ -233,7 +233,7 @@ export async function getSalesforceCredentialsBySub(sub: string): Promise<Stored
         access_token as "accessToken", 
         instance_url as "instanceUrl", 
         refresh_token as "refreshToken",
-  describe_embed_url as "describeEmbedUrl",
+        describe_embed_url as "describeEmbedUrl",
         created_at as "createdAt",
         expires_at as "expiresAt",
         jsonb_build_object(

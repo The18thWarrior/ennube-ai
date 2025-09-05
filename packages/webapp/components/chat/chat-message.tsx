@@ -100,7 +100,7 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, the
                                                 </div>
                                             );
                                         }  
-                                      case 'tool-getSFDCDataTool': {                                             
+                                      case 'tool-getSFDCDataTool': {        
                                             return (
                                                 <div key={callId}>
                                                     {
@@ -343,7 +343,8 @@ const MessageComponentWrapper = (Component: React.ReactElement, role:string, the
 );
 
 const RenderGetDataToolCallComponent = ({args, result, theme}: {args: any, result: any, theme: 'dark' | 'light' | 'system'}) => {
-    const {records } = result;
+    const {records, totalSize } = result.results;
+    const {sql} = result.query;
     const [hide, setHide] = useState(false);
     const [mounted, setMounted] = useState(false);
     useEffect(() => {
@@ -356,9 +357,8 @@ const RenderGetDataToolCallComponent = ({args, result, theme}: {args: any, resul
         setMounted(false);
       };
     }, []);
-    
-  
-    if (!records || records.length === 0) {
+    console.log(`RenderGetDataToolCallComponent`, records, totalSize, result)
+    if ((!records || records.length === 0) && (totalSize === 0 || !totalSize)) {
         return (
             <div className={`flex items-center gap-2 text-xs text-muted-foreground border rounded  transition-all duration-3000 ease-in-out transition-discrete ${hide ? 'h-0 opacity-0' : 'block py-4 px-2 my-2'}`}>
                 {<TriangleAlert className="h-4 w-4 text-red-500" />}
@@ -366,6 +366,25 @@ const RenderGetDataToolCallComponent = ({args, result, theme}: {args: any, resul
             </div>
         )
     }
+
+    if ((!records || records.length === 0) && totalSize && totalSize !== 0) {
+        return (
+          <div key="total-count" className={`w-full border rounded transition-all duration-3000 ease-in-out transition-discrete ${
+                hide ? "h-0 opacity-0" : "block py-4 px-2 my-2"
+              }`}>
+            <div
+              className={`flex items-center gap-2 text-xs text-muted-foreground `}
+            >
+              <CircleCheck className="h-4 w-4 text-green-500" />
+              <div>Total count: {totalSize}</div>
+            </div>
+
+            <div className="text-xs text-muted-foreground pt-3">{sql}</div>
+          </div>
+        )
+    }
+
+
     if (records.length === 1) {
         const fields = Object.keys(records[0]).filter((key) => key !== 'Id' && records[0][key] && key !== 'attributes').map((key) => ({
             label: key,

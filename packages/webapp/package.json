@@ -2,11 +2,6 @@
   "name": "@ennube/webapp",
   "private": true,
   "description": "An example project for NextAuth.js with Next.js",
-  "repository": "https://github.com/nextauthjs/next-auth-example.git",
-  "bugs": {
-    "url": "https://github.com/nextauthjs/next-auth/issues"
-  },
-  "homepage": "https://next-auth-example.vercel.app",
   "scripts": {
     "dev": "next",
     "build": "next build",

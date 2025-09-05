@@ -141,3 +141,9 @@ export interface UsageLogEntry {
     records?: string[]
   };
 }
+
+export interface QueryResult {
+  id: string;
+  payload: Record<string, unknown> | undefined;
+  score: number;
+}

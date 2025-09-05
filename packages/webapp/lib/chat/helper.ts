@@ -35,10 +35,10 @@ export const getTools = async (agent: 'data-steward' | 'prospect-finder' | 'cont
     if (agent === 'data-steward') {
         return {
             getCredentials: getCredentialsTool(userId),
-            getSFDCFieldDescribeTool: getSFDCFieldsTool(userId),
+            //getSFDCFieldDescribeTool: getSFDCFieldsTool(userId),
             //getSFDCDataTool: getSFDCDataTool(userId),
-            getSFDCObjectDescribeTool: getSFDCObjectTool(userId),
-            generateQueryTool: generateQueryTool(userId),
+            //getSFDCObjectDescribeTool: getSFDCObjectTool(userId),
+            getSFDCDataTool: generateQueryTool(userId),
             //getPostgresDataTool: getPostgresDataTool(userId),
             //getPostgresDescribeTool: getPostgresDescribeTool(userId),
             //getCount: getCountTool(userId),
@@ -47,8 +47,9 @@ export const getTools = async (agent: 'data-steward' | 'prospect-finder' | 'cont
     } else if (agent === 'prospect-finder') {
         return {
             getCredentials: getCredentialsTool(userId),
-            getSFDCFieldDescribeTool: getSFDCFieldsTool(userId),
-            getSFDCDataTool: getSFDCDataTool(userId),
+            // getSFDCFieldDescribeTool: getSFDCFieldsTool(userId),
+            // getSFDCDataTool: getSFDCDataTool(userId),
+            getSFDCDataTool: generateQueryTool(userId),
             // getPostgresDataTool: getPostgresDataTool(userId),
             // getPostgresDescribeTool: getPostgresDescribeTool(userId),
             getCustomerProfilesTool: getCustomerProfilesTool(userId),
@@ -60,8 +61,9 @@ export const getTools = async (agent: 'data-steward' | 'prospect-finder' | 'cont
     } else if (agent === 'contract-reader') {
         return {
             getCredentials: getCredentialsTool(userId),
-            getSFDCFieldDescribeTool: getSFDCFieldsTool(userId),
-            getSFDCDataTool: getSFDCDataTool(userId),
+            // getSFDCFieldDescribeTool: getSFDCFieldsTool(userId),
+            // getSFDCDataTool: getSFDCDataTool(userId),
+            getSFDCDataTool: generateQueryTool(userId),
             // getPostgresDataTool: getPostgresDataTool(userId),
             // getPostgresDescribeTool: getPostgresDescribeTool(userId),
             //getCount: getCountTool(userId),
@@ -71,8 +73,9 @@ export const getTools = async (agent: 'data-steward' | 'prospect-finder' | 'cont
 
     return {
         getCredentials: getCredentialsTool(userId),
-        getSFDCFieldDescribeTool: getSFDCFieldsTool(userId),
-        getSFDCDataTool: getSFDCDataTool(userId),
+        getSFDCDataTool: generateQueryTool(userId),
+        // getSFDCFieldDescribeTool: getSFDCFieldsTool(userId),
+        // getSFDCDataTool: getSFDCDataTool(userId),
         getPostgresDataTool: getPostgresDataTool(userId),
         getPostgresDescribeTool: getPostgresDescribeTool(userId),
         //getCount: getCountTool(userId)
