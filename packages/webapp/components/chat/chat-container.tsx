@@ -51,38 +51,31 @@ const ChatContainer = ({
             api: `/api/chat?agent=${selectedAvatar}`,
         }),
         
-        onFinish: (message) => {
-            //console.log('onfinish', message, 'previous', messages);
-            
-            //setThread(threadId, [...messages, message], _name || '');
-            // setTimeout(() => {
-            //     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-            // }, 100);
-        },
+        onFinish: (message) => {},
         onError: (err) => {
             console.error('Chat error:', err);
         },
-        // experimental_prepareRequestBody({ messages, id }) {
-        //     return { message: messages[messages.length - 1], id };
-        // },
     });
     //console.log('Chat container initialized', messages, initialMessages);
     const isLoading = status === 'submitted' || status === 'streaming';
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        //console.log(e)
-        //e.currentTarget.preventDefault();
-        // setThread(threadId, [...messages, {
-        //     id: nanoid(),
-        //     role: 'user',
-        //     parts: [
-        //         {
-        //             type: 'text',
-        //             text: input,
-        //         },
-        //     ],
-        // } as UIMessage<unknown, UIDataTypes, UITools>], _name || '', selectedAvatar);
         sendMessage({ text: input });
         handleInputChange('');
+    };
+
+    const populateName = async () => {
+      const result = await fetch('/api/chat/name-thread', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ messages }),
+      });
+      const data = await result.json();
+      if (data.name) {
+        setName(data.name);
+        await setThread(threadId, [], data.name || '', selectedAvatar);
+      }
     };
 
 
@@ -97,6 +90,9 @@ const ChatContainer = ({
             //console.log(messages);
             messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'end'});
             //setThread(threadId, [...messages], _name || '');
+            if (messages.length > 0 && _name.length === 0) {
+              populateName(); 
+            }
         }
     }, [messages.length, mounted]);
     useEffect(() => {
@@ -136,7 +132,7 @@ const ChatContainer = ({
         setIsEditingName(false);
         await setThread(threadId, [], _name || '', selectedAvatar);
     };
-
+    console.log(name);
     const Agent = avatarOptions.find(a => a.key === selectedAvatar)?.avatar;
     
     if (!theme || !mounted) return <div />;

@@ -1,6 +1,7 @@
 import { Edit, Pencil } from "lucide-react";
 import { Input } from "../ui";
 import { useState } from "react";
+import StreamingText from "../ui/stream-text";
 
 export default ({ isEditingName, _name, setName, handleNameSave, setIsEditingName }: { isEditingName: boolean; _name: string; setName: (name: string) => void; handleNameSave: () => void; setIsEditingName: (isEditing: boolean) => void; }) => {
     const [focus, setFocus] = useState(false);
@@ -50,7 +51,7 @@ export default ({ isEditingName, _name, setName, handleNameSave, setIsEditingNam
                                 </button>
                             </form>
                         ) : (
-                            <span className={'text-xl'}>{_name || <span className="italic text-muted-foreground">(no name)</span>}</span>
+                            <span className={'text-xl'}>{_name ? <StreamingText text={_name} /> : <span className="italic text-muted-foreground">(no name)</span>}</span>
                         )}
                     </div>
                 </div>
