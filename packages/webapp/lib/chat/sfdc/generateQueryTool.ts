@@ -70,6 +70,7 @@ interface DescribeResponse {
  */
 async function generateAndExecuteQuery(
   subId: string, 
+  credentials: StoredSalesforceCredentials,
   sobjectType: string, 
   description: string,
   similarFields: QueryResult[]
@@ -92,6 +93,8 @@ async function generateAndExecuteQuery(
   
   const prompt = `Generate a SOQL query for Salesforce based on the following user request:
     "${description}"
+
+    The running user id for this user is "${credentials?.userInfo?.id}".
 
     Relevant fields for query construction:
     ${fieldContext}
@@ -236,7 +239,7 @@ export const generateQueryTool = (subId: string) => {
       try {
         console.log(`Starting query generation for with description: "${description}"`);
         const query_result = await fetchAndProcessDescribe(credentials, queryEmbedding);
-        const data = await generateAndExecuteQuery(subId, sobject, description, query_result);
+        const data = await generateAndExecuteQuery(subId, credentials, sobject, description, query_result);
         return data;
       } catch (error: { message?: string } | any) {
         console.error('Query generation failed:', error.message);

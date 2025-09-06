@@ -132,7 +132,6 @@ const ChatContainer = ({
         setIsEditingName(false);
         await setThread(threadId, [], _name || '', selectedAvatar);
     };
-    console.log(name);
     const Agent = avatarOptions.find(a => a.key === selectedAvatar)?.avatar;
     
     if (!theme || !mounted) return <div />;

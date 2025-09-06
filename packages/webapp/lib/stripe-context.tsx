@@ -118,8 +118,8 @@ export function StripeProvider({ children }: { children: React.ReactNode }) {
 
 
   useEffect(() => {
-    if (session) fetchSubscriptionStatus();
-  }, [session]);
+    if (session?.user?.auth0?.sub && subscription === null) fetchSubscriptionStatus();
+  }, [session?.user]);
   const hasSubscription = !!(subscription && (subscription.status === 'active' || subscription.status === 'trialing'));
   const value = {
     createCheckoutSession,

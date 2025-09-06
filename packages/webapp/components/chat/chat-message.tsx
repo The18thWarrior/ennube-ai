@@ -349,6 +349,7 @@ const RenderGetDataToolCallComponent = ({args, result, theme}: {args: any, resul
     const [mounted, setMounted] = useState(false);
     useEffect(() => {
       setMounted(true);
+      console.log(`RenderGetDataToolCallComponent`, records, totalSize, result)
 
       setTimeout(() => {
         if (mounted) setHide(true);
@@ -357,7 +358,7 @@ const RenderGetDataToolCallComponent = ({args, result, theme}: {args: any, resul
         setMounted(false);
       };
     }, []);
-    console.log(`RenderGetDataToolCallComponent`, records, totalSize, result)
+    
     if ((!records || records.length === 0) && (totalSize === 0 || !totalSize)) {
         return (
             <div className={`flex items-center gap-2 text-xs text-muted-foreground border rounded  transition-all duration-3000 ease-in-out transition-discrete ${hide ? 'h-0 opacity-0' : 'block py-4 px-2 my-2'}`}>

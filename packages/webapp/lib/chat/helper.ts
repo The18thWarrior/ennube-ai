@@ -34,7 +34,7 @@ export async function getBaseUrl() {
 export const getTools = async (agent: 'data-steward' | 'prospect-finder' | 'contract-reader', userId: string) : Promise<Record<string, Tool>> => {
     if (agent === 'data-steward') {
         return {
-            getCredentials: getCredentialsTool(userId),
+            //getCredentials: getCredentialsTool(userId),
             //getSFDCFieldDescribeTool: getSFDCFieldsTool(userId),
             //getSFDCDataTool: getSFDCDataTool(userId),
             //getSFDCObjectDescribeTool: getSFDCObjectTool(userId),
@@ -46,7 +46,7 @@ export const getTools = async (agent: 'data-steward' | 'prospect-finder' | 'cont
         };
     } else if (agent === 'prospect-finder') {
         return {
-            getCredentials: getCredentialsTool(userId),
+            //getCredentials: getCredentialsTool(userId),
             // getSFDCFieldDescribeTool: getSFDCFieldsTool(userId),
             // getSFDCDataTool: getSFDCDataTool(userId),
             getSFDCDataTool: generateQueryTool(userId),
@@ -60,7 +60,7 @@ export const getTools = async (agent: 'data-steward' | 'prospect-finder' | 'cont
         };
     } else if (agent === 'contract-reader') {
         return {
-            getCredentials: getCredentialsTool(userId),
+            //getCredentials: getCredentialsTool(userId),
             // getSFDCFieldDescribeTool: getSFDCFieldsTool(userId),
             // getSFDCDataTool: getSFDCDataTool(userId),
             getSFDCDataTool: generateQueryTool(userId),
@@ -72,7 +72,7 @@ export const getTools = async (agent: 'data-steward' | 'prospect-finder' | 'cont
     }
 
     return {
-        getCredentials: getCredentialsTool(userId),
+        //getCredentials: getCredentialsTool(userId),
         getSFDCDataTool: generateQueryTool(userId),
         // getSFDCFieldDescribeTool: getSFDCFieldsTool(userId),
         // getSFDCDataTool: getSFDCDataTool(userId),
