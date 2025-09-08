@@ -1,7 +1,7 @@
 import { UpdateProposal } from '@/types/sfdc-update';
 import { generateObject } from 'ai';
-import { openrouter } from '@openrouter/ai-sdk-provider';
 import z from 'zod/v4';
+import getModel from '../getModel';
 
 function simpleId(prefix = 'id') {
   return `${prefix}_${Math.random().toString(36).slice(2, 9)}`;
@@ -37,7 +37,10 @@ const UpdateProposalSchema = z.object({
  * Uses `generateObject` with a strict schema to get deterministic structured output.
  */
 export async function parseUpdateRequest(nlRequest: string, context?: any): Promise<UpdateProposal> {
-  const model = openrouter('deepseek/deepseek-chat-v3.1');
+  const model = getModel();
+  if (!model) {
+    throw new Error('AI model not configured');
+  }
 
   // Compose a clear prompt that instructs the model to output only the JSON object matching the schema
   const prompt = `You are an assistant that converts a user's natural-language instruction into a structured Salesforce update proposal.

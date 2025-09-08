@@ -17,9 +17,9 @@ import z from "zod/v4";
 import { createSalesforceVectorStore, VectorStoreEntry } from "./vectorStore";
 import { embedText, createFieldText, createChildRelationshipText } from "./embeddings";
 import { getBaseUrl } from "../helper";
-import { openrouter } from "@openrouter/ai-sdk-provider";
 import { getSalesforceCredentialsBySub, StoredSalesforceCredentials } from "@/lib/db/salesforce-storage";
 import { QueryResult } from "@/lib/types";
+import getModel from "../getModel";
 
 /**
  * Zod schema for structured SQL generation
@@ -110,8 +110,10 @@ async function generateAndExecuteQuery(
 
   // 5. Generate structured query object using AI
   console.log('Generating SOQL query with AI...');
-  const model = openrouter('deepseek/deepseek-chat-v3.1'); // Use efficient model for query generation
-  
+  const model = getModel();
+  if (!model) {
+    throw new Error('AI model not configured');
+  }
   const { object: queryResult } = await generateObject({
     model,
     providerOptions: {

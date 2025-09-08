@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { convertToModelMessages, stepCountIs, streamText } from 'ai';
-import { createOpenRouter } from '@openrouter/ai-sdk-provider';
 import { auth } from '@/auth';
 import { nanoid } from 'nanoid';
 import { setThread } from '@/lib/cache/message-history';
 import { getPrompt, getTools } from '@/lib/chat/helper';
 import dayjs from 'dayjs';
+import getModel from '@/lib/chat/getModel';
 
 export const maxDuration = 30;
 // The main agent route
@@ -34,11 +34,11 @@ export async function POST(req: NextRequest) {
     // Get user's sub from the session
     const userSub = session.user.auth0.sub;
     const today = dayjs().format('YYYY-MM-DD');
-    const openrouter = createOpenRouter({
-      apiKey: `${process.env.OPENROUTER_API_KEY}`,
-    });
+    const model = getModel();
+    if (!model) {
+      return NextResponse.json({ error: 'AI model not configured' }, { status: 500 });
+    }
     const systemPrompt = `${getPrompt(agent as 'data-steward' | 'prospect-finder' | 'contract-reader')} Today's date is ${today}.`;
-    const model = openrouter('openai/gpt-oss-120b'); // deepseek/deepseek-chat-v3.1 deepseek/deepseek-chat-v3-0324 | google/gemini-2.0-flash-001
     // Set up the OpenAI model
     // Run the agent with tools
     const result = await streamText({

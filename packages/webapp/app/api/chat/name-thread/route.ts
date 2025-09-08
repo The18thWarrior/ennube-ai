@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateText, convertToModelMessages, stepCountIs } from 'ai';
-import { createOpenRouter } from '@openrouter/ai-sdk-provider';
 import { auth } from '@/auth';
+import getModel from '@/lib/chat/getModel';
 
 // POST /api/chat/name-thread
 export async function POST(req: NextRequest) {
@@ -19,8 +19,10 @@ export async function POST(req: NextRequest) {
 			return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
 		}
 
-		const openrouter = createOpenRouter({ apiKey: `${process.env.OPENROUTER_API_KEY}` });
-		const model = openrouter('openai/gpt-oss-120b');
+		const model = getModel();
+    if (!model) {
+      return NextResponse.json({ error: 'AI model not configured' }, { status: 500 });
+    }
 
 		const systemPrompt = `You are an assistant that generates short, human-friendly conversation names. Given a conversation (messages), produce a single concise title of 100 characters or less. Return only the title text with no surrounding quotes or metadata.`;
 
