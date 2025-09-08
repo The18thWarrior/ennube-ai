@@ -18,6 +18,7 @@ import { updateCustomerProfileTool } from './internal/updateCustomerProfile';
 import { Tool } from 'ai';
 import { CONTRACT_READER_SYSTEM_PROMPT } from '../prompts/contract-reader-system-prompt';
 import { generateQueryTool } from './sfdc/generateQueryTool';
+import { proposeUpdateDataTool } from './sfdc/proposeUpdateDataTool';
 
 export const getPrompt = (agent: 'data-steward' | 'prospect-finder' | 'contract-reader') => {
     return agent === 'data-steward' ? DATA_STEWARD_SYSTEM_PROMPT : agent === 'contract-reader' ? CONTRACT_READER_SYSTEM_PROMPT : PROSPECT_FINDER_SYSTEM_PROMPT;
@@ -32,53 +33,37 @@ export async function getBaseUrl() {
 }
 
 export const getTools = async (agent: 'data-steward' | 'prospect-finder' | 'contract-reader', userId: string) : Promise<Record<string, Tool>> => {
-    if (agent === 'data-steward') {
-        return {
-            getCredentials: getCredentialsTool(userId),
-            //getSFDCFieldDescribeTool: getSFDCFieldsTool(userId),
-            //getSFDCDataTool: getSFDCDataTool(userId),
-            //getSFDCObjectDescribeTool: getSFDCObjectTool(userId),
-            getSFDCDataTool: generateQueryTool(userId),
-            //getPostgresDataTool: getPostgresDataTool(userId),
-            //getPostgresDescribeTool: getPostgresDescribeTool(userId),
-            //getCount: getCountTool(userId),
-            callWorkflowTool: getWorkflowTool(agent)
-        };
+    
+  const baseTools = {
+    //getCredentials: getCredentialsTool(userId),
+    getSFDCDataTool: generateQueryTool(userId),
+    //updateSFDCDataTool: proposeUpdateDataTool(userId),
+    // getSFDCFieldDescribeTool: getSFDCFieldsTool(userId),
+    // getSFDCDataTool: getSFDCDataTool(userId),
+    getPostgresDataTool: getPostgresDataTool(userId),
+    getPostgresDescribeTool: getPostgresDescribeTool(userId),
+    //getCount: getCountTool(userId)
+  };
+  if (agent === 'data-steward') {
+    return {
+      ...baseTools,
+      callWorkflowTool: getWorkflowTool(agent)
+    };
     } else if (agent === 'prospect-finder') {
-        return {
-            getCredentials: getCredentialsTool(userId),
-            // getSFDCFieldDescribeTool: getSFDCFieldsTool(userId),
-            // getSFDCDataTool: getSFDCDataTool(userId),
-            getSFDCDataTool: generateQueryTool(userId),
-            // getPostgresDataTool: getPostgresDataTool(userId),
-            // getPostgresDescribeTool: getPostgresDescribeTool(userId),
-            getCustomerProfilesTool: getCustomerProfilesTool(userId),
-            createCustomerProfileTool: createCustomerProfileTool(userId),
-            updateCustomerProfileTool: updateCustomerProfileTool(userId),
-            //getCount: getCountTool(userId),
-            callWorkflowTool: getWorkflowTool(agent),
-        };
+      return {
+        ...baseTools,
+        getCustomerProfilesTool: getCustomerProfilesTool(userId),
+        createCustomerProfileTool: createCustomerProfileTool(userId),
+        updateCustomerProfileTool: updateCustomerProfileTool(userId),
+        callWorkflowTool: getWorkflowTool(agent)
+      };
     } else if (agent === 'contract-reader') {
-        return {
-            getCredentials: getCredentialsTool(userId),
-            // getSFDCFieldDescribeTool: getSFDCFieldsTool(userId),
-            // getSFDCDataTool: getSFDCDataTool(userId),
-            getSFDCDataTool: generateQueryTool(userId),
-            // getPostgresDataTool: getPostgresDataTool(userId),
-            // getPostgresDescribeTool: getPostgresDescribeTool(userId),
-            //getCount: getCountTool(userId),
-            callWorkflowTool: getWorkflowTool(agent)
-        };
+      return {
+        ...baseTools,
+        callWorkflowTool: getWorkflowTool(agent)
+      };
     }
 
-    return {
-        getCredentials: getCredentialsTool(userId),
-        getSFDCDataTool: generateQueryTool(userId),
-        // getSFDCFieldDescribeTool: getSFDCFieldsTool(userId),
-        // getSFDCDataTool: getSFDCDataTool(userId),
-        getPostgresDataTool: getPostgresDataTool(userId),
-        getPostgresDescribeTool: getPostgresDescribeTool(userId),
-        //getCount: getCountTool(userId)
-    };
+    return baseTools;
 
 }   

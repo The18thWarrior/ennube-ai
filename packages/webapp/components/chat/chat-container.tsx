@@ -132,7 +132,15 @@ const ChatContainer = ({
         setIsEditingName(false);
         await setThread(threadId, [], _name || '', selectedAvatar);
     };
-    console.log(name);
+
+    const updateThreadFromTool = async (updatedMessage: UIMessage) => {
+       const index = messages.findIndex((msg) => msg.id === updatedMessage.id);
+        if (index !== -1) {
+            const newMessages = [...messages];
+            newMessages[index] = updatedMessage;
+            setThread(threadId, newMessages, _name || '', selectedAvatar);
+        }
+    };
     const Agent = avatarOptions.find(a => a.key === selectedAvatar)?.avatar;
     
     if (!theme || !mounted) return <div />;
@@ -170,7 +178,7 @@ const ChatContainer = ({
                                     msg.role === 'user' ? styles.userRow : styles.botRow,
                                 ].join(' ')}
                             >
-                                {renderMessage(msg, idx, Agent, theme, session)}
+                                {renderMessage(msg, idx, Agent, theme, session, updateThreadFromTool)}
                             </div>
                         ))}
                         <div ref={messagesEndRef}></div>

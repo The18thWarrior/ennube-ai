@@ -10,30 +10,24 @@ import { JsonRecord } from '../generalized-result';
 import { UIMessage, UIDataTypes, UIMessagePart, UITools, isToolUIPart } from 'ai';
 import { nanoid } from 'nanoid';
 import { Button, Card, CardContent } from '../ui';
-import { CrmRecordDetailCard } from './tools/crm-record-detail-card';
+import { UpdateDataReviewModal } from './tools/update-data-review-modal';
 import { Loader2, User, TriangleAlert, CircleCheck, Loader, Copy } from 'lucide-react';
-import { useSnackbar } from 'notistack';
-import { RecordIcon } from './tools/icon-map';
-import CrmResultCard from './tools/crm-result-card';
-import { CustomProfileToolResult } from './wrappers/custom-profile-tool-result';
-import { UsageLogEntry } from '@/lib/types';
-import dayjs from 'dayjs';
-import { ExecutionDetailsPanel } from '@/components/executions/execution-details-panel';
 import { Session } from 'next-auth';
 import { CustomerProfile } from '@/hooks/useCustomerProfile';
+import DefaultMessageComponent from './default/default-message-component';
+import TimestampWithCopy from './default/timestamp-with-copy';
+import RenderGetDataToolCallComponent from './tools/render-get-data-tool-call';
+import RenderCallWorkflowToolCallComponent from './tools/render-call-workflow-tool-call';
+import RenderGetCustomProfileToolCallComponent from './tools/render-get-custom-profile-tool-call';
+import { ProposalResponse } from '@/types/sfdc-update';
 
 // Custom message rendering
-export const renderMessage = (msg: UIMessage, idx: number, agent: ReactNode, theme: 'dark' | 'light' | 'system', session: Session | null) => {
-    
-    // If the message is from the user, always render as text
-    if (msg.role === 'user') {
-        return RenderHtmlComponent(DefaultMessageComponent(msg, theme), msg, theme, agent, session);
-    }
+export const renderMessage = (msg: UIMessage, idx: number, agent: ReactNode, theme: 'dark' | 'light' | 'system', session: Session | null, updateThreadFromTool: (updatedMessage: UIMessage) => void) => {
     // Default: render as text
-    return RenderHtmlComponent(DefaultMessageComponent(msg, theme), msg, theme, agent, session);
+    return RenderHtmlComponent(DefaultMessageComponent(msg, theme), msg, theme, agent, session, updateThreadFromTool);
 };
 
-const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, theme: 'dark' | 'light' | 'system', agent: ReactNode, session: Session | null) => (
+const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, theme: 'dark' | 'light' | 'system', agent: ReactNode, session: Session | null, updateThreadFromTool: (updatedMessage: UIMessage) => void) => (
     <div className={'flex items-start gap-2'}>
         {msg.role === 'assistant' ? 
             <div className="flex aspect-square size-12 items-center justify-center rounded-full overflow-hidden flex-shrink-0 mt-2 ">
@@ -83,6 +77,24 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, the
                                         
                                     
                                     switch (part.type) {
+                                        case 'tool-proposeUpdateDataTool': {
+                                            const output = part.output as ProposalResponse;
+                                            const proposal = output.proposal;
+                                            return (
+                                                <div key={callId}>
+                                                    {
+                                                        <MessageStateComponent
+                                                            Component={<UpdateDataReviewModal open={true} proposal={proposal} closeProposal={updateThreadFromTool} message={msg} status={output.status} partId={part.toolCallId}/>}
+                                                            state={part.state}
+                                                            theme={theme}
+                                                            successMessage="Proposed Changes"
+                                                            errorMessage={part.errorText || "Error proposing changes"}
+                                                            toolName="Propose Update Tool"
+                                                        />
+                                                    }
+                                                </div>
+                                            );
+                                        }
                                       case 'tool-generateQueryTool': {                                             
                                             return (
                                                 <div key={callId}>
@@ -317,247 +329,6 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, the
         }
     </div>
 )
-
-const DefaultMessageComponent = (msg: UIMessage, theme: 'dark' | 'light' | 'system') => {
-    const _msg = msg.parts ? msg.parts.at(msg.parts.length - 1) as UIMessagePart<UIDataTypes, UITools> : null;
-    const value = _msg && _msg.type === 'text' ? _msg.text : '';
-    const state = _msg && _msg.type === 'text' ? _msg.state : 'done';
-
-    if (!value || value.trim() === '') {
-        return MessageComponentWrapper( <span className="text-xs text-muted-foreground italic">No response</span>, msg.role, theme);
-    }
-
-    return MessageComponentWrapper( <span className={`${state === 'streaming' ? 'text-muted-foreground' : ''} ${msg.role === 'user' ? '' : 'p-2'}`}>{value}</span>, msg.role, theme);
-};
-
-const MessageComponentWrapper = (Component: React.ReactElement, role:string, theme: 'dark' | 'light' | 'system') => (
-    <span
-        className={[
-            styles.messageBubble,
-            role === 'user' ? null : styles.botBubble,
-            theme === 'dark' ? styles.darkBubble : styles.lightBubble,
-        ].join(' ')}
-    >
-        {Component}
-    </span>
-);
-
-const RenderGetDataToolCallComponent = ({args, result, theme}: {args: any, result: any, theme: 'dark' | 'light' | 'system'}) => {
-    const {records, totalSize } = result.results;
-    const {sql} = result.query;
-    const [hide, setHide] = useState(false);
-    const [mounted, setMounted] = useState(false);
-    useEffect(() => {
-      setMounted(true);
-
-      setTimeout(() => {
-        if (mounted) setHide(true);
-      }, 5000);
-      return () => {
-        setMounted(false);
-      };
-    }, []);
-    console.log(`RenderGetDataToolCallComponent`, records, totalSize, result)
-    if ((!records || records.length === 0) && (totalSize === 0 || !totalSize)) {
-        return (
-            <div className={`flex items-center gap-2 text-xs text-muted-foreground border rounded  transition-all duration-3000 ease-in-out transition-discrete ${hide ? 'h-0 opacity-0' : 'block py-4 px-2 my-2'}`}>
-                {<TriangleAlert className="h-4 w-4 text-red-500" />}
-                <span>No data found</span>
-            </div>
-        )
-    }
-
-    if ((!records || records.length === 0) && totalSize && totalSize !== 0) {
-        return (
-          <div key="total-count" className={`w-full border rounded transition-all duration-3000 ease-in-out transition-discrete ${
-                hide ? "h-0 opacity-0" : "block py-4 px-2 my-2"
-              }`}>
-            <div
-              className={`flex items-center gap-2 text-xs text-muted-foreground `}
-            >
-              <CircleCheck className="h-4 w-4 text-green-500" />
-              <div>Total count: {totalSize}</div>
-            </div>
-
-            <div className="text-xs text-muted-foreground pt-3">{sql}</div>
-          </div>
-        )
-    }
-
-
-    if (records.length === 1) {
-        const fields = Object.keys(records[0]).filter((key) => key !== 'Id' && records[0][key] && key !== 'attributes').map((key) => ({
-            label: key,
-            value: records[0][key],
-            icon: RecordIcon.getIcon('default'),
-        }));
-        // Render single record detail
-        return (
-            <div>
-                <CrmRecordDetailCard icon={RecordIcon.getIcon(records[0].attributes.type)} recordType={records[0].attributes.type} title={records[0].Name} subtitle={`ID: ${records[0].Id}`} fields={fields} />
-            </div>
-        );
-    }
-    
-    const convertedRecords = records.map((record: { [x: string]: any; Id?: any; attributes?: any; }) => ({
-        id: record.Id || nanoid(),
-        fields: Object.keys(record).filter((key) => record[key] && key !== 'attributes').map((key) => ({
-            label: key,
-            value: typeof record[key] === 'object' ? Object.keys(record[key]).filter((key2) => record[key] && key2 !== 'attributes').reduce((acc, key2) => {
-              return {...acc, [key2]: record[key][key2]};
-            }, {}) : record[key],
-            icon: RecordIcon.getIcon('default'),
-        })),
-        objectType: record.attributes.type,
-    }));
-    // console.log(`RenderGetDataToolCallComponent`,records)
-    console.log(`RenderGetDataToolCallComponent`,convertedRecords)
-    return (
-        <div className="transition-all duration-300 ease-in-out" style={{ transitionProperty: 'width' }}>
-            {/* <CrmRecordListView records={records} /> */}
-            { <CrmResultCard
-                records={convertedRecords}
-                totalReturned={convertedRecords.length}
-                filterApplied={args?.filter}
-                objectType={args?.sobject}
-            /> }
-        </div>
-    );
-}
-
-// Timestamp display with copy-to-clipboard button
-const TimestampWithCopy = ({ msg } : { msg: UIMessage }) => {
-    const { enqueueSnackbar } = useSnackbar();
-    const handleCopy = async () => {
-        try {
-            if (!msg.parts) {
-                enqueueSnackbar('Nothing to copy', { variant: 'warning', preventDuplicate: true, autoHideDuration: 3000 });
-                return;
-            }
-            const _msg = msg.parts.at(-1) as UIMessagePart<UIDataTypes, UITools>;
-            const value = _msg.type === 'text' ? _msg.text : '';
-            await navigator.clipboard.writeText(value);
-            enqueueSnackbar('Message copied to clipboard', { variant: 'success', preventDuplicate: true, autoHideDuration: 3000 });
-        } catch (err) {
-            console.error('Copy failed', err);
-            enqueueSnackbar('Failed to copy message', { variant: 'error', preventDuplicate: true, autoHideDuration: 3000 });
-        }
-    };
-
-    return (
-        <div className={`align-middle flex flex-row items-center ${msg.role === 'user' ? 'justify-end' : 'justify-start'} gap-2 mt-1 mx-2`}>
-            {/* <span className="text-xs text-muted-foreground px-2">
-                {msg.createdAt && formatDistanceToNow(msg.createdAt, { addSuffix: true })}
-                TODO : Fill date
-            </span> */}
-            <button
-                type="button"
-                aria-label="Copy message"
-                title="Copy message"
-                onClick={handleCopy}
-                className=" inline-flex items-center justify-center p-1 text-muted-foreground hover:bg-muted rounded"
-            >
-                <Copy className="h-4 w-4" />
-            </button>
-        </div>
-    );
-}
-
-const RenderGetCustomProfileToolCallComponent = (args: any, result: {profiles: CustomerProfile[]}, theme: 'dark' | 'light' | 'system') => {
-    const {profiles } = result;
-    if (!profiles || profiles.length === 0) {
-        return <div>
-            <div className="flex items-center gap-2 text-xs text-muted-foreground my-2 py-4 px-2 border rounded">
-                {<TriangleAlert className="h-4 w-4 text-red-500" />}
-                <span>No data found</span>
-            </div>
-        </div>
-    }
-
-    return (
-        <div className="transition-all duration-300 ease-in-out" style={{ transitionProperty: 'width' }}>
-            {/* <CrmRecordListView records={records} /> */}
-            <CustomProfileToolResult
-                profiles={profiles}
-                filterApplied={args?.filter}
-                objectType={args?.sobject}
-                onSelectProfile={(profileId) => {
-                    // Handle profile selection if needed
-                    console.log(`Selected profile ID: ${profileId}`);
-                }}
-            />
-        </div>
-    );
-}
-
-const RenderCallWorkflowToolCallComponent = ({result: {usageId}} : {result: {usageId: string}}) => {
-    const [log, setLog] = useState<UsageLogEntry | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        if (!usageId) {
-            setError('No Id found');
-            setLoading(false);
-            return;
-        }
-        setLoading(true);
-        setError(null);
-        fetch(`/api/dashboard/usage/${usageId}`)
-            .then(async (response) => {
-                if (!response.ok) {
-                    throw new Error('Error fetching usage data');
-                }
-                const data = await response.json();
-                if (!data || !data.id) {
-                    throw new Error('No data found');
-                }
-                setLog(data as UsageLogEntry);
-            })
-            .catch((err) => {
-                setError(err.message || 'Unknown error');
-            })
-            .finally(() => setLoading(false));
-    }, [usageId]);
-
-    if (loading) {
-        return <div>
-            <div className="flex items-center gap-2 text-xs text-muted-foreground py-4 px-2 border rounded">
-                {<Loader className="h-4 w-4" />}
-                <span>Loading usage data...</span>
-            </div>
-        </div>;
-    }
-    if (error) {
-        return <div>{error}</div>;
-    }
-    if (!log) {
-        return <div>
-            <div className="flex items-center gap-2 text-xs text-muted-foreground my-2 py-4 my-2 px-2 border rounded">
-                {<TriangleAlert className="h-4 w-4 text-red-500" />}
-                <span>No data found</span>
-            </div>
-        </div>;
-    }
-    const execution = {
-        id: log.id,
-        agent_name: log.agent,
-        image_url: getAgentImage(log.agent),
-        status: log.status || "unknown",
-        execution_time: dayjs(log.updatedAt).diff(dayjs(log.createdAt), "seconds"),
-        created_at: log.createdAt || dayjs(log.timestamp).toISOString(),
-        response_data: log.responseData || {
-            execution_summary: `Created ${log.recordsCreated} records and updated ${log.recordsUpdated} records`,
-            error: null,
-            error_code: null,
-        },
-    };
-    return (
-        <div className="transition-all duration-300 ease-in-out p-4" style={{ transitionProperty: 'width' }}>
-            <ExecutionDetailsPanel execution={execution} onClose={null} coloredBorder={true} collapsible={true} />
-        </div>
-    );
-}
 
 const MessageStateComponent = ({
   Component,

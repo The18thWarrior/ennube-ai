@@ -27,8 +27,7 @@ export default function Agents() {
     )
   };
   const _agents = agents.map(agent => {
-    let agentButton; 
-    console.log('Agent API Name:', agent.apiName); // Log the agent's API name for debugging
+    let agentButton; // Log the agent's API name for debugging
     switch (agent.apiName) {
       case 'data-steward':
         agentButton = <AgentButton apiName={agent.apiName} />;
