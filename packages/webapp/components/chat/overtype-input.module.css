@@ -1,0 +1,4 @@
+.overtype-container > div && .overtype-wrapper {
+  border-radius: .4rem !important;
+  padding:10000px !important;
+}
