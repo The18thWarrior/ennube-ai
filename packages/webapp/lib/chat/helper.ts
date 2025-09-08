@@ -33,57 +33,37 @@ export async function getBaseUrl() {
 }
 
 export const getTools = async (agent: 'data-steward' | 'prospect-finder' | 'contract-reader', userId: string) : Promise<Record<string, Tool>> => {
-    if (agent === 'data-steward') {
-        return {
-            //getCredentials: getCredentialsTool(userId),
-            //getSFDCFieldDescribeTool: getSFDCFieldsTool(userId),
-            //getSFDCDataTool: getSFDCDataTool(userId),
-            //getSFDCObjectDescribeTool: getSFDCObjectTool(userId),
-            getSFDCDataTool: generateQueryTool(userId),
-            updateSFDCDataTool: proposeUpdateDataTool(userId),
-            //getPostgresDataTool: getPostgresDataTool(userId),
-            //getPostgresDescribeTool: getPostgresDescribeTool(userId),
-            //getCount: getCountTool(userId),
-            callWorkflowTool: getWorkflowTool(agent)
-        };
+    
+  const baseTools = {
+    //getCredentials: getCredentialsTool(userId),
+    getSFDCDataTool: generateQueryTool(userId),
+    //updateSFDCDataTool: proposeUpdateDataTool(userId),
+    // getSFDCFieldDescribeTool: getSFDCFieldsTool(userId),
+    // getSFDCDataTool: getSFDCDataTool(userId),
+    getPostgresDataTool: getPostgresDataTool(userId),
+    getPostgresDescribeTool: getPostgresDescribeTool(userId),
+    //getCount: getCountTool(userId)
+  };
+  if (agent === 'data-steward') {
+    return {
+      ...baseTools,
+      callWorkflowTool: getWorkflowTool(agent)
+    };
     } else if (agent === 'prospect-finder') {
-        return {
-            //getCredentials: getCredentialsTool(userId),
-            // getSFDCFieldDescribeTool: getSFDCFieldsTool(userId),
-            // getSFDCDataTool: getSFDCDataTool(userId),
-            getSFDCDataTool: generateQueryTool(userId),
-            updateSFDCDataTool: proposeUpdateDataTool(userId),
-            // getPostgresDataTool: getPostgresDataTool(userId),
-            // getPostgresDescribeTool: getPostgresDescribeTool(userId),
-            getCustomerProfilesTool: getCustomerProfilesTool(userId),
-            createCustomerProfileTool: createCustomerProfileTool(userId),
-            updateCustomerProfileTool: updateCustomerProfileTool(userId),
-            //getCount: getCountTool(userId),
-            callWorkflowTool: getWorkflowTool(agent),
-        };
+      return {
+        ...baseTools,
+        getCustomerProfilesTool: getCustomerProfilesTool(userId),
+        createCustomerProfileTool: createCustomerProfileTool(userId),
+        updateCustomerProfileTool: updateCustomerProfileTool(userId),
+        callWorkflowTool: getWorkflowTool(agent)
+      };
     } else if (agent === 'contract-reader') {
-        return {
-            //getCredentials: getCredentialsTool(userId),
-            // getSFDCFieldDescribeTool: getSFDCFieldsTool(userId),
-            // getSFDCDataTool: getSFDCDataTool(userId),
-            getSFDCDataTool: generateQueryTool(userId),
-            updateSFDCDataTool: proposeUpdateDataTool(userId),
-            // getPostgresDataTool: getPostgresDataTool(userId),
-            // getPostgresDescribeTool: getPostgresDescribeTool(userId),
-            //getCount: getCountTool(userId),
-            callWorkflowTool: getWorkflowTool(agent)
-        };
+      return {
+        ...baseTools,
+        callWorkflowTool: getWorkflowTool(agent)
+      };
     }
 
-    return {
-        //getCredentials: getCredentialsTool(userId),
-        getSFDCDataTool: generateQueryTool(userId),
-        updateSFDCDataTool: proposeUpdateDataTool(userId),
-        // getSFDCFieldDescribeTool: getSFDCFieldsTool(userId),
-        // getSFDCDataTool: getSFDCDataTool(userId),
-        getPostgresDataTool: getPostgresDataTool(userId),
-        getPostgresDescribeTool: getPostgresDescribeTool(userId),
-        //getCount: getCountTool(userId)
-    };
+    return baseTools;
 
 }   
