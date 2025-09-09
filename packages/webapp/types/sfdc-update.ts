@@ -59,7 +59,7 @@ export type ProposalResponse = {
     ok: boolean;
     issues: ValidationError[];
   };
-  status?: 'draft' | 'proposed' | 'approved' | 'executing' | 'completed' | 'failed';
+  status?: 'draft' | 'proposed' | 'approved' | 'executing' | 'completed' | 'rejected';
 };
 
 /*

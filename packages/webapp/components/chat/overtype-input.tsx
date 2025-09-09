@@ -3,13 +3,16 @@
 import React, { useEffect, useLayoutEffect, useRef } from 'react';
 import OverType from 'overtype';
 import { useTheme } from '../theme-provider';
-import './overtype-input.module.css'
+import styles from './overtype-input.module.css'
+import { Button } from '../ui';
+import { CircleStop, Send } from 'lucide-react';
 
 // Component props
 interface OvertypeProps {
   input: string;
   handleInputChange: (e: string) => void;
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  handleStop: () => void;
   isLoading: boolean;
 }
 
@@ -17,7 +20,7 @@ interface OvertypeProps {
  * A small wrapper around the OverType editor.
  * Ensures safe initialization and keeps the editor in sync with `value`.
  */
-export default function MarkdownEditor({ input, handleInputChange, handleSubmit, isLoading }: OvertypeProps) {
+export default function MarkdownEditor({ input, handleInputChange, handleSubmit, handleStop, isLoading }: OvertypeProps) {
   const ref = useRef<HTMLDivElement | null>(null);
   const editorRef = useRef<any | null>(null);
   const theme = useTheme();
@@ -93,6 +96,16 @@ export default function MarkdownEditor({ input, handleInputChange, handleSubmit,
     el.addEventListener('keydown', onKeyDown);
     return () => el.removeEventListener('keydown', onKeyDown);
   }, [handleSubmit]);
+
+  // const triggerSubmit = (el: HTMLElement | null) => {
+  //   const form = el?.closest('form');
+  //   if (form) {
+  //     // Create a synthetic submit event similar to chat-input behavior
+  //     // @ts-ignore - constructing minimal event for handler
+  //     handleSubmit({ target: form, currentTarget: form } as React.FormEvent<HTMLFormElement>);
+  //     //e.preventDefault();
+  //   }
+  // }
 
   const customThemes = {
     valentine: {
@@ -214,13 +227,28 @@ export default function MarkdownEditor({ input, handleInputChange, handleSubmit,
   return (
     <div className={"relative flex-1"}>
        <form>
-        <div ref={ref} className={"rounded-md border border-gray-300 dark:border-gray-600"} />
+        <div className="flex items-center">
+          <div ref={ref} className={"rounded-md border border-gray-300 dark:border-gray-600 grow"} />
+          {/* <Button className="ml-2 flex-shrink-0" variant="outline" type="submit" onClick={() => triggerSubmit(ref.current)} disabled={isLoading}><Send className={`h-4 w-4 text-white`} /></Button> */}
+          {!isLoading && 
+            <Button type="submit" disabled={isLoading || !input.trim()} size="icon" className={`${styles.sendButton} ml-2 flex-shrink-0`}>
+              <Send className={`h-4 w-4 text-white`} />
+              <span className="sr-only">Send message</span>
+            </Button>
+          }
+          {isLoading && (
+            <Button className="ml-2 flex-shrink-0" type="button" onClick={handleStop}>
+              <CircleStop className={`h-4 w-4 text-white`} />
+              <span className="sr-only">Stop message</span>
+            </Button>
+          )}
+        </div>
       </form>
-      {isLoading && (
+      {/* {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/30 pointer-events-none">
           <div className="text-white text-sm">Sending…</div>
         </div>
-      )}
+      )} */}
     </div>
   );
 }

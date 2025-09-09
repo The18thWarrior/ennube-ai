@@ -43,7 +43,8 @@ const ChatContainer = ({
         status,
         sendMessage,
         error,
-        id: threadId
+        id: threadId,
+        stop
     } = useChat({
         id,
         messages: initialMessages || [],   
@@ -78,7 +79,11 @@ const ChatContainer = ({
       }
     };
 
-
+    const handleStop = () => {
+        if (isLoading) {
+            stop();
+        }
+    }
     // Only render after mount to avoid hydration mismatch
     useEffect(() => {
         setMounted(true);
@@ -191,6 +196,7 @@ const ChatContainer = ({
                     input={input}
                     handleInputChange={handleInputChange}
                     handleSubmit={handleSubmit}
+                    handleStop={handleStop}
                     isLoading={isLoading}
                 />
             </div>

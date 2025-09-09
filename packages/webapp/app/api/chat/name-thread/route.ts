@@ -24,18 +24,20 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'AI model not configured' }, { status: 500 });
     }
 
-		const systemPrompt = `You are an assistant that generates short, human-friendly conversation names. Given a conversation (messages), produce a single concise title of 100 characters or less. Return only the title text with no surrounding quotes or metadata.`;
+		const systemPrompt = `Create a short and descriptive title based on the following user message. The title should be concise, under 10 words and 100 characters.`;
 
 		const result = await generateText({
 			model,
 			system: systemPrompt,
-			messages: convertToModelMessages(messages),
+			messages: convertToModelMessages(messages as any[][0]),
 			providerOptions: {
 				openrouter: {
 					transforms: ['middle-out'],
 				},
 			},
 		});
+
+    console.log(result);
 
 		// read generated text
 		const text = result.text ?? '';

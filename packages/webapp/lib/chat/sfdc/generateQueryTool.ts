@@ -96,6 +96,7 @@ async function generateAndExecuteQuery(
 
     The running user id for this user is "${credentials?.userInfo?.id}".
 
+    Field context will be provided in the following format: "SObjectType.FieldName (Label) - FieldType".
     Relevant fields for query construction:
     ${fieldContext}
 
@@ -107,7 +108,7 @@ async function generateAndExecuteQuery(
     - Limit results to a reasonable number (e.g., LIMIT 200)
 
     Return a well-formed SOQL query that addresses the user's needs.`;
-
+  console.log(prompt);
   // 5. Generate structured query object using AI
   console.log('Generating SOQL query with AI...');
   const model = getModel();
@@ -131,7 +132,7 @@ async function generateAndExecuteQuery(
   }
   
   // 7. Execute query via Salesforce API
-  console.log('Executing generated SOQL query...');
+  console.log('Executing generated SOQL query...', queryResult.sql);
   const baseUrl = await getBaseUrl();
   const queryUrl = `${baseUrl}/api/salesforce/query?sub=${encodeURIComponent(subId)}&soql=${encodeURIComponent(queryResult.sql)}`;
   
@@ -197,7 +198,7 @@ async function fetchAndProcessDescribe(credentials: StoredSalesforceCredentials,
     body: JSON.stringify({
       url: credentials.describeEmbedUrl,
       queryEmbedding,
-      k: 50
+      k: 100
     })
   })
   // return {
@@ -215,7 +216,7 @@ export const generateQueryTool = (subId: string) => {
     description: 'Generate and execute intelligent Salesforce SOQL queries based on natural language descriptions. Uses semantic field discovery to find relevant data.',
     inputSchema: z.object({
       sobject: z.string().describe('Primary Salesforce object type to query, e.g. Account, Contact, Opportunity.'),
-      description: z.string().describe('Natural language description of what data you are looking for. Be specific about the fields, filters, or relationships you need.'),
+      description: z.string().describe('Natural language description of what data you are looking for.'),
     }),
     execute: async ({ description, sobject }: { description: string, sobject: string }) => {
       // Validate required inputs - return structured error objects for predictable tool behavior
@@ -226,7 +227,7 @@ export const generateQueryTool = (subId: string) => {
       if (!description || description.trim().length === 0) {
         throw new Error('description is required to understand what data you are looking for');
       }
-
+      console.log(`Generating query for sobject: ${sobject} with description: "${description}"`);
       const credentials = await getSalesforceCredentialsBySub(subId);
           
       if (!credentials) {

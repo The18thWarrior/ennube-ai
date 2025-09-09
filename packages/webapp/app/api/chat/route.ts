@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
     // Get user's sub from the session
     const userSub = session.user.auth0.sub;
     const today = dayjs().format('YYYY-MM-DD');
-    const model = getModel();
+    const model = getModel('google/gemini-2.0-flash-001');
     if (!model) {
       return NextResponse.json({ error: 'AI model not configured' }, { status: 500 });
     }
