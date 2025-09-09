@@ -7,7 +7,7 @@ import { getPrompt, getTools } from '@/lib/chat/helper';
 import dayjs from 'dayjs';
 import getModel from '@/lib/chat/getModel';
 
-export const maxDuration = 30;
+export const maxDuration = 300;
 // The main agent route
 export async function POST(req: NextRequest) {
   try {
