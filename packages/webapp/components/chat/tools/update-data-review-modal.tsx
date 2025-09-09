@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from 'react';
-import type { UpdateProposal } from '@/types/sfdc-update';
+import type { ProposalResponse, UpdateProposal } from '@/types/sfdc-update';
 import { useSfdcRecord } from '@/hooks/useSfdcRecord';
 import { useSfdcBatch } from '@/hooks/useSfdcBatch';
 import { UIMessage, UIDataTypes, UITools, isToolUIPart } from 'ai';
@@ -9,7 +9,7 @@ type Props = {
   open: boolean;
   partId?: string;
   proposal?: UpdateProposal | null;
-  status?: 'draft' | 'proposed' | 'approved' | 'executing' | 'completed' | 'failed';
+  status?: 'draft' | 'proposed' | 'approved' | 'executing' | 'completed' | 'rejected';
   message?: UIMessage<unknown, UIDataTypes, UITools>;
   closeProposal?: (updatedMessage: UIMessage<unknown, UIDataTypes, UITools>) => void;
 };
@@ -71,9 +71,10 @@ export function UpdateDataReviewModal({ open, proposal, closeProposal, message, 
       if (closeProposal) {
         const updatedParts = message?.parts?.map((p) => {
           if (!isToolUIPart(p) || p.toolCallId !== partId) return p;
-          return {...p, output: { ...p.output as any, status: 'completed' }};
+          return {...p, output: { ...p.output as ProposalResponse, status: 'completed' }};
         });
-        //await closeProposal({...message, parts: [...updatedParts]} as UIMessage<unknown, UIDataTypes, UITools>);
+
+        await closeProposal({...message, parts: updatedParts} as UIMessage<unknown, UIDataTypes, UITools>);
       }
     } catch (err: any) {
       console.error('Execution error:', err);
@@ -83,40 +84,74 @@ export function UpdateDataReviewModal({ open, proposal, closeProposal, message, 
     }
   };
 
-  const handleCancel = () => {
-    //if (closeProposal) closeProposal(null);
+  const handleCancel = async () => {
+    if (closeProposal) {
+      const updatedParts = message?.parts?.map((p) => {
+        if (!isToolUIPart(p) || p.toolCallId !== partId) return p;
+        return {...p, output: { ...p.output as ProposalResponse, status: 'rejected' }};
+      });
+
+      await closeProposal({...message, parts: updatedParts} as UIMessage<unknown, UIDataTypes, UITools>);
+    }
   }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="bg-white rounded-lg shadow-lg w-11/12 max-w-2xl p-4">
-        <h3 className="text-lg font-semibold">Review proposed changes</h3>
-        <p className="text-sm text-muted-foreground">{proposal.summary}</p>
+      {status === 'completed' || status === 'rejected' ? (
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-11/12 max-w-2xl p-4">
+          <h3 className="text-lg font-semibold">Proposal {status === 'completed' ? 'Executed' : 'Rejected'}</h3>
+          {/* <p className="text-sm text-muted-foreground">{proposal.summary}</p>
+          <div className="mt-4 max-h-64 overflow-auto">
+            {proposal.changes.map((c) => (
+              <div key={c.operationId} className="border p-2 rounded mb-2">
+                <div className="font-medium">{c.sobject} — {c.operation}</div>
+                <div className="text-sm">Record: {c.recordId || 'N/A'}</div>
+                <ul className="mt-2">
+                  {(c.fields || []).map((f) => (
+                    <li key={f.fieldName} className="text-sm">
+                      <strong>{f.fieldName}</strong>: {String(f.before)} → {String(f.after)}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+          <div className="mt-4 flex justify-end">
+            <button className="px-3 py-1 rounded border" onClick={handleCancel}>Close</button>
+          </div> */}
+        </div>    
+      ) : (
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-11/12 max-w-2xl p-4">
+          <h3 className="text-lg font-semibold">Review proposed changes</h3>
+          <p className="text-sm text-muted-foreground">{proposal.summary}</p>
 
-        <div className="mt-4 max-h-64 overflow-auto">
-          {proposal.changes.map((c) => (
-            <div key={c.operationId} className="border p-2 rounded mb-2">
-              <div className="font-medium">{c.sobject} — {c.operation}</div>
-              <div className="text-sm">Record: {c.recordId || 'N/A'}</div>
-              <ul className="mt-2">
-                {(c.fields || []).map((f) => (
-                  <li key={f.fieldName} className="text-sm">
-                    <strong>{f.fieldName}</strong>: {String(f.before)} → {String(f.after)}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          <div className="mt-4 max-h-64 overflow-auto">
+            {proposal.changes.map((c) => (
+              <div key={c.operationId} className="border p-2 rounded mb-2">
+                <div className="font-medium">{c.sobject} — {c.operation}</div>
+                <div className="text-sm">Record: {c.recordId || 'N/A'}</div>
+                <ul className="mt-2">
+                  {(c.fields || []).map((f) => (
+                    <li key={f.fieldName} className="text-sm">
+                      <strong>{f.fieldName}</strong>: {String(f.before)} → {String(f.after)}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+
+          {error && <div className="mt-4 text-red-600">Error: {error}</div>}
+          {result && <div className="mt-4 text-green-600">Result: {JSON.stringify(result)}</div>}
+
+          <div className="mt-4 flex justify-end gap-2">
+            <button className="px-3 py-1 rounded border" onClick={handleCancel} disabled={executing}>Cancel</button>
+            <button className="px-3 py-1 rounded bg-blue-600 text-white" onClick={handleApprove} disabled={executing}>{executing ? 'Executing...' : 'Approve & Execute'}</button>
+          </div>
         </div>
-
-        {error && <div className="mt-4 text-red-600">Error: {error}</div>}
-        {result && <div className="mt-4 text-green-600">Result: {JSON.stringify(result)}</div>}
-
-        <div className="mt-4 flex justify-end gap-2">
-          <button className="px-3 py-1 rounded border" onClick={handleCancel} disabled={executing}>Cancel</button>
-          <button className="px-3 py-1 rounded bg-blue-600 text-white" onClick={handleApprove} disabled={executing}>{executing ? 'Executing...' : 'Approve & Execute'}</button>
-        </div>
-      </div>
+      )
+      }
+      
     </div>
   );
 }

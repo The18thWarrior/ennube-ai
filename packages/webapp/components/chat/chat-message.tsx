@@ -77,14 +77,15 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, the
                                         
                                     
                                     switch (part.type) {
-                                        case 'tool-proposeUpdateDataTool': {
+                                        case 'tool-proposeUpdateSFDCDataTool': {
                                             const output = part.output as ProposalResponse;
-                                            const proposal = output.proposal;
+                                            const status = output?.status || 'draft';
+                                            const proposal = output?.proposal;
                                             return (
                                                 <div key={callId}>
                                                     {
                                                         <MessageStateComponent
-                                                            Component={<UpdateDataReviewModal open={true} proposal={proposal} closeProposal={updateThreadFromTool} message={msg} status={output.status} partId={part.toolCallId}/>}
+                                                            Component={<UpdateDataReviewModal open={true} proposal={proposal} closeProposal={updateThreadFromTool} message={msg} status={status} partId={part.toolCallId}/>}
                                                             state={part.state}
                                                             theme={theme}
                                                             successMessage="Proposed Changes"

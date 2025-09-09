@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'AI model not configured' }, { status: 500 });
     }
 
-		const systemPrompt = `You are an assistant that generates short, human-friendly conversation names. Given a conversation (messages), produce a single concise title of 100 characters or less. Return only the title text with no surrounding quotes or metadata.`;
+		const systemPrompt = `You are an assistant that generates short, human-friendly conversation names. Given a conversation (messages), produce a single concise title of 100 characters or less. Return only the title text with no surrounding quotes or metadata. NEVER hallucinate, if no relevant input is provided use the following default value "General Inquiry".`;
 
 		const result = await generateText({
 			model,

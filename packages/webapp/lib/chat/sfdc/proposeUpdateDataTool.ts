@@ -9,7 +9,7 @@ export const proposeUpdateDataTool = (subId: string) => {
     execute: async ({ nlRequest, mode = 'propose', context }: { nlRequest?: string; mode?: 'propose' | 'execute'; context?: any }) => {
       if (!subId) throw new Error('subId is required');
       if (!nlRequest && mode === 'propose') throw new Error('nlRequest is required for propose mode');
-
+      console.log(`proposeUpdateDataTool called with mode: ${mode}, nlRequest: ${nlRequest}, context: ${JSON.stringify(context)}`);
       const baseUrl = await getBaseUrl();
 
         const url = `${baseUrl}/api/salesforce/propose?sub=${encodeURIComponent(subId)}`;
@@ -18,8 +18,8 @@ export const proposeUpdateDataTool = (subId: string) => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ nlRequest, context })
         });
-        if (!res.ok) return false;
         const data = await res.json();
+        if (!res.ok) throw new Error('Failed to generate proposal: ' + (data.error || 'Unknown error'));
         return data;
       
     },

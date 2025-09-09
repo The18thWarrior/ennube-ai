@@ -197,7 +197,7 @@ async function fetchAndProcessDescribe(credentials: StoredSalesforceCredentials,
     body: JSON.stringify({
       url: credentials.describeEmbedUrl,
       queryEmbedding,
-      k: 50
+      k: 100
     })
   })
   // return {
@@ -226,7 +226,7 @@ export const generateQueryTool = (subId: string) => {
       if (!description || description.trim().length === 0) {
         throw new Error('description is required to understand what data you are looking for');
       }
-
+      console.log(`Generating query for sobject: ${sobject} with description: "${description}"`);
       const credentials = await getSalesforceCredentialsBySub(subId);
           
       if (!credentials) {
