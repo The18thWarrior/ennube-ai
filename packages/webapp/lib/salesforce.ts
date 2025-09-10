@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { Session } from "next-auth";
-import {Connection, SaveResult, OAuth2, Schema, DescribeGlobalResult} from 'jsforce';
+import {Connection, SaveResult, OAuth2, Schema, DescribeGlobalResult, DescribeSObjectResult} from 'jsforce';
 import { RefreshTokenResponse, SalesforceAuthResult, SalesforceQueryResult, SalesforceUserInfo } from "./types";
 import { IngestJobV2Results, JobInfoV2, QueryJobInfoV2 } from "jsforce/lib/api/bulk2";
 import { storeSalesforceCredentials, updateSalesforceCredentials } from "./db/salesforce-storage";
@@ -437,7 +437,7 @@ export class SalesforceClient {
    * Describe a Salesforce object (get metadata)
    * @param sobjectType The API name of the Salesforce object
    */
-  async describe(sobjectType: string): Promise<any> {
+  async describe(sobjectType: string): Promise<DescribeSObjectResult> {
     return this.withTokenRefresh(async () => {
       try {
         const result = await this.connection.sobject(sobjectType).describe();

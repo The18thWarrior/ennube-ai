@@ -97,15 +97,15 @@ export default function MarkdownEditor({ input, handleInputChange, handleSubmit,
     return () => el.removeEventListener('keydown', onKeyDown);
   }, [handleSubmit]);
 
-  // const triggerSubmit = (el: HTMLElement | null) => {
-  //   const form = el?.closest('form');
-  //   if (form) {
-  //     // Create a synthetic submit event similar to chat-input behavior
-  //     // @ts-ignore - constructing minimal event for handler
-  //     handleSubmit({ target: form, currentTarget: form } as React.FormEvent<HTMLFormElement>);
-  //     //e.preventDefault();
-  //   }
-  // }
+  const triggerSubmit = (el: HTMLElement | null) => {
+    const form = el?.closest('form');
+    if (form) {
+      // Create a synthetic submit event similar to chat-input behavior
+      // @ts-ignore - constructing minimal event for handler
+      handleSubmit({ target: form, currentTarget: form } as React.FormEvent<HTMLFormElement>);
+      //e.preventDefault();
+    }
+  }
 
   const customThemes = {
     valentine: {
@@ -231,14 +231,14 @@ export default function MarkdownEditor({ input, handleInputChange, handleSubmit,
           <div ref={ref} className={"rounded-md border border-gray-300 dark:border-gray-600 grow"} />
           {/* <Button className="ml-2 flex-shrink-0" variant="outline" type="submit" onClick={() => triggerSubmit(ref.current)} disabled={isLoading}><Send className={`h-4 w-4 text-white`} /></Button> */}
           {!isLoading && 
-            <Button type="submit" disabled={isLoading || !input.trim()} size="icon" className={`${styles.sendButton} ml-2 flex-shrink-0`}>
+            <Button type="button" disabled={isLoading || !input.trim()} size="icon" onClick={() => triggerSubmit(ref.current)} className={`${styles.sendButton} ml-2 flex-shrink-0`}>
               <Send className={`h-4 w-4 text-white`} />
               <span className="sr-only">Send message</span>
             </Button>
           }
           {isLoading && (
-            <Button className="ml-2 flex-shrink-0" type="button" onClick={handleStop}>
-              <CircleStop className={`h-4 w-4 text-white`} />
+            <Button className="ml-2 flex-shrink-0" type="button" variant="outline" onClick={handleStop}>
+              <CircleStop className={`h-4 w-4 dark:text-white`} />
               <span className="sr-only">Stop message</span>
             </Button>
           )}

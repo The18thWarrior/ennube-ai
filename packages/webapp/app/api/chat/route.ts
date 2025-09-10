@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
     // Get user's sub from the session
     const userSub = session.user.auth0.sub;
     const today = dayjs().format('YYYY-MM-DD');
-    const model = getModel('google/gemini-2.0-flash-001');
+    const model = getModel();
     if (!model) {
       return NextResponse.json({ error: 'AI model not configured' }, { status: 500 });
     }
@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
       },
       tools: await getTools(agent as 'data-steward' | 'prospect-finder' | 'contract-reader', userSub),
        messages: convertToModelMessages(messages),
-      stopWhen: stepCountIs(10),
+      stopWhen: stepCountIs(5),
       //toolCallStreaming: true,
       onError: (error) => {
         console.log('Error during tool execution:', error);

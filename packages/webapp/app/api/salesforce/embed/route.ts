@@ -116,12 +116,23 @@ export async function POST(request: NextRequest) {
 		};
 		const client = createSalesforceClient(authResult);
 
-		// Get list of sObjects: include custom + a set of standard objects
+		// Get list of sObjects. If the caller provides a list (body.sobjects),
+		// restrict the global describe to that list. Otherwise use STANDARD_OBJECTS.
 		const globalDescribe = await client.describeGlobal();
-		const sobjects = (globalDescribe.sobjects || [])
-			.filter((obj: any) => obj.custom)
-			.map((obj: any) => obj.name)
-			.concat(STANDARD_OBJECTS);
+		const availableNames: string[] = (globalDescribe.sobjects || []).map((obj: any) => obj.name);
+
+		const providedSobjects = Array.isArray(body?.sobjects)
+			? body.sobjects.filter((s: any) => typeof s === 'string')
+			: null;
+
+		let sobjects: string[];
+		if (providedSobjects && providedSobjects.length > 0) {
+			// Only include provided names that actually exist in the org's global describe
+			sobjects = providedSobjects.filter((name: string) => availableNames.includes(name));
+		} else {
+			// Default to a curated list of standard objects
+			sobjects = STANDARD_OBJECTS.slice();
+		}
     console.log('Memory Usage after global describe:', process.memoryUsage());
 		// Describe each sobject in parallel; tolerate per-sobject failures
 		const describePromises = sobjects.map(async (sobject: string) => {
@@ -150,7 +161,7 @@ export async function POST(request: NextRequest) {
 					fieldName: field.name,
 					label: field.label,
 					type: field.type,
-					helpText: field.inlineHelpText,
+					//helpText: field.inlineHelpText,
 					relationshipName: field.relationshipName,
 					picklistValues: field.picklistValues?.map((pv: any) => pv.value)
 				})
