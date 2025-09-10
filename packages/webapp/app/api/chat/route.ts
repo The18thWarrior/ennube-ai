@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
       },
       tools: await getTools(agent as 'data-steward' | 'prospect-finder' | 'contract-reader', userSub),
        messages: convertToModelMessages(messages),
-      stopWhen: stepCountIs(10),
+      stopWhen: stepCountIs(5),
       //toolCallStreaming: true,
       onError: (error) => {
         console.log('Error during tool execution:', error);

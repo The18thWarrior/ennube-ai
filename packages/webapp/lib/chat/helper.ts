@@ -40,8 +40,8 @@ export const getTools = async (agent: 'data-steward' | 'prospect-finder' | 'cont
     //proposeUpdateSFDCDataTool: proposeUpdateDataTool(userId),
     // getSFDCFieldDescribeTool: getSFDCFieldsTool(userId),
     // getSFDCDataTool: getSFDCDataTool(userId),
-    getPostgresDataTool: getPostgresDataTool(userId),
-    getPostgresDescribeTool: getPostgresDescribeTool(userId),
+    //getPostgresDataTool: getPostgresDataTool(userId),
+    //getPostgresDescribeTool: getPostgresDescribeTool(userId),
     //getCount: getCountTool(userId)
   };
   if (agent === 'data-steward') {

@@ -14,14 +14,12 @@ import { Tool, tool, generateObject } from "ai";
 import { openai } from '@ai-sdk/openai';
 import z from "zod/v4";
 // Delay importing helper at runtime to avoid loading heavy modules during test-time
-import { createSalesforceVectorStore, VectorStoreEntry } from "./vectorStore";
-import { embedText } from "./embeddings";
-import { getBaseUrl } from "../helper";
+import { createSalesforceVectorStore, VectorStoreEntry } from "../vectorStore";
+import { embedText } from "../embeddings";
+import { getBaseUrl } from "../../helper";
 import { getSalesforceCredentialsBySub, StoredSalesforceCredentials } from "@/lib/db/salesforce-storage";
-import { QueryResult, SalesforceAuthResult } from "@/lib/types";
-import getModel from "../getModel";
-import { createSalesforceClient } from "@/lib/salesforce";
-import {Searcher} from 'fast-fuzzy'
+import { QueryResult } from "@/lib/types";
+import getModel from "../../getModel";
 
 /**
  * Zod schema for structured SQL generation
@@ -73,7 +71,7 @@ interface DescribeResponse {
 async function generateAndExecuteQuery(
   subId: string, 
   credentials: StoredSalesforceCredentials,
-  sobjectTypes: string[], 
+  sobjectType: string, 
   description: string,
   similarFields: QueryResult[]
 ) {
@@ -82,9 +80,8 @@ async function generateAndExecuteQuery(
     throw new Error('No relevant fields found for the given description');
   }
   console.log(`Found ${similarFields.length} relevant fields for query generation`);
-  console.log('objects', sobjectTypes)
   console.log('Current description', description);
-  //console.log('All fields:', similarFields.map(f => f.payload ? `${f.payload.sobjectType}.${f.payload.fieldName} ${f.score}` : '[No payload]'));
+  console.log('All fields:', similarFields.map(f => f.payload ? `${f.payload.sobjectType}.${f.payload.fieldName} ${f.score}` : '[No payload]'));
   // 4. Build context for AI generation
   // const fieldContext = similarFields
   //   .slice(0, 20) // Limit to top 20 for token efficiency
@@ -94,7 +91,7 @@ async function generateAndExecuteQuery(
   //     }
   //   })
   //   .join('\n');
-  const fieldContext = JSON.stringify(similarFields.reduce((acc, f) => {
+  const fieldContext = JSON.stringify(similarFields.slice(0, 20).reduce((acc, f) => {
     if (f.payload) {
       if (!Object.keys(acc).includes(f.payload.sobjectType as string) ) {
         acc[f.payload.sobjectType as string] = {
@@ -140,30 +137,76 @@ async function generateAndExecuteQuery(
 
   const prompt = `
     You are an expert Salesforce SOQL (Salesforce Object Query Language) generation agent. Your sole purpose is to convert a user's natural language question into a syntactically correct and efficient SOQL query based on the provided Salesforce schema. You must operate under the following rules and guidelines.
-    Requirements:
-    - Generate only SELECT statements
-    - Use proper SOQL syntax
-    - Focus on fields most relevant to the user's request
-    - Include appropriate WHERE clauses if filtering is implied
-    - Limit results to a reasonable number (e.g., LIMIT 200)
-    - Aggregate functions must be directly declared in GROUP BY and ORDER BY clauses.
 
-    Return a well-formed SOQL query that addresses the user's needs.
-    
+    CORE DIRECTIVES
+    Primary Goal: Your primary goal is to return a valid SOQL query that accurately answers the user's question.
+
+    Schema is a SINGLE SOURCE OF TRUTH: You MUST only use the SObjects and Fields provided in the context. If a user asks for a field or object that is not in the context, you must state that you cannot fulfill the request because the required schema is not available. DO NOT HALLUCINATE or invent fields.
+
+    Strict Output Format: You must always respond with a single JSON object. This object must contain two keys: explanation and query.
+
+    explanation: A brief, one-to-two-sentence summary of how the query works and any assumptions made.
+
+    query: The generated SOQL query as a string, with no extra formatting or comments.
+
+    SOQL GENERATION RULES
+    Object and Field Names:
+
+    Pay strict attention to the API names provided.
+
+    Custom objects and fields are always identifiable by the __c suffix. Use them exactly as provided.
+
+    Do not assume a field exists if it is not in the schema.
+
+    Relationship Queries (Joins):
+
+    You can query parent object fields using dot notation.
+
+    For standard lookup fields (e.g., AccountId, OwnerId), the relationship name is the object name without "Id" (e.g., Account, Owner).
+
+    For custom lookup fields (e.g., Primary_Contact__c), the relationship name is the field name with __c replaced by __r (e.g., Primary_Contact__r).
+
+    Example: To get the name of the Account from an Opportunity, you would select Account.Name.
+
+    WHERE Clauses:
+
+    For string comparisons, always use single quotes (e.g., WHERE Industry = 'Technology').
+
+    When a user asks for a partial match, use the LIKE operator with a wildcard (e.g., WHERE Name LIKE '%Acme%').
+
+    For Picklist fields, use the exact values provided in the schema context if available.
+
+    Date Literals:
+
+    Whenever possible, use Salesforce date literals for relative date queries. This is critical.
+
+    Examples: TODAY, YESTERDAY, LAST_WEEK, THIS_MONTH, LAST_N_DAYS:30, NEXT_N_WEEKS:4, THIS_FISCAL_QUARTER.
+
+    Current Date for Context: Assume the current date is ${new Date().toISOString()}.
+
+    Safety and Limitations:
+
+    You cannot perform DML operations (INSERT, UPDATE, DELETE). Only generate SELECT statements.
+
+    Do not generate queries that use formulas or complex functions not supported by basic SOQL.
+
+    Do not create dynamic SOQL. The query must be static and complete.
+
+    EXAMPLE
     [START OF CONTEXT]
     Generate a SOQL query based on the following user request:
     "${description}"
-    Current Date for Context: Assume the current date is ${new Date().toISOString()}.
+
     The user's id is "${credentials?.userInfo?.id}".
 
-    Relevant schema definitions:
+    Relevant fields for query construction:
     \`\`\`json
     ${fieldContext}
     \`\`\`
     [END OF CONTEXT]`;
   // 5. Generate structured query object using AI
   console.log('Generating SOQL query with AI...');
-  const model = getModel('openai/gpt-oss-120b');
+  const model = getModel();
   if (!model) {
     throw new Error('AI model not configured');
   }
@@ -178,7 +221,6 @@ async function generateAndExecuteQuery(
     prompt
   });
   
-  console.log('Generated query result:', queryResult);
   // 6. Validate generated SQL
   if (!validateSelectOnly(queryResult.sql)) {
     throw new Error(`Generated SQL contains non-SELECT statements: ${queryResult.sql}`);
@@ -191,8 +233,7 @@ async function generateAndExecuteQuery(
   
   const queryResponse = await fetch(queryUrl);
   if (!queryResponse.ok) {
-    const errorData = await queryResponse.json();
-    throw new Error(`Query execution failed: ${errorData.error} => ${errorData.details}`);
+    throw new Error(`Query execution failed: ${queryResponse.status} ${queryResponse.statusText}`);
   }
   
   const queryData = await queryResponse.json();
@@ -204,7 +245,7 @@ async function generateAndExecuteQuery(
     metadata: {
       fieldsConsidered: similarFields.length,
       fieldsUsed: similarFields.slice(0, 20).length,
-      sobjectTypes: '' + sobjectTypes.join(', '),
+      sobjectType,
       description
     }
   };
@@ -239,61 +280,29 @@ function validateSelectOnly(sql: string): boolean {
  * @param sobjectType Salesforce object type
  * @returns Processed field metadata
  */
-async function fetchAndProcessDescribe(credentials: StoredSalesforceCredentials, sub: string, objects: string[]): Promise<QueryResult[]> {
-  const authResult: SalesforceAuthResult = {
-      success: true,
-      userId: sub,
-      accessToken: credentials.accessToken,
-      instanceUrl: credentials.instanceUrl,
-      refreshToken: credentials.refreshToken,
-      userInfo: credentials.userInfo
-  };
-  const client = createSalesforceClient(authResult);
-  const globalResults = await client.describeGlobal();
-  // const searcher = new Searcher(objects);
-  const objectsLower = objects.map(o => o.toLowerCase());
-  const filteredObjects = globalResults.sobjects.filter(obj => (objectsLower.includes(obj.name.toLowerCase()) || objectsLower.includes(obj.label.toLowerCase()) || objectsLower.includes(obj.labelPlural.toLowerCase())) && obj.queryable);
-
-  const describePromises = filteredObjects.map(obj => client.describe(obj.name));
-  const describeResults = await Promise.all(describePromises);
-  const allFields: QueryResult[] = describeResults.flatMap((desc): QueryResult[] => {
-    if (!desc || !desc.fields) return [];
-    return desc.fields.map(field => ({
-      // Provide a deterministic unique id required by QueryResult interface
-      id: `${desc.name}.${field.name}`,
-      score: 1, // Placeholder score; actual similarity scoring happens later
-      payload: {
-        sobjectType: desc.name,
-        fieldName: field.name,
-        label: field.label,
-        type: field.type,
-        //inlineHelpText: field.inlineHelpText,
-        picklistValues: field.picklistValues ? field.picklistValues.map(p => p.value) : undefined,
-        relationshipName: field.relationshipName,
-        length: field.length,
-        precision: field.precision,
-        // Include child relationship info if applicable
-        childSObject: desc.childRelationships.find(cr => cr.field === field.name)?.childSObject
-      }
-    }));
-  });
-
-  // Create a fuzzy searcher for the fields based on description
-  // const searcher = new Searcher(allFields, {
-  //   keySelector: (item) => {
-  //     if (item.payload) {
-  //       return `${item.payload.sobjectType} ${item.payload.fieldName} ${item.payload.label} ${item.payload.type} ${item.payload.inlineHelpText || ''}`;
-  //     }
-  //     return '';
-  //   },
-  //   ignoreCase: true,
-  //   threshold: 0.3 // Adjust threshold as needed for sensitivity
-  // });
-
-  // // Perform the search to get relevant fields
-  // const similarFields = searcher.search(description).slice(0, 50); // Limit to top 50 results
-  //const resultData = similarFields as QueryResult[];
-  return allFields;
+async function fetchAndProcessDescribe(credentials: StoredSalesforceCredentials, queryEmbedding: number[]): Promise<QueryResult[]> {
+  const queryUrl = process.env.VECTOR_REST_URL as string;
+  const apiKey = process.env.VECTOR_API_KEY as string;
+  //console.log(queryUrl, apiKey);
+  const result = await fetch(queryUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`
+    },
+    body: JSON.stringify({
+      url: credentials.describeEmbedUrl,
+      queryEmbedding,
+      k: 100
+    })
+  })
+  // return {
+  //   success: true,
+  //   ...result
+  // };
+  const data = await result.json();
+  const resultData = data.results as QueryResult[];
+  return resultData;
 }
 
 // Tool: Generate Query
@@ -301,10 +310,10 @@ export const generateQueryTool = (subId: string) => {
   return tool({
     description: 'Generate and execute intelligent Salesforce SOQL queries based on natural language descriptions. Uses semantic field discovery to find relevant data.',
     inputSchema: z.object({
-      sobjects: z.array(z.string()).describe('Primary Salesforce object types to query, e.g. Account, Contact, Opportunity.'),
+      sobject: z.string().describe('Primary Salesforce object type to query, e.g. Account, Contact, Opportunity.'),
       description: z.string().describe('Natural language description of what data you are looking for.'),
     }),
-    execute: async ({ description, sobjects }: { description: string, sobjects: string[] }) => {
+    execute: async ({ description, sobject }: { description: string, sobject: string }) => {
       // Validate required inputs - return structured error objects for predictable tool behavior
       if (!subId) {
         throw new Error('subId is required for Salesforce authentication');
@@ -313,7 +322,7 @@ export const generateQueryTool = (subId: string) => {
       if (!description || description.trim().length === 0) {
         throw new Error('description is required to understand what data you are looking for');
       }
-      console.log(`Generating query for sobjects: ${sobjects.join(', ')} with description: "${description}"`);
+      console.log(`Generating query for sobject: ${sobject} with description: "${description}"`);
       const credentials = await getSalesforceCredentialsBySub(subId);
           
       if (!credentials) {
@@ -327,8 +336,8 @@ export const generateQueryTool = (subId: string) => {
 
       try {
         console.log(`Starting query generation for with description: "${description}"`);
-        const query_result = await fetchAndProcessDescribe(credentials, subId, sobjects);
-        const data = await generateAndExecuteQuery(subId, credentials, sobjects, description, query_result);
+        const query_result = await fetchAndProcessDescribe(credentials, queryEmbedding);
+        const data = await generateAndExecuteQuery(subId, credentials, sobject, description, query_result);
         return data;
       } catch (error: { message?: string } | any) {
         console.error('Query generation failed:', error.message);

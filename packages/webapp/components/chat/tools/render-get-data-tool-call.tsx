@@ -6,13 +6,13 @@ import CrmResultCard from "./crm-result-card";
 import { RecordIcon } from "./icon-map";
 
 const RenderGetDataToolCallComponent = ({args, result, theme}: {args: any, result: any, theme: 'dark' | 'light' | 'system'}) => {
-    const {records, totalSize } = result.results;
-    const {sql} = result.query;
+    const {records, totalSize } = result?.results ? result.results : {records: null, totalSize: 0};
+    const {sql} = result?.query ? result.query : {sql: ''};
     const [hide, setHide] = useState(false);
     const [mounted, setMounted] = useState(false);
     useEffect(() => {
       setMounted(true);
-      console.log(`RenderGetDataToolCallComponent`, records, totalSize, result)
+      //console.log(`RenderGetDataToolCallComponent`, records, totalSize, result)
 
       setTimeout(() => {
         if (mounted) setHide(true);
@@ -75,7 +75,7 @@ const RenderGetDataToolCallComponent = ({args, result, theme}: {args: any, resul
         objectType: record.attributes.type,
     }));
     // console.log(`RenderGetDataToolCallComponent`,records)
-    console.log(`RenderGetDataToolCallComponent`,convertedRecords)
+    //console.log(`RenderGetDataToolCallComponent`,convertedRecords)
     return (
         <div className="transition-all duration-300 ease-in-out" style={{ transitionProperty: 'width' }}>
             {/* <CrmRecordListView records={records} /> */}

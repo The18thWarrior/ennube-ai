@@ -4,6 +4,7 @@ import type { ProposalResponse, UpdateProposal } from '@/types/sfdc-update';
 import { useSfdcRecord } from '@/hooks/useSfdcRecord';
 import { useSfdcBatch } from '@/hooks/useSfdcBatch';
 import { UIMessage, UIDataTypes, UITools, isToolUIPart } from 'ai';
+import { CircleCheck, TriangleAlert } from 'lucide-react';
 
 type Props = {
   open: boolean;
@@ -95,32 +96,20 @@ export function UpdateDataReviewModal({ open, proposal, closeProposal, message, 
     }
   }
 
+  if (status === 'completed' || status === 'rejected') { return (
+      <div
+        className={`flex items-center gap-2 text-xs text-muted-foreground border rounded transition-all duration-3000 ease-in-out transition-discrete ${
+           "block py-4 px-2 my-2"
+        }`}
+      >
+        {status === 'completed' ? <CircleCheck className="h-4 w-4 text-green-500" /> : <TriangleAlert className="h-4 w-4 text-red-500" />}
+        <span>Proposal {status === 'completed' ? 'Executed' : 'Rejected'}</span>
+        
+      </div>);
+  }
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      {status === 'completed' || status === 'rejected' ? (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-11/12 max-w-2xl p-4">
-          <h3 className="text-lg font-semibold">Proposal {status === 'completed' ? 'Executed' : 'Rejected'}</h3>
-          {/* <p className="text-sm text-muted-foreground">{proposal.summary}</p>
-          <div className="mt-4 max-h-64 overflow-auto">
-            {proposal.changes.map((c) => (
-              <div key={c.operationId} className="border p-2 rounded mb-2">
-                <div className="font-medium">{c.sobject} — {c.operation}</div>
-                <div className="text-sm">Record: {c.recordId || 'N/A'}</div>
-                <ul className="mt-2">
-                  {(c.fields || []).map((f) => (
-                    <li key={f.fieldName} className="text-sm">
-                      <strong>{f.fieldName}</strong>: {String(f.before)} → {String(f.after)}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-          <div className="mt-4 flex justify-end">
-            <button className="px-3 py-1 rounded border" onClick={handleCancel}>Close</button>
-          </div> */}
-        </div>    
-      ) : (
+    <div className="flex items-center justify-center">
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-11/12 max-w-2xl p-4">
           <h3 className="text-lg font-semibold">Review proposed changes</h3>
           <p className="text-sm text-muted-foreground">{proposal.summary}</p>
@@ -149,9 +138,6 @@ export function UpdateDataReviewModal({ open, proposal, closeProposal, message, 
             <button className="px-3 py-1 rounded bg-blue-600 text-white" onClick={handleApprove} disabled={executing}>{executing ? 'Executing...' : 'Approve & Execute'}</button>
           </div>
         </div>
-      )
-      }
-      
     </div>
   );
 }

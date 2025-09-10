@@ -16,10 +16,13 @@ import { Session } from 'next-auth';
 import { CustomerProfile } from '@/hooks/useCustomerProfile';
 import DefaultMessageComponent from './default/default-message-component';
 import TimestampWithCopy from './default/timestamp-with-copy';
+import {Response} from '../ai-elements/response';
 import RenderGetDataToolCallComponent from './tools/render-get-data-tool-call';
 import RenderCallWorkflowToolCallComponent from './tools/render-call-workflow-tool-call';
 import RenderGetCustomProfileToolCallComponent from './tools/render-get-custom-profile-tool-call';
 import { ProposalResponse } from '@/types/sfdc-update';
+import { Reasoning, ReasoningContent, ReasoningTrigger } from '../ai-elements/reasoning';
+import { Tool, ToolHeader, ToolContent, ToolInput, ToolOutput } from '../ai-elements/tool';
 
 // Custom message rendering
 export const renderMessage = (msg: UIMessage, idx: number, agent: ReactNode, theme: 'dark' | 'light' | 'system', session: Session | null, updateThreadFromTool: (updatedMessage: UIMessage) => void) => {
@@ -56,26 +59,7 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, the
                                 // ensure callId is available before any early returns (loader/UI streaming)
                                 const callId = (part as any).toolCallId || `call-${i}`;
                                 // Narrow to a tool part that contains toolInvocation and toolCallId
-                                if (isToolUIPart(part)) {
-                                    
-                                    // if (part.state === 'input-streaming' || part.state === 'input-available') {
-                                    //     return (
-                                    //         <div key={callId} className="flex items-center gap-2 text-xs text-muted-foreground my-2 py-4 px-2 border rounded">
-                                    //             <Loader2 className="h-4 w-4 animate-spin" />
-                                    //             <span>Calling {part.type || 'tool'}...</span>
-                                    //         </div>
-                                    //     );
-                                    // }
-                                    // if (part.state === 'output-error') {
-                                    //     <div key={callId} className="flex items-center gap-2 text-xs text-muted-foreground py-4 px-2 border rounded">
-                                    //         <TriangleAlert className="h-4 w-4 text-red-500" />
-                                    //         <span>{part.errorText}</span>
-                                    //     </div>
-                                    // }
-                                    // Render based on tool name and state
-                                        //console.log(_part.toolInvocation)
-                                        
-                                    
+                                if (isToolUIPart(part)) {    
                                     switch (part.type) {
                                         case 'tool-proposeUpdateSFDCDataTool': {
                                             const output = part.output as ProposalResponse;
@@ -87,6 +71,7 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, the
                                                         <MessageStateComponent
                                                             Component={<UpdateDataReviewModal open={true} proposal={proposal} closeProposal={updateThreadFromTool} message={msg} status={status} partId={part.toolCallId}/>}
                                                             state={part.state}
+                                                            input={part.input}
                                                             theme={theme}
                                                             successMessage="Proposed Changes"
                                                             errorMessage={part.errorText || "Error proposing changes"}
@@ -103,6 +88,7 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, the
                                                         <MessageStateComponent
                                                             Component={<RenderGetDataToolCallComponent args={{}} result={part.output || {records: []}} theme={theme} />}
                                                             state={part.state}
+                                                            input={part.input}
                                                             theme={theme}
                                                             successMessage="Data Retrieved"
                                                             errorMessage={part.errorText || "Error retrieving data"}
@@ -120,6 +106,7 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, the
                                                         <MessageStateComponent
                                                             Component={<RenderGetDataToolCallComponent args={{}} result={part.output} theme={theme} />}
                                                             state={part.state}
+                                                            input={part.input}
                                                             theme={theme}
                                                             successMessage="Data Retrieved"
                                                             errorMessage={part.errorText || "Error retrieving data"}
@@ -137,6 +124,7 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, the
                                                     <MessageStateComponent
                                                         Component={null}
                                                         state={part.state}
+                                                            input={part.input}
                                                         theme={theme}
                                                         successMessage="Credentials Retrieved"
                                                         errorMessage={part.errorText || "Error retrieving credentials"}
@@ -153,6 +141,7 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, the
                                                         <MessageStateComponent
                                                             Component={<JsonRecord rootLabel="Postgres Data" data={part.output} className={`${styles.jsonBubble} min-w-3/4`} />}
                                                             state={part.state}
+                                                            input={part.input}
                                                             theme={theme}
                                                             successMessage="Data Retrieved"
                                                             errorMessage={part.errorText || "Error retrieving data"}
@@ -170,6 +159,7 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, the
                                                         <MessageStateComponent
                                                             Component={null}
                                                             state={part.state}
+                                                            input={part.input}
                                                             theme={theme}
                                                             successMessage="Schema Retrieved"
                                                             errorMessage={part.errorText || "Error retrieving schema"}
@@ -187,6 +177,7 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, the
                                                         <MessageStateComponent
                                                             Component={part.output ? <RenderCallWorkflowToolCallComponent result={part.output as { usageId : string}} /> : null}
                                                             state={part.state}
+                                                            input={part.input}
                                                             theme={theme}
                                                             successMessage="Workflow Executed"
                                                             errorMessage={part.errorText || "Error executing workflow"}
@@ -203,6 +194,7 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, the
                                                         <MessageStateComponent
                                                             Component={part.output ? RenderGetCustomProfileToolCallComponent({}, part.output as {profiles: CustomerProfile[]}, theme) : null}
                                                             state={part.state}
+                                                            input={part.input}
                                                             theme={theme}
                                                             successMessage="Profiles Retrieved"
                                                             errorMessage={part.errorText || "Error retrieving profiles"}
@@ -220,6 +212,7 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, the
                                                         <MessageStateComponent
                                                             Component={<JsonRecord rootLabel="Get Count" data={part.output} className={`${styles.jsonBubble} min-w-3/4`} />}
                                                             state={part.state}
+                                                            input={part.input}
                                                             theme={theme}
                                                             successMessage="Count Retrieved"
                                                             errorMessage={part.errorText || "Error retrieving count"}
@@ -236,6 +229,7 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, the
                                                         <MessageStateComponent
                                                             Component={null}
                                                             state={part.state}
+                                                            input={part.input}
                                                             theme={theme}
                                                             successMessage="Fields Retrieved"
                                                             errorMessage={part.errorText || "Error retrieving fields"}
@@ -252,6 +246,7 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, the
                                                         <MessageStateComponent
                                                             Component={null}
                                                             state={part.state}
+                                                            input={part.input}
                                                             theme={theme}
                                                             successMessage="Objects Retrieved"
                                                             errorMessage={part.errorText || "Error retrieving objects"}
@@ -284,9 +279,16 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, the
                                 
                                 switch (part.type) {
                                     case 'text':
-                                        return <Markdown key={i}>{part.text}</Markdown>;
+                                        return <Response key={`${msg.id}-${i}`}>{part.text}</Response>
                                     case 'reasoning': 
-                                        return <Markdown key={i}>{'Reasoning...'}</Markdown>;
+                                        return <Reasoning
+                                            key={`${msg.id}-${i}`}
+                                            className="w-full"
+                                            isStreaming={part.state === 'streaming' && i === msg.parts.length - 1}
+                                        >
+                                          <ReasoningTrigger />
+                                          <ReasoningContent>{part.text}</ReasoningContent>
+                                        </Reasoning>
                                     case 'dynamic-tool': 
                                         return null
                                     case 'file': 
@@ -338,6 +340,7 @@ const MessageStateComponent = ({
   successMessage,
   errorMessage,
   toolName,
+  input
 }: {
   Component: React.ReactElement | null;
   state: "input-streaming" | "input-available" | "output-error" | "output-available";
@@ -345,6 +348,39 @@ const MessageStateComponent = ({
   successMessage: string;
   errorMessage: string;
   toolName: string;
+  input?: unknown;
+}) => {
+  //console.log('MessageStateComponent state', state, 'toolName', input);
+  return (
+    <Tool defaultOpen={false}>
+      <ToolHeader type={toolName as `tool-${string}`} state={state} />
+      <ToolContent>
+        <ToolInput input={input} />
+        <ToolOutput
+          output={Component}
+          errorText={errorMessage}
+        />
+      </ToolContent>
+    </Tool>
+  )
+};
+
+const MessageStateComponent_old = ({
+  Component,
+  state,
+  theme,
+  successMessage,
+  errorMessage,
+  toolName,
+  input
+}: {
+  Component: React.ReactElement | null;
+  state: "input-streaming" | "input-available" | "output-error" | "output-available";
+  theme: "dark" | "light" | "system";
+  successMessage: string;
+  errorMessage: string;
+  toolName: string;
+  input?: unknown;
 }) => {
   const [open, setOpen] = useState(false);
   const [hide, setHide] = useState(false);

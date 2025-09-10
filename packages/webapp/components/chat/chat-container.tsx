@@ -132,7 +132,7 @@ const ChatContainer = ({
         if (agent) setSelectedAvatar(agent);
     }, [agent]);
     // EditableField for name, similar to crm-record-detail-card.tsx
-
+    
     const handleNameSave = async () => {
         setIsEditingName(false);
         await setThread(threadId, [], _name || '', selectedAvatar);
