@@ -3,13 +3,18 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { CheckIcon, CopyIcon } from "lucide-react";
-import type { ComponentProps, HTMLAttributes, ReactNode } from "react";
+import type { ComponentProps, HTMLAttributes, ReactNode, ComponentType } from "react";
 import { createContext, useContext, useState } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import {
   oneDark,
   oneLight,
 } from "react-syntax-highlighter/dist/esm/styles/prism";
+
+// react-syntax-highlighter's exported component types sometimes conflict with
+// the project's React types. Use a narrow cast to a generic ComponentType for
+// safe JSX usage inside this file.
+const PrismSyntax: ComponentType<any> = (SyntaxHighlighter as unknown) as ComponentType<any>;
 
 type CodeBlockContextType = {
   code: string;
@@ -43,7 +48,7 @@ export const CodeBlock = ({
       {...props}
     >
       <div className="relative">
-        <SyntaxHighlighter
+        <PrismSyntax
           className="overflow-hidden dark:hidden"
           codeTagProps={{
             className: "font-mono text-sm",
@@ -65,8 +70,8 @@ export const CodeBlock = ({
           style={oneLight}
         >
           {code}
-        </SyntaxHighlighter>
-        <SyntaxHighlighter
+        </PrismSyntax>
+        <PrismSyntax
           className="hidden overflow-hidden dark:block"
           codeTagProps={{
             className: "font-mono text-sm",
@@ -88,7 +93,7 @@ export const CodeBlock = ({
           style={oneDark}
         >
           {code}
-        </SyntaxHighlighter>
+        </PrismSyntax>
         {children && (
           <div className="absolute top-2 right-2 flex items-center gap-2">
             {children}

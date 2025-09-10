@@ -1062,6 +1062,9 @@ importers:
       '@types/react-dom':
         specifier: ^18.2.8
         version: 18.3.7(@types/react@18.3.24)
+      '@types/react-syntax-highlighter':
+        specifier: ^15.5.13
+        version: 15.5.13
       '@types/redis':
         specifier: ^4.0.11
         version: 4.0.11
@@ -6677,6 +6680,12 @@ packages:
       '@types/react': ^19.0.0
     dependencies:
       '@types/react': 19.1.12
+
+  /@types/react-syntax-highlighter@15.5.13:
+    resolution: {integrity: sha512-uLGJ87j6Sz8UaBAooU0T6lWJ0dBmjZgN1PZTrj05TNql2/XpC6+4HhMT5syIdFUUt+FASfCeLLv4kBygNU+8qA==}
+    dependencies:
+      '@types/react': 19.1.12
+    dev: true
 
   /@types/react@18.3.24:
     resolution: {integrity: sha512-0dLEBsA1kI3OezMBF8nSsb7Nk19ZnsyE1LLhB8r27KbgU5H4pvuqZLdtE+aUkJVoXgTVuA+iLIwmZ0TuK4tx6A==}
