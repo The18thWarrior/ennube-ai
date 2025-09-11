@@ -35,8 +35,7 @@ export function UpdateDataReviewModal({ open, proposal, closeProposal, message, 
         const c = proposal.changes[0];
         if (c.operation === 'update') {
           const data: any = {Id: c.recordId};
-          (c.fields || []).forEach((f) => (data[f.fieldName] = f.after));
-          console.log('data', data);
+          (c.fields || []).forEach((f) => (data[f.fieldName] = f.after))
           await updateRecord(c.recordId as string, data);
           if (sfdcError) {
             //console.error('Update error:', sfdcError);
@@ -48,7 +47,6 @@ export function UpdateDataReviewModal({ open, proposal, closeProposal, message, 
         } else if (c.operation === 'delete') {
           await deleteRecord(c.recordId as string);
           if (sfdcError) {
-            console.error('Delete error:', sfdcError);
             setError(sfdcError.message);
             setExecuting(false);
             return;
@@ -60,7 +58,6 @@ export function UpdateDataReviewModal({ open, proposal, closeProposal, message, 
           (c.fields || []).forEach((f) => (data[f.fieldName] = f.after));
           await createRecord(data);
           if (sfdcError) {
-            console.error('Update error:', sfdcError);
             setError(sfdcError.message);
             setExecuting(false);
             return;

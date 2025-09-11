@@ -28,14 +28,12 @@ export default function MarkdownEditor({ input, handleInputChange, handleSubmit,
   useEffect(() => {
     if (theme.theme === 'dark') {
       // Make textarea invisible but keep the cursor
-      console.log(editorRef.current);
       if (editorRef.current?.instanceTheme !== 'cave') {
         editorRef.current?.destroy?.();
         editorRef.current = null;
         initializeEditor();
       }
     } else if (theme.theme === 'light') {
-      console.log(editorRef.current);
       if (editorRef.current?.instanceTheme !== 'solar') {
         editorRef.current?.destroy?.();
         editorRef.current = null;
@@ -83,7 +81,6 @@ export default function MarkdownEditor({ input, handleInputChange, handleSubmit,
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Enter' && !e.shiftKey) {
         const form = el.closest('form');
-        console.log('form found', form)
         if (form) {
           // Create a synthetic submit event similar to chat-input behavior
           // @ts-ignore - constructing minimal event for handler
@@ -230,18 +227,18 @@ export default function MarkdownEditor({ input, handleInputChange, handleSubmit,
         <div className="flex items-center">
           <div ref={ref} className={"rounded-md border border-gray-300 dark:border-gray-600 grow"} />
           {/* <Button className="ml-2 flex-shrink-0" variant="outline" type="submit" onClick={() => triggerSubmit(ref.current)} disabled={isLoading}><Send className={`h-4 w-4 text-white`} /></Button> */}
-          {!isLoading && 
+          {
             <Button type="button" disabled={isLoading || !input.trim()} size="icon" onClick={() => triggerSubmit(ref.current)} className={`${styles.sendButton} ml-2 flex-shrink-0`}>
               <Send className={`h-4 w-4 text-white`} />
               <span className="sr-only">Send message</span>
             </Button>
           }
-          {isLoading && (
+          {/* {isLoading && (
             <Button className="ml-2 flex-shrink-0" type="button" variant="outline" onClick={handleStop}>
               <CircleStop className={`h-4 w-4 dark:text-white`} />
               <span className="sr-only">Stop message</span>
             </Button>
-          )}
+          )} */}
         </div>
       </form>
       {/* {isLoading && (
