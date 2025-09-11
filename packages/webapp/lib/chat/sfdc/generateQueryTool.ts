@@ -13,8 +13,6 @@
 import { Tool, tool, generateObject } from "ai";
 import { openai } from '@ai-sdk/openai';
 import z from "zod/v4";
-// Delay importing helper at runtime to avoid loading heavy modules during test-time
-import { createSalesforceVectorStore, VectorStoreEntry } from "./vectorStore";
 import { embedText } from "./embeddings";
 import { getBaseUrl } from "../helper";
 import { getSalesforceCredentialsBySub, StoredSalesforceCredentials } from "@/lib/db/salesforce-storage";
@@ -178,7 +176,7 @@ async function generateAndExecuteQuery(
     prompt
   });
   
-  console.log('Generated query result:', queryResult);
+  //console.log('Generated query result:', queryResult);
   // 6. Validate generated SQL
   if (!validateSelectOnly(queryResult.sql)) {
     throw new Error(`Generated SQL contains non-SELECT statements: ${queryResult.sql}`);
@@ -277,22 +275,6 @@ async function fetchAndProcessDescribe(credentials: StoredSalesforceCredentials,
       }
     }));
   });
-
-  // Create a fuzzy searcher for the fields based on description
-  // const searcher = new Searcher(allFields, {
-  //   keySelector: (item) => {
-  //     if (item.payload) {
-  //       return `${item.payload.sobjectType} ${item.payload.fieldName} ${item.payload.label} ${item.payload.type} ${item.payload.inlineHelpText || ''}`;
-  //     }
-  //     return '';
-  //   },
-  //   ignoreCase: true,
-  //   threshold: 0.3 // Adjust threshold as needed for sensitivity
-  // });
-
-  // // Perform the search to get relevant fields
-  // const similarFields = searcher.search(description).slice(0, 50); // Limit to top 50 results
-  //const resultData = similarFields as QueryResult[];
   return allFields;
 }
 

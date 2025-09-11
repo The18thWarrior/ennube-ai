@@ -5,6 +5,7 @@ import { useSfdcRecord } from '@/hooks/useSfdcRecord';
 import { useSfdcBatch } from '@/hooks/useSfdcBatch';
 import { UIMessage, UIDataTypes, UITools, isToolUIPart } from 'ai';
 import { CircleCheck, TriangleAlert } from 'lucide-react';
+import { Button } from '@/components/ui';
 
 type Props = {
   open: boolean;
@@ -21,7 +22,7 @@ export function UpdateDataReviewModal({ open, proposal, closeProposal, message, 
   const [result, setResult] = useState<any | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const { updateRecord, createRecord, deleteRecord } = useSfdcRecord({}, proposal.changes[0]?.sobject || '');
+  const { updateRecord, createRecord, deleteRecord, error: sfdcError, loading } = useSfdcRecord({}, proposal.changes[0]?.sobject || '');
   const { bulk } = useSfdcBatch();
 
   const handleApprove = async () => {
@@ -33,17 +34,37 @@ export function UpdateDataReviewModal({ open, proposal, closeProposal, message, 
       if (proposal.changes.length === 1) {
         const c = proposal.changes[0];
         if (c.operation === 'update') {
-          const data: any = {};
+          const data: any = {Id: c.recordId};
           (c.fields || []).forEach((f) => (data[f.fieldName] = f.after));
+          console.log('data', data);
           await updateRecord(c.recordId as string, data);
+          if (sfdcError) {
+            //console.error('Update error:', sfdcError);
+            setError(sfdcError.message);
+            setExecuting(false);
+            return;
+          }
           setResult({ success: true, detail: 'updated single record' });
         } else if (c.operation === 'delete') {
           await deleteRecord(c.recordId as string);
+          if (sfdcError) {
+            console.error('Delete error:', sfdcError);
+            setError(sfdcError.message);
+            setExecuting(false);
+            return;
+          }
+
           setResult({ success: true, detail: 'deleted single record' });
         } else if (c.operation === 'create') {
           const data: any = {};
           (c.fields || []).forEach((f) => (data[f.fieldName] = f.after));
           await createRecord(data);
+          if (sfdcError) {
+            console.error('Update error:', sfdcError);
+            setError(sfdcError.message);
+            setExecuting(false);
+            return;
+          }
           setResult({ success: true, detail: 'created single record' });
         }
       } else {
@@ -78,7 +99,7 @@ export function UpdateDataReviewModal({ open, proposal, closeProposal, message, 
         await closeProposal({...message, parts: updatedParts} as UIMessage<unknown, UIDataTypes, UITools>);
       }
     } catch (err: any) {
-      console.error('Execution error:', err);
+      //console.error('Execution error:', err);
       setError(err?.message || String(err));
     } finally {
       setExecuting(false);
@@ -97,6 +118,7 @@ export function UpdateDataReviewModal({ open, proposal, closeProposal, message, 
   }
 
   if (status === 'completed' || status === 'rejected') { return (
+      
       <div
         className={`flex items-center gap-2 text-xs text-muted-foreground border rounded transition-all duration-3000 ease-in-out transition-discrete ${
            "block py-4 px-2 my-2"
@@ -110,7 +132,7 @@ export function UpdateDataReviewModal({ open, proposal, closeProposal, message, 
 
   return (
     <div className="flex items-center justify-center">
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-11/12 max-w-2xl p-4">
+        <div className=" dark:bg-neutral-800 rounded-lg shadow-lg w-11/12 p-4">
           <h3 className="text-lg font-semibold">Review proposed changes</h3>
           <p className="text-sm text-muted-foreground">{proposal.summary}</p>
 
@@ -134,8 +156,8 @@ export function UpdateDataReviewModal({ open, proposal, closeProposal, message, 
           {result && <div className="mt-4 text-green-600">Result: {JSON.stringify(result)}</div>}
 
           <div className="mt-4 flex justify-end gap-2">
-            <button className="px-3 py-1 rounded border" onClick={handleCancel} disabled={executing}>Cancel</button>
-            <button className="px-3 py-1 rounded bg-blue-600 text-white" onClick={handleApprove} disabled={executing}>{executing ? 'Executing...' : 'Approve & Execute'}</button>
+            <Button className="px-3 py-1 rounded" variant={'outline_neutral'} onClick={handleCancel} disabled={executing}>Cancel</Button>
+            <Button className="px-3 py-1 rounded " variant={'outline'} onClick={handleApprove} disabled={executing}>{executing ? 'Executing...' : 'Approve & Execute'}</Button>
           </div>
         </div>
     </div>

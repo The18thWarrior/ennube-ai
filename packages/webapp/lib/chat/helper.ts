@@ -37,7 +37,7 @@ export const getTools = async (agent: 'data-steward' | 'prospect-finder' | 'cont
   const baseTools = {
     //getCredentials: getCredentialsTool(userId),
     getSFDCDataTool: generateQueryTool(userId),
-    //proposeUpdateSFDCDataTool: proposeUpdateDataTool(userId),
+    proposeUpdateSFDCDataTool: proposeUpdateDataTool(userId),
     // getSFDCFieldDescribeTool: getSFDCFieldsTool(userId),
     // getSFDCDataTool: getSFDCDataTool(userId),
     //getPostgresDataTool: getPostgresDataTool(userId),

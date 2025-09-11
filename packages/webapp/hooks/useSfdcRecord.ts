@@ -35,14 +35,15 @@ export function useSfdcRecord(initialRecord: SfdcRecord, sobject: string): UseSf
         setLoading(true);
         setError(null);
         try {
-        const res = await fetch(`${getApiBase()}/query?sub=${subId}&soql=SELECT+FIELDS(ALL)+FROM+${sobject}+WHERE+Id='${id}'+LIMIT+1`);
-        if (!res.ok) throw new Error(`Failed to fetch record: ${res.statusText}`);
-        const data = await res.json();
-        setRecord(data);
+          const res = await fetch(`${getApiBase()}/query?sub=${subId}&soql=SELECT+FIELDS(ALL)+FROM+${sobject}+WHERE+Id='${id}'+LIMIT+1`);
+          if (!res.ok) throw new Error(`Failed to fetch record: ${res.statusText}`);
+          const data = await res.json();
+          setRecord(data);
+          setError(null);
         } catch (err: any) {
-        setError(err);
+          setError(err);
         } finally {
-        setLoading(false);
+          setLoading(false);
         }
     };
 
@@ -50,18 +51,23 @@ export function useSfdcRecord(initialRecord: SfdcRecord, sobject: string): UseSf
         setLoading(true);
         setError(null);
         try {
-        const res = await fetch(`${getApiBase()}/data/${sobject}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data),
-        });
-        if (!res.ok) throw new Error(`Failed to create record: ${res.statusText}`);
-        const created = await res.json();
-        setRecord(created);
+          const res = await fetch(`${getApiBase()}/data/${sobject}`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(data),
+          });
+          if (!res.ok) {
+            setError(new Error(`Failed to create record: ${res.statusText}`));
+            //throw new Error(`Failed to create record: ${res.statusText}`);
+          } else {
+            const created = await res.json();
+            setRecord(created);
+            setError(null);
+          }
         } catch (err: any) {
-        setError(err);
+          setError(err);
         } finally {
-        setLoading(false);
+          setLoading(false);
         }
     };
 
@@ -69,18 +75,25 @@ export function useSfdcRecord(initialRecord: SfdcRecord, sobject: string): UseSf
         setLoading(true);
         setError(null);
         try {
-        const res = await fetch(`${getApiBase()}/record/${sobject}/${id}`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data),
-        });
-        if (!res.ok) throw new Error(`Failed to update record: ${res.statusText}`);
-        const updated = await res.json();
-        setRecord(updated);
+          const res = await fetch(`${getApiBase()}/data?sub=${subId}&sobjectType=${sobject}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(data),
+          });
+          if (!res.ok) {
+            console.log('Update failed:', res);
+            setError(new Error(`Failed to update record: ${res.statusText}`));
+            //throw new Error(`Failed to update record: ${res.statusText}`);
+          } else {
+            const updated = await res.json();
+            setRecord(updated);
+            setError(null);
+          }
         } catch (err: any) {
-        setError(err);
+          console.error('Update error:', err);
+          setError(err);
         } finally {
-        setLoading(false);
+          setLoading(false);
         }
     };
 
@@ -88,15 +101,22 @@ export function useSfdcRecord(initialRecord: SfdcRecord, sobject: string): UseSf
         setLoading(true);
         setError(null);
         try {
-        const res = await fetch(`${getApiBase()}/record/${sobject}/${id}`, {
-            method: 'DELETE',
-        });
-        if (!res.ok) throw new Error(`Failed to delete record: ${res.statusText}`);
-        setRecord(null);
+          const res = await fetch(`${getApiBase()}/data?sub=${subId}&sobjectType=${sobject}&id=${id}`, {
+              method: 'DELETE',
+          });
+          if (!res.ok) {
+            setError(new Error(`Failed to delete record: ${res.statusText}`));
+            //throw new Error(`Failed to delete record: ${res.statusText}`);
+          } else {
+            setRecord(null);
+            setError(null);
+          }
         } catch (err: any) {
-        setError(err);
+          setError(err);
+          setLoading(false);
+          //throw err;
         } finally {
-        setLoading(false);
+          setLoading(false);
         }
     };
 
@@ -105,14 +125,17 @@ export function useSfdcRecord(initialRecord: SfdcRecord, sobject: string): UseSf
         setLoading(true);
         setError(null);
         try {
-        const res = await fetch(`${getApiBase()}/describe/${sobject}`);
-        if (!res.ok) throw new Error(`Failed to get object describe: ${res.statusText}`);
-        return await res.json();
+          const res = await fetch(`${getApiBase()}/describe/${sobject}`);
+          if (!res.ok) {
+            setError(new Error(`Failed to get object describe: ${res.statusText}`));
+            // throw new Error(`Failed to get object describe: ${res.statusText}`);
+          }
+          return await res.json();
         } catch (err: any) {
-        setError(err);
-        throw err;
+          setError(err);
+          //throw err;
         } finally {
-        setLoading(false);
+          setLoading(false);
         }
     }, [sobject]);
 
