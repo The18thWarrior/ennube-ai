@@ -8,6 +8,7 @@ const getModel = (name = process.env.OPENROUTER_MODEL || 'deepseek/deepseek-chat
   const openrouter = createOpenRouter({
     apiKey: `${process.env.OPENROUTER_API_KEY}`,
   });
+  console.log('Using OpenRouter model:', name);
   // You can change the model name here as needed`
   return openrouter(name); // google/gemini-2.0-flash-001 openai/gpt-oss-120b deepseek/deepseek-chat-v3.1 deepseek/deepseek-chat-v3-0324 | google/gemini-2.0-flash-001
   if (process.env.OPENROUTER_API_KEY) {
