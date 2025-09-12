@@ -81,7 +81,7 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, the
                                                 </div>
                                             );
                                         }
-                                      case 'tool-generateQueryTool': {                                             
+                                        case 'tool-generateQueryTool': {                                             
                                             return (
                                                 <div key={callId}>
                                                     {
@@ -99,7 +99,7 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, the
                                                 </div>
                                             );
                                         }  
-                                      case 'tool-getSFDCDataTool': {        
+                                        case 'tool-getSFDCDataTool': {        
                                             return (
                                                 <div key={callId}>
                                                     {
@@ -251,6 +251,24 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, the
                                                             successMessage="Objects Retrieved"
                                                             errorMessage={part.errorText || "Error retrieving objects"}
                                                             toolName="Describe Objects Tool"
+                                                        />
+                                                    }
+                                                </div>
+                                            )
+                                        }
+
+                                        case 'tool-getSFDCFileTool': {
+                                            return (
+                                                <div key={callId}>
+                                                    {
+                                                        <MessageStateComponent
+                                                            Component={part.output ? <JsonRecord rootLabel="File Output" data={part.output} className={`${styles.jsonBubble} min-w-3/4`} /> : null}
+                                                            state={part.state}
+                                                            input={part.input}
+                                                            theme={theme}
+                                                            successMessage="File Retrieved"
+                                                            errorMessage={part.errorText || "Error retrieving file"}
+                                                            toolName="Get File Tool"
                                                         />
                                                     }
                                                 </div>

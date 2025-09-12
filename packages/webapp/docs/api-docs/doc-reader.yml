@@ -1,0 +1,415 @@
+openapi: 3.0.3
+info:
+  title: base64docxparser API
+  version: 1.0.0
+  description: |
+    OpenAPI specification for the base64docxparser application's serverless API routes.
+    Endpoints accept and return JSON. Some endpoints expect bearer tokens for cron/auth operations.
+servers:
+  - url: https://agent-doc-tool.vercel.app
+    description: Production server
+paths:
+  /api/adobe-auth:
+    post:
+      summary: Test Adobe PDF Services authentication
+      description: Requests an OAuth token from Adobe using client credentials stored in environment variables. Returns token metadata (not the raw token in production).
+      responses:
+        '200':
+          description: Authentication successful (token metadata)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdobeAuthSuccess'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Server error or missing Adobe credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/cleanup:
+    post:
+      summary: Run scheduled cleanup (cron)
+      description: |
+        Cleans up expired upload sessions. Intended for use by a scheduled job. Requires a bearer token in the Authorization header matching CRON_SECRET.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Cleanup completed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  deletedSessions:
+                    type: integer
+                  currentStats:
+                    type: object
+                  timestamp:
+                    type: string
+                    format: date-time
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      summary: Manual cleanup and stats
+      description: Run manual cleanup and return stats (no auth in code, but environment may restrict use).
+      responses:
+        '200':
+          description: Manual cleanup completed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  deletedSessions:
+                    type: integer
+                  stats:
+                    type: object
+                  timestamp:
+                    type: string
+                    format: date-time
+
+  /api/extract-docx:
+    post:
+      summary: Extract text from a base64-encoded file
+      description: |
+        Accepts a JSON body with a base64-encoded file and optional metadata. The server will auto-detect and route extraction (DOCX, PDF, images, zip, etc.).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExtractRequest'
+      responses:
+        '200':
+          description: Extraction result (success)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExtractResponse'
+        '400':
+          description: Bad request (invalid payload)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Processing error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/health:
+    get:
+      summary: Health check
+      description: Returns application health and database connectivity status.
+      responses:
+        '200':
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  timestamp:
+                    type: string
+                    format: date-time
+                  database:
+                    type: string
+                  traceId:
+                    type: string
+        '500':
+          description: Unhealthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/init-db:
+    post:
+      summary: Initialize the database
+      description: Initializes or migrates the database. The endpoint checks an Authorization header in code and may require a secret.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Database initialized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Initialization failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      summary: Manual database init (testing)
+      description: Run initialization for manual testing.
+      responses:
+        '200':
+          description: Database initialized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+
+  /api/process-chunks:
+    post:
+      summary: Assemble and process uploaded chunks
+      description: |
+        Accepts a JSON body with `sessionId`. The server retrieves stored chunks, assembles the full base64 payload and runs extraction. Returns extraction response or error details.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sessionId:
+                  type: string
+              required:
+                - sessionId
+      responses:
+        '200':
+          description: Processing started or completed successfully (may proxy extractor response)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExtractResponse'
+        '400':
+          description: Missing or invalid sessionId or missing chunks
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Session not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Processing error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/upload-chunk:
+    post:
+      summary: Upload a file chunk
+      description: |
+        Clients POST one chunk per request with JSON body containing sessionId, chunk (base64 string), chunkIndex, totalChunks and optional fileName/fileType. Returns session progress and whether upload is complete.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UploadChunkRequest'
+      responses:
+        '200':
+          description: Chunk stored
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadChunkResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '415':
+          description: Unsupported Media Type (expect application/json)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      summary: Delete a session or cleanup expired sessions
+      description: Send a JSON body with optional `sessionId` to delete a specific session. If omitted, expired sessions will be purged.
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sessionId:
+                  type: string
+      responses:
+        '200':
+          description: Cleanup result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  traceId:
+                    type: string
+        '400':
+          description: Invalid JSON
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Cleanup failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        details:
+          type: object
+      required:
+        - error
+
+    AdobeAuthSuccess:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        tokenReceived:
+          type: boolean
+        tokenLength:
+          type: integer
+        expiresIn:
+          type: integer
+        tokenType:
+          type: string
+
+    ExtractRequest:
+      type: object
+      properties:
+        base64:
+          type: string
+          description: Base64 encoded file content or array of base64 chunk strings (for assembled chunks)
+        fileName:
+          type: string
+          description: Optional original file name (e.g., document.docx)
+        fileType:
+          type: string
+          description: Optional MIME type (e.g., application/vnd.openxmlformats-officedocument.wordprocessingml.document)
+      required:
+        - base64
+
+    ExtractResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+        text:
+          type: string
+        pages:
+          type: integer
+        metadata:
+          type: object
+
+    UploadChunkRequest:
+      type: object
+      properties:
+        sessionId:
+          type: string
+          description: Client-generated session identifier
+        chunk:
+          type: string
+          description: Base64 chunk (no data: prefix)
+        chunkIndex:
+          type: integer
+        totalChunks:
+          type: integer
+        fileName:
+          type: string
+        fileType:
+          type: string
+      required:
+        - sessionId
+        - chunk
+        - chunkIndex
+        - totalChunks
+
+    UploadChunkResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        chunkIndex:
+          type: integer
+        receivedChunks:
+          type: integer
+        totalChunks:
+          type: integer
+        isComplete:
+          type: boolean
+        sessionId:
+          type: string
+        traceId:
+          type: string
