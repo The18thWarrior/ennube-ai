@@ -10,7 +10,12 @@
     "start:mpc": "pnpm --filter @ennube/mcp exec mpc-server",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "build:benchmark": "tsc -p benchmark/tsconfig.json",
+    "benchmark:run": "node benchmark/dist/execute_benchmark.js",
+    "benchmark:tsnode": "node benchmark/run-benchmark.cjs",
+    "benchmark:tsx": "tsx benchmark/execute_benchmark.ts",
+    "benchmark": "pnpm run build:benchmark && pnpm run benchmark:run"
   },
   "author": "Jordan Paul",
   "dependencies": {
@@ -62,6 +67,7 @@
     "cmdk": "^1.1.1",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
+    "dotenv": "^17.2.2",
     "embla-carousel-react": "^8.6.0",
     "fast-fuzzy": "^1.12.0",
     "google-auth-library": "^9.15.1",
@@ -113,6 +119,8 @@
     "postcss": "^8.4.29",
     "tailwindcss": "^3.3.3",
     "ts-jest": "^29.4.1",
+    "ts-node": "^10",
+    "tsx": "^3.14.0",
     "typescript": "^5.2.2"
   },
   "engines": {

@@ -145,8 +145,12 @@ async function generateAndExecuteQuery(
     - Include appropriate WHERE clauses if filtering is implied
     - Limit results to a reasonable number (e.g., LIMIT 200)
     - Aggregate functions must be directly declared in GROUP BY and ORDER BY clauses.
+    - Date and DateTime Formatting: Dates and DateTimes in WHERE clauses must be in ISO 8601 format.
+    -- Date: YYYY-MM-DD (e.g., 2023-01-15) | DateTime: YYYY-MM-DDThh:mm:ssZ (e.g., 2023-01-15T10:00:00Z)
+    - Aggregate Functions and LIMIT Clause: A non-grouped query that uses an aggregate function (e.g., COUNT(), MAX(), MIN(), AVG(), SUM()) cannot also use a LIMIT clause. This is because aggregate functions already return a single result. 
+    -- Invalid Query: SELECT COUNT(Id) FROM Account LIMIT 1 | Valid Query: SELECT COUNT(Id) FROM Account
 
-    Return a well-formed SOQL query that addresses the user's needs.
+    Return a well-formed SOQgL query that addresses the user's needs.
     
     [START OF CONTEXT]
     Generate a SOQL query based on the following user request:
@@ -161,7 +165,7 @@ async function generateAndExecuteQuery(
     [END OF CONTEXT]`;
   // 5. Generate structured query object using AI
   console.log('Generating SOQL query with AI...');
-  const model = getModel('openai/gpt-oss-120b');
+  const model = getModel();
   if (!model) {
     throw new Error('AI model not configured');
   }
@@ -175,7 +179,7 @@ async function generateAndExecuteQuery(
     schema: QueryGenerationSchema,
     prompt
   });
-  
+  console.log('Generated query result:', queryResult);
   //console.log('Generated query result:', queryResult);
   // 6. Validate generated SQL
   if (!validateSelectOnly(queryResult.sql)) {
@@ -302,10 +306,10 @@ export const generateQueryTool = (subId: string) => {
           throw new Error('Failed to fetch credentials');
       }
 
-      const queryEmbedding = await embedText(description);
-      if (!queryEmbedding || queryEmbedding.length === 0) {
-        throw new Error('Failed to generate query embedding');
-      }
+      // const queryEmbedding = await embedText(description);
+      // if (!queryEmbedding || queryEmbedding.length === 0) {
+      //   throw new Error('Failed to generate query embedding');
+      // }
 
       try {
         console.log(`Starting query generation for with description: "${description}"`);

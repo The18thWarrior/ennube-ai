@@ -6,6 +6,7 @@ import { setThread } from '@/lib/cache/message-history';
 import { getPrompt, getTools } from '@/lib/chat/helper';
 import dayjs from 'dayjs';
 import getModel from '@/lib/chat/getModel';
+import { chatAgent } from '@/lib/chat/chatAgent';
 
 export const maxDuration = 300;
 // The main agent route
@@ -39,36 +40,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'AI model not configured' }, { status: 500 });
     }
     const systemPrompt = `${getPrompt(agent as 'data-steward' | 'prospect-finder' | 'contract-reader')} Today's date is ${today}.`;
+    const tools = await getTools(agent as 'data-steward' | 'prospect-finder' | 'contract-reader', userSub);
+    const _messages = convertToModelMessages(messages);
+    const userMessage = _messages.at(-1);
+    if (!userMessage) {
+      return NextResponse.json({ error: 'No user message found' }, { status: 400 });
+    }
     // Set up the OpenAI model
     // Run the agent with tools
-    const result = await streamText({
-      //model: openai('gpt-4.1-nano'),
-      model: model,
-      system: systemPrompt,
-      providerOptions: {
-        openrouter: {
-          transforms: ["middle-out"],
-          parallelToolCalls: false
-        }
-      },
-      tools: await getTools(agent as 'data-steward' | 'prospect-finder' | 'contract-reader', userSub),
-       messages: convertToModelMessages(messages),
-      stopWhen: stepCountIs(5),
-      //toolCallStreaming: true,
-      onError: (error) => {
-        console.log('Error during tool execution:', error);
-      },
-      onFinish: (response) => {
-        console.log('Response finished:', response.finishReason);
-      },
-      onStepFinish: (step) => {
-        console.log('Step finished', step.finishReason);
-      },
-      
-      //metadata: { subId: metadata.subId },
-    });
-
-    return result.toUIMessageStreamResponse();
+    //const steps = await taskManager({ prompt: userMessage, messageHistory: _messages.slice(0, -1), tools: Object.keys(tools).map(t => ({ name: t, description: tools[t].description })) });
+    return chatAgent({ model, systemPrompt, tools, _messages });
     //return NextResponse.json(result);
   } catch (error) {
     console.log('Error in chat route:', error);
