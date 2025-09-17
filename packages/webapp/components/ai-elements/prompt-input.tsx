@@ -1,5 +1,6 @@
 "use client";
 
+import styles from './prompt-input.module.css'
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -547,7 +548,8 @@ export const PromptInputButton = ({
         "shrink-0 gap-1.5 rounded-lg",
         variant === "ghost" && "text-muted-foreground",
         newSize === "default" && "px-3",
-        className
+        className,
+        styles.sendButton
       )}
       size={newSize}
       type="button"
@@ -606,7 +608,7 @@ export type PromptInputSubmitProps = ComponentProps<typeof Button> & {
 
 export const PromptInputSubmit = ({
   className,
-  variant = "default",
+  variant = null,
   size = "icon",
   status,
   children,
@@ -623,8 +625,9 @@ export const PromptInputSubmit = ({
   }
 
   return (
+    
     <Button
-      className={cn("gap-1.5 rounded-lg", className)}
+      className={cn("gap-1.5 rounded-lg", className, styles.sendButton)}
       size={size}
       type="submit"
       variant={variant}

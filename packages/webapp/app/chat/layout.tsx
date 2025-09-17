@@ -67,7 +67,7 @@ function ChatSidebar({
 
   const { toggleSidebar, open } = useSidebar()
   return (
-      <Sidebar className="min-h-50 max-h-[79dvh] " variant={'floating'} collapsible={'icon'}>
+      <Sidebar className="min-h-50 max-h-[80dvh] " variant={'floating'} collapsible={'icon'}>
         <SidebarHeader>
           
           <div className="flex items-center justify-end">
@@ -282,7 +282,7 @@ export default function ChatLayout({ children }: { children: React.ReactNode }) 
             setShowAgentSelect={setShowAgentSelect}
           />
           <SidebarInset className="flex flex-col bg-lavender-chat">
-            <div className="flex-1 overflow-auto">{children}</div>
+            <div className="flex-1 ">{children}</div>
           </SidebarInset>
         </SidebarProvider>
       {/* </div> */}

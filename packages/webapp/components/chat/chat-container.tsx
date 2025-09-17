@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, ChangeEventHandler } from 'react';
 import { useSession } from 'next-auth/react';
 import { useTheme } from '../theme-provider';
 import styles from './chat-container.module.css';
@@ -13,6 +13,7 @@ import { useMessageHistory } from '@/hooks/useMessageHistory';
 import {avatarOptions, AgentSelector} from '@/components/chat/agents';
 import NameComponent from './chat-name';
 import MarkdownEditor from './overtype-input';
+import { PromptInput, PromptInputBody, PromptInputAttachments, PromptInputAttachment, PromptInputTextarea, PromptInputToolbar, PromptInputTools, PromptInputActionMenu, PromptInputActionMenuTrigger, PromptInputActionMenuContent, PromptInputActionAddAttachments, PromptInputSubmit, PromptInputMessage } from '../ai-elements/prompt-input';
 
 /**
  * Simple chat container using n8n/chat (embed mode)
@@ -63,6 +64,17 @@ const ChatContainer = ({
         sendMessage({ text: input });
         handleInputChange('');
     };
+
+    const handleSubmitPromptInput = (message: PromptInputMessage, event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+      if (!message.text || message.text.trim().length === 0) return;
+      sendMessage({ text: message.text } );
+      handleInputChange('');
+    }
+
+    const handlePromptInputChange: ChangeEventHandler<HTMLTextAreaElement> = (event) => {
+      handleInputChange(event.target.value);
+    }    
 
     const populateName = async () => {
       const result = await fetch('/api/chat/name-thread', {
@@ -151,9 +163,9 @@ const ChatContainer = ({
     if (!theme || !mounted) return <div />;
 
     return (
-        <div className="flex flex-col relative" >
+        <div className="flex flex-col relative mr-6" >
             {/* EditableField for Name */}
-            <div className={'rounded-lg border border-gray-200 dark:border-gray-700 h-[79dvh] max-h-[79dvh] overflow-auto scrollbar'} > {/*height: "calc(100vh - 240px)",*/}
+            <div className={'rounded-lg border border-gray-200 dark:border-neutral-700 h-[80dvh] max-h-[85dvh] overflow-auto scrollbar'} > {/*height: "calc(100vh - 240px)",*/}
                 <div className="flex justify-between items-start group mb-4 p-3 border-b ">
                     {/* <svg className="mr-3 h-4 w-4 text-muted-foreground mt-1 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /></svg> */}
                     <div className={'px-2'}>
@@ -190,15 +202,39 @@ const ChatContainer = ({
                     </div>
                 </div>
             </div>
-            <div className={`pt-2 h-[10dvh] bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60  ${styles.wfill}`}>
+            <div className={`h-[10dvh] bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60  ${styles.wfill}`}>
                 {error && <div className="text-red-500 mb-2">Error: {error.message}</div>}
-                <MarkdownEditor
+                {/* <MarkdownEditor
                     input={input}
                     handleInputChange={handleInputChange}
                     handleSubmit={handleSubmit}
                     handleStop={handleStop}
                     isLoading={isLoading}
-                />
+                /> */}
+                <PromptInput onSubmit={handleSubmitPromptInput} className="mt-4 relative">
+                  <PromptInputBody>
+                    {/* <PromptInputAttachments>
+                      {(attachment) => (
+                        <PromptInputAttachment data={attachment} />
+                      )}
+                    </PromptInputAttachments> */}
+                    <PromptInputTextarea onChange={handlePromptInputChange} value={input} />
+                  </PromptInputBody>
+                  <PromptInputToolbar>
+                    <PromptInputTools>
+                      {/* <PromptInputActionMenu>
+                        <PromptInputActionMenuTrigger />
+                        <PromptInputActionMenuContent>
+                          <PromptInputActionAddAttachments />
+                        </PromptInputActionMenuContent>
+                      </PromptInputActionMenu> */}
+                    </PromptInputTools>
+                    <PromptInputSubmit
+                      disabled={isLoading}
+                      status={'ready'}
+                    />
+                  </PromptInputToolbar>
+                </PromptInput>
             </div>
         </div>
     );
