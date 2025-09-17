@@ -319,8 +319,12 @@ async function main(question: string) {
     }
     // Default to data-steward agent for benchmark
     const agent: 'data-steward' | 'prospect-finder' | 'contract-reader' = 'data-steward';
-    const systemPrompt = getPrompt(agent);
+    const systemPrompt = await getPrompt(agent);
     
+    if (!systemPrompt) {
+      throw new Error(`System prompt not found for agent: ${agent}`);
+    }
+
     // Mock user sub for tools (this would need to be adapted for your authentication)
     // For benchmark purposes, we'll use a test user ID or skip tools that require authentication
     const session = await auth();

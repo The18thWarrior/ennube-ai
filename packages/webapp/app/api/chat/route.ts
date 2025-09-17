@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
     if (!model) {
       return NextResponse.json({ error: 'AI model not configured' }, { status: 500 });
     }
-    const systemPrompt = `${getPrompt(agent as 'data-steward' | 'prospect-finder' | 'contract-reader')} Today's date is ${today}.`;
+    const systemPrompt = `${await getPrompt(agent as 'data-steward' | 'prospect-finder' | 'contract-reader')} Today's date is ${today}.`;
     const tools = await getTools(agent as 'data-steward' | 'prospect-finder' | 'contract-reader', userSub);
     const _messages = convertToModelMessages(messages);
     const userMessage = _messages.at(-1);

@@ -34,16 +34,16 @@ import { getPrompt, getBaseUrl } from '@/lib/chat/helper';
 
 describe('lib/chat/helper', () => {
   describe('getPrompt', () => {
-    it('returns the data-steward system prompt', () => {
-      expect(getPrompt('data-steward')).toBe('DATA_STEWARD_PROMPT');
+    it('returns the data-steward system prompt', async () => {
+      expect(await getPrompt('data-steward')).toBe('DATA_STEWARD_PROMPT');
     });
 
-    it('returns the contract-reader system prompt', () => {
-      expect(getPrompt('contract-reader')).toBe('CONTRACT_PROMPT');
+    it('returns the contract-reader system prompt', async () => {
+      expect(await getPrompt('contract-reader')).toBe('CONTRACT_PROMPT');
     });
 
-    it('returns the prospect-finder system prompt', () => {
-      expect(getPrompt('prospect-finder')).toBe('PROSPECT_PROMPT');
+    it('returns the prospect-finder system prompt', async () => {
+      expect(await getPrompt('prospect-finder')).toBe('PROSPECT_PROMPT');
     });
   });
 

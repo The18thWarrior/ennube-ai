@@ -15,59 +15,59 @@ export declare const createVisualizationTool: {
             radius: z.ZodOptional<z.ZodEnum<["none", "sm", "md", "lg", "full"]>>;
             shadow: z.ZodOptional<z.ZodEnum<["none", "sm", "md", "lg", "xl"]>>;
         }, "strip", z.ZodTypeAny, {
-            primary?: string | undefined;
             background?: "default" | "muted" | "card" | undefined;
-            radius?: "none" | "sm" | "md" | "lg" | "full" | undefined;
-            shadow?: "none" | "sm" | "md" | "lg" | "xl" | undefined;
+            radius?: "sm" | "md" | "lg" | "none" | "full" | undefined;
+            shadow?: "sm" | "md" | "lg" | "none" | "xl" | undefined;
+            primary?: string | undefined;
         }, {
-            primary?: string | undefined;
             background?: "default" | "muted" | "card" | undefined;
-            radius?: "none" | "sm" | "md" | "lg" | "full" | undefined;
-            shadow?: "none" | "sm" | "md" | "lg" | "xl" | undefined;
+            radius?: "sm" | "md" | "lg" | "none" | "full" | undefined;
+            shadow?: "sm" | "md" | "lg" | "none" | "xl" | undefined;
+            primary?: string | undefined;
         }>>;
         animation: z.ZodOptional<z.ZodObject<{
             type: z.ZodOptional<z.ZodEnum<["fade", "slide", "bounce", "pulse", "spin", "none"]>>;
             duration: z.ZodOptional<z.ZodNumber>;
             delay: z.ZodOptional<z.ZodNumber>;
         }, "strip", z.ZodTypeAny, {
-            type?: "fade" | "slide" | "bounce" | "pulse" | "spin" | "none" | undefined;
+            type?: "pulse" | "none" | "fade" | "slide" | "bounce" | "spin" | undefined;
             duration?: number | undefined;
             delay?: number | undefined;
         }, {
-            type?: "fade" | "slide" | "bounce" | "pulse" | "spin" | "none" | undefined;
+            type?: "pulse" | "none" | "fade" | "slide" | "bounce" | "spin" | undefined;
             duration?: number | undefined;
             delay?: number | undefined;
         }>>;
     }, "strip", z.ZodTypeAny, {
-        title: string;
         components: import("..").ComponentConfig[];
-        description?: string | undefined;
+        title: string;
         theme?: {
-            primary?: string | undefined;
             background?: "default" | "muted" | "card" | undefined;
-            radius?: "none" | "sm" | "md" | "lg" | "full" | undefined;
-            shadow?: "none" | "sm" | "md" | "lg" | "xl" | undefined;
+            radius?: "sm" | "md" | "lg" | "none" | "full" | undefined;
+            shadow?: "sm" | "md" | "lg" | "none" | "xl" | undefined;
+            primary?: string | undefined;
         } | undefined;
         animation?: {
-            type?: "fade" | "slide" | "bounce" | "pulse" | "spin" | "none" | undefined;
+            type?: "pulse" | "none" | "fade" | "slide" | "bounce" | "spin" | undefined;
             duration?: number | undefined;
             delay?: number | undefined;
         } | undefined;
+        description?: string | undefined;
     }, {
-        title: string;
         components: import("..").ComponentConfig[];
-        description?: string | undefined;
+        title: string;
         theme?: {
-            primary?: string | undefined;
             background?: "default" | "muted" | "card" | undefined;
-            radius?: "none" | "sm" | "md" | "lg" | "full" | undefined;
-            shadow?: "none" | "sm" | "md" | "lg" | "xl" | undefined;
+            radius?: "sm" | "md" | "lg" | "none" | "full" | undefined;
+            shadow?: "sm" | "md" | "lg" | "none" | "xl" | undefined;
+            primary?: string | undefined;
         } | undefined;
         animation?: {
-            type?: "fade" | "slide" | "bounce" | "pulse" | "spin" | "none" | undefined;
+            type?: "pulse" | "none" | "fade" | "slide" | "bounce" | "spin" | undefined;
             duration?: number | undefined;
             delay?: number | undefined;
         } | undefined;
+        description?: string | undefined;
     }>;
     execute: (params: any) => Promise<import("..").VisualizationConfig | undefined>;
 };
@@ -90,67 +90,67 @@ export declare const createLayoutTool: {
                 label: z.ZodString;
                 content: z.ZodAny;
             }, "strip", z.ZodTypeAny, {
-                id: string;
                 label: string;
+                id: string;
                 content?: any;
             }, {
-                id: string;
                 label: string;
+                id: string;
                 content?: any;
             }>, "many">>;
         }, "strip", z.ZodTypeAny, {
             columns?: number | "auto" | "fit" | undefined;
-            gap?: "none" | "sm" | "md" | "lg" | "xl" | undefined;
             direction?: "row" | "col" | "row-reverse" | "col-reverse" | undefined;
-            justify?: "start" | "end" | "center" | "between" | "around" | "evenly" | undefined;
-            align?: "start" | "end" | "center" | "baseline" | "stretch" | undefined;
+            justify?: "center" | "end" | "start" | "between" | "around" | "evenly" | undefined;
+            align?: "center" | "end" | "start" | "baseline" | "stretch" | undefined;
+            gap?: "sm" | "md" | "lg" | "none" | "xl" | undefined;
             tabs?: {
-                id: string;
                 label: string;
+                id: string;
                 content?: any;
             }[] | undefined;
         }, {
             columns?: number | "auto" | "fit" | undefined;
-            gap?: "none" | "sm" | "md" | "lg" | "xl" | undefined;
             direction?: "row" | "col" | "row-reverse" | "col-reverse" | undefined;
-            justify?: "start" | "end" | "center" | "between" | "around" | "evenly" | undefined;
-            align?: "start" | "end" | "center" | "baseline" | "stretch" | undefined;
+            justify?: "center" | "end" | "start" | "between" | "around" | "evenly" | undefined;
+            align?: "center" | "end" | "start" | "baseline" | "stretch" | undefined;
+            gap?: "sm" | "md" | "lg" | "none" | "xl" | undefined;
             tabs?: {
-                id: string;
                 label: string;
+                id: string;
                 content?: any;
             }[] | undefined;
         }>;
         children: z.ZodOptional<z.ZodArray<z.ZodType<import("..").ComponentConfig, z.ZodTypeDef, import("..").ComponentConfig>, "many">>;
     }, "strip", z.ZodTypeAny, {
-        type: "GridLayout" | "FlexLayout" | "TabLayout";
         config: {
             columns?: number | "auto" | "fit" | undefined;
-            gap?: "none" | "sm" | "md" | "lg" | "xl" | undefined;
             direction?: "row" | "col" | "row-reverse" | "col-reverse" | undefined;
-            justify?: "start" | "end" | "center" | "between" | "around" | "evenly" | undefined;
-            align?: "start" | "end" | "center" | "baseline" | "stretch" | undefined;
+            justify?: "center" | "end" | "start" | "between" | "around" | "evenly" | undefined;
+            align?: "center" | "end" | "start" | "baseline" | "stretch" | undefined;
+            gap?: "sm" | "md" | "lg" | "none" | "xl" | undefined;
             tabs?: {
-                id: string;
                 label: string;
+                id: string;
                 content?: any;
             }[] | undefined;
         };
+        type: "GridLayout" | "FlexLayout" | "TabLayout";
         children?: import("..").ComponentConfig[] | undefined;
     }, {
-        type: "GridLayout" | "FlexLayout" | "TabLayout";
         config: {
             columns?: number | "auto" | "fit" | undefined;
-            gap?: "none" | "sm" | "md" | "lg" | "xl" | undefined;
             direction?: "row" | "col" | "row-reverse" | "col-reverse" | undefined;
-            justify?: "start" | "end" | "center" | "between" | "around" | "evenly" | undefined;
-            align?: "start" | "end" | "center" | "baseline" | "stretch" | undefined;
+            justify?: "center" | "end" | "start" | "between" | "around" | "evenly" | undefined;
+            align?: "center" | "end" | "start" | "baseline" | "stretch" | undefined;
+            gap?: "sm" | "md" | "lg" | "none" | "xl" | undefined;
             tabs?: {
-                id: string;
                 label: string;
+                id: string;
                 content?: any;
             }[] | undefined;
         };
+        type: "GridLayout" | "FlexLayout" | "TabLayout";
         children?: import("..").ComponentConfig[] | undefined;
     }>;
     execute: (params: any) => Promise<import("..").ComponentConfig>;
@@ -171,13 +171,13 @@ export declare const createDataVisualizationTool: {
                 sortable: z.ZodOptional<z.ZodBoolean>;
                 type: z.ZodOptional<z.ZodEnum<["string", "number", "date", "boolean"]>>;
             }, "strip", z.ZodTypeAny, {
-                key: string;
                 header: string;
+                key: string;
                 type?: "string" | "number" | "boolean" | "date" | undefined;
                 sortable?: boolean | undefined;
             }, {
-                key: string;
                 header: string;
+                key: string;
                 type?: "string" | "number" | "boolean" | "date" | undefined;
                 sortable?: boolean | undefined;
             }>, "many">>;
@@ -185,53 +185,53 @@ export declare const createDataVisualizationTool: {
             searchable: z.ZodOptional<z.ZodBoolean>;
             pagination: z.ZodOptional<z.ZodBoolean>;
         }, "strip", z.ZodTypeAny, {
-            chartType?: "line" | "bar" | "pie" | "area" | "scatter" | undefined;
             columns?: {
-                key: string;
                 header: string;
+                key: string;
                 type?: "string" | "number" | "boolean" | "date" | undefined;
                 sortable?: boolean | undefined;
             }[] | undefined;
             pagination?: boolean | undefined;
             searchable?: boolean | undefined;
+            chartType?: "area" | "line" | "bar" | "pie" | "scatter" | undefined;
         }, {
-            chartType?: "line" | "bar" | "pie" | "area" | "scatter" | undefined;
             columns?: {
-                key: string;
                 header: string;
+                key: string;
                 type?: "string" | "number" | "boolean" | "date" | undefined;
                 sortable?: boolean | undefined;
             }[] | undefined;
             pagination?: boolean | undefined;
             searchable?: boolean | undefined;
+            chartType?: "area" | "line" | "bar" | "pie" | "scatter" | undefined;
         }>>;
     }, "strip", z.ZodTypeAny, {
-        data: any[];
         type: "DataTable" | "Chart" | "MetricCard" | "Timeline";
+        data: any[];
         config?: {
-            chartType?: "line" | "bar" | "pie" | "area" | "scatter" | undefined;
             columns?: {
-                key: string;
                 header: string;
+                key: string;
                 type?: "string" | "number" | "boolean" | "date" | undefined;
                 sortable?: boolean | undefined;
             }[] | undefined;
             pagination?: boolean | undefined;
             searchable?: boolean | undefined;
+            chartType?: "area" | "line" | "bar" | "pie" | "scatter" | undefined;
         } | undefined;
     }, {
-        data: any[];
         type: "DataTable" | "Chart" | "MetricCard" | "Timeline";
+        data: any[];
         config?: {
-            chartType?: "line" | "bar" | "pie" | "area" | "scatter" | undefined;
             columns?: {
-                key: string;
                 header: string;
+                key: string;
                 type?: "string" | "number" | "boolean" | "date" | undefined;
                 sortable?: boolean | undefined;
             }[] | undefined;
             pagination?: boolean | undefined;
             searchable?: boolean | undefined;
+            chartType?: "area" | "line" | "bar" | "pie" | "scatter" | undefined;
         } | undefined;
     }>;
     execute: (params: any) => Promise<import("..").ComponentConfig>;
@@ -260,52 +260,52 @@ export declare const createFormTool: {
                 value?: any;
             }>, "many">>;
         }, "strip", z.ZodTypeAny, {
-            type: "number" | "text" | "email" | "password" | "select" | "checkbox" | "radio" | "textarea";
+            type: "number" | "text" | "checkbox" | "radio" | "select" | "textarea" | "email" | "password";
             name: string;
+            label?: string | undefined;
+            placeholder?: string | undefined;
             options?: {
                 label: string;
                 value?: any;
             }[] | undefined;
-            placeholder?: string | undefined;
-            label?: string | undefined;
             required?: boolean | undefined;
         }, {
-            type: "number" | "text" | "email" | "password" | "select" | "checkbox" | "radio" | "textarea";
+            type: "number" | "text" | "checkbox" | "radio" | "select" | "textarea" | "email" | "password";
             name: string;
+            label?: string | undefined;
+            placeholder?: string | undefined;
             options?: {
                 label: string;
                 value?: any;
             }[] | undefined;
-            placeholder?: string | undefined;
-            label?: string | undefined;
             required?: boolean | undefined;
         }>, "many">;
         submitText: z.ZodOptional<z.ZodString>;
         onSubmit: z.ZodOptional<z.ZodString>;
     }, "strip", z.ZodTypeAny, {
         fields: {
-            type: "number" | "text" | "email" | "password" | "select" | "checkbox" | "radio" | "textarea";
+            type: "number" | "text" | "checkbox" | "radio" | "select" | "textarea" | "email" | "password";
             name: string;
+            label?: string | undefined;
+            placeholder?: string | undefined;
             options?: {
                 label: string;
                 value?: any;
             }[] | undefined;
-            placeholder?: string | undefined;
-            label?: string | undefined;
             required?: boolean | undefined;
         }[];
         onSubmit?: string | undefined;
         submitText?: string | undefined;
     }, {
         fields: {
-            type: "number" | "text" | "email" | "password" | "select" | "checkbox" | "radio" | "textarea";
+            type: "number" | "text" | "checkbox" | "radio" | "select" | "textarea" | "email" | "password";
             name: string;
+            label?: string | undefined;
+            placeholder?: string | undefined;
             options?: {
                 label: string;
                 value?: any;
             }[] | undefined;
-            placeholder?: string | undefined;
-            label?: string | undefined;
             required?: boolean | undefined;
         }[];
         onSubmit?: string | undefined;
@@ -329,53 +329,53 @@ export declare const createFeedbackTool: {
                 label: z.ZodString;
                 completed: z.ZodBoolean;
             }, "strip", z.ZodTypeAny, {
-                id: string;
                 label: string;
+                id: string;
                 completed: boolean;
             }, {
-                id: string;
                 label: string;
+                id: string;
                 completed: boolean;
             }>, "many">>;
         }, "strip", z.ZodTypeAny, {
+            status?: "error" | "info" | "success" | "warning" | undefined;
             message?: string | undefined;
-            status?: "success" | "error" | "warning" | "info" | undefined;
             steps?: {
-                id: string;
                 label: string;
+                id: string;
                 completed: boolean;
             }[] | undefined;
         }, {
+            status?: "error" | "info" | "success" | "warning" | undefined;
             message?: string | undefined;
-            status?: "success" | "error" | "warning" | "info" | undefined;
             steps?: {
-                id: string;
                 label: string;
+                id: string;
                 completed: boolean;
             }[] | undefined;
         }>;
     }, "strip", z.ZodTypeAny, {
-        type: "StatusIndicator" | "AlertBanner" | "ProgressTracker";
         config: {
+            status?: "error" | "info" | "success" | "warning" | undefined;
             message?: string | undefined;
-            status?: "success" | "error" | "warning" | "info" | undefined;
             steps?: {
-                id: string;
                 label: string;
+                id: string;
                 completed: boolean;
             }[] | undefined;
         };
+        type: "StatusIndicator" | "AlertBanner" | "ProgressTracker";
     }, {
-        type: "StatusIndicator" | "AlertBanner" | "ProgressTracker";
         config: {
+            status?: "error" | "info" | "success" | "warning" | undefined;
             message?: string | undefined;
-            status?: "success" | "error" | "warning" | "info" | undefined;
             steps?: {
-                id: string;
                 label: string;
+                id: string;
                 completed: boolean;
             }[] | undefined;
         };
+        type: "StatusIndicator" | "AlertBanner" | "ProgressTracker";
     }>;
     execute: (params: any) => Promise<import("..").ComponentConfig>;
 };
