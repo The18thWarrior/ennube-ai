@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { Button } from "./ui";
 
 // === admin-dropdown.tsx ===
 // Created: 2025-09-16
@@ -33,15 +34,16 @@ export default function AdminDropdown(): JSX.Element {
 
   return (
     <div className="relative" ref={ref}>
-      <button
+      <Button
         type="button"
         aria-haspopup="menu"
         aria-expanded={open}
+        variant={'outline'}
         onClick={() => setOpen((v) => !v)}
-        className="px-3 py-1 rounded-md text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-800"
+        className="px-3 py-1 rounded-md text-sm font-medium "
       >
         Admin
-      </button>
+      </Button>
 
       {open && (
         <div
