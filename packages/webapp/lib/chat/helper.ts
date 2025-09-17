@@ -20,9 +20,12 @@ import { Tool } from 'ai';
 import { CONTRACT_READER_SYSTEM_PROMPT } from '../prompts/contract-reader-system-prompt';
 import { generateQueryTool } from './sfdc/generateQueryTool';
 import { proposeUpdateDataTool } from './sfdc/proposeUpdateDataTool';
+import { getPrompt as getPromptCache } from '@/lib/cache/prompt-cache';
 
 export const getPrompt = (agent: 'data-steward' | 'prospect-finder' | 'contract-reader') => {
-    return agent === 'data-steward' ? DATA_STEWARD_SYSTEM_PROMPT : agent === 'contract-reader' ? CONTRACT_READER_SYSTEM_PROMPT : PROSPECT_FINDER_SYSTEM_PROMPT;
+  const cachePrompt = getPromptCache(agent);
+
+  return cachePrompt || (agent === 'data-steward' ? DATA_STEWARD_SYSTEM_PROMPT : agent === 'contract-reader' ? CONTRACT_READER_SYSTEM_PROMPT : PROSPECT_FINDER_SYSTEM_PROMPT);
 }
 
 export async function getBaseUrl() {

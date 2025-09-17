@@ -7,7 +7,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 
 // Load prompts text from the bundled file
-import { prompts as promptsText } from '../../benchmark/files/query_prompts'
+import { prompts as promptsText } from '../../../benchmark/files/query_prompts'
 import { Button, Card, JsonView } from '@/components/ui'
 //import resultsJson from './results.json'
 
