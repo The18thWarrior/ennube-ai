@@ -60,7 +60,7 @@ export async function GET(
     const contentVersion = await client.query(
       `SELECT Id, Title, FileExtension FROM ContentVersion WHERE Id = '${contentVersionId}' LIMIT 1`
     );
-
+    console.log("ContentVersion query result:", contentVersion);
     const records = (
       contentVersion as {
         records: Array<{ Id: string; Title: string; FileExtension?: string }>;
