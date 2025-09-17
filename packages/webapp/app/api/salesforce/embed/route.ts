@@ -6,6 +6,7 @@ import { SalesforceAuthResult } from '@/lib/types';
 import { auth } from '@/auth';
 import { createFieldText, createChildRelationshipText, embedManyTexts } from '@/lib/chat/sfdc/embeddings';
 import { VectorStoreEntry, createSalesforceVectorStore } from '@/lib/chat/sfdc/vectorStore';
+import { loadSchemaFromJSON } from '@/lib/graph';
 
 const STANDARD_OBJECTS = ['Account', 'Contact', 'Lead', 'Opportunity', 'OpportunityLineItem', 'Product2', 'Case', 'User', 'Campaign', 'Task', 'Event', 'Contract', 'ContentVersion', 'Attachment', 'Note'];
 export const maxDuration = 300;
@@ -149,110 +150,66 @@ export async function POST(request: NextRequest) {
 
     console.log('Memory Usage after describe results:', process.memoryUsage());
 		// Build VectorStoreEntry records using the same pattern as generateQueryTool
-		const entries: VectorStoreEntry[] = [];
+		
+		// Instead of storing vectors, build a schema object and create a graph
+		const tables: any[] = [];
 		for (const res of describeResults) {
-			if ((res as any).error || !(res as any).describe) continue;
-			const desc = (res as any).describe;
-			const sobjectType = desc.name;
-
-			const fieldTexts: string[] = (desc.fields || []).map((field: any) =>
-				createFieldText({
-					sobjectType,
-					fieldName: field.name,
-					label: field.label,
-					type: field.type,
-					//helpText: field.inlineHelpText,
-					relationshipName: field.relationshipName,
-					picklistValues: field.picklistValues?.map((pv: any) => pv.value)
-				})
-			);
-
-			const childTexts: string[] = (desc.childRelationships || []).map((child: any) =>
-				createChildRelationshipText({
-					childSObject: child.childSObject,
-					field: child.field,
-					relationshipName: child.relationshipName
-				})
-			);
-
-			const allTexts = fieldTexts.concat(childTexts);
-			if (allTexts.length === 0) continue;
-
-			// Batch embed texts for this sobject
-			let vectors: number[][] = [];
-			try {
-				vectors = await embedManyTexts(allTexts);
-			} catch (err) {
-				console.warn(`Embedding failed for ${sobjectType}:`, err);
-				continue;
-			}
-      //console.log(`vector length`, vectors.at(0)?.length);
-
-			// Fields
-			for (let i = 0; i < fieldTexts.length; i++) {
-				const field = desc.fields[i];
-				const vec = vectors[i];
-				if (!vec || !Array.isArray(vec) || vec.length === 0) continue;
-				entries.push({
-					id: `${sobjectType}:${field.name}`,
-					vector: vec,
-					payload: {
-						sobjectType,
-						fieldName: field.name,
-						label: field.label,
-						type: field.type,
-						helpText: field.inlineHelpText,
-						picklistValues: field.picklistValues?.map((pv: any) => pv.value)
+			if (res.error || !res.describe) continue;
+			const desc = res.describe;
+			const tableSchema: any = {
+				name: desc.name,
+				schema: 'public',
+				columns: (desc.fields || []).map((f) => ({
+					name: f.name,
+					dataType: f.type || 'unknown',
+					isNullable: f.nillable ?? true,
+					isPrimaryKey:f.name.toLowerCase() === 'id',
+					defaultValue: undefined,
+					maxLength: f.length,
+				})),
+				foreignKeys: (desc.fields || []).flatMap((f) => {
+					// Detect lookup/foreign key fields by presence of referenceTo
+					if (Array.isArray(f.referenceTo) && f.referenceTo.length > 0) {
+						// Create a FK entry for each referenced table
+						return f.referenceTo.map((ref: string) => ({
+							columnName: f.name,
+							referencedTable: ref,
+							referencedColumn: 'id',
+						}));
 					}
-				});
-			}
-
-			// Child relationships
-			for (let j = 0; j < childTexts.length; j++) {
-				const child = desc.childRelationships[j];
-				const vec = vectors[fieldTexts.length + j];
-				if (!vec || !Array.isArray(vec) || vec.length === 0) continue;
-				entries.push({
-					id: `${sobjectType}:child:${child.relationshipName}`,
-					vector: vec,
-					payload: {
-						sobjectType: child.childSObject,
-						fieldName: child.field,
-						parentSobjectType: sobjectType,
-						relationshipName: child.relationshipName
-					}
-				});
-			}
+					return [];
+				}),
+			};
+			tables.push(tableSchema);
 		}
 
-    console.log('Memory Usage after embedding:', process.memoryUsage());
-    const prunedEntries = entries.reduce((acc, entry) => {
-      if (entry.id && !acc.some(e => e.id === entry.id)) {
-        acc.push(entry);
-      }
-      return acc;
-    }, [] as VectorStoreEntry[]);
-    const { url } = await put(`sfdc:${sub}:embed.txt`, JSON.stringify(prunedEntries), { access: 'public', allowOverwrite: true });
-    const credentials2 = await getSalesforceCredentialsBySub(sub);
-    if (!credentials2) {
+		// Use the graph library to build a graph from the schema
+		
+		const graph = loadSchemaFromJSON({ tables });
+		const jsonData = graph.toJSON();
+
+		// Write graph JSON to Vercel Blob
+		const fileName = `sfdc:${sub}:embed.json`;
+		const { url } = await put(fileName, JSON.stringify(jsonData), { access: 'public', allowOverwrite: true });
+
+		// Update stored credentials with describe embed URL
+		const credentials2 = await getSalesforceCredentialsBySub(sub);
+		if (!credentials2) {
 			return NextResponse.json({ error: 'No Salesforce credentials found for this user' }, { status: 404 });
 		}
-    const authResult2: SalesforceAuthResult = {
+		const authResult2: SalesforceAuthResult = {
 			success: true,
 			userId: sub,
 			accessToken: credentials2.accessToken,
 			instanceUrl: credentials2.instanceUrl,
 			refreshToken: credentials2.refreshToken,
 			userInfo: credentials2.userInfo,
-      describeEmbedUrl: url
+			describeEmbedUrl: url
 		};
-    await updateDescribeEmbedUrlByUserAndType(authResult2.userId, authResult2.describeEmbedUrl || null);
-    console.log('successfully embedded', url)
-		// Upsert entries into the in-memory vector store
-		// const store = createSalesforceVectorStore();
-		// await store.upsert(entries);
+		await updateDescribeEmbedUrlByUserAndType(authResult2.userId, authResult2.describeEmbedUrl || null);
+		console.log('successfully embedded graph json', url);
 
-		return NextResponse.json({ message: 'Embedded sobject metadata', sub, sobjectsProcessed: describeResults.length, entriesCreated: entries.length });
+		return NextResponse.json({ message: 'Embedded sobject graph', sub, sobjectsProcessed: describeResults.length, file: url });
 	} catch (error) {
 		return NextResponse.json({ error: error instanceof Error ? error.message : String(error) }, { status: 500 });
 	}

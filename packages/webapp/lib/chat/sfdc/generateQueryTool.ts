@@ -15,11 +15,13 @@ import { openai } from '@ai-sdk/openai';
 import z from "zod/v4";
 import { embedText } from "./embeddings";
 import { getBaseUrl } from "../helper";
-import { getSalesforceCredentialsBySub, StoredSalesforceCredentials } from "@/lib/db/salesforce-storage";
+import { getSalesforceCredentialsBySub, StoredSalesforceCredentials, updateDescribeEmbedUrlByUserAndType } from "@/lib/db/salesforce-storage";
 import { QueryResult, SalesforceAuthResult } from "@/lib/types";
 import getModel from "../getModel";
 import { createSalesforceClient } from "@/lib/salesforce";
 import {Searcher} from 'fast-fuzzy'
+import { loadSchemaFromJSON, createSchemaAnalyzer, GraphDatabase, NodeType } from '@/lib/graph';
+import { put } from "@vercel/blob";
 
 /**
  * Zod schema for structured SQL generation
@@ -251,34 +253,145 @@ async function fetchAndProcessDescribe(credentials: StoredSalesforceCredentials,
       userInfo: credentials.userInfo
   };
   const client = createSalesforceClient(authResult);
-  const globalResults = await client.describeGlobal();
-  // const searcher = new Searcher(objects);
-  const objectsLower = objects.map(o => o.toLowerCase());
-  const filteredObjects = globalResults.sobjects.filter(obj => (objectsLower.includes(obj.name.toLowerCase()) || objectsLower.includes(obj.label.toLowerCase()) || objectsLower.includes(obj.labelPlural.toLowerCase())) && obj.queryable);
 
-  const describePromises = filteredObjects.map(obj => client.describe(obj.name));
-  const describeResults = await Promise.all(describePromises);
-  const allFields: QueryResult[] = describeResults.flatMap((desc): QueryResult[] => {
-    if (!desc || !desc.fields) return [];
-    return desc.fields.map(field => ({
-      // Provide a deterministic unique id required by QueryResult interface
-      id: `${desc.name}.${field.name}`,
-      score: 1, // Placeholder score; actual similarity scoring happens later
-      payload: {
-        sobjectType: desc.name,
-        fieldName: field.name,
-        label: field.label,
-        type: field.type,
-        //inlineHelpText: field.inlineHelpText,
-        picklistValues: field.picklistValues ? field.picklistValues.map(p => p.value) : undefined,
-        relationshipName: field.relationshipName,
-        length: field.length,
-        precision: field.precision,
-        // Include child relationship info if applicable
-        childSObject: desc.childRelationships.find(cr => cr.field === field.name)?.childSObject
+  // Try to load an existing serialized graph if the credentials point to one
+  if (credentials.describeEmbedUrl) {
+    try {
+      const resp = await fetch(credentials.describeEmbedUrl);
+      if (resp.ok) {
+        const json = await resp.json();
+        const from = GraphDatabase.fromJSON(json);
+        if (from && from.success && from.data) {
+          const graph = from.data;
+          const analyzer = createSchemaAnalyzer(graph);
+
+          const results: QueryResult[] = [];
+
+          // Iterate all table nodes and their columns
+          const tableNodes = graph.getNodesByType(NodeType.TABLE);
+          for (const t of tableNodes) {
+            if (!objects.includes(t.name)) continue;
+            const cols = analyzer.getTableColumns(t.id);
+            for (const col of cols) {
+              const payload: any = {
+                sobjectType: t.name,
+                fieldName: col.name,
+                label: col.name,
+                type: col.dataType,
+              };
+              results.push({ id: `${t.name}.${col.name}`, score: 1, payload });
+            }
+          }
+
+          if (results.length > 0) return results;
+        }
       }
-    }));
+    } catch (err) {
+      console.warn('Failed to load embedded graph from describeEmbedUrl, will fall back to live describe', err);
+    }
+  }
+
+  // No stored graph; perform live describe on requested objects
+  const describePromises = objects.map(async (obj) => {
+    try {
+      const describe = await client.describe(obj);
+      return { sobject: obj, describe } as DescribeResponse;
+    } catch (err) {
+      console.warn(`Failed to describe ${obj}:`, err);
+      return { sobject: obj, describe: null } as any;
+    }
   });
+
+  const describeResults = await Promise.all(describePromises);
+
+  const tables: any[] = [];
+  const fieldInfoMap = new Map<string, any>();
+
+  for (const res of describeResults) {
+    if (!res || !res.describe) continue;
+    const desc = res.describe;
+    const sobjectType = desc.name;
+
+    const tableSchema: any = {
+      name: sobjectType,
+      schema: desc.namespacePrefix || 'public',
+      columns: (desc.fields || []).map((f: any) => ({
+        name: f.name,
+        dataType: f.type || 'unknown',
+        isNullable: f.nillable ?? true,
+        isPrimaryKey: (f.name || '').toLowerCase() === 'id',
+        defaultValue: undefined,
+        maxLength: f.length,
+      })),
+      foreignKeys: (desc.fields || []).flatMap((f: any) => {
+        if (Array.isArray(f.referenceTo) && f.referenceTo.length > 0) {
+          return f.referenceTo.map((ref: string) => ({
+            columnName: f.name,
+            referencedTable: ref,
+            referencedColumn: 'id',
+          }));
+        }
+        return [];
+      }),
+    };
+
+    for (const f of desc.fields || []) {
+      fieldInfoMap.set(`${sobjectType}.${f.name}`, {
+        label: f.label,
+        picklistValues: f.picklistValues ? f.picklistValues.map((p: any) => p.value) : undefined,
+        relationshipName: f.relationshipName,
+        length: f.length,
+        precision: f.precision,
+      });
+    }
+
+    for (const cr of desc.childRelationships || []) {
+      if (cr.field) {
+        const key = `${sobjectType}.${cr.field}`;
+        const existing = fieldInfoMap.get(key) || {};
+        existing.childSObject = cr.childSObject;
+        existing.relationshipName = cr.relationshipName;
+        fieldInfoMap.set(key, existing);
+      }
+    }
+
+    tables.push(tableSchema);
+  }
+
+  const graph = loadSchemaFromJSON({ tables });
+  const jsonData = graph.toJSON();
+
+  // Write graph JSON to Vercel Blob
+  const fileName = `sfdc:${sub}:embed.json`;
+  const { url } = await put(fileName, JSON.stringify(jsonData), { access: 'public', allowOverwrite: true });
+  await updateDescribeEmbedUrlByUserAndType(sub, url);
+    
+  const analyzer = createSchemaAnalyzer(graph);
+
+  const allFields: QueryResult[] = [];
+  for (const table of tables) {
+    const tableNodes = graph.getNodesByName(table.name);
+    const tableNode = tableNodes.find((n: any) => n.type === 0) || tableNodes[0];
+    if (!tableNode) continue;
+
+    const columns = analyzer.getTableColumns(tableNode.id);
+    for (const col of columns) {
+      const key = `${table.name}.${col.name}`;
+      const info = fieldInfoMap.get(key) || {};
+      const payload: Record<string, unknown> = {
+        sobjectType: table.name,
+        fieldName: col.name,
+        label: info.label || col.name,
+        type: col.dataType,
+        picklistValues: info.picklistValues,
+        relationshipName: info.relationshipName,
+        childSObject: info.childSObject,
+      };
+
+      allFields.push({ id: `${table.name}.${col.name}`, score: 1, payload });
+    }
+  }
+
   return allFields;
 }
 
