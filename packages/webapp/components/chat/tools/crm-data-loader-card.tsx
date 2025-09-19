@@ -27,7 +27,7 @@ interface DataLoaderProps {
 type LoaderStep = 'input' | 'mapping' | 'execution' | 'results'
 
 export function CrmDataLoaderCard({ records, onComplete, borderless }: DataLoaderProps) {
-  const { client, isLoading: sfdcLoading, error: sfdcError, describeGlobal, bulk, describeSobject } = useSfdcBatch()
+  const { isLoading: sfdcLoading, error: sfdcError, describeGlobal, bulk, describeSobject } = useSfdcBatch()
   
   // State management
   const [currentStep, setCurrentStep] = useState<LoaderStep>('input')
@@ -192,7 +192,7 @@ export function CrmDataLoaderCard({ records, onComplete, borderless }: DataLoade
 
   // Execute bulk operation
   const executeBulkOperation = useCallback(async () => {
-    if (!client || !selectedObject || csvData.length === 0) return
+    if (!selectedObject || csvData.length === 0 || operation === 'upsert') return
     
     setIsExecuting(true)
     setExecutionError(null)
@@ -204,7 +204,7 @@ export function CrmDataLoaderCard({ records, onComplete, borderless }: DataLoade
         type: 'ingest',
         sobjectType: selectedObject,
         operation,
-        externalIdFieldName: operation === 'upsert' ? externalIdField : undefined,
+        externalIdFieldName: undefined,
         records: transformedData,
         timeout
       })
@@ -217,7 +217,7 @@ export function CrmDataLoaderCard({ records, onComplete, borderless }: DataLoade
     } finally {
       setIsExecuting(false)
     }
-  }, [client, selectedObject, csvData, transformData, bulk, operation, externalIdField, timeout, onComplete])
+  }, [selectedObject, csvData, transformData, bulk, operation, externalIdField, timeout, onComplete])
 
   // Navigation helpers
   const canProceedToMapping = useMemo(() => {

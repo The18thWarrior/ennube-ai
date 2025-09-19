@@ -150,6 +150,25 @@ export function useSfdcBatch() {
    * @param sobject - The API name of the Salesforce object
    * @returns The describe result for the sObject
    */
+  const describeSobject = async (sobject: string) => {
+    if (!sobject) throw new Error('sobject is required');
+    const url = `/api/salesforce/describe?sobjectType=${encodeURIComponent(sobject as string)}`;
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin'
+    });
+
+    if (!res.ok) {
+      // Try to surface server-side error details
+      let details: any = null;
+      try { details = await res.json(); } catch (e) { details = await res.text(); }
+      throw new Error(`Salesforce batch API error: ${res.status} ${res.statusText} - ${JSON.stringify(details)}`);
+    }
+
+    const json = await res.json();
+    return json;
+  }
   
-  return { isLoading, error, describeGlobal, bulk};
+  return { isLoading, error, describeGlobal, bulk, describeSobject};
 }
