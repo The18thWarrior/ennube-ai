@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import type { ComponentProps, ReactNode } from "react";
 import { CodeBlock } from "./code-block";
+import { JsonView } from "../ui";
 
 export type ToolProps = ComponentProps<typeof Collapsible>;
 
@@ -96,12 +97,13 @@ export type ToolInputProps = ComponentProps<"div"> & {
 };
 
 export const ToolInput = ({ className, input, ...props }: ToolInputProps) => (
-  <div className={cn("space-y-2 overflow-hidden p-4", className)} {...props}>
+  <div className={cn("overflow-hidden px-4 pt-4", className)} {...props}>
     <h4 className="font-medium text-muted-foreground text-xs uppercase tracking-wide">
       Parameters
     </h4>
-    <div className="rounded-md bg-muted/50">
-      <CodeBlock code={JSON.stringify(input, null, 2)} language="json" />
+    <div className="rounded-md ">
+      {/* <CodeBlock code={JSON.stringify(input, null, 2)} language="json" /> */}
+      <JsonView data={input} classNames="!m-0 p-4" />
     </div>
   </div>
 );

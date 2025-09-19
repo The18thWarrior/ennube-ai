@@ -24,7 +24,8 @@ import { getPrompt as getPromptCache } from '@/lib/cache/prompt-cache';
 
 export const getPrompt = async (agent: 'data-steward' | 'prospect-finder' | 'contract-reader') => {
   const cachePrompt = await getPromptCache(agent);
-  if (cachePrompt) return cachePrompt.prompt;
+  // TODO: use cached prompt if found
+  //if (cachePrompt) return cachePrompt.prompt;
   return agent === 'data-steward' ? DATA_STEWARD_SYSTEM_PROMPT : agent === 'contract-reader' ? CONTRACT_READER_SYSTEM_PROMPT : PROSPECT_FINDER_SYSTEM_PROMPT;
 }
 

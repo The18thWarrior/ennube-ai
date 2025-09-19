@@ -12,12 +12,12 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { nlRequest, context } = body || {};
+    const { nlRequest, operation, sobject, recordIds } = body || {};
     if (!nlRequest || typeof nlRequest !== 'string') {
       return NextResponse.json({ error: 'Invalid input: nlRequest required' }, { status: 400 });
     }
 
-    const result = await proposeUpdate(nlRequest, { ...context, userId: sub });
+    const result = await proposeUpdate(nlRequest, { userId: sub, operation, sobject, recordIds });
     return NextResponse.json(result);
   } catch (error) {
     console.log('Error in propose route:', error);

@@ -20,7 +20,7 @@ import {
   useSidebar,
 } from '../../components/ui/sidebar';
 import { useRouter, usePathname } from 'next/navigation';
-import { Delete, History, SquarePlus, Trash2, ArrowRightToLine, ArrowLeftToLine} from 'lucide-react';
+import { Delete, History, SquarePlus, Menu, Trash2, ArrowRightToLine, ArrowLeftToLine} from 'lucide-react';
 import { nanoid } from 'nanoid';
 import { agents } from '@/resources/agent-defintion';
 import Image from 'next/image';
@@ -69,11 +69,12 @@ function ChatSidebar({
   return (
       <Sidebar className="min-h-50 max-h-[80dvh] " variant={'floating'} collapsible={'icon'}>
         <SidebarHeader>
-          
-          <div className="flex items-center justify-end">
+
+          <div className={`flex items-center ${open ? 'justify-between' : 'justify-center'}`}>
             {/* <span className="font-semibold text-lg">Chats</span> */}
-            <Button variant="ghost" size="icon" onClick={toggleSidebar} className="mr-1">
-              {open ? <ArrowLeftToLine /> : <ArrowRightToLine />}
+            <Button variant="ghost" size="icon" onClick={toggleSidebar} className="">
+              {/* {open ? <ArrowLeftToLine /> : <ArrowRightToLine />} */}
+              <Menu />
             </Button>
           </div>
         </SidebarHeader>
@@ -94,7 +95,7 @@ function ChatSidebar({
                   }
                 </SidebarMenuItem>
                 { (
-                  <div id="agent-select-section" className={`rounded transition-height duration-300 ease-in-out ${showAgentSelect ? 'h-auto ' : 'h-0 overflow-hidden m-0 p-0'}`}>
+                  <div id="agent-select-section" className={`rounded transition-height duration-300 ease-in-out ${showAgentSelect || !open ? 'h-auto ' : 'h-0 overflow-hidden m-0 p-0'}`}>
                     {/* <div className="mb-2 text-xs font-semibold text-muted-foreground">Select an agent:</div> */}
                     <ul className="space-y-1">
                       {agents.map((agent) => (

@@ -42,6 +42,7 @@ export async function POST(req: NextRequest) {
     const systemPrompt = `${await getPrompt(agent as 'data-steward' | 'prospect-finder' | 'contract-reader')} Today's date is ${today}.`;
     const tools = await getTools(agent as 'data-steward' | 'prospect-finder' | 'contract-reader', userSub);
     const _messages = convertToModelMessages(messages);
+    console.log('api/chat - messages:', _messages);
     const userMessage = _messages.at(-1);
     if (!userMessage) {
       return NextResponse.json({ error: 'No user message found' }, { status: 400 });

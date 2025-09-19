@@ -142,6 +142,7 @@ async function generateAndExecuteQuery(
     You are an expert Salesforce SOQL (Salesforce Object Query Language) generation agent. Your sole purpose is to convert a user's natural language question into a syntactically correct and efficient SOQL query based on the provided Salesforce schema. You must operate under the following rules and guidelines.
     Requirements:
     - Generate only SELECT statements
+    - ALWAYS include the object Id field in the SELECT clause
     - Use proper SOQL syntax
     - Focus on fields most relevant to the user's request
     - Include appropriate WHERE clauses if filtering is implied

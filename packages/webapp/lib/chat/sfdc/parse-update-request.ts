@@ -17,10 +17,9 @@ const FieldChangeSchema = z.object({
 const RecordChangeSchema = z.object({
   operationId: z.string().optional(),
   operation: z.enum(['update', 'delete', 'create']),
-  sobject: z.string(),
-  recordId: z.string().optional(),
-  fields: z.array(FieldChangeSchema).optional(),
-  confidence: z.number().min(0).max(1).optional()
+  sobject: z.string().describe('Salesforce object type, e.g. Account, Contact'),
+  recordId: z.string().optional().describe('ID of the record to update/delete; omit for create operations'),
+  fields: z.array(FieldChangeSchema).nonempty().describe('List of field changes')
 });
 
 const UpdateProposalSchema = z.object({
@@ -52,75 +51,6 @@ Instructions:
 - Keep values concise. If a record id is not present, omit recordId.
 - Do not include any explanations or surrounding text; return only the JSON object.
 
-Examples (few-shot):
-
-NL: "Update Account 0012x00000ABCDE set Phone to 555-1234 and Industry to Technology"
-JSON:
-{
-  "proposalId": "proposal_example_1",
-  "createdBy": "agent",
-  "createdAt": "2025-01-01T00:00:00Z",
-  "summary": "Update Account fields",
-  "changes": [
-    {
-      "operationId": "op_example_1",
-      "operation": "update",
-      "sobject": "Account",
-      "recordId": "0012x00000ABCDE",
-      "fields": [
-        { "fieldName": "Phone", "after": "555-1234" },
-        { "fieldName": "Industry", "after": "Technology" }
-      ],
-      "confidence": 0.9
-    }
-  ],
-  "status": "proposed"
-}
-
-NL: "Delete Contact 0035x00000XYZ12"
-JSON:
-{
-  "proposalId": "proposal_example_2",
-  "createdBy": "agent",
-  "createdAt": "2025-01-01T00:00:00Z",
-  "summary": "Delete Contact",
-  "changes": [
-    {
-      "operationId": "op_example_2",
-      "operation": "delete",
-      "sobject": "Contact",
-      "recordId": "0035x00000XYZ12",
-      "fields": [],
-      "confidence": 0.95
-    }
-  ],
-  "status": "proposed"
-}
-
-NL: "Create a Contact under Account 0012x00000ABCDE with FirstName John, LastName Doe, Email john@example.com"
-JSON:
-{
-  "proposalId": "proposal_example_3",
-  "createdBy": "agent",
-  "createdAt": "2025-01-01T00:00:00Z",
-  "summary": "Create Contact",
-  "changes": [
-    {
-      "operationId": "op_example_3",
-      "operation": "create",
-      "sobject": "Contact",
-      "fields": [
-        { "fieldName": "FirstName", "after": "John" },
-        { "fieldName": "LastName", "after": "Doe" },
-        { "fieldName": "Email", "after": "john@example.com" },
-        { "fieldName": "AccountId", "after": "0012x00000ABCDE" }
-      ],
-      "confidence": 0.85
-    }
-  ],
-  "status": "proposed"
-}
-
 User request:
 """
 ${nlRequest}
@@ -150,19 +80,19 @@ Return a single JSON object that validates against the schema.`;
       // Prepare a repair prompt for the next attempt
       if (attempt < maxAttempts) {
         const repairPrompt = `The model's previous attempt failed to produce a valid JSON object that matches the required schema.
-Please correct the output and return only a single JSON object that validates against the schema. Do not include any explanatory text.
+          Please correct the output and return only a single JSON object that validates against the schema. Do not include any explanatory text.
 
-Previous error:
-${err instanceof Error ? err.message : String(err)}
+          Previous error:
+          ${err instanceof Error ? err.message : String(err)}
 
-Original user request:
-"""
-${nlRequest}
-"""
+          Original user request:
+          """
+          ${nlRequest}
+          """
 
-Context (if any): ${JSON.stringify(context || {})}
+          Context (if any): ${JSON.stringify(context || {})}
 
-Return a clean JSON object.`;
+          Return a clean JSON object.`;
 
         // Overwrite prompt with repairPrompt for the next iteration
         // Keep examples in the original prompt by appending them to the repairPrompt

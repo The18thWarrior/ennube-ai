@@ -2,30 +2,35 @@ import { Tool, tool } from 'ai';
 import z from 'zod/v4';
 import { getBaseUrl } from '../helper';
 
+const ProposalRequestSchema = z.object({
+  nlRequest: z.string().describe('Natural-language request describing desired change'),
+  operation: z.enum(['create','update', 'delete']),
+  sobject: z.string().describe('Salesforce object type, e.g. Account, Contact'),
+  recordIds: z.array(z.string()).describe('List of record IDs to use for update/delete operations'),
+});
+
+
+//const combinedSchema = z.union([ProposalRequestSchemaUpdate, ProposalRequestSchemaCreate]);
 // Tool: Update Data (propose + execute)
 export const proposeUpdateDataTool = (subId: string) => {
   return tool({
-    description: 'Propose changes to Salesforce records from a natural-language request and optionally execute them after approval. Returns a structured proposal and validation issues or execution results.',
-    execute: async ({ nlRequest, mode = 'propose', context }: { nlRequest?: string; mode?: 'propose' | 'execute'; context?: any }) => {
+    description: 'Propose changes to Salesforce records. Returns a structured proposal. ALWAYS use the getSFDCDataTool first to validate current record state before proposing changes.',
+    execute: async ( params : z.infer<typeof ProposalRequestSchema>) => {
       if (!subId) throw new Error('subId is required');
-      if (!nlRequest && mode === 'propose') throw new Error('nlRequest is required for propose mode');
-      console.log(`proposeUpdateDataTool called with mode: ${mode}, nlRequest: ${nlRequest}, context: ${JSON.stringify(context)}`);
+      if (!params.nlRequest) throw new Error('nlRequest is required for propose mode');
       const baseUrl = await getBaseUrl();
 
-        const url = `${baseUrl}/api/salesforce/propose?sub=${encodeURIComponent(subId)}`;
-        const res = await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nlRequest, context })
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error('Failed to generate proposal: ' + (data.error || 'Unknown error'));
-        return data;
+      const url = `${baseUrl}/api/salesforce/propose?sub=${encodeURIComponent(subId)}`;
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(params)
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error('Failed to generate proposal: ' + (data.error || 'Unknown error'));
+      return data;
       
     },
-    inputSchema: z.object({
-      nlRequest: z.string().optional().describe('Natural-language request describing desired change'),
-      context: z.any().optional().describe('Optional context for proposal or execution (e.g., sobject, recordId, proposal)')
-    })
+    inputSchema: ProposalRequestSchema
   });
 };

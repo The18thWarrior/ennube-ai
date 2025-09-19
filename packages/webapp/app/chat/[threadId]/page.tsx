@@ -16,9 +16,7 @@ export default function ChatPage(props: { params: Promise<{ threadId: string }> 
   const searchParams = useSearchParams();
   const agent = searchParams.get('agent') || undefined; // get the agent from the URL params
   const { getThread } = useMessageHistory();
-
-  useEffect(() => {
-    const runAsync = async () => {
+  const runAsync = async () => {
       setHasThreadLoaded(false);
       const { threadId: _threadId } = await props.params; // get the chat ID from the URL
       setThreadId(_threadId);
@@ -30,7 +28,9 @@ export default function ChatPage(props: { params: Promise<{ threadId: string }> 
       
       setThread(thread);
       setHasThreadLoaded(true);
-    };
+  };
+  useEffect(() => {
+    
     runAsync();
   }, []);
   if (!threadId) return null;
@@ -39,7 +39,7 @@ export default function ChatPage(props: { params: Promise<{ threadId: string }> 
         <ToastProvider>
             <div className={'px-5'} style={{scrollbarColor: 'black'}}>
                 {hasThreadLoaded && 
-                  <Chat id={threadId} initialMessages={thread?.messages || undefined} name={thread?.name} agent={thread?.currentAgent|| agent}/>
+                  <Chat id={threadId} initialMessages={thread?.messages || undefined} name={thread?.name} agent={thread?.currentAgent|| agent} reload={runAsync}/>
                 }
             </div>      
         </ToastProvider>

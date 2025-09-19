@@ -27,7 +27,8 @@ const ChatContainer = ({
   initialMessages,
   name,
   agent,
-}: { id?: string | undefined; initialMessages?: UIMessage[]; name?: string | null; agent?: string | null }) => {
+  reload
+}: { id?: string | undefined; initialMessages?: UIMessage[]; name?: string | null; agent?: string | null; reload: () => void }) => {
     const { theme } = useTheme();
     const [input, handleInputChange] = React.useState('');
     const { data: session } = useSession();
@@ -64,7 +65,6 @@ const ChatContainer = ({
         sendMessage({ text: input });
         handleInputChange('');
     };
-
     const handleSubmitPromptInput = (message: PromptInputMessage, event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
       if (!message.text || message.text.trim().length === 0) return;
@@ -111,6 +111,7 @@ const ChatContainer = ({
               populateName(); 
             }
         }
+        console.log(messages);
     }, [messages.length, mounted]);
     useEffect(() => {
         if (!mounted) return;
@@ -155,8 +156,9 @@ const ChatContainer = ({
         if (index !== -1) {
             const newMessages = [...messages];
             newMessages[index] = updatedMessage;
-            setThread(threadId, newMessages, _name || '', selectedAvatar);
+            await setThread(threadId, newMessages, _name || '', selectedAvatar);
         }
+        //reload();
     };
     const Agent = avatarOptions.find(a => a.key === selectedAvatar)?.avatar;
     

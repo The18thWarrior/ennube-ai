@@ -21,6 +21,7 @@ export function UpdateDataReviewModal({ open, proposal, closeProposal, message, 
   const [executing, setExecuting] = useState(false);
   const [result, setResult] = useState<any | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [clientCompletion, setClientCompletion] = useState<string | null>(null);
 
   const { updateRecord, createRecord, deleteRecord, error: sfdcError, loading } = useSfdcRecord({}, proposal.changes[0]?.sobject || '');
   const { bulk } = useSfdcBatch();
@@ -112,6 +113,21 @@ export function UpdateDataReviewModal({ open, proposal, closeProposal, message, 
 
       await closeProposal({...message, parts: updatedParts} as UIMessage<unknown, UIDataTypes, UITools>);
     }
+    setExecuting(false);
+    setClientCompletion('rejected');
+  }
+
+  if (clientCompletion === 'rejected') { return (
+      
+      <div
+        className={`flex items-center gap-2 text-xs text-muted-foreground border rounded transition-all duration-3000 ease-in-out transition-discrete ${
+           "block py-4 px-2 my-2"
+        }`}
+      >
+        <TriangleAlert className="h-4 w-4 text-red-500" />
+        <span>Proposal Rejected</span>
+        
+      </div>);
   }
 
   if (status === 'completed' || status === 'rejected') { return (

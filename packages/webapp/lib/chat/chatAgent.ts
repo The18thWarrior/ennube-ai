@@ -1,4 +1,4 @@
-import { LanguageModel, Tool, ModelMessage, UIMessage, streamText, stepCountIs, createUIMessageStreamResponse, AssistantModelMessage } from "ai";
+import { LanguageModel, Tool, ModelMessage, UIMessage, streamText, stepCountIs, createUIMessageStreamResponse, AssistantModelMessage, SystemModelMessage } from "ai";
 //import { StepProgress, ExecutorOptions, executePlanSequentially } from "./planExecutor";
 import { orchestrator } from "./orchestrator";
 import {nanoid} from "nanoid";
@@ -109,7 +109,7 @@ export async function chatAgent({ model, systemPrompt, tools, _messages }: { mod
     const planMessage = { role: 'assistant', content: `Generated plan:\n${JSON.stringify(plan, null, 2)}`, id: `plan-${nanoid()}` } as AssistantModelMessage;
     _messages.push(planMessage);
     //console.log('Generated plan:', JSON.stringify(plan, null, 2));
-
+    console.log('Generated plan:', plan);
     // Create a ReadableStream that emits UI message events compatible with the SDK stream protocol
     const result = await streamText({
       model: model,
