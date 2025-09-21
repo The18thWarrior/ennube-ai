@@ -33,7 +33,13 @@ export function useSfdcBatch() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [describeGlobal, setDescribeGlobal] = useState<any | null>(null);
-
+  const [instanceUrl, setInstanceUrl] = useState<string | null>(null);
+  const getApiBase = () => '/api/salesforce';
+  // Fetch instance URL once
+  useEffect(() => {
+    if (!instanceUrl) getInstanceUrl();
+  },[])
+  
   useEffect(() => {
     let isMounted = true;
     async function fetchCredentialsAndDescribe() {
@@ -152,7 +158,7 @@ export function useSfdcBatch() {
    */
   const describeSobject = async (sobject: string) => {
     if (!sobject) throw new Error('sobject is required');
-    const url = `/api/salesforce/describe?sobjectType=${encodeURIComponent(sobject as string)}`;
+    const url = `${getApiBase()}/describe?sobjectType=${encodeURIComponent(sobject as string)}`;
     const res = await fetch(url, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
@@ -169,6 +175,18 @@ export function useSfdcBatch() {
     const json = await res.json();
     return json;
   }
-  
-  return { isLoading, error, describeGlobal, bulk, describeSobject};
+
+  const getInstanceUrl = async () => {
+    try {
+      const instRes = await fetch(`${getApiBase()}/instance`, { credentials: 'same-origin' });
+      if (instRes.ok) {
+        const inst = await instRes.json();
+        setInstanceUrl(inst?.instanceUrl || null);
+      }
+    } catch (e) {
+      // best-effort
+    }
+  };
+
+  return { isLoading, error, describeGlobal, bulk, describeSobject, getInstanceUrl };
 }

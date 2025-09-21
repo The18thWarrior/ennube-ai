@@ -28,7 +28,7 @@ interface CustomerProfileCardProps {
  */
 
 export const CustomerProfileCard: React.FC<CustomerProfileCardProps> = ({ profile, onSave, onClose }) => {
-  const { updateProfile, loading, error } = useCustomerProfile();
+  const { updateProfile, deleteProfile, loading, error } = useCustomerProfile();
   const [editMode, setEditMode] = useState(false);
   const [form, setForm] = useState<Partial<CustomerProfile>>({ ...profile });
   const [success, setSuccess] = useState<string | null>(null);
@@ -65,6 +65,11 @@ export const CustomerProfileCard: React.FC<CustomerProfileCardProps> = ({ profil
               onClick={() => { setEditMode(false); setForm({ ...profile }); setSuccess(null); }}
             >Cancel</button>
           )}
+          <button
+            className="bg-red-600 hover:bg-red-700 text-white text-sm px-4 py-2 rounded"
+            onClick={async () => { const ok = await deleteProfile(profile.id!); if (ok && onClose) onClose(); }}
+            disabled={loading}
+          >Delete</button>
           {/* Close button */}
           {typeof onClose === 'function' && (
             <button

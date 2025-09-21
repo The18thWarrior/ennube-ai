@@ -18,6 +18,7 @@ import Link from "next/link"
 import { getAgentLink } from "@/lib/utils"
 import { Execution } from "@/lib/types"
 import { useTheme } from "../theme-provider"
+import { useSfdcRecord } from "@/hooks/useSfdcRecord"
 
 interface ExecutionDetailsPanelProps extends React.HTMLAttributes<HTMLDivElement> {
   execution: Execution | undefined
@@ -33,6 +34,7 @@ export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, colla
   const [open, setOpen] = React.useState(collapsible ? false : true);
   const {theme} = useTheme();
   // Flip animation state
+  const { instanceUrl } = useSfdcRecord({}, '');
   const [selectedRecordId, setSelectedRecordId] = React.useState<string | null>(null);
   const [flip, setFlip] = React.useState(false);
   const [flipping, setFlipping] = React.useState(false);
@@ -67,16 +69,17 @@ export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, colla
   const rawData = !hasResponseData ? {} : {...execution.response_data, execution_summary: executionSummary};
   const recordIds = !hasResponseData ? [] : execution.response_data.records || [];
 
-  const handleSelectRecord = (recordId: string) => {
-    setSelectedRecordId(recordId);
-    setFlipping(true);
-    setTimeout(() => {
-      setFlip(true);
-      setTimeout(() => {
-        setFlipping(false);
-      }, 500);
-    }, 50);
-  };
+  // const handleSelectRecord = (recordId: string) => {
+  //   if (!instanceUrl) {}
+  //   // setSelectedRecordId(recordId);
+  //   // setFlipping(true);
+  //   // setTimeout(() => {
+  //   //   setFlip(true);
+  //   //   setTimeout(() => {
+  //   //     setFlipping(false);
+  //   //   }, 500);
+  //   // }, 50);
+  // };
 
   const handleGoToList = () => {
     console.log("Going back to list");
@@ -209,9 +212,9 @@ export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, colla
                     <Badge
                       variant="outline"
                       className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                      onClick={() => handleSelectRecord(id)}
+                      // onClick={() => handleSelectRecord(id)}
                     >
-                      <span className="truncate">{id}</span>
+                      <Link href={instanceUrl ? `${instanceUrl}/${id}` : `https://login.salesforce.com/${id}`} rel="noopener noreferrer" target="_blank"><span className="truncate">{id}</span></Link>
                     </Badge>
                   </li>
                 ))}

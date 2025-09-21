@@ -6,6 +6,7 @@ import { useSfdcBatch } from '@/hooks/useSfdcBatch';
 import { UIMessage, UIDataTypes, UITools, isToolUIPart } from 'ai';
 import { CircleCheck, TriangleAlert } from 'lucide-react';
 import { Button } from '@/components/ui';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 type Props = {
   open: boolean;
@@ -16,14 +17,29 @@ type Props = {
   closeProposal?: (updatedMessage: UIMessage<unknown, UIDataTypes, UITools>) => void;
 };
 
+type SingleChangeResult = {
+  bulkOperation: false;
+  change: 'create' | 'update' | 'delete';
+  recordId: string | undefined;
+}
+
+type BulkChangeResult = {
+  bulkOperation: true;
+  changedRecords: Array<{
+    sobject: string;
+    change: string;
+    result: any;
+  }>;
+}
+
 export function UpdateDataReviewModal({ open, proposal, closeProposal, message, status, partId }: Props) {
   if (!open || !proposal) return null;
   const [executing, setExecuting] = useState(false);
-  const [result, setResult] = useState<any | null>(null);
+  const [result, setResult] = useState<SingleChangeResult | BulkChangeResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [clientCompletion, setClientCompletion] = useState<string | null>(null);
 
-  const { updateRecord, createRecord, deleteRecord, error: sfdcError, loading } = useSfdcRecord({}, proposal.changes[0]?.sobject || '');
+  const { updateRecord, createRecord, deleteRecord, error: sfdcError, loading, instanceUrl } = useSfdcRecord({}, proposal.changes[0]?.sobject || '');
   const { bulk } = useSfdcBatch();
 
   const handleApprove = async () => {
@@ -44,7 +60,7 @@ export function UpdateDataReviewModal({ open, proposal, closeProposal, message, 
             setExecuting(false);
             return;
           }
-          setResult({ success: true, detail: 'updated single record' });
+          setResult({ bulkOperation: false, change: 'update', recordId: c.recordId });
         } else if (c.operation === 'delete') {
           await deleteRecord(c.recordId as string);
           if (sfdcError) {
@@ -53,7 +69,7 @@ export function UpdateDataReviewModal({ open, proposal, closeProposal, message, 
             return;
           }
 
-          setResult({ success: true, detail: 'deleted single record' });
+          setResult({ bulkOperation: false, change: 'delete', recordId: c.recordId });
         } else if (c.operation === 'create') {
           const data: any = {};
           (c.fields || []).forEach((f) => (data[f.fieldName] = f.after));
@@ -63,7 +79,7 @@ export function UpdateDataReviewModal({ open, proposal, closeProposal, message, 
             setExecuting(false);
             return;
           }
-          setResult({ success: true, detail: 'created single record' });
+          setResult({ bulkOperation: false, change: 'create', recordId: undefined });
         }
       } else {
         // Batch mode: group by sobject and operation
@@ -84,7 +100,7 @@ export function UpdateDataReviewModal({ open, proposal, closeProposal, message, 
           const bulkResult = await bulk({ type: 'ingest', sobjectType: group.sobject, operation: op as any, records: group.records });
           executionResults.push({ sobject: group.sobject, operation: group.operation, result: bulkResult });
         }
-        setResult({ success: true, detail: executionResults });
+        setResult({bulkOperation: true, changedRecords: executionResults });
       }
 
       // Call external onApprove if provided
@@ -166,7 +182,45 @@ export function UpdateDataReviewModal({ open, proposal, closeProposal, message, 
           </div>
 
           {error && <div className="mt-4 text-red-600">Error: {error}</div>}
-          {result && <div className="mt-4 text-green-600">Result: {JSON.stringify(result)}</div>}
+          {result && (
+            <div className="mt-4">
+              <h4 className="text-md font-semibold mb-2">Execution Results</h4>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    {!result.bulkOperation ? (
+                      <>
+                        <TableHead>Operation</TableHead>
+                        <TableHead>Record ID</TableHead>
+                      </>
+                    ) : (
+                      <>
+                        <TableHead>SObject</TableHead>
+                        <TableHead>Operation</TableHead>
+                        <TableHead>Result</TableHead>
+                      </>
+                    )}
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {!result.bulkOperation ? (
+                    <TableRow>
+                      <TableCell>{result.change}</TableCell>
+                      <TableCell>{result.recordId || 'N/A'}</TableCell>
+                    </TableRow>
+                  ) : (
+                    result.changedRecords.map((record, index) => (
+                      <TableRow key={index}>
+                        <TableCell>{record.sobject}</TableCell>
+                        <TableCell>{record.change}</TableCell>
+                        <TableCell>{JSON.stringify(record.result)}</TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          )}
 
           <div className="mt-4 flex justify-end gap-2">
             <Button className="px-3 py-1 rounded" variant={'outline_neutral'} onClick={handleCancel} disabled={executing}>Cancel</Button>

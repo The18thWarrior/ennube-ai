@@ -1,5 +1,5 @@
 import { useSession } from 'next-auth/react';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 interface SfdcRecord {
   [key: string]: any;
@@ -7,6 +7,7 @@ interface SfdcRecord {
 
 interface UseSfdcRecordResult {
   record: SfdcRecord | null;
+  instanceUrl: string | null;
   loading: boolean;
   error: Error | null;
   getRecord: (id: string) => Promise<void>;
@@ -30,12 +31,32 @@ export function useSfdcRecord(initialRecord: SfdcRecord, sobject: string): UseSf
     const subId = session?.user?.auth0?.sub || null;
     // Helper to get Salesforce API base URL (customize as needed)
     const getApiBase = () => '/api/salesforce';
+    const [instanceUrl, setInstanceUrl] = useState<string | null>(null);
+
+    // Fetch instance URL once
+    useEffect(() => {
+      if (!instanceUrl) getInstanceUrl();
+    },[])
+
+    const getInstanceUrl = async () => {
+      try {
+        const instRes = await fetch(`${getApiBase()}/instance`, { credentials: 'same-origin' });
+        if (instRes.ok) {
+          const inst = await instRes.json();
+          setInstanceUrl(inst?.instanceUrl || null);
+        }
+      } catch (e) {
+        // best-effort
+      }
+    };
 
     const getRecord = async (id: string) => {
         setLoading(true);
         setError(null);
         try {
-          const res = await fetch(`${getApiBase()}/query?sub=${subId}&soql=SELECT+FIELDS(ALL)+FROM+${sobject}+WHERE+Id='${id}'+LIMIT+1`);
+          const headers: Record<string,string> = { 'Content-Type': 'application/json' };
+          //if (instanceUrl) headers['x-salesforce-instance'] = instanceUrl;
+          const res = await fetch(`${getApiBase()}/query?sub=${subId}&soql=SELECT+FIELDS(ALL)+FROM+${sobject}+WHERE+Id='${id}'+LIMIT+1`, { headers, credentials: 'same-origin' });
           if (!res.ok) throw new Error(`Failed to fetch record: ${res.statusText}`);
           const data = await res.json();
           setRecord(data);
@@ -51,11 +72,14 @@ export function useSfdcRecord(initialRecord: SfdcRecord, sobject: string): UseSf
         setLoading(true);
         setError(null);
         try {
-          const res = await fetch(`${getApiBase()}/data/${sobject}`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(data),
-          });
+      const headers: Record<string,string> = { 'Content-Type': 'application/json' };
+      //if (instanceUrl) headers['x-salesforce-instance'] = instanceUrl;
+      const res = await fetch(`${getApiBase()}/data/${sobject}`, {
+        method: 'POST',
+        headers,
+        credentials: 'same-origin',
+        body: JSON.stringify(data),
+      });
           if (!res.ok) {
             setError(new Error(`Failed to create record: ${res.statusText}`));
             //throw new Error(`Failed to create record: ${res.statusText}`);
@@ -75,11 +99,14 @@ export function useSfdcRecord(initialRecord: SfdcRecord, sobject: string): UseSf
         setLoading(true);
         setError(null);
         try {
-          const res = await fetch(`${getApiBase()}/data?sub=${subId}&sobjectType=${sobject}`, {
-              method: 'PUT',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(data),
-          });
+      const headers: Record<string,string> = { 'Content-Type': 'application/json' };
+      if (instanceUrl) headers['x-salesforce-instance'] = instanceUrl;
+      const res = await fetch(`${getApiBase()}/data?sub=${subId}&sobjectType=${sobject}`, {
+        method: 'PUT',
+        headers,
+        credentials: 'same-origin',
+        body: JSON.stringify(data),
+      });
           if (!res.ok) {
             console.log('Update failed:', res);
             setError(new Error(`Failed to update record: ${res.statusText}`));
@@ -101,9 +128,13 @@ export function useSfdcRecord(initialRecord: SfdcRecord, sobject: string): UseSf
         setLoading(true);
         setError(null);
         try {
-          const res = await fetch(`${getApiBase()}/data?sub=${subId}&sobjectType=${sobject}&id=${id}`, {
-              method: 'DELETE',
-          });
+      const headers: Record<string,string> = {};
+      if (instanceUrl) headers['x-salesforce-instance'] = instanceUrl;
+      const res = await fetch(`${getApiBase()}/data?sub=${subId}&sobjectType=${sobject}&id=${id}`, {
+        method: 'DELETE',
+        headers,
+        credentials: 'same-origin'
+      });
           if (!res.ok) {
             setError(new Error(`Failed to delete record: ${res.statusText}`));
             //throw new Error(`Failed to delete record: ${res.statusText}`);
@@ -125,7 +156,9 @@ export function useSfdcRecord(initialRecord: SfdcRecord, sobject: string): UseSf
         setLoading(true);
         setError(null);
         try {
-          const res = await fetch(`${getApiBase()}/describe/${sobject}`);
+          const headers: Record<string,string> = { 'Content-Type': 'application/json' };
+          if (instanceUrl) headers['x-salesforce-instance'] = instanceUrl;
+          const res = await fetch(`${getApiBase()}/describe/${sobject}`, { headers, credentials: 'same-origin' });
           if (!res.ok) {
             setError(new Error(`Failed to get object describe: ${res.statusText}`));
             // throw new Error(`Failed to get object describe: ${res.statusText}`);
@@ -141,6 +174,7 @@ export function useSfdcRecord(initialRecord: SfdcRecord, sobject: string): UseSf
 
     return {
         record,
+        instanceUrl,
         loading,
         error,
         getRecord,
