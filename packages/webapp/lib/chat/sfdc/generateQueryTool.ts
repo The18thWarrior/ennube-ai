@@ -182,7 +182,7 @@ async function generateAndExecuteQuery(
     schema: QueryGenerationSchema,
     prompt
   });
-  console.log('Generated query result:', queryResult);
+  //console.log('Generated query result:', queryResult);
   //console.log('Generated query result:', queryResult);
   // 6. Validate generated SQL
   if (!validateSelectOnly(queryResult.sql)) {

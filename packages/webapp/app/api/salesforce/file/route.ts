@@ -5,6 +5,7 @@ import { createSalesforceClient } from "@/lib/salesforce";
 import { SalesforceAuthResult } from "@/lib/types";
 import { Buffer } from "node:buffer";
 import { NextRequest, NextResponse } from "next/server";
+import { insertLog } from "@/lib/db/log-storage";
 
 const mimeByExt: Record<string, string> = {
   pdf: "application/pdf",
@@ -78,7 +79,12 @@ export async function GET(
       chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
     }
     const fileBuffer = Buffer.concat(chunks);
-
+    await insertLog({
+        userId: sub,
+        type: 'query',
+        action: `Retrieved file: ${filename}`,
+        credits: 1 // Assuming each query costs 1 credit, adjust as needed
+    });
     return new Response(fileBuffer, {
       headers: {
         "Content-Type": mime,

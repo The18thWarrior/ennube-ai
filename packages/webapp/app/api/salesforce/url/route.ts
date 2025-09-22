@@ -4,6 +4,7 @@ import { getSalesforceCredentialsBySub } from '@/lib/db/salesforce-storage';
 import { SalesforceClient, createSalesforceClient } from '@/lib/salesforce';
 import { SalesforceAuthResult } from '@/lib/types';
 import { auth } from '@/auth';
+import { insertLog } from '@/lib/db/log-storage';
 /**
  * API route to handle Salesforce URL operations.
  * 
@@ -49,6 +50,12 @@ export async function GET(request: NextRequest) {
     if (url) {
       // Fetch Salesforce record by URL
       const record = await client.getByUrl(url);
+      await insertLog({
+        userId: sub,
+        type: 'query',
+        action: `Retrieved file by URL: ${url}`,
+        credits: 1 // Assuming each query costs 1 credit, adjust as needed
+      });
       return new NextResponse(record, { headers: { 'content-type': 'application/json' } });
     } else {
       // Describe all objects (describeGlobal)

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSalesforceCredentialsBySub } from '@/lib/db/salesforce-storage';
 import { SalesforceClient, createSalesforceClient } from '@/lib/salesforce';
 import { SalesforceAuthResult } from '@/lib/types';
+import { insertLog } from '@/lib/db/log-storage';
 
 /**
  * API endpoint to run a Salesforce SOQL query
@@ -59,6 +60,13 @@ export async function GET(request: NextRequest) {
     // Execute the SOQL query
     const queryResult = await salesforceClient.query(soql);
     
+    await insertLog({
+      userId: sub,
+      type: 'query',
+      action: `Executed SOQL: ${soql}`,
+      credits: 1 // Assuming each query costs 1 credit, adjust as needed
+    });
+
     // Return the query results
     return NextResponse.json(queryResult);
     

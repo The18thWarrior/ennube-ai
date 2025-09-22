@@ -3,13 +3,15 @@ import { getSalesforceCredentialsBySub } from '@/lib/db/salesforce-storage';
 import { createSalesforceClient, SalesforceClient } from '@/lib/salesforce';
 import { SalesforceAuthResult } from '@/lib/types';
 import { validateSession } from '@/lib/n8n/utils';
+import { insertLog } from '@/lib/db/log-storage';
 /**
  * Helper function to get a Salesforce client from the sub parameter
  */
 async function getSalesforceClientFromSub(request: NextRequest): Promise<{ 
   client: SalesforceClient | null, 
   error: NextResponse | null,
-  sobjectType: string | null 
+  sobjectType: string | null,
+  userId: string | null
 }> {
   const {isValid, userId} = await validateSession(request);
   if (!isValid) {
@@ -19,7 +21,8 @@ async function getSalesforceClientFromSub(request: NextRequest): Promise<{
         { error: 'Missing required parameter: sub' },
         { status: 400 }
       ),
-      sobjectType: null
+      sobjectType: null,
+      userId: null
     };
   }
   // Get query parameters
@@ -34,7 +37,8 @@ async function getSalesforceClientFromSub(request: NextRequest): Promise<{
         { error: 'Missing required parameter: sub' },
         { status: 400 }
       ),
-      sobjectType: null
+      sobjectType: null, 
+      userId: null
     };
   }
   
@@ -45,7 +49,8 @@ async function getSalesforceClientFromSub(request: NextRequest): Promise<{
         { error: 'Missing required parameter: sobjectType' },
         { status: 400 }
       ),
-      sobjectType: null
+      sobjectType: null, 
+      userId: null
     };
   }
   
@@ -59,7 +64,8 @@ async function getSalesforceClientFromSub(request: NextRequest): Promise<{
         { error: 'No Salesforce credentials found for this user' },
         { status: 404 }
       ),
-      sobjectType: null
+      sobjectType: null,  
+      userId: null
     };
   }
   
@@ -78,7 +84,8 @@ async function getSalesforceClientFromSub(request: NextRequest): Promise<{
   return {
     client: salesforceClient,
     error: null,
-    sobjectType
+    sobjectType,
+    userId
   };
 }
 
@@ -92,7 +99,7 @@ async function getSalesforceClientFromSub(request: NextRequest): Promise<{
  */
 export async function POST(request: NextRequest) {
   try {
-    const { client, error, sobjectType } = await getSalesforceClientFromSub(request);
+    const { client, error, sobjectType, userId } = await getSalesforceClientFromSub(request);
     if (error) return error;
     if (!client || !sobjectType) {
       return NextResponse.json({ error: 'Failed to initialize Salesforce client' }, { status: 500 });
@@ -110,6 +117,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: `Invalid operation: ${operation}` }, { status: 400 });
     }
     const results = await client.batch(operation, sobjectType, records);
+    await insertLog({
+      userId: userId!,
+      type: 'save',
+      action: `${operation} records in bulk ${sobjectType}`,
+      credits: 1 // Assuming each query costs 1 credit, adjust as needed
+    });
     return NextResponse.json({ success: true, operation, results });
   } catch (error) {
     console.log('Error in Salesforce batch operation:', error);
@@ -127,7 +140,7 @@ export async function POST(request: NextRequest) {
  */
 export async function PUT(request: NextRequest) {
   try {
-    const { client, error, sobjectType } = await getSalesforceClientFromSub(request);
+    const { client, error, sobjectType, userId } = await getSalesforceClientFromSub(request);
     if (error) return error;
     if (!client || !sobjectType) {
       return NextResponse.json({ error: 'Failed to initialize Salesforce client' }, { status: 500 });
@@ -149,6 +162,12 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'All records must include an Id field for update operations.' }, { status: 400 });
     }
     const results = await client.batch('update', sobjectType, records);
+    await insertLog({
+      userId: userId!,
+      type: 'save',
+      action: `Updated records in bulk ${sobjectType}`,
+      credits: 1 // Assuming each query costs 1 credit, adjust as needed
+    });
     return NextResponse.json({ success: true, operation: 'update', results });
   } catch (error) {
     console.log('Error in Salesforce batch update:', error);
@@ -166,7 +185,7 @@ export async function PUT(request: NextRequest) {
  */
 export async function DELETE(request: NextRequest) {
   try {
-    const { client, error, sobjectType } = await getSalesforceClientFromSub(request);
+    const { client, error, sobjectType, userId } = await getSalesforceClientFromSub(request);
     if (error) return error;
     if (!client || !sobjectType) {
       return NextResponse.json({ error: 'Failed to initialize Salesforce client' }, { status: 500 });
@@ -188,6 +207,12 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'All records must include an Id or id field for delete operations.' }, { status: 400 });
     }
     const results = await client.batch('delete', sobjectType, records);
+    await insertLog({
+      userId: userId!,
+      type: 'save',
+      action: `Deleted records in bulk ${sobjectType}`,
+      credits: 1 // Assuming each query costs 1 credit, adjust as needed
+    });
     return NextResponse.json({ success: true, operation: 'delete', results });
   } catch (error) {
     console.log('Error in Salesforce batch delete:', error);
