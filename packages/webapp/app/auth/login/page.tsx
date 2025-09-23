@@ -95,7 +95,7 @@ function LoginPage() {
             Join the growing number of businesses using AI agents to enhance their customer relationship management.
           </p>
           <div className="mt-6">
-            <Link href="https://ennube.ai" className="inline-flex items-center rounded-md /90 px-4 py-2 text-sm font-medium text-indigo-700 shadow hover:">
+            <Link href="https://ennube.ai" className="inline-flex items-center rounded-md text-white bg-indigo-600 px-4 py-2 text-sm font-medium shadow hover:bg-indigo-700">
               Explore Ennube.ai
             </Link>
           </div>

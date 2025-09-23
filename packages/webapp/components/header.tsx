@@ -11,13 +11,14 @@ export default async function Header() {
 
   // If there's no authenticated user, preserve the previous minimal header.
   if (!session?.user) {
-    return (
-      <header className="fixed top-0 left-0 right-0 z-40 bg-transparent">
-        <div className="mx-auto flex h-16 w-full items-center justify-between px-4 sm:px-6">
-          <SignIn provider={'auth0'} />
-        </div>
-      </header>
-    )
+    return null;
+    // return (
+    //   <header className="fixed top-0 left-0 right-0 z-40 bg-transparent">
+    //     <div className="mx-auto flex h-16 w-full items-center justify-between px-4 sm:px-6">
+    //       <SignIn provider={'auth0'} />
+    //     </div>
+    //   </header>
+    // )
   }
 
   const checkAdmin = isAdmin(session?.user?.auth0?.sub || '')
