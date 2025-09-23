@@ -5,7 +5,8 @@ import { useSfdcRecord } from '@/hooks/useSfdcRecord';
 import { useSfdcBatch } from '@/hooks/useSfdcBatch';
 import { UIMessage, UIDataTypes, UITools, isToolUIPart } from 'ai';
 import { CircleCheck, TriangleAlert } from 'lucide-react';
-import { Button } from '@/components/ui';
+import Link from "next/link"
+import { Badge, Button, Card } from '@/components/ui';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 type Props = {
@@ -28,7 +29,15 @@ type BulkChangeResult = {
   changedRecords: Array<{
     sobject: string;
     change: string;
-    result: any;
+    result: {
+      success: boolean;
+      operation: string;
+      results: Array<{
+        id: string;
+        success: boolean;
+        errors: Array<any>;
+      }>;
+    };
   }>;
 }
 
@@ -112,6 +121,8 @@ export function UpdateDataReviewModal({ open, proposal, closeProposal, message, 
 
         await closeProposal({...message, parts: updatedParts} as UIMessage<unknown, UIDataTypes, UITools>);
       }
+
+      setClientCompletion('completed');
     } catch (err: any) {
       //console.error('Execution error:', err);
       setError(err?.message || String(err));
@@ -223,38 +234,68 @@ export function UpdateDataReviewModal({ open, proposal, closeProposal, message, 
           )} */}
 
           {result && (
-            <ExecutionResult result={result} />
+            <ExecutionResult result={result} instanceUrl={instanceUrl} />
           )}
 
           <div className="mt-4 flex justify-end gap-2">
             <Button className="px-3 py-1 rounded" variant={'outline_neutral'} onClick={handleCancel} disabled={executing}>Cancel</Button>
-            <Button className="px-3 py-1 rounded " variant={'outline'} onClick={handleApprove} disabled={executing}>{executing ? 'Executing...' : 'Approve & Execute'}</Button>
+            <Button className="px-3 py-1 rounded " variant={'outline'} onClick={handleApprove} disabled={executing || clientCompletion === 'completed'}>{executing ? 'Executing...' : 'Approve & Execute'}</Button>
           </div>
         </div>
     </div>
   );
 }
 
-const ExecutionResult = ({ result }: { result: SingleChangeResult | BulkChangeResult }) => {
+const ExecutionResult = ({ result, instanceUrl }: { result: SingleChangeResult | BulkChangeResult, instanceUrl: string | null }) => {
   if (!result) return null;
 
   if (!result.bulkOperation) {
     return (
-      <div>
+      <Card className={'bg-popover'}>
         <div><strong>Operation:</strong> {result.change}</div>
-        <div><strong>Record ID:</strong> {result.recordId || 'N/A'}</div>
-      </div>
+        <div>
+          <strong>Record ID: </strong>
+            <Badge
+              variant="outline"
+              className="cursor-pointer hover:bg-muted  transition-colors"
+              // onClick={() => handleSelectRecord(id)}
+            >
+              <Link href={instanceUrl ? `${instanceUrl}/${result.recordId}` : `https://login.salesforce.com/${result.recordId}`} rel="noopener noreferrer" target="_blank"><span className="truncate">{result.recordId || "N/A"}</span></Link>
+            </Badge>
+          </div>
+      </Card>
     );
   } else {
     return (
-      <div>
-        {result.changedRecords.map((record, index) => (
-          <div key={index} className="mb-2">
-            <div><strong>SObject:</strong> {record.sobject}</div>
-            <div><strong>Operation:</strong> {record.change}</div>
-            <div><strong>Result:</strong> {JSON.stringify(record.result)}</div>
-          </div>
-        ))}
+      <div className="mt-4">
+        <h3 className="text-lg font-semibold">Execution Results</h3>
+        <div className="mt-2 max-h-64 overflow-auto scrollbar">
+          {result.changedRecords.map((record, index) => {
+            if (!record.result) return null;
+            return record.result.results.map((r) => (
+              <Card key={r.id} className={'bg-popover mb-2'}>
+                <div><strong>SObject:</strong> {record.sobject}</div>
+                <div><strong>Operation:</strong> {record.change}</div>
+                <div>
+                  <strong>Record ID: </strong>
+                  <Badge
+                    variant="outline"
+                    className="cursor-pointer hover:bg-muted  transition-colors"
+                    // onClick={() => handleSelectRecord(id)}
+                  >
+                    <Link href={instanceUrl ? `${instanceUrl}/${r.id}` : `https://login.salesforce.com/${r.id}`} rel="noopener noreferrer" target="_blank"><span className="truncate">{r.id || "N/A"}</span></Link>
+                  </Badge>
+                </div>
+                <div><strong>Success:</strong> {r.success ? 'Yes' : 'No'}</div>
+                {r.errors && r.errors.length > 0 && (
+                  <div className="text-red-600">
+                    <strong>Errors:</strong> {JSON.stringify(r.errors)}
+                  </div>
+                )}
+              </Card>
+            ))
+          })}
+        </div>
       </div>
     );
   }
