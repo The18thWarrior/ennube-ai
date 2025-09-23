@@ -73,7 +73,7 @@ export const ContractResultList: React.FC<ContractResultListProps> = ({ }) => {
               <tr>
                 <td colSpan={4} className="px-6 py-4 text-center">
                   <div className="flex justify-center">
-                    <div className="animate-spin h-5 w-5 border-2  rounded-full border-t-transparent"></div>
+                    <div className="animate-spin h-5 w-5 border-2 rounded-full border-t-transparent"></div>
                   </div>
                 </td>
               </tr>
@@ -96,10 +96,10 @@ export const ContractResultList: React.FC<ContractResultListProps> = ({ }) => {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground ">
                     {result.source_id}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-xs text-muted ">
+                  <td className="px-6 py-4 whitespace-nowrap text-xs text-muted-foreground ">
                     {result.id}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-xs text-muted ">
+                  <td className="px-6 py-4 whitespace-nowrap text-xs text-muted-foreground ">
                     {result.created_at ? formatDistanceToNow(dayjs(result.created_at).toDate(), { addSuffix: true }) : '\u2014'}
                   </td>
                 </tr>
