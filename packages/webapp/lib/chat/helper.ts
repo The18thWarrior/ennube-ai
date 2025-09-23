@@ -21,6 +21,7 @@ import { CONTRACT_READER_SYSTEM_PROMPT } from '../prompts/contract-reader-system
 import { generateQueryTool } from './sfdc/generateQueryTool';
 import { proposeUpdateDataTool } from './sfdc/proposeUpdateDataTool';
 import { getPrompt as getPromptCache } from '@/lib/cache/prompt-cache';
+import { webSearchTool } from './webSearchTool';
 
 export const getPrompt = async (agent: 'data-steward' | 'prospect-finder' | 'contract-reader') => {
   const cachePrompt = await getPromptCache(agent);
@@ -44,6 +45,7 @@ export const getTools = async (agent: 'data-steward' | 'prospect-finder' | 'cont
     getSFDCDataTool: generateQueryTool(userId),
     proposeUpdateSFDCDataTool: proposeUpdateDataTool(userId),
     getSFDCFileTool: getFileTool(userId),
+    webSearchTool: webSearchTool(userId),
     // getSFDCFieldDescribeTool: getSFDCFieldsTool(userId),
     // getSFDCDataTool: getSFDCDataTool(userId),
     //getPostgresDataTool: getPostgresDataTool(userId),

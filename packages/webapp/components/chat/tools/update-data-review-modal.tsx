@@ -165,7 +165,7 @@ export function UpdateDataReviewModal({ open, proposal, closeProposal, message, 
           <h3 className="text-lg font-semibold">Review proposed changes</h3>
           <p className="text-sm text-muted-foreground">{proposal.summary}</p>
 
-          <div className="mt-4 max-h-64 overflow-auto">
+          <div className="mt-4 max-h-64 overflow-auto scrollbar">
             {proposal.changes.map((c) => (
               <div key={c.operationId} className="border p-2 rounded mb-2">
                 <div className="font-medium">{c.sobject} — {c.operation}</div>
@@ -182,7 +182,7 @@ export function UpdateDataReviewModal({ open, proposal, closeProposal, message, 
           </div>
 
           {error && <div className="mt-4 text-red-600">Error: {error}</div>}
-          {result && (
+          {/* {result && (
             <div className="mt-4">
               <h4 className="text-md font-semibold mb-2">Execution Results</h4>
               <Table>
@@ -220,6 +220,10 @@ export function UpdateDataReviewModal({ open, proposal, closeProposal, message, 
                 </TableBody>
               </Table>
             </div>
+          )} */}
+
+          {result && (
+            <ExecutionResult result={result} />
           )}
 
           <div className="mt-4 flex justify-end gap-2">
@@ -230,3 +234,28 @@ export function UpdateDataReviewModal({ open, proposal, closeProposal, message, 
     </div>
   );
 }
+
+const ExecutionResult = ({ result }: { result: SingleChangeResult | BulkChangeResult }) => {
+  if (!result) return null;
+
+  if (!result.bulkOperation) {
+    return (
+      <div>
+        <div><strong>Operation:</strong> {result.change}</div>
+        <div><strong>Record ID:</strong> {result.recordId || 'N/A'}</div>
+      </div>
+    );
+  } else {
+    return (
+      <div>
+        {result.changedRecords.map((record, index) => (
+          <div key={index} className="mb-2">
+            <div><strong>SObject:</strong> {record.sobject}</div>
+            <div><strong>Operation:</strong> {record.change}</div>
+            <div><strong>Result:</strong> {JSON.stringify(record.result)}</div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+};
