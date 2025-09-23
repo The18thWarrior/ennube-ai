@@ -18,8 +18,8 @@ export default function SessionData({ session }: { session: Session | null }) {
             the page to avoid exposing sensitive information.
           </p>
         )}
-        <div className="flex flex-col rounded-md bg-neutral-100">
-          <div className="rounded-t-md bg-neutral-200 p-4 font-bold">
+        <div className="flex flex-col rounded-md bg-muted">
+          <div className="rounded-t-md bg-muted p-4 font-bold">
             Session
           </div>
           <pre className="whitespace-pre-wrap break-all px-4 py-6">

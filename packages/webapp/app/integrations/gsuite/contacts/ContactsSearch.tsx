@@ -134,7 +134,7 @@ export default function ContactsSearch() {
       )}
 
       {searchResults.length === 0 && !isLoading ? (
-        <p className="text-center py-8 text-gray-500">No contacts found</p>
+        <p className="text-center py-8 text-muted-foreground">No contacts found</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
           {searchResults.map((contact) => (
@@ -148,7 +148,7 @@ export default function ContactsSearch() {
                   <div>
                     <h3 className="font-medium">{getDisplayName(contact)}</h3>
                     {getOrganization(contact) && (
-                      <p className="text-sm text-gray-500">{getOrganization(contact)?.title || ''}</p>
+                      <p className="text-sm text-muted-foreground">{getOrganization(contact)?.title || ''}</p>
                     )}
                   </div>
                 </div>
@@ -156,30 +156,30 @@ export default function ContactsSearch() {
                 <div className="mt-4 space-y-2">
                   {getEmailAddresses(contact).map((email, index) => (
                     <div key={index} className="flex items-center gap-2 text-sm">
-                      <Mail className="h-4 w-4 text-gray-400" />
+                      <Mail className="h-4 w-4 text-muted" />
                       <span>{email.value}</span>
-                      {email.type && <span className="text-xs text-gray-500">({email.type})</span>}
+                      {email.type && <span className="text-xs text-muted-foreground">({email.type})</span>}
                     </div>
                   ))}
 
                   {getPhoneNumbers(contact).map((phone, index) => (
                     <div key={index} className="flex items-center gap-2 text-sm">
-                      <Phone className="h-4 w-4 text-gray-400" />
+                      <Phone className="h-4 w-4 text-muted" />
                       <span>{phone.value}</span>
-                      {phone.type && <span className="text-xs text-gray-500">({phone.type})</span>}
+                      {phone.type && <span className="text-xs text-muted-foreground">({phone.type})</span>}
                     </div>
                   ))}
 
                   {getOrganization(contact) && getOrganization(contact)?.name && (
                     <div className="flex items-center gap-2 text-sm">
-                      <Building className="h-4 w-4 text-gray-400" />
+                      <Building className="h-4 w-4 text-muted" />
                       <span>{getOrganization(contact)?.name}</span>
                     </div>
                   )}
 
                   {getAddress(contact) && (
                     <div className="flex items-start gap-2 text-sm">
-                      <MapPin className="h-4 w-4 text-gray-400 mt-1" />
+                      <MapPin className="h-4 w-4 text-muted mt-1" />
                       <span>{getAddress(contact)}</span>
                     </div>
                   )}

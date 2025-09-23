@@ -49,14 +49,14 @@ export default function AdminDropdown(): JSX.Element {
         <div
           role="menu"
           aria-label="Admin menu"
-          className="absolute right-0 z-50 mt-2 w-48 overflow-hidden rounded-md bg-white shadow-lg ring-1 ring-black/5 dark:bg-gray-900"
+          className="absolute right-0 z-50 mt-2 w-48 overflow-hidden rounded-md  shadow-lg ring-1 ring-black/5 "
         >
           <ul className="py-1">
             <li role="none">
               <Link
                 role="menuitem"
                 href="/admin/prompts"
-                className="block px-4 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-800"
+                className="block px-4 py-2 text-sm hover:bg-muted "
                 onClick={() => setOpen(false)}
               >
                 Edit Prompts
@@ -66,7 +66,7 @@ export default function AdminDropdown(): JSX.Element {
               <Link
                 role="menuitem"
                 href="/admin/benchmark"
-                className="block px-4 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-800"
+                className="block px-4 py-2 text-sm hover:bg-muted "
                 onClick={() => setOpen(false)}
               >
                 Benchmark

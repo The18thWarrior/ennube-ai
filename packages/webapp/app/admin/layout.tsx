@@ -58,10 +58,10 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   if (access === 'forbidden') {
     return (
       <div>
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-          <div className="max-w-md w-full p-6 bg-white dark:bg-gray-800 rounded-lg shadow">
-            <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-50">Access denied</h1>
-            <p className="mt-3 text-sm text-gray-600 dark:text-gray-300">
+        <div className="min-h-screen flex items-center justify-center bg-muted ">
+          <div className="max-w-md w-full p-6   rounded-lg shadow">
+            <h1 className="text-2xl font-semibold text-muted-foreground ">Access denied</h1>
+            <p className="mt-3 text-sm text-muted-foreground ">
               Your account does not have permission to view the admin area.
             </p>
             <div className="mt-6">
@@ -91,9 +91,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <div lang="en">
       <div className="min-h-screen flex items-center justify-center ">
-        <div className="max-w-md w-full p-6 bg-white dark:bg-gray-800 rounded-lg shadow">
-          <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-50">Unable to verify access</h1>
-          <p className="mt-3 text-sm text-gray-600 dark:text-gray-300">
+        <div className="max-w-md w-full p-6   rounded-lg shadow">
+          <h1 className="text-2xl font-semibold text-muted-foreground ">Unable to verify access</h1>
+          <p className="mt-3 text-sm text-muted-foreground ">
             There was an error checking your permissions. Please try again later.
           </p>
           <div className="mt-6">

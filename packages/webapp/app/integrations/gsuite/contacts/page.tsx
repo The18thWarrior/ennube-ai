@@ -22,7 +22,7 @@ export default async function ContactsPage() {
         Google Contacts
       </h1>
 
-      <div className="p-6 bg-gray-50 dark:bg-gray-900 rounded-lg">
+      <div className="p-6 bg-muted  rounded-lg">
         <p className="mb-6">
           Search and manage your Google Contacts directly from this application.
           Use the search box below to find specific contacts.

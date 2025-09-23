@@ -2,7 +2,7 @@ import { CustomerProfile } from "@/hooks/useCustomerProfile";
 import { TriangleAlert } from "lucide-react";
 import { CustomProfileToolResult } from "../wrappers/custom-profile-tool-result";
 
-const RenderGetCustomProfileToolCallComponent = (args: any, result: {profiles: CustomerProfile[]}, theme: 'dark' | 'light' | 'system') => {
+const RenderGetCustomProfileToolCallComponent = (args: any, result: {profiles: CustomerProfile[]}, theme: 'dark' | 'light' | 'lavender') => {
     const {profiles } = result;
     if (!profiles || profiles.length === 0) {
         return <div>

@@ -111,7 +111,7 @@ export function ToolResultCard({
   return (
     <div
       className={cn(
-        "flex-shrink-0 bg-white dark:bg-gray-800 border rounded-md shadow-sm",
+        "flex-shrink-0   border rounded-md shadow-sm",
         compact ? "w-full px-3 py-2 flex items-start gap-2" : "w-60 px-3 py-3"
       )}
       data-card-id={id}
@@ -121,7 +121,7 @@ export function ToolResultCard({
           <h4 className="text-sm font-medium truncate">{title}</h4>
           <button
             onClick={() => onDetails?.(id)}
-            className="text-xs px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
+            className="text-xs px-2 py-1 rounded hover:bg-muted "
             aria-label={`View details for ${title}`}
           >
             <Eye className="h-4 w-4" />
@@ -221,7 +221,7 @@ export default function ChatToolContainer(_: PropsWithChildren) {
               <div />
               <button
                 onClick={handleClose}
-                className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800"
+                className="p-2 rounded-md hover:bg-muted "
                 aria-label="Close modal"
               >
                 <X className="h-5 w-5" />
@@ -245,11 +245,11 @@ export default function ChatToolContainer(_: PropsWithChildren) {
               {/* Expanded/detail view */}
               {selectedId && (
                 <div className="flex h-full gap-4">
-                  <div className="w-3/4 bg-white dark:bg-gray-900 rounded p-4 overflow-auto transition-all duration-300">
+                  <div className="w-3/4   rounded p-4 overflow-auto transition-all duration-300">
                     <div className="flex items-center justify-between mb-4">
                       <button
                         onClick={handleBackToAll}
-                        className="inline-flex items-center gap-2 text-sm px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800"
+                        className="inline-flex items-center gap-2 text-sm px-2 py-1 rounded hover:bg-muted "
                       >
                         <ArrowLeft className="h-4 w-4" />
                         Back to all
@@ -262,7 +262,7 @@ export default function ChatToolContainer(_: PropsWithChildren) {
                       <div key={e.id} className="space-y-3">
                         <h3 className="text-lg font-semibold">{e.title}</h3>
                         <p className="text-sm text-muted-foreground">{e.summary}</p>
-                        <div className="mt-3 bg-gray-50 dark:bg-gray-800 p-4 rounded">
+                        <div className="mt-3 bg-muted  p-4 rounded">
                           {e.body}
                         </div>
                       </div>

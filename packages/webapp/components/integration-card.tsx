@@ -23,11 +23,11 @@ export default function IntegrationCard({ title, description, url, icon, connect
         }
     }
     return (
-        <Card className={isAddCard ? "border-dashed border-2 bg-gray-50 dark:bg-gray-800" : ""}>
+        <Card className={isAddCard ? "border-dashed border-2 bg-muted " : ""}>
         <CardHeader className="flex flex-row items-center gap-4">
             {isAddCard ? (
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
-                <PlusCircle className="h-6 w-6 text-gray-400" />
+                <PlusCircle className="h-6 w-6 text-muted" />
             </div>
             ) : (
             <div className="flex h-12 w-12 items-center justify-center">

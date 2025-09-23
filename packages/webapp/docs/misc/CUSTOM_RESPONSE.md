@@ -210,7 +210,7 @@ Feel free to adjust the config schema or add support for additional UI component
       type: "Layout",
       props: {
         maxWidth: "md",
-        className: "p-6 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-md",
+        className: "p-6 bg-gray-100  rounded-lg shadow-md",
       },
       children: [
         {
@@ -225,7 +225,7 @@ Feel free to adjust the config schema or add support for additional UI component
             {
               type: "Text",
               props: {
-                className: "text-2xl font-bold text-center text-gray-900 dark:text-gray-100",
+                className: "text-2xl font-bold text-center text-muted-foreground ",
               },
               children: "User Login",
             },
@@ -240,7 +240,7 @@ Feel free to adjust the config schema or add support for additional UI component
                   props: {
                     placeholder: "Email",
                     name: "email",
-                    className: "w-full p-2 border rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100",
+                    className: "w-full p-2 border rounded  dark:   text-muted-foreground ",
                   },
                 },
                 {
@@ -249,7 +249,7 @@ Feel free to adjust the config schema or add support for additional UI component
                     placeholder: "Password",
                     name: "password",
                     type: "password",
-                    className: "w-full p-2 border rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100",
+                    className: "w-full p-2 border rounded  dark:   text-muted-foreground ",
                   },
                 },
                 {
@@ -274,7 +274,7 @@ Feel free to adjust the config schema or add support for additional UI component
                       type: "Button",
                       props: {
                         variant: "ghost",
-                        className: "px-4 py-2 border rounded border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-700",
+                        className: "px-4 py-2 border rounded  dark: text-muted-foreground  hover:bg-muted ",
                       },
                       children: "Cancel",
                     },
@@ -289,7 +289,7 @@ Feel free to adjust the config schema or add support for additional UI component
                   { title: "Accordion Item 1", content: "Content for item 1" },
                   { title: "Accordion Item 2", content: "Content for item 2" },
                 ],
-                className: "w-full border rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100",
+                className: "w-full border rounded  dark:   text-muted-foreground ",
               },
             },
             {
@@ -299,7 +299,7 @@ Feel free to adjust the config schema or add support for additional UI component
                   { label: "Tab 1", content: "Content for Tab 1" },
                   { label: "Tab 2", content: "Content for Tab 2" },
                 ],
-                className: "w-full border rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100",
+                className: "w-full border rounded  dark:   text-muted-foreground ",
               },
             },
             {
@@ -307,7 +307,7 @@ Feel free to adjust the config schema or add support for additional UI component
               props: {
                 title: "Card Title",
                 description: "Card Description",
-                className: "p-4 border rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100",
+                className: "p-4 border rounded  dark:   text-muted-foreground ",
               },
             },
             {
@@ -329,7 +329,7 @@ Feel free to adjust the config schema or add support for additional UI component
               props: {
                 trigger: "Hover me",
                 content: "Popover content",
-                className: "text-gray-900 dark:text-gray-100",
+                className: "text-muted-foreground ",
               },
             },
             {
@@ -337,7 +337,7 @@ Feel free to adjust the config schema or add support for additional UI component
               props: {
                 title: "Toast Title",
                 description: "Toast Description",
-                className: "p-4 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100",
+                className: "p-4 bg-gray-100  text-muted-foreground ",
               },
             },
             {
@@ -353,14 +353,14 @@ Feel free to adjust the config schema or add support for additional UI component
               props: {
                 trigger: "Expand",
                 content: "Collapsible content",
-                className: "text-gray-900 dark:text-gray-100",
+                className: "text-muted-foreground ",
               },
             },
             {
               type: "Label",
               props: {
                 text: "Label Text",
-                className: "text-gray-900 dark:text-gray-100",
+                className: "text-muted-foreground ",
               },
             },
           ],

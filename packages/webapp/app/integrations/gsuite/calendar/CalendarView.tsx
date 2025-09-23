@@ -270,10 +270,10 @@ export default function CalendarView() {
             <CardContent>
               {isLoading ? (
                 <div className="flex justify-center py-8">
-                  <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+                  <Loader2 className="h-8 w-8 animate-spin text-muted" />
                 </div>
               ) : events.length === 0 ? (
-                <p className="text-center py-8 text-gray-500">No events scheduled for this day</p>
+                <p className="text-center py-8 text-muted-foreground">No events scheduled for this day</p>
               ) : (
                 <div className="space-y-4">
                   {events.map((event) => {
@@ -283,20 +283,20 @@ export default function CalendarView() {
                       <div className="p-4 border-l-4 border-blue-500">
                         <h3 className="font-medium text-lg">{event.summary}</h3>
                         <div className="mt-2 space-y-2 text-sm">
-                          <div className="flex items-center text-gray-600">
+                          <div className="flex items-center text-muted-foreground">
                             <Clock className="h-4 w-4 mr-2" />
                             {formatEventTime(event.start.date || event.start.dateTime )} - {formatEventTime(event.end.date || event.end.dateTime)}
                           </div>
                           
                           {event.location && (
-                            <div className="flex items-center text-gray-600">
+                            <div className="flex items-center text-muted-foreground">
                               <MapPin className="h-4 w-4 mr-2" />
                               {event.location}
                             </div>
                           )}
                           
                           {event.attendees && event.attendees.length > 0 && (
-                            <div className="flex items-start text-gray-600">
+                            <div className="flex items-start text-muted-foreground">
                               <Users className="h-4 w-4 mr-2 mt-1" />
                               <div>
                                 {event.attendees.map((attendee, index) => (
@@ -309,7 +309,7 @@ export default function CalendarView() {
                           )}
                           
                           {event.description && (
-                            <div className="mt-2 text-gray-700">
+                            <div className="mt-2 text-muted-foreground">
                               {event.description}
                             </div>
                           )}

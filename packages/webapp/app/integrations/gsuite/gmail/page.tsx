@@ -20,7 +20,7 @@ export default async function GmailPage() {
         Gmail Integration
       </h1>
 
-      <div className="p-6 bg-gray-50 dark:bg-gray-900 rounded-lg">
+      <div className="p-6 bg-muted  rounded-lg">
         <p className="mb-6">
           Search and manage your Gmail messages directly from this application. 
           Use the search box below to find specific emails.

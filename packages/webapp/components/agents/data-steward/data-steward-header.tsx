@@ -22,7 +22,7 @@ export default function DataStewardHeader() {
   //       >
   //         <div className="relative max-w-4xl max-h-[90vh]">
   //           <button
-  //             className="absolute -top-12 right-0 p-2 text-white hover:text-gray-300 transition-colors"
+  //             className="absolute -top-12 right-0 p-2 text-white hover:text-muted transition-colors"
   //             onClick={() => setIsImageModalOpen(false)}
   //           >
   //             <X className="h-8 w-8" />
@@ -58,7 +58,7 @@ export default function DataStewardHeader() {
   //             </div>
   //           </div>
   //           <div className="text-center md:text-left">
-  //             <div className="inline-block px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm text-sm mb-2">
+  //             <div className="inline-block px-3 py-1 rounded-full /20 backdrop-blur-sm text-sm mb-2">
   //               Online Now
   //             </div>
   //             <h1 className="text-4xl font-bold">Prospect Finder</h1>
@@ -81,7 +81,7 @@ export default function DataStewardHeader() {
         >
           <div className="relative max-w-4xl max-h-[90vh]">
             <button
-              className="absolute -top-12 right-0 p-2 text-white hover:text-gray-300 transition-colors"
+              className="absolute -top-12 right-0 p-2 text-white hover:text-muted transition-colors"
               onClick={() => setIsImageModalOpen(false)}
             >
               <Image

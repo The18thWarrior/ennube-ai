@@ -121,7 +121,7 @@ export default function UsageProgressBar() {
         </div>
       </div>
       <Progress 
-        value={usagePercentage} 
+        value={usagePercentage*10} 
         className={`h-2 ${usagePercentage > 90 ? 'bg-red-100' : ''}`}
       />
       <p className="text-xs text-muted-foreground mt-1">

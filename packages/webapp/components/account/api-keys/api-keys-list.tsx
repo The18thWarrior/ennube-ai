@@ -10,6 +10,7 @@ import React from 'react';
 import useApiKeys, { ApiKey } from '@/hooks/useApiKeys';
 import { ApiKeyCreateCard } from './api-key-create-card';
 import { useSnackbar } from 'notistack';
+import { Button } from '@/components/ui';
 
 interface ApiKeysListProps {}
 
@@ -70,58 +71,59 @@ export const ApiKeysList: React.FC<ApiKeysListProps> = ({}) => {
         </div>
       )}
 
-      <div className="overflow-x-auto bg-white dark:bg-gray-800 shadow-md rounded-lg">
+      <div className="overflow-x-auto   shadow-md rounded-lg">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead className="bg-gray-50 dark:bg-gray-700">
+          <thead className="bg-accent ">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">ID</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Created</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Updated</th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">ID</th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Created</th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Updated</th>
+              <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
-          <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+          <tbody className="  divide-y divide-gray-200 dark:divide-gray-700">
             {loading ? (
               <tr>
                 <td colSpan={4} className="px-6 py-4 text-center">
                   <div className="flex justify-center">
-                    <div className="animate-spin h-5 w-5 border-2 border-gray-500 rounded-full border-t-transparent"></div>
+                    <div className="animate-spin h-5 w-5 border-2  rounded-full border-t-transparent"></div>
                   </div>
                 </td>
               </tr>
             ) : apiKeys.length === 0 ? (
               <tr>
-                <td colSpan={4} className="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
+                <td colSpan={4} className="px-6 py-4 text-center text-sm text-muted-foreground ">
                   No API keys found
                 </td>
               </tr>
             ) : (
               apiKeys.map((key: ApiKey) => (
-                <tr key={key.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300 font-medium">{key.id}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-400 dark:text-gray-500">{key.createdAt ? new Date(key.createdAt).toLocaleString() : '\u2014'}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-400 dark:text-gray-500">{key.updatedAt ? new Date(key.updatedAt).toLocaleString() : '\u2014'}</td>
+                <tr key={key.id} className="">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground font-medium">{key.id}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-xs text-muted ">{key.createdAt ? new Date(key.createdAt).toLocaleString() : '\u2014'}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-xs text-muted ">{key.updatedAt ? new Date(key.updatedAt).toLocaleString() : '\u2014'}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex items-center justify-end gap-2">
-                    <button
-                      className="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm px-3 py-1 rounded"
+                    <Button
+                      variant="outline"
+                      className="text-sm px-3 py-1 rounded"
                       onClick={() => navigator.clipboard.writeText(key.id)}
                       title="Copy ID"
                     >
                       Copy
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       className="bg-yellow-500 hover:bg-yellow-600 text-white text-sm px-3 py-1 rounded"
                       onClick={() => handleRotate(key.id)}
                     >
                       Rotate
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       className="bg-red-600 hover:bg-red-700 text-white text-sm px-3 py-1 rounded"
                       onClick={() => handleDelete(key.id)}
                       disabled={deletingId === key.id}
                     >
                       {deletingId === key.id ? 'Deleting...' : 'Delete'}
-                    </button>
+                    </Button>
                   </td>
                 </tr>
               ))
@@ -142,13 +144,13 @@ export const ApiKeysList: React.FC<ApiKeysListProps> = ({}) => {
       )}
       {/* Display revealed tokens */}
       {Object.entries(revealedToken).map(([id, token]) => token ? (
-        <div key={id} className="fixed bottom-4 right-4 bg-white dark:bg-gray-900 p-4 rounded shadow">
+        <div key={id} className="fixed bottom-4 right-4 p-4 rounded shadow">
           <div className="text-sm font-medium">New token for {id}</div>
           <div className="mt-2 flex items-center gap-2">
-            <input readOnly value={token} className="px-3 py-2 rounded outline outline-gray-300 dark:outline-gray-700 dark:bg-gray-800 dark:text-gray-100" />
-            <button className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-3 py-2 rounded" onClick={() => copyValue(token)}>Copy</button>
+            <input readOnly value={token} className="px-3 py-2 rounded outline" />
+            <button className="bg-gray-200 hover:bg-muted text-muted-foreground px-3 py-2 rounded" onClick={() => copyValue(token)}>Copy</button>
           </div>
-          <div className="text-xs text-gray-500 mt-2">This token will be hidden after 30 seconds.</div>
+          <div className="text-xs text-muted-foreground mt-2">This token will be hidden after 30 seconds.</div>
         </div>
       ) : null)}
     </div>

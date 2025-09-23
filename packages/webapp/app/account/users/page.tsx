@@ -257,8 +257,8 @@ export default function UsersPage() {
       ) : users.length === 0 ? (
         <Card>
           <CardContent className="py-10 text-center">
-            <p className="text-gray-500">No secondary users found.</p>
-            <p className="mt-2 text-gray-500">Create your first user to get started.</p>
+            <p className="text-muted-foreground">No secondary users found.</p>
+            <p className="mt-2 text-muted-foreground">Create your first user to get started.</p>
           </CardContent>
         </Card>
       ) : (

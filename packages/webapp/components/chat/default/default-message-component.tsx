@@ -1,7 +1,7 @@
 import { UIMessage, UIMessagePart, UIDataTypes, UITools } from "ai";
 import MessageComponentWrapper from "./message-component-wrapper";
 
-const DefaultMessageComponent = (msg: UIMessage, theme: 'dark' | 'light' | 'system') => {
+const DefaultMessageComponent = (msg: UIMessage, theme: 'dark' | 'light' | 'lavender') => {
     const _msg = msg.parts ? msg.parts.at(msg.parts.length - 1) as UIMessagePart<UIDataTypes, UITools> : null;
     const value = _msg && _msg.type === 'text' ? _msg.text : '';
     const state = _msg && _msg.type === 'text' ? _msg.state : 'done';

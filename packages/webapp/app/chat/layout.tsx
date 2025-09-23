@@ -101,7 +101,7 @@ function ChatSidebar({
                       {agents.map((agent) => (
                         <li key={agent.id} className={'my-2'}>
                           <button
-                            className="w-full rounded text-left px-2 py-2 hover:bg-accent hover:bg-gray-200 dark:hover:bg-gray-900 focus:bg-accent focus:outline-none"
+                            className="w-full rounded text-left px-2 py-2 hover:bg-accent hover:bg-muted  focus:bg-accent focus:outline-none"
                             onClick={() => onSelectAgent(agent.apiName)}
                             disabled={loading}
                           > 

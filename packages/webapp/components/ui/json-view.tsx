@@ -20,7 +20,7 @@ export function JsonView({ data, classNames }: JsonViewProps) {
         <ReactJsonView
           src={data}
           name={null}
-          theme={theme === "dark" ? "tomorrow" : "rjv-default"}
+          theme={theme === "dark" || theme === "lavender" ? "tomorrow" : "rjv-default"}
           collapsed={2}
           enableClipboard={false}
           

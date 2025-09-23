@@ -33,7 +33,7 @@ function SubscriptionSuccessPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[70vh] p-6">
         <h1 className="text-2xl font-bold mb-4 text-red-500">Subscription Verification Failed</h1>
-        <p className="text-gray-600 mb-6">We couldn't verify your subscription. Please contact support.</p>
+        <p className="text-muted-foreground mb-6">We couldn't verify your subscription. Please contact support.</p>
         <Link href="/">
           <Button>Return to Home</Button>
         </Link>
@@ -49,7 +49,7 @@ function SubscriptionSuccessPage() {
         </svg>
       </div>
       <h1 className="text-2xl font-bold mb-2">Subscription Successful!</h1>
-      <p className="text-gray-600 mb-6 text-center max-w-md">
+      <p className="text-muted-foreground mb-6 text-center max-w-md">
         Thank you for subscribing! Your account has been successfully upgraded.
       </p>
       <Link href="/">

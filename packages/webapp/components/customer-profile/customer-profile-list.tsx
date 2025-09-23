@@ -57,31 +57,31 @@ export const CustomerProfileList: React.FC<CustomerProfileListProps> = ({ }) => 
         </div>
       )}
 
-      <div className="overflow-x-auto bg-white dark:bg-gray-800 shadow-md rounded-lg">
+      <div className="overflow-x-auto shadow-md rounded-lg">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead className="bg-gray-50 dark:bg-gray-700">
+          <thead className="bg-accent ">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Name</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Lifecycle</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Industries</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Products</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Regions</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Active</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Created</th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Name</th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Lifecycle</th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Industries</th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Products</th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Regions</th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Active</th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Created</th>
             </tr>
           </thead>
-          <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+          <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
             {loading ? (
               <tr>
                 <td colSpan={7} className="px-6 py-4 text-center">
                   <div className="flex justify-center">
-                    <div className="animate-spin h-5 w-5 border-2 border-gray-500 rounded-full border-t-transparent"></div>
+                    <div className="animate-spin h-5 w-5 border-2  rounded-full border-t-transparent"></div>
                   </div>
                 </td>
               </tr>
             ) : profiles.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
+                <td colSpan={7} className="px-6 py-4 text-center text-sm text-muted-foreground ">
                   No customer profiles found
                 </td>
               </tr>
@@ -89,22 +89,22 @@ export const CustomerProfileList: React.FC<CustomerProfileListProps> = ({ }) => 
               profiles.map((profile, index) => (
                 <tr
                   key={profile.id || index}
-                  className="hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+                  className="hover:bg-muted/40  cursor-pointer"
                   onClick={() => handleProfileClick(profile)}
                 >
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-700 dark:text-blue-300 font-medium">
                     {profile.customerProfileName}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground ">
                     {profile.accountLifecycle || 'N/A'}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground ">
                     {profile.commonIndustries || '—'}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground ">
                     {profile.frequentlyPurchasedProducts || '—'}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground ">
                     {profile.geographicRegions || '—'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-xs">
@@ -112,7 +112,7 @@ export const CustomerProfileList: React.FC<CustomerProfileListProps> = ({ }) => 
                       {profile.active ? 'Active' : 'Inactive'}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-400 dark:text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-xs text-muted ">
                     {profile.createdAt ? new Date(profile.createdAt).toLocaleDateString() : '—'}
                   </td>
                 </tr>

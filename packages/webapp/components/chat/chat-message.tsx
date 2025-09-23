@@ -25,12 +25,12 @@ import { Reasoning, ReasoningContent, ReasoningTrigger } from '../ai-elements/re
 import { Tool, ToolHeader, ToolContent, ToolInput, ToolOutput } from '../ai-elements/tool';
 
 // Custom message rendering
-export const renderMessage = (msg: UIMessage, idx: number, agent: ReactNode, theme: 'dark' | 'light' | 'system', session: Session | null, updateThreadFromTool: (updatedMessage: UIMessage) => void) => {
+export const renderMessage = (msg: UIMessage, idx: number, agent: ReactNode, theme: 'dark' | 'light' | 'lavender', session: Session | null, updateThreadFromTool: (updatedMessage: UIMessage) => void) => {
     // Default: render as text
     return RenderHtmlComponent(DefaultMessageComponent(msg, theme), msg, theme, agent, session, updateThreadFromTool);
 };
 
-const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, theme: 'dark' | 'light' | 'system', agent: ReactNode, session: Session | null, updateThreadFromTool: (updatedMessage: UIMessage) => void) => (
+const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, theme: 'dark' | 'light' | 'lavender', agent: ReactNode, session: Session | null, updateThreadFromTool: (updatedMessage: UIMessage) => void) => (
     <div className={'flex items-start gap-2'}>
         {msg.role === 'assistant' ? 
             <div className="flex aspect-square size-12 items-center justify-center rounded-full overflow-hidden flex-shrink-0 mt-2 ">
@@ -42,14 +42,13 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, the
         }
         <div>
             <Card
-                className={cn("mx-2", msg.role === "user" ? "bg-blue-500 text-white" : "bg-card", "")}
+                className={cn("mx-2", msg.role === "user" ? "bg-muted text-white" : "bg-background text-muted-foreground", "")}
             >
                 <CardContent className="px-4 py-2 text-base">
                     {msg.parts && msg.parts.filter(part => isToolUIPart(part)  /*&& (part.toolInvocation.toolName === 'getSFDCDataTool' || part.toolInvocation.toolName === 'getPostgresDataTool' || part.toolInvocation.toolName === 'getCount' || part.toolInvocation.toolName === 'callWorkflowTool')*/).map((part) => (
                         <span
                             className={[
-                                styles.messageBubble,
-                                theme === 'dark' ? styles.darkBubble : styles.lightBubble,
+                                styles.messageBubble
                                 
                             ].join(' ')}
                             style={{ padding: 0, background: 'none', border: 'none' }}
@@ -336,7 +335,7 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, the
         {msg.role === 'user' ?
             <div className="flex size-12 items-center justify-center rounded-full overflow-hidden flex-shrink-0 mt-2 ">
               {session?.user?.image ? (
-                <img height={35} width={35} className={" border border-gray-300 rounded-full"}
+                <img height={35} width={35} className={" border  rounded-full"}
                         src={session?.user?.image ||
                         `/logo.png`
                         }
@@ -362,7 +361,7 @@ const MessageStateComponent = ({
 }: {
   Component: React.ReactElement | null;
   state: "input-streaming" | "input-available" | "output-error" | "output-available";
-  theme: "dark" | "light" | "system";
+  theme: "dark" | "light" | "lavender";
   successMessage: string;
   errorMessage: string;
   toolName: string;
@@ -370,7 +369,7 @@ const MessageStateComponent = ({
 }) => {
   //console.log('MessageStateComponent state', state, 'toolName', input);
   return (
-    <Tool defaultOpen={false}>
+    <Tool defaultOpen={false} >
       <ToolHeader type={toolName as `tool-${string}`} state={state} />
       <ToolContent>
         <ToolInput input={input} />

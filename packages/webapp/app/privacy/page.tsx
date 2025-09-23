@@ -2,14 +2,14 @@ import Link from "next/link"
 
 export default function PrivacyPolicy() {
   return (
-    <div className="bg-white dark:bg-gray-800 py-12 sm:py-16">
+    <div className="  py-12 sm:py-16">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         {/* Using max-w-7xl to match the width of the main layout */}
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl">
+          <h1 className="text-3xl font-bold tracking-tight text-muted-foreground  sm:text-4xl">
             Ennube.ai Website Privacy Policy
           </h1>
-          <p className="mt-2 text-lg leading-8 text-gray-600 dark:text-gray-400">Last updated: May 9 2025</p>
+          <p className="mt-2 text-lg leading-8 text-muted-foreground ">Last updated: May 9 2025</p>
         </div>
         <div className="mt-10">
           <div className="prose prose-lg prose-indigo max-w-none">
@@ -39,45 +39,45 @@ export default function PrivacyPolicy() {
                     <tr>
                       <th
                         scope="col"
-                        className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 sm:pl-0"
+                        className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-muted-foreground  sm:pl-0"
                       >
                         Category
                       </th>
-                      <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">
+                      <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-muted-foreground ">
                         Examples
                       </th>
-                      <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">
+                      <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-muted-foreground ">
                         How We Collect
                       </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
                     <tr>
-                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-100 sm:pl-0">
+                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-muted-foreground  sm:pl-0">
                         Contact & Account Info
                       </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground ">
                         Name, email, company, job title, password hash
                       </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">Forms you submit</td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground ">Forms you submit</td>
                     </tr>
                     <tr>
-                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-100 sm:pl-0">
+                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-muted-foreground  sm:pl-0">
                         Usage Data
                       </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground ">
                         IP address, browser type, referring URL, pages visited, timestamps
                       </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">Automatic via server logs</td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground ">Automatic via server logs</td>
                     </tr>
                     <tr>
-                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-100 sm:pl-0">
+                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-muted-foreground  sm:pl-0">
                         Cookies & Similar Tech
                       </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground ">
                         Session cookies, analytics events (privacy-focused Plausible)
                       </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">Automatic</td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground ">Automatic</td>
                     </tr>
                   </tbody>
                 </table>
@@ -92,43 +92,43 @@ export default function PrivacyPolicy() {
                     <tr>
                       <th
                         scope="col"
-                        className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 sm:pl-0"
+                        className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-muted-foreground  sm:pl-0"
                       >
                         Purpose
                       </th>
-                      <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">
+                      <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-muted-foreground ">
                         Lawful basis (GDPR Art. 6)
                       </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
                     <tr>
-                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-100 sm:pl-0">
+                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-muted-foreground  sm:pl-0">
                         Provide & secure the Site
                       </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground ">
                         Legitimate interests / contract
                       </td>
                     </tr>
                     <tr>
-                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-100 sm:pl-0">
+                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-muted-foreground  sm:pl-0">
                         Respond to inquiries
                       </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">Contract</td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground ">Contract</td>
                     </tr>
                     <tr>
-                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-100 sm:pl-0">
+                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-muted-foreground  sm:pl-0">
                         Analytics & performance
                       </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground ">
                         Legitimate interests (opt-out available)
                       </td>
                     </tr>
                     <tr>
-                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-100 sm:pl-0">
+                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-muted-foreground  sm:pl-0">
                         Marketing emails
                       </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">Consent (you must opt in)</td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground ">Consent (you must opt in)</td>
                     </tr>
                   </tbody>
                 </table>

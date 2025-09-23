@@ -83,7 +83,7 @@ export default function PromptsClient({ initial }: { initial: Prompt[] }) {
   }
 
   return (
-    <div className="p-4 bg-white dark:bg-neutral-800 text-gray-900 dark:text-gray-100 rounded">
+    <div className="p-4   text-muted-foreground  rounded">
       <h2 className="text-lg font-semibold mb-2">Agent Prompts</h2>
 
       <form onSubmit={save} className="mb-4 space-y-2">
@@ -92,7 +92,7 @@ export default function PromptsClient({ initial }: { initial: Prompt[] }) {
           <input
             value={agent}
             onChange={(e) => setAgent(e.target.value)}
-            className="w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-neutral-700 rounded p-2 text-sm placeholder-gray-500 dark:placeholder-gray-400"
+            className="w-full border     rounded p-2 text-sm placeholder-gray-500 dark:placeholder-gray-400"
           />
         </div>
         <div>
@@ -101,7 +101,7 @@ export default function PromptsClient({ initial }: { initial: Prompt[] }) {
             value={promptText}
             onChange={(e) => setPromptText(e.target.value)}
             rows={6}
-            className="w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-neutral-700 rounded p-2 font-mono text-sm"
+            className="w-full border     rounded p-2 font-mono text-sm"
           />
         </div>
         <div className="flex gap-2">
@@ -119,14 +119,14 @@ export default function PromptsClient({ initial }: { initial: Prompt[] }) {
               setPromptText('');
               setEditingAgent(null);
             }}
-            className="px-3 py-1 border border-gray-300 dark:border-gray-700 rounded bg-white dark:bg-gray-800"
+            className="px-3 py-1 border   rounded  "
           >
             Cancel
           </button>
           <button
             type="button"
             onClick={reload}
-            className="px-3 py-1 border border-gray-300 dark:border-gray-700 rounded bg-white dark:bg-gray-800"
+            className="px-3 py-1 border   rounded  "
             disabled={loading}
           >
             Reload
@@ -135,24 +135,24 @@ export default function PromptsClient({ initial }: { initial: Prompt[] }) {
       </form>
 
       <div className="space-y-2">
-        {loading && <div className="text-sm text-gray-500">Loading...</div>}
-        {prompts.length === 0 && <div className="text-sm text-gray-500">No prompts found.</div>}
+        {loading && <div className="text-sm text-muted-foreground">Loading...</div>}
+        {prompts.length === 0 && <div className="text-sm text-muted-foreground">No prompts found.</div>}
         {prompts.map((p) => (
           <div
             key={p.agent}
-            className="border border-gray-200 dark:border-gray-800 rounded p-2 flex justify-between items-start bg-white dark:bg-gray-800"
+            className="border  dark: rounded p-2 flex justify-between items-start  "
           >
             <div className="mr-4 break-words">
-              <div className="font-mono text-sm text-gray-700 dark:text-gray-200">{p.agent}</div>
+              <div className="font-mono text-sm text-muted-foreground ">{p.agent}</div>
               <Collapsible>
                 <div className="overflow-hidden">
                   <div className="h-20 overflow-hidden">
-                    <pre className="whitespace-pre-wrap text-sm mt-1 text-gray-800 dark:text-gray-100">{p.prompt}</pre>
+                    <pre className="whitespace-pre-wrap text-sm mt-1 text-muted-foreground ">{p.prompt}</pre>
                   </div>
                 </div>
                 <CollapsibleContent>
                   <div className="mt-2">
-                    <pre className="whitespace-pre-wrap text-sm text-gray-800 dark:text-gray-100">{p.prompt}</pre>
+                    <pre className="whitespace-pre-wrap text-sm text-muted-foreground ">{p.prompt}</pre>
                   </div>
                 </CollapsibleContent>
                 <div className="mt-2">

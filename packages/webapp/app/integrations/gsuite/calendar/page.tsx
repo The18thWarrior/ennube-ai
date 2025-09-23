@@ -20,7 +20,7 @@ export default async function CalendarPage() {
         Google Calendar Integration
       </h1>
 
-      <div className="p-6 bg-gray-50 dark:bg-gray-900 rounded-lg">
+      <div className="p-6 bg-muted  rounded-lg">
         <p className="mb-6">
           Manage your calendar events and schedule meetings directly from this application.
           View upcoming events and create new ones.

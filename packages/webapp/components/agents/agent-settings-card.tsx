@@ -472,7 +472,7 @@ export function AgentSettingsCard({
   const getStatusBadge = () => {
     if (loading) {
       return (
-        <Badge variant="outline" className="bg-gray-100 dark:bg-gray-800">
+        <Badge variant="outline" className="bg-gray-100 ">
           <Loader2 className="h-3 w-3 mr-1 animate-spin" />
           Loading
         </Badge>
@@ -489,7 +489,7 @@ export function AgentSettingsCard({
     }
     
     return (
-      <Badge variant="outline" className="bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
+      <Badge variant="outline" className="bg-gray-100  text-muted-foreground ">
         <XCircle className="h-3 w-3 mr-1" />
         Inactive
       </Badge>

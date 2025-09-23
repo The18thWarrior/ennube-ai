@@ -95,7 +95,7 @@ export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, colla
   const AgentHeader = () => {
     return (
       <div className="flex items-center gap-4 flex-auto">
-        <div className="h-16 w-16 rounded-full overflow-hidden flex-shrink-0 border border-gray-200">
+        <div className="h-16 w-16 rounded-full overflow-hidden flex-shrink-0 border ">
           <Link href={getAgentLink(execution.agent_name)}>
             <Image
               src={execution.image_url || "/placeholder.svg"}
@@ -147,20 +147,20 @@ export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, colla
           <AgentHeader />
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <h3 className="text-sm font-medium text-gray-500">EXECUTION ID</h3>
-              <p className="font-mono dark:text-gray-400">{execution.id}</p>
+            <div className="bg-muted p-4 rounded-lg">
+              <h3 className="text-sm font-medium text-muted-foreground">EXECUTION ID</h3>
+              <p className="font-mono ">{execution.id}</p>
             </div>
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <h3 className="text-sm font-medium text-gray-500">EXECUTION TIME</h3>
-              <p className="dark:text-gray-400">{execution.execution_time ? `${(execution.execution_time).toFixed(2)} seconds` : execution.status === "success" || execution.status === "failed" ? "Unknown" :"Running..."}</p>
+            <div className="bg-muted p-4 rounded-lg">
+              <h3 className="text-sm font-medium text-muted-foreground">EXECUTION TIME</h3>
+              <p className="">{execution.execution_time ? `${(execution.execution_time).toFixed(2)} seconds` : execution.status === "success" || execution.status === "failed" ? "Unknown" :"Running..."}</p>
             </div>
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <h3 className="text-sm font-medium text-gray-500">DATE</h3>
-              <p className=" dark:text-gray-400">{new Date(execution.created_at).toLocaleString()}</p>
+            <div className="bg-muted p-4 rounded-lg">
+              <h3 className="text-sm font-medium text-muted-foreground">DATE</h3>
+              <p className=" ">{new Date(execution.created_at).toLocaleString()}</p>
             </div>
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <h3 className="text-sm font-medium text-gray-500">STATUS</h3>
+            <div className="bg-muted p-4 rounded-lg">
+              <h3 className="text-sm font-medium text-muted-foreground">STATUS</h3>
               <StatusBadge status={execution.status} />
             </div>
           </div>
@@ -211,7 +211,7 @@ export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, colla
                   <li key={id+index} >
                     <Badge
                       variant="outline"
-                      className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                      className="cursor-pointer hover:bg-muted  transition-colors"
                       // onClick={() => handleSelectRecord(id)}
                     >
                       <Link href={instanceUrl ? `${instanceUrl}/${id}` : `https://login.salesforce.com/${id}`} rel="noopener noreferrer" target="_blank"><span className="truncate">{id}</span></Link>
@@ -220,7 +220,7 @@ export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, colla
                 ))}
               </ul>
             ) : (
-              <p className="text-sm text-gray-500">No records processed.</p>
+              <p className="text-sm text-muted-foreground">No records processed.</p>
             )}
           </div>        
 
@@ -231,10 +231,10 @@ export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, colla
                 <TabsTrigger value="formatted">Formatted</TabsTrigger>
                 <TabsTrigger value="raw">Raw</TabsTrigger>
               </TabsList>
-              <TabsContent value="formatted" className="p-4 bg-gray-50 dark:bg-gray-800 rounded-md">
+              <TabsContent value="formatted" className="p-4 bg-muted  rounded-md">
                 <JsonView data={rawData} />
               </TabsContent>
-              <TabsContent value="raw" className="p-4 bg-gray-50 dark:bg-gray-800 rounded-md overflow-auto max-h-96">
+              <TabsContent value="raw" className="p-4 bg-muted  rounded-md overflow-auto max-h-96">
                 <pre className="text-xs">{JSON.stringify(rawData, null, 2)}</pre>
               </TabsContent>
             </Tabs>
@@ -327,20 +327,20 @@ export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, colla
                   
                 </div>
                 <div className="grid grid-cols-4 gap-4 flex-1">
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                      <h3 className="text-sm font-medium text-gray-500">EXECUTION ID</h3>
-                      <p className="font-mono dark:text-gray-400">{execution.id}</p>
+                    <div className="bg-muted p-4 rounded-lg">
+                      <h3 className="text-sm font-medium text-muted-foreground">EXECUTION ID</h3>
+                      <p className="font-mono ">{execution.id}</p>
                     </div>
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                      <h3 className="text-sm font-medium text-gray-500">EXECUTION TIME</h3>
-                      <p className="dark:text-gray-400">{execution.execution_time ? `${(execution.execution_time).toFixed(2)} seconds` : "Running..."}</p>
+                    <div className="bg-muted p-4 rounded-lg">
+                      <h3 className="text-sm font-medium text-muted-foreground">EXECUTION TIME</h3>
+                      <p className="">{execution.execution_time ? `${(execution.execution_time).toFixed(2)} seconds` : "Running..."}</p>
                     </div>
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                      <h3 className="text-sm font-medium text-gray-500">DATE</h3>
-                      <p className=" dark:text-gray-400">{new Date(execution.created_at).toLocaleString()}</p>
+                    <div className="bg-muted p-4 rounded-lg">
+                      <h3 className="text-sm font-medium text-muted-foreground">DATE</h3>
+                      <p className=" ">{new Date(execution.created_at).toLocaleString()}</p>
                     </div>
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                      <h3 className="text-sm font-medium text-gray-500">STATUS</h3>
+                    <div className="bg-muted p-4 rounded-lg">
+                      <h3 className="text-sm font-medium text-muted-foreground">STATUS</h3>
                       <StatusBadge status={execution.status} />
                     </div>
                   </div>
@@ -351,10 +351,10 @@ export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, colla
                     <TabsTrigger value="formatted">Formatted</TabsTrigger>
                     <TabsTrigger value="raw">Raw</TabsTrigger>
                   </TabsList>
-                  <TabsContent value="formatted" className="p-4 bg-gray-50 dark:bg-gray-800 rounded-md">
+                  <TabsContent value="formatted" className="p-4 bg-muted  rounded-md">
                     <JsonView data={rawData} />
                   </TabsContent>
-                  <TabsContent value="raw" className="p-4 bg-gray-50 dark:bg-gray-800 rounded-md overflow-auto max-h-96">
+                  <TabsContent value="raw" className="p-4 bg-muted  rounded-md overflow-auto max-h-96">
                     <pre className="text-xs">{JSON.stringify(rawData, null, 2)}</pre>
                   </TabsContent>
                 </Tabs>
@@ -456,19 +456,19 @@ function StatusBadge({ status }: { status: string }) {
       )
     case "in_progress":
       return (
-        <Badge variant="outline" className="flex items-center gap-1 dark:text-gray-700">
+        <Badge variant="outline" className="flex items-center gap-1 ">
           <Clock className="h-3 w-3" />
           <span>In Progress</span>
         </Badge>
       )
     case "In Progress":
       return (
-        <Badge variant="outline" className="flex items-center gap-1 dark:text-gray-500">
+        <Badge variant="outline" className="flex items-center gap-1 ">
           <Clock className="h-3 w-3" />
           <span>In Progress</span>
         </Badge>
       )
     default:
-      return <Badge variant="outline" className="dark:text-gray-500">{status}</Badge>
+      return <Badge variant="outline" className="">{status}</Badge>
   }
 }

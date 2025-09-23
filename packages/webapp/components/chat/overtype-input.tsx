@@ -156,7 +156,7 @@ export default function MarkdownEditor({ input, handleInputChange, handleSubmit,
       value: input,
       borderRadius: '.4rem',
       textareaProps: {
-        className: `rounded-md border border-gray-300 dark:border-gray-600 `
+        className: `rounded-md border  dark: `
       },
       onChange: (s: string) => {
         // Adapt OverType onChange to the project's change handler which expects an event.
@@ -225,7 +225,7 @@ export default function MarkdownEditor({ input, handleInputChange, handleSubmit,
     <div className={"relative flex-1"}>
        <form>
         <div className="flex items-center">
-          <div ref={ref} className={"rounded-md border border-gray-300 dark:border-gray-600 grow"} />
+          <div ref={ref} className={"rounded-md border  dark: grow"} />
           {/* <Button className="ml-2 flex-shrink-0" variant="outline" type="submit" onClick={() => triggerSubmit(ref.current)} disabled={isLoading}><Send className={`h-4 w-4 text-white`} /></Button> */}
           {
             <Button type="button" disabled={isLoading || !input.trim()} size="icon" onClick={() => triggerSubmit(ref.current)} className={`${styles.sendButton} ml-2 flex-shrink-0`}>

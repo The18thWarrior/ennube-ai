@@ -58,28 +58,28 @@ export const ContractResultList: React.FC<ContractResultListProps> = ({ }) => {
         </div>
       )}
 
-      <div className="overflow-x-auto bg-white dark:bg-gray-800 shadow-md rounded-lg">
+      <div className="overflow-x-auto shadow-md rounded-lg">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead className="bg-gray-50 dark:bg-gray-700">
+          <thead className="bg-accent ">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Provider</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Contract ID</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Result Id</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Created</th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Provider</th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Contract ID</th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Result Id</th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Created</th>
             </tr>
           </thead>
-          <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+          <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
             {loading ? (
               <tr>
                 <td colSpan={4} className="px-6 py-4 text-center">
                   <div className="flex justify-center">
-                    <div className="animate-spin h-5 w-5 border-2 border-gray-500 rounded-full border-t-transparent"></div>
+                    <div className="animate-spin h-5 w-5 border-2  rounded-full border-t-transparent"></div>
                   </div>
                 </td>
               </tr>
             ) : results.length === 0 ? (
               <tr>
-                <td colSpan={4} className="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
+                <td colSpan={4} className="px-6 py-4 text-center text-sm text-muted-foreground ">
                   No contract results found
                 </td>
               </tr>
@@ -87,19 +87,19 @@ export const ContractResultList: React.FC<ContractResultListProps> = ({ }) => {
               results.map((result, index) => (
                 <tr
                   key={result.id || index}
-                  className="hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+                  className="hover:bg-muted/40  cursor-pointer"
                   onClick={() => handleResultClick(result)}
                 >
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-700 dark:text-blue-300 font-medium">
                     {result.provider}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground ">
                     {result.source_id}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-400 dark:text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-xs text-muted ">
                     {result.id}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-400 dark:text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-xs text-muted ">
                     {result.created_at ? formatDistanceToNow(dayjs(result.created_at).toDate(), { addSuffix: true }) : '\u2014'}
                   </td>
                 </tr>

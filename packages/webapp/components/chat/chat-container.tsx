@@ -14,6 +14,7 @@ import {avatarOptions, AgentSelector} from '@/components/chat/agents';
 import NameComponent from './chat-name';
 import MarkdownEditor from './overtype-input';
 import { PromptInput, PromptInputBody, PromptInputAttachments, PromptInputAttachment, PromptInputTextarea, PromptInputToolbar, PromptInputTools, PromptInputActionMenu, PromptInputActionMenuTrigger, PromptInputActionMenuContent, PromptInputActionAddAttachments, PromptInputSubmit, PromptInputMessage } from '../ai-elements/prompt-input';
+import { Card } from '../ui';
 
 /**
  * Simple chat container using n8n/chat (embed mode)
@@ -167,7 +168,7 @@ const ChatContainer = ({
     return (
         <div className="flex flex-col relative mr-6" >
             {/* EditableField for Name */}
-            <div className={'rounded-lg border border-gray-200 dark:border-neutral-700 h-[80dvh] max-h-[85dvh] overflow-auto scrollbar'} > {/*height: "calc(100vh - 240px)",*/}
+            <Card className={'rounded-lg border h-[80dvh] max-h-[85dvh] overflow-auto scrollbar'} > {/*height: "calc(100vh - 240px)",*/}
                 <div className="flex justify-between items-start group mb-4 p-3 border-b ">
                     {/* <svg className="mr-3 h-4 w-4 text-muted-foreground mt-1 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /></svg> */}
                     <div className={'px-2'}>
@@ -203,7 +204,7 @@ const ChatContainer = ({
                         <div ref={messagesEndRef}></div>
                     </div>
                 </div>
-            </div>
+            </Card>
             <div className={`h-[10dvh] bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60  ${styles.wfill}`}>
                 {error && <div className="text-red-500 mb-2">Error: {error.message}</div>}
                 {/* <MarkdownEditor

@@ -329,7 +329,7 @@ export function CrmDataLoaderCard({ records, onComplete, borderless }: DataLoade
                         {/* CSV Upload */}
                         {inputMethod === 'csv' && (
                             <div className="space-y-4">
-                            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                            <div className="border-2 border-dashed  rounded-lg p-6 text-center">
                                 <input
                                 ref={fileInputRef}
                                 type="file"
@@ -345,7 +345,7 @@ export function CrmDataLoaderCard({ records, onComplete, borderless }: DataLoade
                                 Choose CSV File
                                 </Button>
                                 {csvFile && (
-                                <p className="text-sm text-gray-600">
+                                <p className="text-sm text-muted-foreground">
                                     Selected: {csvFile.name} ({csvData.length} records)
                                 </p>
                                 )}
@@ -475,7 +475,7 @@ export function CrmDataLoaderCard({ records, onComplete, borderless }: DataLoade
                     </TableBody>
                   </Table>
                   {csvData.length > 3 && (
-                    <div className="p-2 text-center text-sm text-gray-500 border-t">
+                    <div className="p-2 text-center text-sm text-muted-foreground border-t">
                       ... and {csvData.length - 3} more records
                     </div>
                   )}
@@ -506,11 +506,11 @@ export function CrmDataLoaderCard({ records, onComplete, borderless }: DataLoade
               </Button>
             </div>
             <div className="space-y-4">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-muted-foreground">
                 Map your CSV fields to Salesforce fields for {selectedObject}
               </p>
               {fieldsLoading && (
-                <div className="p-2 text-center text-gray-500">Loading fields...</div>
+                <div className="p-2 text-center text-muted-foreground">Loading fields...</div>
               )}
               {fieldsError && (
                 <div className="p-2 text-center text-red-600">Error loading fields: {fieldsError}</div>
@@ -597,7 +597,7 @@ export function CrmDataLoaderCard({ records, onComplete, borderless }: DataLoade
             </div>
             
             <div className="space-y-4">
-              <div className="p-4 border rounded-lg bg-gray-50 dark:bg-gray-800">
+              <div className="p-4 border rounded-lg bg-muted ">
                 <h4 className="font-medium mb-2">Operation Summary</h4>
                 <div className="space-y-1 text-sm">
                   <p><strong>Object:</strong> {selectedObject}</p>
@@ -651,7 +651,7 @@ export function CrmDataLoaderCard({ records, onComplete, borderless }: DataLoade
             </div>
             
             <div className="space-y-4">
-              <pre className="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg text-sm overflow-auto max-h-96">
+              <pre className="p-4 bg-gray-100  rounded-lg text-sm overflow-auto max-h-96">
                 {JSON.stringify(executionResult, null, 2)}
               </pre>
             </div>

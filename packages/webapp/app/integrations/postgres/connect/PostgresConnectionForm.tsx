@@ -108,7 +108,7 @@ export default function PostgresConnectionForm() {
           onChange={(e) => setConnectionUrl(e.target.value)}
           className="font-mono text-sm"
         />
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-muted-foreground">
           Format: postgres://username:password@hostname:port/database
         </p>
       </div>

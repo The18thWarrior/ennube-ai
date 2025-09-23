@@ -161,7 +161,7 @@ export function UpdateDataReviewModal({ open, proposal, closeProposal, message, 
 
   return (
     <div className="flex items-center justify-center">
-        <div className=" dark:bg-neutral-800 rounded-lg shadow-lg w-11/12 p-4">
+        <div className="  rounded-lg shadow-lg w-11/12 p-4">
           <h3 className="text-lg font-semibold">Review proposed changes</h3>
           <p className="text-sm text-muted-foreground">{proposal.summary}</p>
 

@@ -80,7 +80,7 @@ export default async function HubspotDashboard() {
           
           {/* User Info */}
           {userInfo && (
-            <div className="p-6 bg-gray-50 dark:bg-gray-900 rounded-lg">
+            <div className="p-6 bg-popover  rounded-lg">
               <h2 className="text-xl font-semibold mb-4">Account Information</h2>
               <div className="flex items-center gap-4 mb-4">
                 <Avatar className="h-16 w-16">
@@ -89,20 +89,20 @@ export default async function HubspotDashboard() {
                 </Avatar>
                 <div>
                   <p className="text-lg font-medium">{userInfo.email}</p>
-                  <p className="text-sm text-gray-400">Portal ID: {userInfo.portalId}</p>
+                  <p className="text-sm text-muted">Portal ID: {userInfo.portalId}</p>
                 </div>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500">User ID</h3>
+                  <h3 className="text-sm font-medium text-muted-foreground">User ID</h3>
                   <p>{userInfo.id}</p>
                 </div>
               </div>
             </div>
           )}
           
-          {displayQuickActions && <div className="p-6 bg-gray-50 dark:bg-gray-900 rounded-lg">
+          {displayQuickActions && <div className="p-6 bg-popover  rounded-lg">
             <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               
@@ -119,7 +119,7 @@ export default async function HubspotDashboard() {
           </div> }
 
           {/* Data Access Links */}
-          {/* <div className="p-6 bg-gray-50 dark:bg-gray-900 rounded-lg">
+          {/* <div className="p-6 bg-muted  rounded-lg">
             <h2 className="text-xl font-semibold mb-4">HubSpot Data</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Link href="/integrations/hubspot/contacts" passHref>

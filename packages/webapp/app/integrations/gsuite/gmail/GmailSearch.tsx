@@ -124,13 +124,13 @@ export default function GmailSearch() {
         <div className="md:col-span-1 space-y-2">
           <h2 className="text-lg font-medium">Results</h2>
           {searchResults.length === 0 && !isLoading ? (
-            <p className="text-gray-500 text-sm">No results to show</p>
+            <p className="text-muted-foreground text-sm">No results to show</p>
           ) : (
             <div className="space-y-2 max-h-[500px] overflow-y-auto">
               {searchResults.map((thread) => (
                 <Card 
                   key={thread.id}
-                  className={`cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors ${
+                  className={`cursor-pointer hover:bg-muted  transition-colors ${
                     selectedThread?.id === thread.id ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : ''
                   }`}
                   onClick={() => viewThread(thread.id)}
@@ -151,7 +151,7 @@ export default function GmailSearch() {
             <div className="border rounded-lg p-4 space-y-4 max-h-[500px] overflow-y-auto">
               {selectedThread.messages?.map((message) => (
                 <Card key={message.id} className="overflow-hidden">
-                  <CardHeader className="p-3 bg-gray-50 dark:bg-gray-800">
+                  <CardHeader className="p-3 bg-muted ">
                     <div className="flex gap-3 items-start">
                       <Avatar className="h-10 w-10">
                         <AvatarFallback>{getInitials(message.from)}</AvatarFallback>
@@ -159,9 +159,9 @@ export default function GmailSearch() {
                       <div className="flex-1">
                         <div className="flex justify-between items-start">
                           <CardTitle className="text-base">{message.from}</CardTitle>
-                          <span className="text-xs text-gray-500">{formatDate(message.date.toString())}</span>
+                          <span className="text-xs text-muted-foreground">{formatDate(message.date.toString())}</span>
                         </div>
-                        <p className="text-sm text-gray-500">To: {message.to.join(', ')}</p>
+                        <p className="text-sm text-muted-foreground">To: {message.to.join(', ')}</p>
                         <p className="font-medium">{message.subject}</p>
                       </div>
                     </div>
@@ -196,7 +196,7 @@ export default function GmailSearch() {
               </Button>
             </div>
           ) : (
-            <div className="border rounded-lg p-6 text-center text-gray-500">
+            <div className="border rounded-lg p-6 text-center text-muted-foreground">
               Select an email thread to view its contents
             </div>
           )}

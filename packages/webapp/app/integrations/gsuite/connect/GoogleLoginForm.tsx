@@ -42,7 +42,7 @@ export default function GoogleLoginForm() {
         {isSubmitting ? "Redirecting..." : "Connect with Google Workspace"}
       </Button>
       
-      <div className="mt-4 text-center text-sm text-gray-500">
+      <div className="mt-4 text-center text-sm text-muted-foreground">
         <p>
           You will be redirected to Google to authorize this application.
           No credentials are stored in this application when using OAuth.

@@ -20,13 +20,13 @@ export default async function PostgresConnect() {
     <div className="space-y-6">
       <h1 className="text-3xl font-bold">Connect to PostgreSQL</h1>
 
-      <div className="p-6 bg-gray-50 dark:bg-gray-900 rounded-lg">
+      <div className="p-6 bg-muted  rounded-lg">
         <p className="mb-4">Connect your PostgreSQL database to access and manage your data directly from this application.</p>
         <PostgresConnectionForm />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="p-6 bg-gray-50 dark:bg-gray-900 rounded-lg">
+        <div className="p-6 bg-muted  rounded-lg">
           <h2 className="text-xl font-semibold mb-4">Benefits of connecting</h2>
           <ul className="list-disc pl-5 space-y-2">
             <li>Execute SQL queries directly from the interface</li>
@@ -37,7 +37,7 @@ export default async function PostgresConnect() {
           </ul>
         </div>
         
-        <div className="p-6 bg-gray-50 dark:bg-gray-900 rounded-lg">
+        <div className="p-6 bg-muted  rounded-lg">
           <h2 className="text-xl font-semibold mb-4">Connection Requirements</h2>
           <p className="mb-4">To connect your PostgreSQL database:</p>
           <ol className="list-decimal pl-5 space-y-2">
@@ -60,7 +60,7 @@ export default async function PostgresConnect() {
       </div>
       
       <div className="mt-8">
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-muted-foreground">
           Need help? Check our <CustomLink href="/docs">documentation</CustomLink> or contact support.
         </p>
       </div>

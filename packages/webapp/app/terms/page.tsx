@@ -3,8 +3,8 @@ export default function TermsOfService() {
     <div className=" py-12 sm:py-16">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl">Ennube.ai Terms of Service</h1>
-          <p className="mt-2 text-lg leading-8 text-gray-600 dark:text-gray-400">Last updated: May 9 2025</p>
+          <h1 className="text-3xl font-bold tracking-tight text-muted-foreground  sm:text-4xl">Ennube.ai Terms of Service</h1>
+          <p className="mt-2 text-lg leading-8 text-muted-foreground ">Last updated: May 9 2025</p>
         </div>
         <div className="mt-10">
           <div className="prose prose-lg prose-indigo max-w-none">

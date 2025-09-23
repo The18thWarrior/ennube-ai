@@ -80,7 +80,7 @@ export default async function PostgresDashboard() {
           
           {/* Database Info */}
           {dbInfo && config && (
-            <div className="p-6 bg-gray-50 dark:bg-gray-900 rounded-lg">
+            <div className="p-6 bg-popover  rounded-lg">
               <h2 className="text-xl font-semibold mb-4">Database Information</h2>
               <div className="flex items-center gap-4 mb-4">
                 <Avatar className="h-16 w-16">
@@ -92,18 +92,18 @@ export default async function PostgresDashboard() {
                 </Avatar>
                 <div>
                   <p className="text-lg font-medium">{dbInfo.current_database}</p>
-                  <p className="text-gray-500">User: {dbInfo.current_user}</p>
-                  <p className="text-sm text-gray-400">Host: {config.host}:{config.port}</p>
+                  <p className="text-muted-foreground">User: {dbInfo.current_user}</p>
+                  <p className="text-sm text-muted">Host: {config.host}:{config.port}</p>
                 </div>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500">PostgreSQL Version</h3>
+                  <h3 className="text-sm font-medium text-muted-foreground">PostgreSQL Version</h3>
                   <p className="text-sm">{dbInfo.version}</p>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500">Connection Time</h3>
+                  <h3 className="text-sm font-medium text-muted-foreground">Connection Time</h3>
                   <p className="text-sm">{new Date(dbInfo.current_time).toLocaleString()}</p>
                 </div>
               </div>
@@ -111,7 +111,7 @@ export default async function PostgresDashboard() {
           )}
           
           {/* Quick Actions */}
-          <div className="p-6 bg-gray-50 dark:bg-gray-900 rounded-lg">
+          <div className="p-6 bg-popover  rounded-lg">
             <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Button asChild variant="outline" className="h-auto py-4 px-6 flex flex-col items-center justify-center gap-2">
@@ -146,7 +146,7 @@ export default async function PostgresDashboard() {
       )}
       
       {/* Administration Section */}
-      <div className="p-6 bg-gray-50 dark:bg-gray-900 rounded-lg">
+      <div className="p-6 bg-muted  rounded-lg">
         <h2 className="text-xl font-semibold mb-4">Administration</h2>
         <div className="flex flex-col space-y-4">
           <div className="flex flex-row space-x-4">

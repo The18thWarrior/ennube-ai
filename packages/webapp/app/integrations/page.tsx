@@ -36,7 +36,7 @@ export default async function IntegrationsPage() {
     return (
         <div className="container mx-auto py-10 px-4">
             <h1 className="text-3xl font-bold mb-6">Integrations</h1>
-            <p className="text-gray-600 mb-8">Connect your favorite tools and services to enhance your agent capabilities.</p>
+            <p className="text-muted-foreground mb-8">Connect your favorite tools and services to enhance your agent capabilities.</p>
 
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 <IntegrationCard

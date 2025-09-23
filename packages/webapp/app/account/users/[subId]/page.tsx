@@ -257,7 +257,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ subId: st
             <div className="flex items-center justify-between pt-4">
               <div className="space-y-0.5">
                 <Label htmlFor="status">Active Status</Label>
-                <div className="text-sm text-gray-500">
+                <div className="text-sm text-muted-foreground">
                   {userForm.status === 'active' 
                     ? 'User can access the system' 
                     : 'User access is disabled'}
@@ -280,13 +280,13 @@ export default function UserDetailPage({ params }: { params: Promise<{ subId: st
             <CardContent>
               <dl className="space-y-4">
                 <div className="flex justify-between">
-                  <dt className="font-medium text-gray-500">User ID:</dt>
-                  <dd className="text-gray-700">{user?.user_id}</dd>
+                  <dt className="font-medium text-muted-foreground">User ID:</dt>
+                  <dd className="text-muted-foreground">{user?.user_id}</dd>
                 </div>
                 <Separator />
                 <div className="flex justify-between">
-                  <dt className="font-medium text-gray-500">Last Updated:</dt>
-                  <dd className="text-gray-700">
+                  <dt className="font-medium text-muted-foreground">Last Updated:</dt>
+                  <dd className="text-muted-foreground">
                     {user?.user_metadata?.lastUpdated 
                       ? new Date(user.user_metadata.lastUpdated).toLocaleString() 
                       : 'N/A'}
@@ -294,8 +294,8 @@ export default function UserDetailPage({ params }: { params: Promise<{ subId: st
                 </div>
                 <Separator />
                 <div className="flex justify-between">
-                  <dt className="font-medium text-gray-500">Created By:</dt>
-                  <dd className="text-gray-700">
+                  <dt className="font-medium text-muted-foreground">Created By:</dt>
+                  <dd className="text-muted-foreground">
                     {user?.user_metadata?.createdBy || 'N/A'}
                   </dd>
                 </div>

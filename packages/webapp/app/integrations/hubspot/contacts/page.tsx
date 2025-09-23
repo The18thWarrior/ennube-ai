@@ -68,14 +68,14 @@ export default async function HubspotContacts() {
           {contacts.length > 0 ? (
             <div className="rounded-md border">
               <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50 dark:bg-gray-800">
+                <thead className="bg-muted ">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Name</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Email</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Phone</th>
                   </tr>
                 </thead>
-                <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200">
+                <tbody className="  divide-y divide-gray-200">
                   {contacts.map((contact) => (
                     <tr key={contact.id}>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -93,7 +93,7 @@ export default async function HubspotContacts() {
               </table>
             </div>
           ) : (
-            <div className="p-6 bg-gray-50 dark:bg-gray-900 rounded-lg">
+            <div className="p-6 bg-muted  rounded-lg">
               <p>No contacts found.</p>
             </div>
           )}

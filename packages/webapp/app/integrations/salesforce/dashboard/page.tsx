@@ -13,7 +13,6 @@ export default async function SalesforceDashboard() {
   // Check if we have a NextAuth session with Salesforce OAuth data
   const session = await auth()
   const displayQuickActions = true;
-  console.log(session?.user?.auth0)
   //console.log('Session:', session?.user?.auth0)
   // Check if we have a Salesforce client from either OAuth or direct authentication
   const salesforceCredentials = await getSalesforceCredentialsById()
@@ -86,7 +85,7 @@ export default async function SalesforceDashboard() {
           
           {/* User Info */}
           {userInfo && (
-            <div className="p-6 bg-gray-50 dark:bg-gray-900 rounded-lg">
+            <div className="p-6 bg-popover rounded-lg">
               <h2 className="text-xl font-semibold mb-4">Account Information</h2>
               <div className="flex items-center gap-4 mb-4">
                 <Avatar className="h-16 w-16">
@@ -95,14 +94,14 @@ export default async function SalesforceDashboard() {
                 </Avatar>
                 <div>
                   <p className="text-lg font-medium">{userInfo.display_name}</p>
-                  <p className="text-gray-500">{userInfo.email}</p>
-                  <p className="text-sm text-gray-400">Organization ID: {userInfo.organization_id}</p>
+                  <p className="text-muted-foreground">{userInfo.email}</p>
+                  <p className="text-sm text-muted">Organization ID: {userInfo.organization_id}</p>
                 </div>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500">Instance Url</h3>
+                  <h3 className="text-sm font-medium text-muted-foreground">Instance Url</h3>
                   <p>{salesforceCredentials.instanceUrl}</p>
                 </div>
               </div>
@@ -110,7 +109,7 @@ export default async function SalesforceDashboard() {
           )}
           
           {/* Quick Actions */}
-          {displayQuickActions && <div className="p-6 bg-gray-50 dark:bg-gray-900 rounded-lg">
+          {displayQuickActions && <div className="p-6 bg-popover rounded-lg">
             <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* <Button asChild variant="outline" className="h-auto py-4 px-6 flex flex-col items-center justify-center gap-2">
@@ -148,7 +147,7 @@ export default async function SalesforceDashboard() {
       )}
       
       {/* Administration Section */}
-      <div className="p-6 bg-gray-50 dark:bg-gray-900 rounded-lg">
+      <div className="p-6 bg-muted  rounded-lg">
         <h2 className="text-xl font-semibold mb-4">Administration</h2>
         <div className="flex flex-col space-y-4">
           <div className="flex flex-row space-x-4">

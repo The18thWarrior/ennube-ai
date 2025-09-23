@@ -5,7 +5,7 @@ import { CrmRecordDetailCard } from "./crm-record-detail-card";
 import CrmResultCard from "./crm-result-card";
 import { RecordIcon } from "./icon-map";
 
-const RenderGetDataToolCallComponent = ({args, result, theme}: {args: any, result: any, theme: 'dark' | 'light' | 'system'}) => {
+const RenderGetDataToolCallComponent = ({args, result, theme}: {args: any, result: any, theme: 'dark' | 'light' | 'lavender'}) => {
     const {records, totalSize } = result?.results ? result.results : {records: null, totalSize: 0};
     const {sql} = result?.query ? result.query : {sql: ''};
     const [hide, setHide] = useState(false);
