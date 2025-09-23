@@ -38,28 +38,24 @@ export async function getBaseUrl() {
     return `${protocol}://${host}`;
 }
 
-export const getTools = async (agent: 'data-steward' | 'prospect-finder' | 'contract-reader', userId: string) : Promise<Record<string, Tool>> => {
+export const getTools = async (agent: 'data-steward' | 'prospect-finder' | 'contract-reader', userId: string, webSearch: boolean = false) : Promise<Record<string, Tool>> => {
     
   const baseTools = {
-    //getCredentials: getCredentialsTool(userId),
     getSFDCDataTool: generateQueryTool(userId),
     proposeUpdateSFDCDataTool: proposeUpdateDataTool(userId),
     getSFDCFileTool: getFileTool(userId),
-    webSearchTool: webSearchTool(userId),
-    // getSFDCFieldDescribeTool: getSFDCFieldsTool(userId),
-    // getSFDCDataTool: getSFDCDataTool(userId),
     //getPostgresDataTool: getPostgresDataTool(userId),
     //getPostgresDescribeTool: getPostgresDescribeTool(userId),
-    //getCount: getCountTool(userId)
   };
+  const _baseTools = webSearch ? { ...baseTools, webSearchTool: webSearchTool(userId), } : { ...baseTools };
   if (agent === 'data-steward') {
     return {
-      ...baseTools,
+      ..._baseTools,
       callWorkflowTool: getWorkflowTool(agent)
     };
     } else if (agent === 'prospect-finder') {
       return {
-        ...baseTools,
+        ..._baseTools,
         getCustomerProfilesTool: getCustomerProfilesTool(userId),
         createCustomerProfileTool: createCustomerProfileTool(userId),
         updateCustomerProfileTool: updateCustomerProfileTool(userId),
@@ -67,11 +63,11 @@ export const getTools = async (agent: 'data-steward' | 'prospect-finder' | 'cont
       };
     } else if (agent === 'contract-reader') {
       return {
-        ...baseTools,
+        ..._baseTools,
         callWorkflowTool: getWorkflowTool(agent)
       };
     }
 
-    return baseTools;
+    return _baseTools;
 
 }   

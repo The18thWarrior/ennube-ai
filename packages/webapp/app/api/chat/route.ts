@@ -21,6 +21,7 @@ export async function POST(req: NextRequest) {
 
     const searchParams = req.nextUrl.searchParams;
     const agent = searchParams.get('agent') || 'data-steward';
+    const webSearch = searchParams.get('webSearch') === 'true';
     // Get the current session to identify the user
     const session = await auth();
     
@@ -40,7 +41,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'AI model not configured' }, { status: 500 });
     }
     const systemPrompt = `${await getPrompt(agent as 'data-steward' | 'prospect-finder' | 'contract-reader')} Today's date is ${today}.`;
-    const tools = await getTools(agent as 'data-steward' | 'prospect-finder' | 'contract-reader', userSub);
+    const tools = await getTools(agent as 'data-steward' | 'prospect-finder' | 'contract-reader', userSub, webSearch);
     const _messages = convertToModelMessages(messages);
     //console.log('api/chat - messages:', _messages);
     const userMessage = _messages.at(-1);

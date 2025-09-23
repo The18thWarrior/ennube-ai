@@ -548,8 +548,7 @@ export const PromptInputButton = ({
         "shrink-0 gap-1.5 rounded-lg",
         variant === "ghost" && "text-muted-foreground",
         newSize === "default" && "px-3",
-        className,
-        styles.sendButton
+        className
       )}
       size={newSize}
       type="button"

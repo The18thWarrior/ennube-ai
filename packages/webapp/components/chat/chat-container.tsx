@@ -13,8 +13,9 @@ import { useMessageHistory } from '@/hooks/useMessageHistory';
 import {avatarOptions, AgentSelector} from '@/components/chat/agents';
 import NameComponent from './chat-name';
 import MarkdownEditor from './overtype-input';
-import { PromptInput, PromptInputBody, PromptInputAttachments, PromptInputAttachment, PromptInputTextarea, PromptInputToolbar, PromptInputTools, PromptInputActionMenu, PromptInputActionMenuTrigger, PromptInputActionMenuContent, PromptInputActionAddAttachments, PromptInputSubmit, PromptInputMessage } from '../ai-elements/prompt-input';
+import { PromptInput, PromptInputBody, PromptInputAttachments, PromptInputAttachment, PromptInputTextarea, PromptInputToolbar, PromptInputTools, PromptInputActionMenu, PromptInputActionMenuTrigger, PromptInputActionMenuContent, PromptInputActionAddAttachments, PromptInputSubmit, PromptInputMessage, PromptInputButton } from '../ai-elements/prompt-input';
 import { Card } from '../ui';
+import { GlobeIcon } from 'lucide-react';
 
 /**
  * Simple chat container using n8n/chat (embed mode)
@@ -40,6 +41,8 @@ const ChatContainer = ({
     const [ _name, setName ] = React.useState<string>(name || '');
     const { getThread, setThread } = useMessageHistory();
     const [selectedAvatar, setSelectedAvatar] = React.useState(agent ? agent : avatarOptions[0].key);
+    
+    const [webSearch, setWebSearch] = React.useState(false);
     // Use the ai-sdk/react chat hook
     const {
         messages,
@@ -52,7 +55,7 @@ const ChatContainer = ({
         id,
         messages: initialMessages || [],   
         transport: new DefaultChatTransport({
-            api: `/api/chat?agent=${selectedAvatar}`,
+            api: `/api/chat?agent=${selectedAvatar}&webSearch=${webSearch}`,
         }),
         
         onFinish: (message) => {},
@@ -225,6 +228,13 @@ const ChatContainer = ({
                   </PromptInputBody>
                   <PromptInputToolbar>
                     <PromptInputTools>
+                      <PromptInputButton
+                        variant={webSearch ? 'default' : 'ghost'}
+                        onClick={() => setWebSearch(!webSearch)}
+                      >
+                        <GlobeIcon size={16} />
+                        <span>Search</span>
+                      </PromptInputButton>
                       {/* <PromptInputActionMenu>
                         <PromptInputActionMenuTrigger />
                         <PromptInputActionMenuContent>
