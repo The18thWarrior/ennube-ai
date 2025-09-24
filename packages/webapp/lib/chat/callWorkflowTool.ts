@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { tool } from "ai";
 import { nanoid } from "nanoid";
 import z from "zod/v4";
+import { storeUsageLog } from "../db/usage-logs";
 
 /**
  * Tool: Call Workflow
@@ -22,10 +23,27 @@ export const callWorkflowToolDataSteward = tool({
         if (!session || !session.user || !session.user.auth0) throw new Error('You must be signed in to call a workflow');
         const subId = session.user.auth0.sub;
 		if (!subId) throw new Error('subId is required');
-		const usageId = nanoid();
-		const webhookUrl = process.env.DATASTEWARD_WEBHOOK_URL;
+    const webhookUrl = process.env.DATASTEWARD_WEBHOOK_URL;
 		if (!webhookUrl) throw new Error('Webhook URL is not configured for this agent');
 
+		const usageId = nanoid();
+    const params = {
+      userSub: subId,
+      agent: 'DataSteward',
+      recordsUpdated: 0,
+      recordsCreated: 0,
+      meetingsBooked: 0,
+      queriesExecuted: 0, // Initialize queriesExecuted to 0
+      signature: null,
+      nonce: 0,
+      logId: usageId,
+      isNew: true,
+      status: null,
+      errors: null,
+      recordId: null
+    };
+    await storeUsageLog(params);
+		
 		const url = `${webhookUrl}?limit=${limit || '10'}&subId=${subId}&usageId=${usageId}${accountIds ? `&accountIds=${accountIds.join(',')}` : ''}`;
 		const response = await fetch(url, {
 			method: 'GET',
@@ -35,6 +53,7 @@ export const callWorkflowToolDataSteward = tool({
 			const errorText = await response.text();
 			throw new Error(`Error from agent webhook: ${errorText}`);
 		}
+    
 		const data = await response.json();
 		return { ...data, usageId };
 	},
@@ -46,14 +65,30 @@ export const callWorkflowToolProspectFinder = tool({
 		limit: z.string().optional(),
 	}),
 	execute: async ({ limit }) => {
-        const session = await auth();
-        if (!session || !session.user || !session.user.auth0) throw new Error('You must be signed in to call a workflow');
-        const subId = session.user.auth0.sub;
+    const session = await auth();
+    if (!session || !session.user || !session.user.auth0) throw new Error('You must be signed in to call a workflow');
+    const subId = session.user.auth0.sub;
 		if (!subId) throw new Error('subId is required');
-		const usageId = nanoid();
-		const webhookUrl = process.env.PROSPECTFINDER_WEBHOOK_URL;
+    const webhookUrl = process.env.PROSPECTFINDER_WEBHOOK_URL;
 		if (!webhookUrl) throw new Error('Webhook URL is not configured for this agent');
 
+		const usageId = nanoid();
+    const params = {
+      userSub: subId,
+      agent: 'ProspectFinder',
+      recordsUpdated: 0,
+      recordsCreated: 0,
+      meetingsBooked: 0,
+      queriesExecuted: 0, // Initialize queriesExecuted to 0
+      signature: null,
+      nonce: 0,
+      logId: usageId,
+      isNew: true,
+      status: null,
+      errors: null,
+      recordId: null
+    };
+    await storeUsageLog(params);
 		const url = `${webhookUrl}?limit=${limit || '10'}&subId=${subId}&usageId=${usageId}`;
 		const response = await fetch(url, {
 			method: 'GET',
@@ -74,14 +109,30 @@ export const callWorkflowToolContractReader = tool({
 		limit: z.string().optional(),
 	}),
 	execute: async ({ limit }) => {
-        const session = await auth();
-        if (!session || !session.user || !session.user.auth0) throw new Error('You must be signed in to call a workflow');
-        const subId = session.user.auth0.sub;
+    const session = await auth();
+    if (!session || !session.user || !session.user.auth0) throw new Error('You must be signed in to call a workflow');
+    const subId = session.user.auth0.sub;
 		if (!subId) throw new Error('subId is required');
-		const usageId = nanoid();
 		const webhookUrl = process.env.CONTRACT_READER_WEBHOOK_URL;
 		if (!webhookUrl) throw new Error('Webhook URL is not configured for this agent');
 
+		const usageId = nanoid();
+    const params = {
+      userSub: subId,
+      agent: 'ContractReader',
+      recordsUpdated: 0,
+      recordsCreated: 0,
+      meetingsBooked: 0,
+      queriesExecuted: 0, // Initialize queriesExecuted to 0
+      signature: null,
+      nonce: 0,
+      logId: usageId,
+      isNew: true,
+      status: null,
+      errors: null,
+      recordId: null
+    };
+    await storeUsageLog(params);
 		const url = `${webhookUrl}?limit=${limit || '10'}&subId=${subId}&usageId=${usageId}`;
 		const response = await fetch(url, {
 			method: 'GET',
