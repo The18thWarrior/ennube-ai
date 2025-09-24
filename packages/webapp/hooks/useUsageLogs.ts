@@ -36,7 +36,7 @@ export function useUsageLogs(itemsPerPage: number = 10, filter?: string): UseUsa
       }
       
       const fetchedLogs = await response.json();
-      console.log('Fetched logs:', fetchedLogs);
+      //console.log('Fetched logs:', fetchedLogs);
       setLogs(fetchedLogs);
       setHasMore(fetchedLogs.length === itemsPerPage);
       setError(null);

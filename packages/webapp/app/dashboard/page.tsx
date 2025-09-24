@@ -36,10 +36,6 @@ function ExecutionsPageComponent() {
 
   useEffect(() => {
     // Fetch logs from the API
-    console.log("Fetched logs:", logs);
-  }, [logs]);
-  useEffect(() => {
-    // Fetch logs from the API
     console.log("All executions:", executions);
   }, [executions]);
   // Filter and sort executions based on current state
