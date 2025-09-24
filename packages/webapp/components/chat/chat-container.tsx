@@ -55,7 +55,7 @@ const ChatContainer = ({
         id,
         messages: initialMessages || [],   
         transport: new DefaultChatTransport({
-            api: `/api/chat?agent=${selectedAvatar}&webSearch=${webSearch}`,
+            api: `/api/chat?agent=${selectedAvatar}`,
         }),
         
         onFinish: (message) => {},
@@ -65,14 +65,11 @@ const ChatContainer = ({
     });
     //console.log('Chat container initialized', messages, initialMessages);
     const isLoading = status === 'submitted' || status === 'streaming';
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        sendMessage({ text: input });
-        handleInputChange('');
-    };
+
     const handleSubmitPromptInput = (message: PromptInputMessage, event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
       if (!message.text || message.text.trim().length === 0) return;
-      sendMessage({ text: message.text } );
+      sendMessage({ text: message.text },{ body: { webSearch } });
       handleInputChange('');
     }
 
@@ -230,7 +227,10 @@ const ChatContainer = ({
                     <PromptInputTools>
                       <PromptInputButton
                         variant={webSearch ? 'default' : 'ghost'}
-                        onClick={() => setWebSearch(!webSearch)}
+                        onClick={() => {
+                          console.log(`Web search toggled, old value: ${webSearch} new value: ${!webSearch}`);
+                          setWebSearch(!webSearch)
+                        }}
                       >
                         <GlobeIcon size={16} />
                         <span>Search</span>

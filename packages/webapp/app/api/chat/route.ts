@@ -13,7 +13,7 @@ export const maxDuration = 300;
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { messages } = body;
+    const { messages, webSearch } = body;
     if (!messages) {
       console.log('Missing messages in request body');
       return NextResponse.json({ error: 'Missing messages' }, { status: 400 });
@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
 
     const searchParams = req.nextUrl.searchParams;
     const agent = searchParams.get('agent') || 'data-steward';
-    const webSearch = searchParams.get('webSearch') === 'true';
+    //const webSearch = searchParams.get('webSearch') === 'true';
     // Get the current session to identify the user
     const session = await auth();
     
@@ -44,6 +44,7 @@ export async function POST(req: NextRequest) {
     const tools = await getTools(agent as 'data-steward' | 'prospect-finder' | 'contract-reader', userSub, webSearch);
     const _messages = convertToModelMessages(messages);
     //console.log('api/chat - messages:', _messages);
+    console.log('chatTools', Object.keys(tools), webSearch );
     const userMessage = _messages.at(-1);
     if (!userMessage) {
       return NextResponse.json({ error: 'No user message found' }, { status: 400 });
