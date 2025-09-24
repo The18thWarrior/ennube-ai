@@ -12,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { X, CheckCircle, XCircle, Clock, RefreshCw, Workflow, ChevronDown, ChevronUp } from "lucide-react"
 import { JsonView } from "../ui/json-view"
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "../ui/collapsible"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip"
 import ExecutionRecordDetailItem from "./execution-record-detail-item"
 import { Agent } from "http"
 import Link from "next/link"
@@ -68,19 +69,9 @@ export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, colla
   const executionSummary = !hasResponseData ? "" : (execution.response_data.recordsUpdated || execution.response_data.recordsCreated) ? `Created ${execution.response_data.recordsCreated || 0} records and updated ${execution.response_data.recordsUpdated || 0} records` : execution.response_data.execution_summary;
   const rawData = !hasResponseData ? {} : {...execution.response_data, execution_summary: executionSummary};
   const recordIds = !hasResponseData ? [] : execution.response_data.records || [];
-
-  // const handleSelectRecord = (recordId: string) => {
-  //   if (!instanceUrl) {}
-  //   // setSelectedRecordId(recordId);
-  //   // setFlipping(true);
-  //   // setTimeout(() => {
-  //   //   setFlip(true);
-  //   //   setTimeout(() => {
-  //   //     setFlipping(false);
-  //   //   }, 500);
-  //   // }, 50);
-  // };
-
+  const errorRecordIds = !hasResponseData ? [] : execution.response_data.errorRecords || [];
+  const errorMessages = !hasResponseData ? [] : execution.response_data.errorMessages || [];
+  
   const handleGoToList = () => {
     console.log("Going back to list");
     setFlipping(true);
@@ -222,7 +213,34 @@ export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, colla
             ) : (
               <p className="text-sm text-muted-foreground">No records processed.</p>
             )}
-          </div>        
+          </div>
+          {errorRecordIds.length > 0 && (
+            <div>
+              <h3 className="text-lg font-medium mb-2">Error Records</h3>
+              <TooltipProvider>
+                <ul className="list-disc pl-5 space-y-1">
+                  {errorRecordIds.map((id: string, index: number) => (
+                    <li key={'error:'+id+index} >
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Badge
+                            variant="outline"
+                            className="cursor-pointer hover:bg-muted  transition-colors"
+                            // onClick={() => handleSelectRecord(id)}
+                          >
+                            <Link href={instanceUrl ? `${instanceUrl}/${id}` : `https://login.salesforce.com/${id}`} rel="noopener noreferrer" target="_blank"><span className="truncate">{id}</span></Link>
+                          </Badge>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>{errorMessages[index]}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </li>
+                  ))}
+                </ul>
+              </TooltipProvider>
+            </div>
+          )}        
 
           <div>
             <h3 className="text-lg font-medium mb-2">Response Data</h3>
