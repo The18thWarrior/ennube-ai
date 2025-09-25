@@ -102,7 +102,7 @@ export function StripeProvider({ children }: { children: React.ReactNode }) {
       });
 
       const data = await response.json();
-      console.log(data);
+      //console.log(data);
       if (!response.ok) {
         throw new Error(data.error || 'Failed to create portal link');
       }

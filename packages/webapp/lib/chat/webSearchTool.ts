@@ -24,7 +24,7 @@ import z from "zod/v4";
 // Tool: Web Search
 export const webSearchTool = (subId: string) => {
     return tool({
-      description: 'Search the web using Google Custom Search API for real-time information.',
+      description: 'Search the web using Google Custom Search API for real-time information. Useful for answering questions about current events or finding specific information online.',
       execute: async ({ query }: { query: string }) => {
         if (!subId) throw new Error('subId is required');
         const url = process.env.GOOGLE_SEARCH_URL;
