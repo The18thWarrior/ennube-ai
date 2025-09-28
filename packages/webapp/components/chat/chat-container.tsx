@@ -69,7 +69,7 @@ const ChatContainer = ({
     const handleSubmitPromptInput = (message: PromptInputMessage, event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
       if (!message.text || message.text.trim().length === 0) return;
-      sendMessage({ text: message.text },{ body: { webSearch } });
+      sendMessage({ text: message.text, files: message.files },{ body: { webSearch } });
       handleInputChange('');
     }
 
@@ -167,8 +167,7 @@ const ChatContainer = ({
 
     return (
         <div className="flex flex-col relative mr-6" >
-            {/* EditableField for Name */}
-            <Card className={'rounded-lg border h-[80dvh] max-h-[85dvh] overflow-auto scrollbar'} > {/*height: "calc(100vh - 240px)",*/}
+            <Card className={'rounded-lg border grow h-[80dvh] max-h-[85dvh] overflow-auto scrollbar'} > {/*height: "calc(100vh - 240px)",*/}
                 <div className="flex justify-between items-start group mb-4 p-3 border-b ">
                     {/* <svg className="mr-3 h-4 w-4 text-muted-foreground mt-1 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /></svg> */}
                     <div className={'px-2'}>
@@ -205,26 +204,27 @@ const ChatContainer = ({
                     </div>
                 </div>
             </Card>
-            <div className={`h-[10dvh] bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60  ${styles.wfill}`}>
+            <div className={`h-[10dvh] flex-none bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60`}>
                 {error && <div className="text-red-500 mb-2">Error: {error.message}</div>}
-                {/* <MarkdownEditor
-                    input={input}
-                    handleInputChange={handleInputChange}
-                    handleSubmit={handleSubmit}
-                    handleStop={handleStop}
-                    isLoading={isLoading}
-                /> */}
-                <PromptInput onSubmit={handleSubmitPromptInput} className="mt-4 relative">
-                  <PromptInputBody>
+                <PromptInput globalDrop={true} onSubmit={handleSubmitPromptInput} className="mt-4 relative">
+                  <PromptInputBody className={'flex flex-row'}>
+                    <PromptInputTextarea onChange={handlePromptInputChange} value={input} />
+
                     {/* <PromptInputAttachments>
                       {(attachment) => (
                         <PromptInputAttachment data={attachment} />
                       )}
                     </PromptInputAttachments> */}
-                    <PromptInputTextarea onChange={handlePromptInputChange} value={input} />
                   </PromptInputBody>
                   <PromptInputToolbar>
                     <PromptInputTools>
+                      {/* <PromptInputActionMenu>
+                        <PromptInputActionMenuTrigger />
+                        <PromptInputActionMenuContent>
+                          <PromptInputActionAddAttachments />
+                        </PromptInputActionMenuContent>
+                        
+                      </PromptInputActionMenu> */}
                       <PromptInputButton
                         variant={webSearch ? 'default' : 'ghost'}
                         onClick={() => {
@@ -235,12 +235,11 @@ const ChatContainer = ({
                         <GlobeIcon size={16} />
                         <span>Search</span>
                       </PromptInputButton>
-                      {/* <PromptInputActionMenu>
-                        <PromptInputActionMenuTrigger />
-                        <PromptInputActionMenuContent>
-                          <PromptInputActionAddAttachments />
-                        </PromptInputActionMenuContent>
-                      </PromptInputActionMenu> */}
+                      {/* <PromptInputAttachments>
+                        {(attachment) => (
+                          <PromptInputAttachment data={attachment} />
+                        )}
+                      </PromptInputAttachments>  */}
                     </PromptInputTools>
                     <PromptInputSubmit
                       disabled={isLoading}

@@ -19,16 +19,16 @@
     --primary-foreground: 0 0% 100%; 
 
     /* The purple/lavender color used for the active "Home" link and as the start of gradients. */
-    --secondary: 265 58% 65%;
+    --accent: 265 58% 65%;
     /* Dark text for use on a potential secondary background. */
-    --secondary-foreground: 222.2 84% 4.9%;
+    --accent-foreground: 222.2 84% 4.9%;
 
     --muted: 210 40% 96.1%;
     /* The gray text for paragraphs and inactive navigation links. */
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
@@ -58,16 +58,16 @@
     --primary-foreground: 0 0% 100%; 
 
     /* The purple/lavender from the light theme, used for links and gradients. */
-    --secondary: 265 58% 65%;
+    --accent: 265 58% 65%;
     /* White text for use on a potential secondary background. */
-    --secondary-foreground: 0 0% 100%;
+    --accent-foreground: 0 0% 100%;
 
     --muted: 217.2 32.6% 17.5%;
     /* A lighter gray for secondary text to ensure readability. */
     --muted-foreground: 240 5% 64.9%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;

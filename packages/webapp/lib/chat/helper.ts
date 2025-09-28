@@ -15,6 +15,7 @@ import { getCustomerProfilesTool } from './internal/getCustomerProfiles';
 import { createCustomerProfileTool } from './internal/createCustomerProfile';
 import { updateCustomerProfile } from '../db/customer-profile-storage';
 import { updateCustomerProfileTool } from './internal/updateCustomerProfile';
+import { parseFileTool } from './parseFileTool';
 import { getFileTool } from './sfdc/getFileTool';
 import { Tool } from 'ai';
 import { CONTRACT_READER_SYSTEM_PROMPT } from '../prompts/contract-reader-system-prompt';
@@ -44,6 +45,7 @@ export const getTools = async (agent: 'data-steward' | 'prospect-finder' | 'cont
     getSFDCDataTool: generateQueryTool(userId),
     proposeUpdateSFDCDataTool: proposeUpdateDataTool(userId),
     getSFDCFileTool: getFileTool(userId),
+    //parseFileTool: parseFileTool(userId),
     //getPostgresDataTool: getPostgresDataTool(userId),
     //getPostgresDescribeTool: getPostgresDescribeTool(userId),
   };

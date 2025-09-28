@@ -85,7 +85,7 @@ export function PromptInputAttachment({
 
   return (
     <div
-      className={cn("group relative h-14 w-14 rounded-md border", className)}
+      className={cn("group relative h-10 w-10 rounded-md border", className)}
       key={data.id}
       {...props}
     >
@@ -131,7 +131,7 @@ export function PromptInputAttachments({
   const attachments = usePromptInputAttachments();
   const [height, setHeight] = useState(0);
   const contentRef = useRef<HTMLDivElement>(null);
-
+  console.log('attachments.files', attachments.files);
   useLayoutEffect(() => {
     const el = contentRef.current;
     if (!el) {
@@ -155,7 +155,7 @@ export function PromptInputAttachments({
       style={{ height: attachments.files.length ? height : 0 }}
       {...props}
     >
-      <div className="flex flex-wrap gap-2 p-3 pt-3" ref={contentRef}>
+      <div className="flex flex-wrap gap-2 p-2" ref={contentRef}>
         {attachments.files.map((file) => (
           <Fragment key={file.id}>{children(file)}</Fragment>
         ))}
@@ -171,7 +171,7 @@ export type PromptInputActionAddAttachmentsProps = ComponentProps<
 };
 
 export const PromptInputActionAddAttachments = ({
-  label = "Add photos or files",
+  label = "Add files",
   ...props
 }: PromptInputActionAddAttachmentsProps) => {
   const attachments = usePromptInputAttachments();
@@ -184,7 +184,7 @@ export const PromptInputActionAddAttachments = ({
         attachments.openFileDialog();
       }}
     >
-      <ImageIcon className="mr-2 size-4" /> {label}
+      <ImageIcon className="mr-2 size-2" /> {label}
     </DropdownMenuItem>
   );
 };
@@ -216,6 +216,13 @@ export type PromptInputProps = Omit<
     event: FormEvent<HTMLFormElement>
   ) => void;
 };
+
+const toBase64 = (file: Blob) => new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result?.toString() || '');
+    reader.onerror = () => reject('error reading file');
+});
 
 export const PromptInput = ({
   className,
@@ -261,7 +268,7 @@ export const PromptInput = ({
   );
 
   const add = useCallback(
-    (files: File[] | FileList) => {
+    async (files: File[] | FileList) => {
       const incoming = Array.from(files);
       const accepted = incoming.filter((f) => matchesAccept(f));
       if (accepted.length === 0) {
@@ -281,31 +288,32 @@ export const PromptInput = ({
         });
         return;
       }
-      setItems((prev) => {
-        const capacity =
-          typeof maxFiles === "number"
-            ? Math.max(0, maxFiles - prev.length)
-            : undefined;
-        const capped =
-          typeof capacity === "number" ? sized.slice(0, capacity) : sized;
-        if (typeof capacity === "number" && sized.length > capacity) {
-          onError?.({
-            code: "max_files",
-            message: "Too many files. Some were not added.",
-          });
-        }
-        const next: (FileUIPart & { id: string })[] = [];
-        for (const file of capped) {
-          next.push({
-            id: nanoid(),
-            type: "file",
-            url: URL.createObjectURL(file),
-            mediaType: file.type,
-            filename: file.name,
-          });
-        }
-        return prev.concat(next);
-      });
+      const prev = items;
+      const capacity =
+        typeof maxFiles === "number"
+          ? Math.max(0, maxFiles - prev.length)
+          : undefined;
+      const capped =
+        typeof capacity === "number" ? sized.slice(0, capacity) : sized;
+      if (typeof capacity === "number" && sized.length > capacity) {
+        onError?.({
+          code: "max_files",
+          message: "Too many files. Some were not added.",
+        });
+      }
+      const next: (FileUIPart & { id: string })[] = [];
+      for (const file of capped) {
+        const url = await toBase64(file);//URL.createObjectURL(file);
+        console.log('file url', url);
+        next.push({
+          id: nanoid(),
+          type: "file",
+          url,
+          mediaType: file.type,
+          filename: file.name,
+        });
+      }
+      setItems(prev.concat(next));
     },
     [matchesAccept, maxFiles, maxFileSize, onError]
   );
@@ -408,6 +416,7 @@ export const PromptInput = ({
     }));
 
     onSubmit({ text: event.currentTarget.message.value, files }, event);
+
   };
 
   const ctx = useMemo<AttachmentsContext>(

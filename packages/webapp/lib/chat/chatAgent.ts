@@ -97,7 +97,7 @@ export async function chatAgent({ model, systemPrompt, tools, _messages }: { mod
   // If the latest user message asked for a plan execution, attempt to generate a plan and run it.
   // Heuristic: if the last user message includes the word "plan" or "execute steps" we will try to create a plan.
   const lastMsg = _messages && _messages.length ? _messages[_messages.length - 1] : undefined;
-
+  //console.log('chatAgent - lastMsg:', lastMsg);
   const shouldGeneratePlan = lastMsg && !(/plan|steps|execute/i.test(String(lastMsg.content)));
 
   if (shouldGeneratePlan) {
@@ -105,12 +105,15 @@ export async function chatAgent({ model, systemPrompt, tools, _messages }: { mod
     const promptMsg: ModelMessage = lastMsg as ModelMessage;
 
     // Generate plan using taskManager
+    console.log('entering plan generation');
     const plan = await orchestrator({ prompt: promptMsg, messageHistory: _messages, tools: tools });
+    console.log('plan generated');
     const planMessage = { role: 'assistant', content: `Generated plan:\n${JSON.stringify(plan, null, 2)}`, id: `plan-${nanoid()}` } as AssistantModelMessage;
     _messages.push(planMessage);
     //console.log('Generated plan:', JSON.stringify(plan, null, 2));
     //console.log('Generated plan:', plan);
     // Create a ReadableStream that emits UI message events compatible with the SDK stream protocol
+    console.log('creating stream');
     const result = await streamText({
       model: model,
       system: systemPrompt,
@@ -125,7 +128,7 @@ export async function chatAgent({ model, systemPrompt, tools, _messages }: { mod
       stopWhen: stepCountIs(5),
       //toolCallStreaming: true,
       onError: (error) => {
-        console.log('Error during tool execution:', error);
+        console.log('Error during execution:', error);
       },
       onFinish: (response) => {
         console.log('Response finished:', response.finishReason);

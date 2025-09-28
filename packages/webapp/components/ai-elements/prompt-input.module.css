@@ -1,4 +1,5 @@
 .sendButton {
   transition: background 0.2s;
   background: linear-gradient(135deg, #3b82f6 0%, #a21caf 100%);
+  color: white;
 }

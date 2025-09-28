@@ -5,7 +5,6 @@
   "scripts": {
     "dev": "pnpm --filter @ennube/webapp dev",
     "build:webapp": "pnpm --filter @ennube/webapp build",
-    "build:contractReader": "pnpm --filter @ennube/contract-reader build",
     "build": "pnpm -r build",
     "typecheck": "pnpm -r --parallel --filter \"./packages/**\" exec tsc --noEmit",
     "start": "pnpm --filter @ennube/webapp start",

@@ -42,9 +42,11 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, the
         }
         <div>
             <Card
-                className={cn("mx-2", msg.role === "user" ? "bg-muted text-white" : "bg-background text-muted-foreground", "")}
+                className={cn("mx-2", msg.role === "user" ? "bg-secondary text-secondary-foreground" : "bg-background text-muted-foreground", "")}
             >
                 <CardContent className="px-4 py-2 text-base">
+                    {Component}
+
                     {msg.parts && msg.parts.filter(part => isToolUIPart(part)  /*&& (part.toolInvocation.toolName === 'getSFDCDataTool' || part.toolInvocation.toolName === 'getPostgresDataTool' || part.toolInvocation.toolName === 'getCount' || part.toolInvocation.toolName === 'callWorkflowTool')*/).map((part) => (
                         <span
                             className={[
@@ -325,8 +327,6 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, the
                             })}
                         </span>                    
                     ))}
-
-                    {Component}
                 </CardContent>
             </Card>
             <TimestampWithCopy msg={msg} />
