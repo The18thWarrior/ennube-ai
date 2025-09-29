@@ -18,7 +18,7 @@ export const GetFileInputSchema = z.object({
 
 export const getFileTool = (subId: string) => {
   return tool({
-    description: 'Fetch a file from Salesforce and extract text using the doc-reader service.',
+    description: 'Fetch a file from Salesforce and extract text using the doc-reader service. Do not use this tool if you already have the file contents from a previous tool call.',
     inputSchema: GetFileInputSchema,
     execute: async ({ contentVersionId, relatedId }: z.infer<typeof GetFileInputSchema>) => {
       if (!subId) throw new Error('subId is required for Salesforce authentication');

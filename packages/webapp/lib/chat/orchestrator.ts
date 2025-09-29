@@ -78,7 +78,7 @@ export async function orchestrator ({ prompt, messageHistory, tools }: { prompt:
         throw new Error('AI model not configured');
       }
 
-      const context = buildContext(prompt, messageHistory, tools);
+      //const context = buildContext(prompt, messageHistory, tools);
 
       const generationPrompt = `
         You are an expert task planner for an autonomous agent. Given a user goal, message history, and a list of available tools, produce a concise, ordered plan the agent should follow to accomplish the goal.
@@ -90,19 +90,19 @@ export async function orchestrator ({ prompt, messageHistory, tools }: { prompt:
         - If multiple tools can be used, prefer the one explicitly listed in the available tools. Use the tool name exactly.
         - Provide an estimated time in minutes for each step when possible.
 
-        [START OF CONTEXT]
-        ${context}
-        [END OF CONTEXT]
-
-        Return an object conforming to the schema: { summary, steps: [{ id, order, title, description, tool (optional), toolInput(optional), mustRunSequentially (optional), estimatedMinutes (optional) }], confidence (optional) }
-        `;
+        [Available Tools]
+        ${Object.entries(tools || {}).map(([name, t]) => `- ${name}: ${(t as any)?.description || 'No description provided'}`).join('\n')}
+        [End Available Tools]
+      `;
 
       console.log('Generating task plan with AI...');
 
       const { object: planResult } = await generateObject({
         model,
         schema: PlanSchema,
-        prompt: generationPrompt,
+        system: generationPrompt,
+        messages: messageHistory ? [...messageHistory, prompt] : [prompt], 
+        //prompt: generationPrompt,
         // Provider options can be added here if needed
       });
 
