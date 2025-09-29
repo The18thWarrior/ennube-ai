@@ -140,6 +140,7 @@ async function generateAndExecuteQuery(
 
   const prompt = `
     You are an expert Salesforce SOQL (Salesforce Object Query Language) generation agent. Your sole purpose is to convert a user's natural language question into a syntactically correct and efficient SOQL query based on the provided Salesforce schema. You must operate under the following rules and guidelines.
+
     Requirements:
     - Generate only SELECT statements
     - ALWAYS include the object Id field in the SELECT clause
@@ -149,11 +150,25 @@ async function generateAndExecuteQuery(
     - Limit results to a reasonable number (e.g., LIMIT 200)
     - Aggregate functions must be directly declared in GROUP BY and ORDER BY clauses.
     - Date and DateTime Formatting: Dates and DateTimes in WHERE clauses must be in ISO 8601 format.
-    -- Date: YYYY-MM-DD (e.g., 2023-01-15) | DateTime: YYYY-MM-DDThh:mm:ssZ (e.g., 2023-01-15T10:00:00Z)
+      -- Date: YYYY-MM-DD (e.g., 2023-01-15) | DateTime: YYYY-MM-DDThh:mm:ssZ (e.g., 2023-01-15T10:00:00Z)
     - Aggregate Functions and LIMIT Clause: A non-grouped query that uses an aggregate function (e.g., COUNT(), MAX(), MIN(), AVG(), SUM()) cannot also use a LIMIT clause. This is because aggregate functions already return a single result. 
-    -- Invalid Query: SELECT COUNT(Id) FROM Account LIMIT 1 | Valid Query: SELECT COUNT(Id) FROM Account
+      -- Invalid Query: SELECT COUNT(Id) FROM Account LIMIT 1 | Valid Query: SELECT COUNT(Id) FROM Account
 
-    Return a well-formed SOQgL query that addresses the user's needs.
+    Nomenclature:
+    - The 'OwnerId' field on a record points to either a User or a Queue. If ownership is being changed, resolve the new owner's 'Id' (usually a UserId) and update the record’s 'OwnerId.
+
+    - Files in Salesforce are represented by three key objects:
+      • ContentDocument — the logical file record. 
+      • ContentVersion — stores individual versions of the file (including binary data). The latest version is where you download from.
+      • ContentDocumentLink — junction object linking a ContentDocument to another record (e.g., Account, Contact).
+
+      To find files for a record:
+      1. Query ContentDocumentLink where LinkedEntityId = the record Id.
+      2. From each ContentDocumentLink, get the ContentDocument.
+      3. From the ContentDocument, retrieve the latest ContentVersion (IsLatest = true).
+      4. Download the file from ContentVersion.VersionData.
+
+    Return a well-formed SOQL query that addresses the user's needs.
     
     [START OF CONTEXT]
     Generate a SOQL query based on the following user request:

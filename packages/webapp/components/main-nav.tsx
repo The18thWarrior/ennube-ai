@@ -65,8 +65,8 @@ export function MainNav() {
     },
     {
       href: "/dashboard",
-      title: "Usage",
-      description: "View your usage statistics",
+      title: "Activity",
+      description: "View your activity statistics",
     },
     // {
     //   href: "/agents",

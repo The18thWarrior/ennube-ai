@@ -516,6 +516,7 @@ export class SalesforceClient {
             }
           });
           if (_package) {
+            console.log(`Package ${namespacePrefix} is installed with version:`, _package.SubscriberPackageVersionId);
             return {
               installed: true,
               validVersion: _package.SubscriberPackageVersionId === process.env.NEXT_PUBLIC_SFDC_MANAGED_PACKAGE_VERSION

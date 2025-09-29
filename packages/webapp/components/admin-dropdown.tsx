@@ -49,7 +49,7 @@ export default function AdminDropdown(): JSX.Element {
         <div
           role="menu"
           aria-label="Admin menu"
-          className="absolute right-0 z-50 mt-2 w-48 overflow-hidden rounded-md  shadow-lg ring-1 ring-black/5 "
+          className="bg-background border absolute right-0 z-50 mt-2 w-48 overflow-hidden rounded-md  shadow-lg ring-1 ring-black/5 "
         >
           <ul className="py-1">
             <li role="none">

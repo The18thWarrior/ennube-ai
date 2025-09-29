@@ -40,6 +40,7 @@ export async function GET(req: NextRequest) {
     }
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');
+    console.log('GET /customer-profile - id:', id, 'userId:', userId);
     //const userId = session?.user?.auth0?.sub || searchParams.get('subId'); // Use authenticated user's ID
     if (id) {
       const profile = await getCustomerProfile(id);
