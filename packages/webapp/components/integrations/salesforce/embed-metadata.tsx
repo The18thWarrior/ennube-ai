@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 // import Link from 'next/link' (not used)
 import { useSnackbar } from 'notistack'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
+import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription } from '@/components/ui/alert-dialog'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -27,6 +28,7 @@ export const EmbedMetadataButton: React.FC<EmbedMetadataButtonProps> = ({ instan
   const [describeResults, setDescribeResults] = useState<Array<any>>([])
   const [filter, setFilter] = useState('')
   const [selected, setSelected] = useState<Record<string, {apiName: string, selected: boolean}>>({})
+  const [alertOpen, setAlertOpen] = useState(false)
   const { enqueueSnackbar } = useSnackbar()
 
   // Derived helpers for visible (filtered) items
@@ -89,6 +91,8 @@ export const EmbedMetadataButton: React.FC<EmbedMetadataButtonProps> = ({ instan
       return
     }
     setEmbedLoading(true)
+    setOpen(false)
+    setAlertOpen(true)
     try {
       const res = await fetch('/api/salesforce/embed', {
         method: 'POST',
@@ -107,6 +111,7 @@ export const EmbedMetadataButton: React.FC<EmbedMetadataButtonProps> = ({ instan
       enqueueSnackbar(`Error embedding metadata: ${msg}`, { variant: 'error' })
     } finally {
       setEmbedLoading(false)
+      setAlertOpen(false)
     }
   }
 
@@ -184,6 +189,17 @@ export const EmbedMetadataButton: React.FC<EmbedMetadataButtonProps> = ({ instan
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <AlertDialog open={alertOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Embedding Metadata</AlertDialogTitle>
+            <AlertDialogDescription>
+              Please wait while we embed the selected metadata...
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   )
 }
