@@ -13,31 +13,20 @@ import z from "zod/v4";
 import { getBaseUrl } from "./helper";
 import { createDocReaderClient } from "@/lib/external";
 import type { ExtractResponse } from "@/lib/external/docReaderClient";
+import { getFile } from "@/lib/cache/file-cache";
 
 const MAX_SINGLE_PAYLOAD_BYTES = 3.5 * 1024 * 1024; // Align with doc-reader upload guidelines (3.5 MB)
 
-export const parseFileTool = (subId?: string) => {
+export const parseFileTool = (subId: string) => {
   return tool({
     description:
       'Parse an attachment (DOCX, PDF, images, zip, etc.) using the doc-reader API. Provide a base64 payload or a File object, and the tool will chunk, upload, and return the final analysis.',
-    execute: async ({ base64, fileName, fileType, file }: { base64?: string; fileName?: string; fileType?: string; file?: File }) => {
-      let buffer: Buffer;
+    execute: async ({ fileName, fileType }: {fileName: string; fileType?: string; }) => {
       console.log('parseFileTool called');
-      if (file) {
-        // Convert File to Buffer
-        const arrayBuffer = await file.arrayBuffer();
-        buffer = Buffer.from(arrayBuffer);
-        fileName = fileName || file.name;
-        fileType = fileType || file.type;
-      } else if (base64) {
-        const trimmedBase64 = typeof base64 === 'string' ? base64.replace(/\s+/g, '') : '';
-        if (!trimmedBase64) throw new Error('base64 payload is required');
-        if (!isValidBase64(trimmedBase64)) throw new Error('Invalid base64 payload provided');
-        buffer = Buffer.from(trimmedBase64, 'base64');
-      } else {
-        throw new Error('Either base64 or file must be provided');
-      }
-
+      const blob = await getFile(fileName, subId);
+      if (!blob) throw new Error('No files found for the given id.')
+      const arrayBuffer = await blob.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
       if (!buffer || buffer.byteLength === 0) throw new Error('Decoded payload is empty');
 
       const baseUrl = await getBaseUrl();
@@ -78,15 +67,16 @@ export const parseFileTool = (subId?: string) => {
       }
     },
     inputSchema: z.object({
-      base64: z
-        .string()
-        .optional()
-        .describe('Base64-encoded file content (no data: prefix). The tool will chunk automatically as needed.'),
-      file: z
-        .instanceof(File)
-        .optional()
-        .describe('The file object to parse. If provided, base64 is ignored.'),
-      fileName: z.string().optional().describe('Optional original filename (e.g., document.docx).'),
+      // base64: z
+      //   .string()
+      //   .optional()
+      //   .describe('Base64-encoded file content (no data: prefix). The tool will chunk automatically as needed.'),
+      // file: z
+      //   .instanceof(File)
+      //   .optional()
+      //   .describe('The file object to parse. If provided, base64 is ignored.'),
+     
+      fileName: z.string().describe('Optional original filename (e.g., document.docx).'),
       fileType: z.string().optional().describe('Optional MIME type (e.g., application/pdf).'),
     }),
   });

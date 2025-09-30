@@ -131,7 +131,6 @@ export function PromptInputAttachments({
   const attachments = usePromptInputAttachments();
   const [height, setHeight] = useState(0);
   const contentRef = useRef<HTMLDivElement>(null);
-  console.log('attachments.files', attachments.files);
   useLayoutEffect(() => {
     const el = contentRef.current;
     if (!el) {
@@ -268,7 +267,7 @@ export const PromptInput = ({
   );
 
   const add = useCallback(
-    async (files: File[] | FileList) => {
+    (files: File[] | FileList) => {
       const incoming = Array.from(files);
       const accepted = incoming.filter((f) => matchesAccept(f));
       if (accepted.length === 0) {
@@ -288,32 +287,58 @@ export const PromptInput = ({
         });
         return;
       }
-      const prev = items;
-      const capacity =
-        typeof maxFiles === "number"
-          ? Math.max(0, maxFiles - prev.length)
-          : undefined;
-      const capped =
-        typeof capacity === "number" ? sized.slice(0, capacity) : sized;
-      if (typeof capacity === "number" && sized.length > capacity) {
-        onError?.({
-          code: "max_files",
-          message: "Too many files. Some were not added.",
-        });
-      }
-      const next: (FileUIPart & { id: string })[] = [];
-      for (const file of capped) {
-        const url = await toBase64(file);//URL.createObjectURL(file);
-        console.log('file url', url);
-        next.push({
-          id: nanoid(),
-          type: "file",
-          url,
-          mediaType: file.type,
-          filename: file.name,
-        });
-      }
-      setItems(prev.concat(next));
+      // ALT WAY
+      // const prev = items;
+      // const capacity =
+      //   typeof maxFiles === "number"
+      //     ? Math.max(0, maxFiles - prev.length)
+      //     : undefined;
+      // const capped =
+      //   typeof capacity === "number" ? sized.slice(0, capacity) : sized;
+      // if (typeof capacity === "number" && sized.length > capacity) {
+      //   onError?.({
+      //     code: "max_files",
+      //     message: "Too many files. Some were not added.",
+      //   });
+      // }
+      // const next: (FileUIPart & { id: string })[] = [];
+      // for (const file of capped) {
+      //   //const url = await toBase64(file);//URL.createObjectURL(file);
+      //   // console.log('file url', url);
+      //   next.push({
+      //     id: nanoid(),
+      //     type: "file",
+      //     url: URL.createObjectURL(file),
+      //     mediaType: file.type,
+      //     filename: file.name,
+      //   });
+      // }
+      // setItems(prev.concat(next));
+      setItems((prev) => {
+        const capacity =
+          typeof maxFiles === "number"
+            ? Math.max(0, maxFiles - prev.length)
+            : undefined;
+        const capped =
+          typeof capacity === "number" ? sized.slice(0, capacity) : sized;
+        if (typeof capacity === "number" && sized.length > capacity) {
+          onError?.({
+            code: "max_files",
+            message: "Too many files. Some were not added.",
+          });
+        }
+        const next: (FileUIPart & { id: string })[] = [];
+        for (const file of capped) {
+          next.push({
+            id: nanoid(),
+            type: "file",
+            url: URL.createObjectURL(file),
+            mediaType: file.type,
+            filename: file.name,
+          });
+        }
+        return prev.concat(next);
+      });
     },
     [matchesAccept, maxFiles, maxFileSize, onError]
   );

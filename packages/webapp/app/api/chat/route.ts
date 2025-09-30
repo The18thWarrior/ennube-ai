@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { convertToModelMessages, stepCountIs, streamText } from 'ai';
+import { convertToModelMessages, stepCountIs, streamText, UIMessage } from 'ai';
 import { auth } from '@/auth';
 import { nanoid } from 'nanoid';
 import { setThread } from '@/lib/cache/message-history';
@@ -7,13 +7,14 @@ import { getPrompt, getTools } from '@/lib/chat/helper';
 import dayjs from 'dayjs';
 import getModel from '@/lib/chat/getModel';
 import { chatAgent } from '@/lib/chat/chatAgent';
+import { storeFilesFromMessages } from '@/lib/cache/file-cache';
 
 export const maxDuration = 300;
 // The main agent route
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { messages, webSearch } = body;
+    const { messages, webSearch } = body as { messages: UIMessage[]; webSearch?: boolean };
     if (!messages) {
       console.log('Missing messages in request body');
       return NextResponse.json({ error: 'Missing messages' }, { status: 400 });
@@ -40,6 +41,7 @@ export async function POST(req: NextRequest) {
     if (!model) {
       return NextResponse.json({ error: 'AI model not configured' }, { status: 500 });
     }
+    await storeFilesFromMessages(messages, userSub);
     const systemPrompt = `${await getPrompt(agent as 'data-steward' | 'prospect-finder' | 'contract-reader')} Today's date is ${today}.`;
     const tools = await getTools(agent as 'data-steward' | 'prospect-finder' | 'contract-reader', userSub, webSearch);
     const _messages = convertToModelMessages(messages);

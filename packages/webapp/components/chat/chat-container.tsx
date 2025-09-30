@@ -215,22 +215,16 @@ const ChatContainer = ({
                 <PromptInput globalDrop={true} onSubmit={handleSubmitPromptInput} className="mt-4 relative">
                   <PromptInputBody className={'flex flex-row'}>
                     <PromptInputTextarea onChange={handlePromptInputChange} value={input} />
-
-                    {/* <PromptInputAttachments>
-                      {(attachment) => (
-                        <PromptInputAttachment data={attachment} />
-                      )}
-                    </PromptInputAttachments> */}
                   </PromptInputBody>
                   <PromptInputToolbar>
                     <PromptInputTools>
-                      {/* <PromptInputActionMenu>
+                      <PromptInputActionMenu>
                         <PromptInputActionMenuTrigger />
                         <PromptInputActionMenuContent>
                           <PromptInputActionAddAttachments />
                         </PromptInputActionMenuContent>
                         
-                      </PromptInputActionMenu> */}
+                      </PromptInputActionMenu>
                       <PromptInputButton
                         variant={webSearch ? 'default' : 'ghost'}
                         onClick={() => {
@@ -241,11 +235,11 @@ const ChatContainer = ({
                         <GlobeIcon size={16} />
                         <span>Search</span>
                       </PromptInputButton>
-                      {/* <PromptInputAttachments>
+                      <PromptInputAttachments>
                         {(attachment) => (
                           <PromptInputAttachment data={attachment} />
                         )}
-                      </PromptInputAttachments>  */}
+                      </PromptInputAttachments> 
                     </PromptInputTools>
                     <PromptInputSubmit
                       disabled={isLoading}
