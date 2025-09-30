@@ -48,6 +48,7 @@ const ChatContainer = ({
         messages,
         status,
         sendMessage,
+        setMessages,
         error,
         id: threadId,
         stop
@@ -152,12 +153,17 @@ const ChatContainer = ({
         await setThread(threadId, [], _name || '', selectedAvatar);
     };
 
-    const updateThreadFromTool = async (updatedMessage: UIMessage) => {
+    const updateThreadFromTool = async (updatedMessage: UIMessage, resultMessage: UIMessage | undefined = undefined) => {
        const index = messages.findIndex((msg) => msg.id === updatedMessage.id);
         if (index !== -1) {
             const newMessages = [...messages];
             newMessages[index] = updatedMessage;
-            await setThread(threadId, newMessages, _name || '', selectedAvatar);
+            if (resultMessage) {
+              await setThread(threadId, [...newMessages, resultMessage], _name || '', selectedAvatar);
+              await setMessages([...newMessages, resultMessage]);
+            } else {
+              await setThread(threadId, newMessages, _name || '', selectedAvatar);
+            }
         }
         //reload();
     };

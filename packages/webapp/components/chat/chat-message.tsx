@@ -25,12 +25,12 @@ import { Reasoning, ReasoningContent, ReasoningTrigger } from '../ai-elements/re
 import { Tool, ToolHeader, ToolContent, ToolInput, ToolOutput } from '../ai-elements/tool';
 
 // Custom message rendering
-export const renderMessage = (msg: UIMessage, idx: number, agent: ReactNode, theme: 'dark' | 'light' | 'lavender', session: Session | null, updateThreadFromTool: (updatedMessage: UIMessage) => void) => {
+export const renderMessage = (msg: UIMessage, idx: number, agent: ReactNode, theme: 'dark' | 'light' | 'lavender', session: Session | null, updateThreadFromTool: (updatedMessage: UIMessage, newMessage?: UIMessage) => void) => {
     // Default: render as text
     return RenderHtmlComponent(DefaultMessageComponent(msg, theme), msg, theme, agent, session, updateThreadFromTool);
 };
 
-const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, theme: 'dark' | 'light' | 'lavender', agent: ReactNode, session: Session | null, updateThreadFromTool: (updatedMessage: UIMessage) => void) => (
+const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, theme: 'dark' | 'light' | 'lavender', agent: ReactNode, session: Session | null, updateThreadFromTool: (updatedMessage: UIMessage, newMessage?: UIMessage) => void) => (
     <div className={'flex items-start gap-2'}>
         {msg.role === 'assistant' ? 
             <div className="flex aspect-square size-12 items-center justify-center rounded-full overflow-hidden flex-shrink-0 mt-2 ">

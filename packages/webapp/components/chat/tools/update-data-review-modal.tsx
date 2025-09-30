@@ -8,6 +8,7 @@ import { CircleCheck, TriangleAlert } from 'lucide-react';
 import Link from "next/link"
 import { Badge, Button, Card } from '@/components/ui';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { nanoid } from 'nanoid';
 
 type Props = {
   open: boolean;
@@ -15,7 +16,7 @@ type Props = {
   proposal?: UpdateProposal | null;
   status?: 'draft' | 'proposed' | 'approved' | 'executing' | 'completed' | 'rejected';
   message?: UIMessage<unknown, UIDataTypes, UITools>;
-  closeProposal?: (updatedMessage: UIMessage<unknown, UIDataTypes, UITools>) => void;
+  closeProposal?: (updatedMessage: UIMessage<unknown, UIDataTypes, UITools>, newMessage?: UIMessage<UIDataTypes, UITools>) => void;
 };
 
 type SingleChangeResult = {
@@ -57,6 +58,7 @@ export function UpdateDataReviewModal({ open, proposal, closeProposal, message, 
     setResult(null);
     try {
       // If single change, use useSfdcRecord for convenience
+      let finalResult : SingleChangeResult | BulkChangeResult | null = null;
       if (proposal.changes.length === 1) {
         const c = proposal.changes[0];
         if (c.operation === 'update') {
@@ -69,7 +71,8 @@ export function UpdateDataReviewModal({ open, proposal, closeProposal, message, 
             setExecuting(false);
             return;
           }
-          setResult({ bulkOperation: false, change: 'update', recordId: c.recordId });
+          //setResult();
+          finalResult = { bulkOperation: false, change: 'update', recordId: c.recordId };
         } else if (c.operation === 'delete') {
           await deleteRecord(c.recordId as string);
           if (sfdcError) {
@@ -78,7 +81,7 @@ export function UpdateDataReviewModal({ open, proposal, closeProposal, message, 
             return;
           }
 
-          setResult({ bulkOperation: false, change: 'delete', recordId: c.recordId });
+          finalResult = { bulkOperation: false, change: 'delete', recordId: c.recordId };
         } else if (c.operation === 'create') {
           const data: any = {};
           (c.fields || []).forEach((f) => (data[f.fieldName] = f.after));
@@ -88,7 +91,7 @@ export function UpdateDataReviewModal({ open, proposal, closeProposal, message, 
             setExecuting(false);
             return;
           }
-          setResult({ bulkOperation: false, change: 'create', recordId: undefined });
+          finalResult = { bulkOperation: false, change: 'create', recordId: undefined }; // TODO: get new record ID
         }
       } else {
         // Batch mode: group by sobject and operation
@@ -109,17 +112,25 @@ export function UpdateDataReviewModal({ open, proposal, closeProposal, message, 
           const bulkResult = await bulk({ type: 'ingest', sobjectType: group.sobject, operation: op as any, records: group.records });
           executionResults.push({ sobject: group.sobject, operation: group.operation, result: bulkResult });
         }
-        setResult({bulkOperation: true, changedRecords: executionResults });
+        // setResult({bulkOperation: true, changedRecords: executionResults });
+        finalResult = {bulkOperation: true, changedRecords: executionResults };
       }
-
+      setResult(finalResult);
       // Call external onApprove if provided
       if (closeProposal) {
         const updatedParts = message?.parts?.map((p) => {
           if (!isToolUIPart(p) || p.toolCallId !== partId) return p;
           return {...p, output: { ...p.output as ProposalResponse, status: 'completed' }};
         });
-
-        await closeProposal({...message, parts: updatedParts} as UIMessage<unknown, UIDataTypes, UITools>);
+        const newMessage = {
+          id: nanoid(),
+          role: 'system',
+          parts: [{
+            type: 'text',
+            text: `${finalResult ? (finalResult.bulkOperation ? `Bulk operation executed with ${finalResult.changedRecords.length} changes. There were ${finalResult.changedRecords.filter(r => r.change === 'create').length} created, ${finalResult.changedRecords.filter(r => r.change === 'update').length} updated, and ${finalResult.changedRecords.filter(r => r.change === 'delete').length} deleted.` : `One record ${finalResult.change}d.`) : ''}`
+          }]
+        } as UIMessage<UIDataTypes, UITools>;
+        await closeProposal({...message, parts: updatedParts} as UIMessage<unknown, UIDataTypes, UITools>, newMessage);
       }
 
       setClientCompletion('completed');
