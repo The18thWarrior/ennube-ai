@@ -37,6 +37,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     if (body.active !== undefined) updateData.active = Boolean(body.active)
     if (body.frequency !== undefined) updateData.frequency = body.frequency
     if (body.provider !== undefined) updateData.provider = body.provider
+    if (body.custom_workflow !== undefined) updateData.custom_workflow = body.custom_workflow
 
     if (Object.keys(updateData).length === 0) return NextResponse.json({ success: false, error: 'No data provided', message: 'At least one field must be provided for update' }, { status: 400 })
 

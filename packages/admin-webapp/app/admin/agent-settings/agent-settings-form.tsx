@@ -36,7 +36,8 @@ const schema = z.object({
   provider: z.enum(['sfdc', 'hubspot', 'gmail', 'msoffice'] as const),
   batch_size: z.number().min(1, 'Batch size must be at least 1'),
   active: z.boolean(),
-  frequency: z.enum(['business_hours', 'daily', 'weekly', 'monthly'] as const)
+  frequency: z.enum(['business_hours', 'daily', 'weekly', 'monthly'] as const),
+  custom_workflow: z.string().optional()
 })
 
 type FormData = z.infer<typeof schema>
@@ -59,7 +60,8 @@ export function AgentSettingsForm({ open, onOpenChange, agentSettings, onSubmit 
       provider: 'sfdc',
       batch_size: 10,
       active: true,
-      frequency: 'daily'
+      frequency: 'daily',
+      custom_workflow: undefined
     }
   })
 
@@ -71,10 +73,11 @@ export function AgentSettingsForm({ open, onOpenChange, agentSettings, onSubmit 
           provider: agentSettings.provider || 'sfdc',
           batch_size: agentSettings.batch_size || 10,
           active: agentSettings.active ?? true,
-          frequency: agentSettings.frequency || 'daily'
+          frequency: agentSettings.frequency || 'daily',
+          custom_workflow: agentSettings.custom_workflow || undefined
         })
       } else {
-        form.reset({ agent: '', provider: 'sfdc', batch_size: 10, active: true, frequency: 'daily' })
+        form.reset({ agent: '', provider: 'sfdc', batch_size: 10, active: true, frequency: 'daily', custom_workflow: undefined })
       }
     }
   }, [open, agentSettings, form])
@@ -88,7 +91,8 @@ export function AgentSettingsForm({ open, onOpenChange, agentSettings, onSubmit 
         batch_size: data.batch_size,
         active: data.active,
         frequency: data.frequency,
-        provider: data.provider
+        provider: data.provider,
+        custom_workflow: data.custom_workflow || undefined
       })
       onOpenChange(false)
       form.reset()
@@ -116,7 +120,7 @@ export function AgentSettingsForm({ open, onOpenChange, agentSettings, onSubmit 
               <FormItem>
                 <FormLabel>Agent</FormLabel>
                 <FormControl>
-                  <Input placeholder="Agent name or identifier" {...field} disabled={isSubmitting} />
+                  <Input placeholder="Agent name or identifier" type={'text'} {...field} disabled={isSubmitting} className={'border'}/>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -126,7 +130,7 @@ export function AgentSettingsForm({ open, onOpenChange, agentSettings, onSubmit 
               <FormItem>
                 <FormLabel>Provider</FormLabel>
                 <FormControl>
-                  <Input placeholder="Provider" {...field} disabled={isSubmitting} />
+                  <Input placeholder="Provider" {...field} type={'text'} disabled={isSubmitting} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -146,7 +150,17 @@ export function AgentSettingsForm({ open, onOpenChange, agentSettings, onSubmit 
               <FormItem>
                 <FormLabel>Frequency</FormLabel>
                 <FormControl>
-                  <Input {...field} disabled={isSubmitting} />
+                  <Input {...field} disabled={isSubmitting} type={'text'} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )} />
+
+            <FormField control={form.control} name="custom_workflow" render={({ field }) => (
+              <FormItem>
+                <FormLabel>Custom Workflow</FormLabel>
+                <FormControl>
+                  <Input {...field} disabled={isSubmitting} type={'text'} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -156,7 +170,7 @@ export function AgentSettingsForm({ open, onOpenChange, agentSettings, onSubmit 
               <FormItem>
                 <FormLabel>Active</FormLabel>
                 <FormControl>
-                  <input
+                  <Input
                     type="checkbox"
                     checked={!!field.value}
                     onChange={(e) => field.onChange(e.target.checked)}

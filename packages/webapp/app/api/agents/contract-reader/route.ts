@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
+import { getAgentSetting } from '@/lib/db/agent-settings-storage';
 
 /**
  * Contract Reader API
@@ -35,9 +36,8 @@ export async function GET(request: NextRequest) {
         { status: 400 }
       );
     }
-    
-    // Get the webhook URL from environment variable
-    const webhookUrl = provider === 'sfdc' ? process.env.CONTRACT_READER_WEBHOOK_URL : process.env.CONTRACT_READER_WEBHOOK_URL;
+    const setting = await getAgentSetting(userSub, 'contract-reader');
+    const webhookUrl = setting?.customWorkflow || (provider === 'sfdc' ? process.env.CONTRACT_READER_WEBHOOK_URL : process.env.CONTRACT_READER_WEBHOOK_URL);
     if (!webhookUrl) {
       return NextResponse.json(
         { error: 'Contract reader webhook URL is not configured' },

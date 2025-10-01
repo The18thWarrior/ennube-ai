@@ -215,9 +215,9 @@ export const agentSettingsService = {
     
     const result = await pool.query(`
       INSERT INTO AgentSettings (
-        user_id, agent, created_at, updated_at, batch_size, active, frequency, provider
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
-      [data.user_id, data.agent, currentTime, currentTime, data.batch_size, data.active, data.frequency, data.provider]
+        user_id, agent, created_at, updated_at, batch_size, active, frequency, provider, custom_workflow
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
+      [data.user_id, data.agent, currentTime, currentTime, data.batch_size, data.active, data.frequency, data.provider, data.custom_workflow]
     );
     return result.rows[0];
   },

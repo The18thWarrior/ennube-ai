@@ -4,6 +4,7 @@
   "description": "An example project for NextAuth.js with Next.js",
   "scripts": {
     "dev": "pnpm --filter @ennube/webapp dev",
+    "dev-admin": "pnpm --filter @ennube/admin-webapp dev",
     "build:webapp": "pnpm --filter @ennube/webapp build",
     "build": "pnpm -r build",
     "typecheck": "pnpm -r --parallel --filter \"./packages/**\" exec tsc --noEmit",

@@ -45,7 +45,8 @@ export async function POST(request: NextRequest) {
       batch_size: Number(body.batch_size),
       active: Boolean(body.active),
       frequency: body.frequency,
-      provider: body.provider
+      provider: body.provider,
+      custom_workflow: body.custom_workflow || null
     }
 
     const created = await agentSettingsService.create(data)

@@ -35,6 +35,7 @@ export interface AgentSetting {
   frequency: FrequencyType;
   batchSize?: number;
   provider: ProviderType;
+  customWorkflow?: string;
 }
 
 /**
@@ -119,7 +120,7 @@ export async function getAgentSetting(userId: string, agent: string): Promise<Ag
     
     const result = await pool.query(
       `SELECT id, user_id as "userId", agent, created_at as "createdAt", 
-              updated_at as "updatedAt", active, frequency, batch_size as "batchSize", provider
+              updated_at as "updatedAt", active, frequency, batch_size as "batchSize", provider, custom_workflow as "customWorkflow"
        FROM AgentSettings
        WHERE user_id = $1 AND agent = $2`,
       [userId, agent]
@@ -148,7 +149,7 @@ export async function getUserAgentSettings(userId: string): Promise<AgentSetting
     
     const result = await pool.query(
       `SELECT id, user_id as "userId", agent, created_at as "createdAt", 
-              updated_at as "updatedAt", active, frequency, batch_size as "batchSize", provider
+              updated_at as "updatedAt", active, frequency, batch_size as "batchSize", provider, custom_workflow as "customWorkflow"
        FROM AgentSettings
        WHERE user_id = $1
        ORDER BY agent`,
@@ -312,7 +313,7 @@ export async function getAllActiveSettings(): Promise<AgentSetting[]> {
   try {
     const result = await pool.query(
       `SELECT id, user_id as "userId", agent, created_at as "createdAt", 
-              updated_at as "updatedAt", active, frequency, batch_size as "batchSize", provider
+              updated_at as "updatedAt", active, frequency, batch_size as "batchSize", provider, custom_workflow as "customWorkflow"
        FROM AgentSettings
        WHERE active = true
        ORDER BY user_id, agent`

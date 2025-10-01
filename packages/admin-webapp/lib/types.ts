@@ -62,6 +62,7 @@ export interface AgentSettings {
   active: boolean;
   frequency: FrequencyType;
   provider: ProviderType;
+  custom_workflow?: string;
 }
 
 // API Keys interface
@@ -185,6 +186,7 @@ export interface CreateAgentSettingsData {
   active: boolean;
   frequency: FrequencyType;
   provider: ProviderType;
+  custom_workflow?: string;
 }
 
 export interface CreateApiKeyData {
