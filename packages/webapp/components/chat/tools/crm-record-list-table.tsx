@@ -304,14 +304,12 @@ export function CrmRecordListTable({
                     onCheckedChange={handleSelectAll}
                   />
                 </th> */}
-                <th className="relative text-left p-2 font-medium text-sm border-r border-border/50 select-none">
-                  <span className="flex-1 truncate">{`Actions`}</span>
-                </th>
+
                 {visibleColumns.map((column) => (
                   <th
                     key={column.id}
                     className="relative text-left p-2 font-medium text-sm border-r border-border/50 select-none"
-                    style={{ width: column.width }}
+                    style={{ width: column.width*2 }}
                     draggable
                     onDragStart={() => handleColumnDragStart(column.id)}
                     onDragOver={(e) => handleColumnDragOver(e, column.id)}
@@ -337,6 +335,9 @@ export function CrmRecordListTable({
                     />
                   </th>
                 ))}
+                <th className="relative text-left p-2 font-medium text-sm border-r border-border/50 select-none" style={{ width: 50 }}>
+                  <span className="flex-1 truncate">{`Actions`}</span>
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -356,11 +357,6 @@ export function CrmRecordListTable({
                     />
                   </td> */}
 
-                  <td className="p-2 text-sm border-r border-border/20">
-                    <Button variant="ghost" size="sm" onClick={() => handleRecordSelect(record.id)}>
-                      {`>`}
-                    </Button>
-                  </td>
                   {visibleColumns.map((column) => (
                     <td
                       key={column.id}
@@ -370,6 +366,12 @@ export function CrmRecordListTable({
                       {formatCellValue(record.fields.find(field => field.label === column.field)?.value, column.type)}
                     </td>
                   ))}
+
+                  <td className="p-2 text-sm border-r border-border/20">
+                    <Button variant="ghost" size="sm" onClick={() => handleRecordSelect(record.id)}>
+                      {`>`}
+                    </Button>
+                  </td>
                 </tr>
               ))}
             </tbody>

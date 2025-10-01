@@ -119,7 +119,7 @@ export default async function HubspotDashboard() {
           </div> }
 
           {/* Data Access Links */}
-          {/* <div className="p-6 bg-muted  rounded-lg">
+          <div className="p-6 bg-muted  rounded-lg">
             <h2 className="text-xl font-semibold mb-4">HubSpot Data</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Link href="/integrations/hubspot/contacts" passHref>
@@ -149,7 +149,7 @@ export default async function HubspotDashboard() {
                 </Button>
               </Link>
             </div>
-          </div> */}
+          </div>
         </>
       )}
       

@@ -113,7 +113,7 @@ const ChatContainer = ({
               populateName(); 
             }
         }
-        console.log(messages);
+        //console.log(messages);
     }, [messages.length, mounted]);
     useEffect(() => {
         if (!mounted) return;

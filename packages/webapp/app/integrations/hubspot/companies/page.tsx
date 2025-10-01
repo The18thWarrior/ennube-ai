@@ -22,7 +22,7 @@ export default async function HubspotCompanies() {
   if (!hubspotCredentials) {
     redirect("/integrations/hubspot/connect");
   }
-
+  console.log(hubspotCredentials)
   const hubspotClient = new HubSpotClient(
     hubspotCredentials.accessToken, 
     hubspotCredentials.refreshToken,
@@ -39,8 +39,9 @@ export default async function HubspotCompanies() {
   try {
     const companiesResult = await hubspotClient.query<Company>('companies', {
       limit: 10,
-      properties: ['name', 'domain', 'industry', 'phone'],
+      properties: ['id','name', 'domain', 'industry', 'phone'],
     });
+    console.log(companiesResult)
     companies = companiesResult.records || [];
   } catch (e) {
     console.log("Failed to fetch HubSpot companies:", e);
