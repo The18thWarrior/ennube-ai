@@ -112,6 +112,7 @@ export class HubSpotClient {
 
       if (!response.ok) {
         const errorData = await response.json();
+        console.log('Failed to refresh HubSpot token:', errorData);
         throw new Error(`Failed to refresh token: ${errorData.message || response.statusText}`);
       }
 
@@ -351,7 +352,7 @@ export class HubSpotClient {
         
         return true;
       } catch (error) {
-        console.log(`Error updating ${objectType}:`);
+        console.log(`Error updating ${objectType}:${error}`);
         throw new Error(`Failed to update ${objectType}: ${error instanceof Error ? error.message : String(error)}`);
       }
     });
