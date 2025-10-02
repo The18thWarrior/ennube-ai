@@ -187,7 +187,7 @@ export async function PUT(request: NextRequest) {
       mappedData = fields;
       notes = companyNotes;
     }
-
+    mappedData = { ...mappedData, 'ennube_enrichment_description': JSON.stringify(data) };
     console.info('Mapped data for HubSpot update:', mappedData);
     // Update the record
     const success = await client!.update(objectType!, id, mappedData);
