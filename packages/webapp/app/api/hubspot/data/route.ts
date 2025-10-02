@@ -180,6 +180,8 @@ export async function PUT(request: NextRequest) {
     const data = await request.json();
     let mappedData: Record<string, any> = {};
     let notes: string[] = [];
+
+    console.log('data to update:', data);
     if (objectType === 'companies') {
       const {fields, notes: companyNotes} = mapFieldsCompany(data, companyFields);
       mappedData = fields;
@@ -192,7 +194,7 @@ export async function PUT(request: NextRequest) {
 
     if (notes.length > 0) {
       // Add notes if provided
-      await client!.addNotes(objectType!, id, notes);
+      //await client!.addNotes(objectType!, id, notes);
     }
     
     return NextResponse.json({ success });
