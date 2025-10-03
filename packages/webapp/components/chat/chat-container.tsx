@@ -173,7 +173,7 @@ const ChatContainer = ({
 
     return (
         <div className="flex flex-col relative mr-6" >
-            <Card className={'rounded-lg border grow h-[80dvh] max-h-[85dvh] overflow-auto scrollbar'} > {/*height: "calc(100vh - 240px)",*/}
+            <Card className={'rounded-lg border grow h-[75dvh] max-h-[75dvh] overflow-auto scrollbar'} > {/*height: "calc(100vh - 240px)",*/}
                 <div className="flex justify-between items-start group mb-4 p-3 border-b ">
                     {/* <svg className="mr-3 h-4 w-4 text-muted-foreground mt-1 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /></svg> */}
                     <div className={'px-2'}>
@@ -189,7 +189,7 @@ const ChatContainer = ({
                 <div
                     className={[
                         styles.chatContainer,
-                        
+                        'overflow-hidden relative'
                         //theme === 'dark' ? styles.dark : styles.light,
                     ].join(' ')}
                     style={{scrollbarColor: 'none'}}

@@ -67,7 +67,7 @@ function ChatSidebar({
 
   const { toggleSidebar, open } = useSidebar()
   return (
-      <Sidebar className="min-h-50 max-h-[80dvh] " variant={'floating'} collapsible={'icon'}>
+      <Sidebar className="min-h-50 max-h-[75dvh] " variant={'floating'} collapsible={'icon'}>
         <SidebarHeader>
 
           <div className={`flex items-center ${open ? 'justify-between' : 'justify-center'}`}>

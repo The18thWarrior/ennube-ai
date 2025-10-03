@@ -21,7 +21,8 @@ type Props = {
 export default function HeaderClient({ checkAdmin, user }: Props) {
   const pathname = usePathname() || "/"
   const isChat = useMemo(() => pathname.startsWith("/chat"), [pathname])
-  const [navVisible, setNavVisible] = useState(!isChat)
+  //const [navVisible, setNavVisible] = useState(!isChat)
+  const [navVisible, setNavVisible] = useState(true)
   const hoverRef = useRef<HTMLDivElement | null>(null)
   const headerRef = useRef<HTMLElement | null>(null)
   // Track whether either the floating UserButton or the header is being hovered
@@ -36,7 +37,7 @@ export default function HeaderClient({ checkAdmin, user }: Props) {
   // Manage top padding on the main content to avoid being hidden by the fixed header
   useEffect(() => {
     const root = document.documentElement
-    if (!isChat) {
+    if (true) {
       // For non-chat routes, ensure content is pushed down by nav height
       root.style.setProperty("--site-header-height", `${NAV_HEIGHT}px`)
       document.body.style.paddingTop = `${NAV_HEIGHT}px`
@@ -54,9 +55,9 @@ export default function HeaderClient({ checkAdmin, user }: Props) {
   }, [isChat])
 
   // Keep navVisible in sync with route changes
-  useEffect(() => {
-    setNavVisible(!isChat)
-  }, [isChat])
+  // useEffect(() => {
+  //   setNavVisible(!isChat)
+  // }, [isChat])
 
   // Hover handlers for the floating button
   function handleMouseEnter() {
@@ -68,36 +69,36 @@ export default function HeaderClient({ checkAdmin, user }: Props) {
     setNavVisible(true)
   }
   function handleMouseLeave() {
-    if (!isChat) return
-    // Left the floating button; schedule hide only if not hovering header
-    isHoveringButtonRef.current = false
-    if (hideTimeoutRef.current) window.clearTimeout(hideTimeoutRef.current)
-    hideTimeoutRef.current = window.setTimeout(() => {
-      if (!isHoveringHeaderRef.current && !isHoveringButtonRef.current) {
-        setNavVisible(false)
-      }
-      hideTimeoutRef.current = null
-    }, 150)
+    // if (!isChat) return
+    // // Left the floating button; schedule hide only if not hovering header
+    // isHoveringButtonRef.current = false
+    // if (hideTimeoutRef.current) window.clearTimeout(hideTimeoutRef.current)
+    // hideTimeoutRef.current = window.setTimeout(() => {
+    //   if (!isHoveringHeaderRef.current && !isHoveringButtonRef.current) {
+    //     setNavVisible(false)
+    //   }
+    //   hideTimeoutRef.current = null
+    // }, 150)
   }
 
   // Header hover handlers
   function handleHeaderMouseEnter() {
-    if (!isChat) return
-    isHoveringHeaderRef.current = true
-    if (hideTimeoutRef.current) window.clearTimeout(hideTimeoutRef.current)
-    setNavVisible(true)
+    // if (!isChat) return
+    // isHoveringHeaderRef.current = true
+    // if (hideTimeoutRef.current) window.clearTimeout(hideTimeoutRef.current)
+    // setNavVisible(true)
   }
 
   function handleHeaderMouseLeave() {
-    if (!isChat) return
-    isHoveringHeaderRef.current = false
-    if (hideTimeoutRef.current) window.clearTimeout(hideTimeoutRef.current)
-    hideTimeoutRef.current = window.setTimeout(() => {
-      if (!isHoveringHeaderRef.current && !isHoveringButtonRef.current) {
-        setNavVisible(false)
-      }
-      hideTimeoutRef.current = null
-    }, 150)
+    // if (!isChat) return
+    // isHoveringHeaderRef.current = false
+    // if (hideTimeoutRef.current) window.clearTimeout(hideTimeoutRef.current)
+    // hideTimeoutRef.current = window.setTimeout(() => {
+    //   if (!isHoveringHeaderRef.current && !isHoveringButtonRef.current) {
+    //     setNavVisible(false)
+    //   }
+    //   hideTimeoutRef.current = null
+    // }, 150)
   }
 
   return (
@@ -106,7 +107,7 @@ export default function HeaderClient({ checkAdmin, user }: Props) {
         ref={headerRef}
         onMouseEnter={handleHeaderMouseEnter}
         onMouseLeave={handleHeaderMouseLeave}
-        className={`fixed top-0 left-0 right-0 z-40  backdrop-blur transition-transform duration-300 ease-in-out ${navVisible ? "translate-y-0" : "-translate-y-full"}`}
+        className={`fixed top-0 left-0 right-0 z-40 border-b backdrop-blur transition-transform duration-300 ease-in-out ${navVisible ? "translate-y-0" : "-translate-y-full"}`}
         style={{
           // Ensure the header does not take layout space (we manage padding on body)
           height: NAV_HEIGHT,

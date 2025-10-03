@@ -2,20 +2,30 @@
 
 import { cn } from "@/lib/utils";
 import { type ComponentProps, memo } from "react";
-import { Streamdown } from "streamdown";
+import { Streamdown, ShikiThemeContext } from "streamdown";
+import { useTheme } from "../theme-provider";
+import { CodeBlock } from "./code-block";
+import { BundledLanguage } from "shiki";
 
 type ResponseProps = ComponentProps<typeof Streamdown>;
 
 export const Response = memo(
-  ({ className, ...props }: ResponseProps) => (
-    <Streamdown
-      className={cn(
-        "size-full [&>*:first-child]:mt-0 [&>*:last-child]:mb-0",
-        className
-      )}
-      {...props}
-    />
-  ),
+  ({ className, ...props }: ResponseProps) => {
+    const { theme } = useTheme();
+    return (
+      <Streamdown
+        className={cn(
+          "size-full [&>*:first-child]:mt-0 [&>*:last-child]:mb-0",
+          className
+        )}
+        shikiTheme={theme === "lavender" ? ["github-dark", "github-dark"] : ["github-light", "github-dark"]}
+        components={{
+          //code: (codeProps) => <CodeBlock code={codeProps.content || ''} language={codeProps.datatype as BundledLanguage || 'plaintext'} />,
+        }}
+        {...props}
+      />
+    )
+  },
   (prevProps, nextProps) => prevProps.children === nextProps.children
 );
 
