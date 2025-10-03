@@ -4,7 +4,7 @@
  * This class provides methods for creating and managing secondary users
  * and their license relationships with the primary account.
  */
-import { ManagementClient } from 'auth0';
+import { ManagementClient, RequiredError } from 'auth0';
 import { auth } from '@/auth';
 import { createLicense, updateLicenseParent, LicenseStatus, updateLicenseStatus } from '@/lib/db/license-storage';
 
@@ -63,7 +63,7 @@ class Auth0Manager {
   /**
    * Create a secondary user and associate them with the current user via license
    */
-  async createSecondaryUser(params: CreateUserParams): Promise<Auth0User | null> {
+  async createSecondaryUser(params: CreateUserParams): Promise<Auth0User | unknown> {
     try {
       // Get the current user's session to extract their sub ID
       const session = await auth();
@@ -107,9 +107,9 @@ class Auth0Manager {
       
       console.log(`Secondary user created: ${newUser.email} (${newUser.user_id})`);
       return newUser;
-    } catch (error) {
+    } catch (error: RequiredError | any) {
       console.log('Error creating secondary user:', error);
-      return null;
+      return error.msg as string || 'Error creating secondary user';
     }
   }
 

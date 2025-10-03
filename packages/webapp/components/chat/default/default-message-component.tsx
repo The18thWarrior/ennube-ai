@@ -1,5 +1,6 @@
 import { UIMessage, UIMessagePart, UIDataTypes, UITools } from "ai";
 import MessageComponentWrapper from "./message-component-wrapper";
+import { Response } from "@/components/ai-elements/response";
 
 const DefaultMessageComponent = (msg: UIMessage, theme: 'dark' | 'light' | 'lavender') => {
     const _msg = msg.parts ? msg.parts.at(msg.parts.length - 1) as UIMessagePart<UIDataTypes, UITools> : null;
@@ -10,7 +11,8 @@ const DefaultMessageComponent = (msg: UIMessage, theme: 'dark' | 'light' | 'lave
         return MessageComponentWrapper( <span className="text-xs text-muted-foreground italic">No response</span>, msg.role, theme);
     }
 
-    return MessageComponentWrapper( <span className={`${state === 'streaming' ? 'text-muted-foreground' : ''} ${msg.role === 'user' ? '' : 'p-2'}`}>{value}</span>, msg.role, theme);
+    return MessageComponentWrapper( <Response>{value}</Response>, msg.role, theme);
+    // return MessageComponentWrapper( <span className={`${state === 'streaming' ? 'text-muted-foreground' : ''} ${msg.role === 'user' ? '' : 'p-2'}`}>{value}</span>, msg.role, theme);
 };
 
 export default DefaultMessageComponent;
