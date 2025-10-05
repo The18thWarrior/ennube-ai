@@ -7,6 +7,9 @@ import express, { Request, Response } from 'express';
 import dotenv from 'dotenv'
 import { createSalesforceVectorStore, type VectorStoreEntry } from './vector-store.js';
 import { getCachedEntries, setCachedEntries, touchCache, cleanupCacheOnce } from './cache.js';
+// npm i @huggingface/transformers
+import { pipeline } from '@huggingface/transformers';
+
 
 dotenv.config()
 const app = express();
@@ -85,6 +88,29 @@ app.post('/query', requireApiToken, async (req: Request, res: Response) => {
     await store.upsert(deduplicatedByID);
     const results = await store.query(queryEmbedding, k);
     return res.json({ results });
+  } catch (err: any) {
+    return res.status(500).json({ error: 'internal error', details: String(err) });
+  }
+});
+
+app.get('/download', async (req: Request, res: Response) => {
+  const pipe = await pipeline('embeddings', 'nomic-ai/nomic-embed-text-v1.5', {
+    cache_dir: './.hf_cache'
+  });
+  //console.log('pipeline loaded', pipe.model, pipe.name, pipe.task);
+  return res.status(200).json({ model: pipe.model.name || '', name: pipe.name || '', task: pipe.task || '' });
+});
+app.post('/embed', async (req: Request, res: Response) => {
+  const body = req.body as { texts?: string[] };
+  if (!body?.texts || !Array.isArray(body.texts) || body.texts.some(t => typeof t !== 'string')) {
+    return res.status(400).json({ error: 'missing or invalid required field: texts (array of strings)' });
+  }
+  // Allocate pipeline
+  const embedder = await pipeline('embeddings', 'nomic-ai/nomic-embed-text-v1.5');
+  const { texts } = body;
+  try {
+    const entries = await embedder(texts, {});
+    return res.json({ entries });
   } catch (err: any) {
     return res.status(500).json({ error: 'internal error', details: String(err) });
   }
