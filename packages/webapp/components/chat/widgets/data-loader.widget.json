@@ -1,0 +1,256 @@
+{
+  "version": "1.0",
+  "name": "Data loader setup",
+  "description": "Guided summary of a pending Salesforce bulk load job.",
+  "template": "{\"type\":\"Card\",\"size\":\"sm\",\"status\":{\"text\":{{ (statusText | default('Ready to ingest data')) | tojson }},\"icon\":{{ (statusIcon | default('square-code')) | tojson }}},\"children\":[{\"type\":\"Col\",\"gap\":3,\"children\":[{\"type\":\"Title\",\"value\":{{ (title | default('Salesforce data load')) | tojson }},\"size\":\"md\",\"weight\":\"semibold\"},{\"type\":\"Row\",\"gap\":2,\"children\":[{\"type\":\"Badge\",\"label\":{{ (operationLabel | default('Insert')) | tojson }},\"color\":{{ (operationColor | default('info')) | tojson }},\"variant\":\"soft\"},{% if targetObject %}{\"type\":\"Badge\",\"label\":{{ targetObject | tojson }},\"variant\":\"outline\"}{% endif %}]},{% if recordCount %}{\"type\":\"Text\",\"value\":{{ ('Records: ' ~ recordCount) | tojson }},\"size\":\"sm\",\"color\":\"secondary\"},{% endif %}{% if fieldMappingNote %}{\"type\":\"Text\",\"value\":{{ fieldMappingNote | tojson }},\"size\":\"sm\",\"color\":\"secondary\",\"maxLines\":3},{% endif %}{% if sampleRows %}{\"type\":\"ListView\",\"limit\":3,\"children\":[{%- set _rows -%}{%- for row in sampleRows -%},{\"type\":\"ListViewItem\",\"key\":{{ (row.id) | tojson }},\"gap\":2,\"children\":[{\"type\":\"Col\",\"gap\":1,\"children\":[{\"type\":\"Text\",\"value\":{{ (row.primary) | tojson }},\"size\":\"sm\",\"weight\":\"semibold\"},{% if row.secondary %}{\"type\":\"Caption\",\"value\":{{ row.secondary | tojson }},\"color\":\"secondary\"}{% endif %}]}]}{%- endfor -%}{%- endset -%}{{- (_rows[1:] if _rows and _rows[0] == ',' else _rows) -}}]},{\"type\":\"Row\",\"gap\":2,\"children\":[{\"type\":\"Button\",\"label\":{{ (primaryAction.label | default('Launch loader')) | tojson }},\"style\":{{ (primaryAction.style | default('primary')) | tojson }},\"onClickAction\":{\"type\":{{ (primaryAction.action.type | default('loader.open')) | tojson }},\"payload\":{{ (primaryAction.action.payload | default({})) | tojson }}}},{% if secondaryAction %}{\"type\":\"Button\",\"label\":{{ (secondaryAction.label) | tojson }},\"variant\":\"outline\",\"onClickAction\":{\"type\":{{ (secondaryAction.action.type) | tojson }},\"payload\":{{ (secondaryAction.action.payload | default({})) | tojson }}}{% endif %}]}]}]} ",
+  "jsonSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "data-loader-widget",
+    "type": "object",
+    "properties": {
+      "title": {
+        "type": "string",
+        "maxLength": 60
+      },
+      "statusText": {
+        "type": "string",
+        "default": "Ready to ingest data"
+      },
+      "statusIcon": {
+        "type": "string",
+        "default": "square-code"
+      },
+      "operationLabel": {
+        "type": "string",
+        "default": "Insert"
+      },
+      "operationColor": {
+        "type": "string",
+        "enum": [
+          "info",
+          "success",
+          "warning",
+          "danger"
+        ],
+        "default": "info"
+      },
+      "targetObject": {
+        "type": "string",
+        "maxLength": 60
+      },
+      "recordCount": {
+        "type": "string",
+        "pattern": "^[0-9]+(\u002B)?$"
+      },
+      "fieldMappingNote": {
+        "type": "string",
+        "maxLength": 160
+      },
+      "sampleRows": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "primary": {
+              "type": "string",
+              "maxLength": 80
+            },
+            "secondary": {
+              "type": "string",
+              "maxLength": 120
+            }
+          },
+          "required": [
+            "id",
+            "primary"
+          ],
+          "additionalProperties": false
+        },
+        "minItems": 1,
+        "maxItems": 3
+      },
+      "primaryAction": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "default": "Launch loader"
+          },
+          "style": {
+            "type": "string",
+            "enum": [
+              "primary",
+              "secondary"
+            ],
+            "default": "primary"
+          },
+          "action": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "default": "loader.open"
+              },
+              "payload": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "type"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "action"
+        ],
+        "additionalProperties": false
+      },
+      "secondaryAction": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "action": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string"
+              },
+              "payload": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "type"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "label",
+          "action"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "required": [
+      "primaryAction"
+    ],
+    "additionalProperties": false
+  },
+  "outputJsonPreview": {
+    "type": "Card",
+    "size": "sm",
+    "status": {
+      "text": "Ready to ingest data",
+      "icon": "square-code"
+    },
+    "children": [
+      {
+        "type": "Col",
+        "gap": 3,
+        "children": [
+          {
+            "type": "Title",
+            "value": "Salesforce data load",
+            "size": "md",
+            "weight": "semibold"
+          },
+          {
+            "type": "Row",
+            "gap": 2,
+            "children": [
+              {
+                "type": "Badge",
+                "label": "Insert",
+                "color": "info",
+                "variant": "soft"
+              },
+              {
+                "type": "Badge",
+                "label": "Contact",
+                "variant": "outline"
+              }
+            ]
+          },
+          {
+            "type": "Text",
+            "value": "Records: 250",
+            "size": "sm",
+            "color": "secondary"
+          },
+          {
+            "type": "Text",
+            "value": "Mapped 12 CSV fields to Salesforce Contact fields.",
+            "size": "sm",
+            "color": "secondary",
+            "maxLines": 3
+          },
+          {
+            "type": "ListView",
+            "limit": 3,
+            "children": [
+              {
+                "type": "ListViewItem",
+                "key": "row-1",
+                "gap": 2,
+                "children": [
+                  {
+                    "type": "Col",
+                    "gap": 1,
+                    "children": [
+                      {
+                        "type": "Text",
+                        "value": "Alex Rivera",
+                        "size": "sm",
+                        "weight": "semibold"
+                      },
+                      {
+                        "type": "Caption",
+                        "value": "alex@example.com",
+                        "color": "secondary"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "Row",
+            "gap": 2,
+            "children": [
+              {
+                "type": "Button",
+                "label": "Launch loader",
+                "style": "primary",
+                "onClickAction": {
+                  "type": "loader.open",
+                  "payload": {
+                    "jobId": "job-789"
+                  }
+                }
+              },
+              {
+                "type": "Button",
+                "label": "Send CSV",
+                "variant": "outline",
+                "onClickAction": {
+                  "type": "loader.emailCsv",
+                  "payload": {
+                    "jobId": "job-789"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

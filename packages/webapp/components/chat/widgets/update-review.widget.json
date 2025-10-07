@@ -1,0 +1,272 @@
+{
+  "version": "1.0",
+  "name": "Change proposal review",
+  "description": "Shows pending CRM changes with approve / reject actions.",
+  "template": "{\"type\":\"Card\",\"size\":\"sm\",\"status\":{\"text\":{{ (statusText | default('Review proposed changes')) | tojson }},\"icon\":{{ (statusIcon | default('write-alt')) | tojson }}},\"confirm\":{% if approveAction %}{\"label\":{{ (approveAction.label | default('Approve')) | tojson }},\"action\":{\"type\":{{ (approveAction.action.type) | tojson }},\"payload\":{{ (approveAction.action.payload | default({})) | tojson }}}{% else %}null{% endif %},\"cancel\":{% if rejectAction %}{\"label\":{{ (rejectAction.label | default('Reject')) | tojson }},\"action\":{\"type\":{{ (rejectAction.action.type) | tojson }},\"payload\":{{ (rejectAction.action.payload | default({})) | tojson }}}{% else %}null{% endif %},\"children\":[{\"type\":\"Col\",\"gap\":3,\"children\":[{% if summary %}{\"type\":\"Text\",\"value\":{{ summary | tojson }},\"size\":\"sm\",\"color\":\"secondary\"},{% endif %}{\"type\":\"Col\",\"gap\":3,\"children\":[{%- set _changes -%}{%- for change in changes -%},{\"type\":\"Col\",\"key\":{{ (change.id) | tojson }},\"gap\":2,\"children\":[{\"type\":\"Row\",\"gap\":2,\"children\":[{\"type\":\"Badge\",\"label\":{{ (change.operation | capitalize) | tojson }},\"variant\":\"soft\",\"color\":{{ (change.badgeColor | default('info')) | tojson }}}{% if change.recordId %},{\"type\":\"Caption\",\"value\":{{ ('Record ' ~ change.recordId) | tojson }},\"color\":\"secondary\"}{% endif %}]},{\"type\":\"Text\",\"value\":{{ (change.sobject) | tojson }},\"size\":\"sm\",\"weight\":\"semibold\"},{% if change.fields %}{\"type\":\"Col\",\"gap\":1,\"children\":[{%- for field in change.fields -%},{\"type\":\"Row\",\"gap\":2,\"children\":[{\"type\":\"Caption\",\"value\":{{ (field.label | default(field.name)) | tojson }},\"color\":\"secondary\"},{\"type\":\"Spacer\"},{\"type\":\"Text\",\"value\":{{ (field.before | default('∅')) | tojson }},\"size\":\"sm\",\"color\":\"secondary\",\"maxLines\":1},{\"type\":\"Icon\",\"name\":\"chevron-right\",\"size\":\"sm\"},{\"type\":\"Text\",\"value\":{{ (field.after | default('∅')) | tojson }},\"size\":\"sm\",\"weight\":\"semibold\",\"maxLines\":1}]}{%- endfor -%}]},{% endif %}]}{%- endfor -%}{%- endset -%}{{- (_changes[1:] if _changes and _changes[0] == ',' else _changes) -}}]}]}]} ",
+  "jsonSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "change-proposal-widget",
+    "type": "object",
+    "properties": {
+      "statusText": {
+        "type": "string",
+        "default": "Review proposed changes"
+      },
+      "statusIcon": {
+        "type": "string",
+        "default": "write-alt"
+      },
+      "summary": {
+        "type": "string",
+        "maxLength": 160
+      },
+      "changes": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "operation": {
+              "type": "string",
+              "enum": [
+                "create",
+                "update",
+                "delete"
+              ]
+            },
+            "badgeColor": {
+              "type": "string",
+              "enum": [
+                "info",
+                "success",
+                "warning",
+                "danger"
+              ],
+              "default": "info"
+            },
+            "sobject": {
+              "type": "string",
+              "maxLength": 60
+            },
+            "recordId": {
+              "type": "string",
+              "maxLength": 80
+            },
+            "fields": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "label": {
+                    "type": "string"
+                  },
+                  "before": {
+                    "type": "string"
+                  },
+                  "after": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "after"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 1,
+              "maxItems": 6
+            }
+          },
+          "required": [
+            "id",
+            "operation",
+            "sobject"
+          ],
+          "additionalProperties": false
+        },
+        "minItems": 1,
+        "maxItems": 5
+      },
+      "approveAction": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "default": "Approve"
+          },
+          "action": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string"
+              },
+              "payload": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "type"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "action"
+        ],
+        "additionalProperties": false
+      },
+      "rejectAction": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "default": "Reject"
+          },
+          "action": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string"
+              },
+              "payload": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "type"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "action"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "required": [
+      "changes"
+    ],
+    "additionalProperties": false
+  },
+  "outputJsonPreview": {
+    "type": "Card",
+    "size": "sm",
+    "status": {
+      "text": "3 updates awaiting approval",
+      "icon": "write-alt"
+    },
+    "confirm": {
+      "label": "Approve",
+      "action": {
+        "type": "proposal.approve",
+        "payload": {
+          "proposalId": "pr-21"
+        }
+      }
+    },
+    "cancel": {
+      "label": "Reject",
+      "action": {
+        "type": "proposal.reject",
+        "payload": {
+          "proposalId": "pr-21"
+        }
+      }
+    },
+    "children": [
+      {
+        "type": "Col",
+        "gap": 3,
+        "children": [
+          {
+            "type": "Text",
+            "value": "Summary: Update opportunity pipeline and clean contacts",
+            "size": "sm",
+            "color": "secondary"
+          },
+          {
+            "type": "Col",
+            "gap": 3,
+            "children": [
+              {
+                "type": "Col",
+                "key": "change-1",
+                "gap": 2,
+                "children": [
+                  {
+                    "type": "Row",
+                    "gap": 2,
+                    "children": [
+                      {
+                        "type": "Badge",
+                        "label": "Update",
+                        "variant": "soft",
+                        "color": "info"
+                      },
+                      {
+                        "type": "Caption",
+                        "value": "Record 006XX0000ABCD",
+                        "color": "secondary"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Text",
+                    "value": "Opportunity",
+                    "size": "sm",
+                    "weight": "semibold"
+                  },
+                  {
+                    "type": "Col",
+                    "gap": 1,
+                    "children": [
+                      {
+                        "type": "Row",
+                        "gap": 2,
+                        "children": [
+                          {
+                            "type": "Caption",
+                            "value": "Stage",
+                            "color": "secondary"
+                          },
+                          {
+                            "type": "Spacer"
+                          },
+                          {
+                            "type": "Text",
+                            "value": "Negotiation",
+                            "size": "sm",
+                            "color": "secondary",
+                            "maxLines": 1
+                          },
+                          {
+                            "type": "Icon",
+                            "name": "chevron-right",
+                            "size": "sm"
+                          },
+                          {
+                            "type": "Text",
+                            "value": "Closed Won",
+                            "size": "sm",
+                            "weight": "semibold",
+                            "maxLines": 1
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

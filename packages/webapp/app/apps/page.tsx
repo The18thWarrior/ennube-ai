@@ -1,4 +1,5 @@
 
+import WelcomeMessage from '@/components/account/welcome-message';
 import { Badge } from '@/components/ui';
 import Image from 'next/image';
 
@@ -55,6 +56,7 @@ const apps = [
 export default function AppsLayout() {
        return (
 	       <main className="min-h-screen py-12 px-4">
+            <WelcomeMessage />
 		       <div className="max-w-4xl mx-auto">
 			       <h1 className="text-xl font-bold mb-2">Apps</h1>
 			       <p className="mb-8">AI Agent powered applications that enhance your productivity and seamlessly connect your business systems.</p>

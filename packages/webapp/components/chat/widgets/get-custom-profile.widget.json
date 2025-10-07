@@ -1,0 +1,195 @@
+{
+  "version": "1.0",
+  "name": "Customer profile matches",
+  "description": "Highlights the strongest customer profile matches from the custom profile tool.",
+  "template": "{\"type\":\"Card\",\"size\":\"sm\",\"status\":{\"text\":{{ (statusText | default('Profile suggestions ready')) | tojson }},\"icon\":\"profile\"},\"children\":[{\"type\":\"Col\",\"gap\":3,\"children\":[{\"type\":\"Title\",\"value\":{{ (headline | default('Suggested profiles')) | tojson }},\"size\":\"md\",\"weight\":\"semibold\"},{% if contextNote %}{\"type\":\"Text\",\"value\":{{ contextNote | tojson }},\"size\":\"sm\",\"color\":\"secondary\"},{% endif %}{\"type\":\"Divider\",\"flush\":false},{\"type\":\"Col\",\"gap\":3,\"children\":[{%- set _items -%}{%- for profile in profiles -%},{\"type\":\"Row\",\"key\":{{ (profile.id) | tojson }},\"gap\":3,\"align\":\"start\",\"children\":[{\"type\":\"Box\",\"background\":\"alpha-10\",\"radius\":\"md\",\"padding\":2,\"children\":[{\"type\":\"Icon\",\"name\":\"profile-card\",\"size\":\"lg\"}]},{\"type\":\"Col\",\"gap\":1,\"children\":[{\"type\":\"Text\",\"value\":{{ (profile.name) | tojson }},\"size\":\"sm\",\"weight\":\"semibold\"},{% if profile.role %}{\"type\":\"Caption\",\"value\":{{ (profile.role) | tojson }},\"color\":\"secondary\"},{% endif %}{% if profile.summary %}{\"type\":\"Text\",\"value\":{{ (profile.summary) | tojson }},\"size\":\"sm\",\"color\":\"secondary\",\"maxLines\":2},{% endif %}]},{\"type\":\"Spacer\"},{% if profile.confidence %}{\"type\":\"Badge\",\"label\":{{ ('Score ' ~ profile.confidence) | tojson }},\"color\":\"success\",\"variant\":\"soft\"},{% endif %}{\"type\":\"Button\",\"label\":{{ (profile.cta.label | default('View')) | tojson }},\"variant\":\"outline\",\"onClickAction\":{\"type\":{{ (profile.cta.action.type | default('crm.profile.open')) | tojson }},\"payload\":{{ (profile.cta.action.payload | default({\"id\": profile.id})) | tojson }}}}]}{%- endfor -%}{%- endset -%}{{- (_items[1:] if _items and _items[0] == ',' else _items) -}}]}]}]} ",
+  "jsonSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "customer-profile-widget",
+    "type": "object",
+    "properties": {
+      "headline": {
+        "type": "string",
+        "maxLength": 60
+      },
+      "statusText": {
+        "type": "string",
+        "default": "Profile suggestions ready"
+      },
+      "contextNote": {
+        "type": "string",
+        "maxLength": 120
+      },
+      "profiles": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string",
+              "maxLength": 80
+            },
+            "role": {
+              "type": "string",
+              "maxLength": 60
+            },
+            "summary": {
+              "type": "string",
+              "maxLength": 140
+            },
+            "confidence": {
+              "type": "string",
+              "pattern": "^(?:[0-9]{1,3}%|High|Medium|Low)$"
+            },
+            "cta": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "default": "View"
+                },
+                "action": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "default": "crm.profile.open"
+                    },
+                    "payload": {
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "payload"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "action"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "id",
+            "name"
+          ],
+          "additionalProperties": false
+        },
+        "minItems": 1,
+        "maxItems": 6
+      }
+    },
+    "required": [
+      "profiles"
+    ],
+    "additionalProperties": false
+  },
+  "outputJsonPreview": {
+    "type": "Card",
+    "size": "sm",
+    "status": {
+      "text": "3 matches found",
+      "icon": "profile"
+    },
+    "children": [
+      {
+        "type": "Col",
+        "gap": 3,
+        "children": [
+          {
+            "type": "Title",
+            "value": "Finance decision makers",
+            "size": "md",
+            "weight": "semibold"
+          },
+          {
+            "type": "Text",
+            "value": "Filtered by ARR > $1M",
+            "size": "sm",
+            "color": "secondary"
+          },
+          {
+            "type": "Divider"
+          },
+          {
+            "type": "Col",
+            "gap": 3,
+            "children": [
+              {
+                "type": "Row",
+                "key": "profile-1",
+                "gap": 3,
+                "align": "start",
+                "children": [
+                  {
+                    "type": "Box",
+                    "background": "alpha-10",
+                    "radius": "md",
+                    "padding": 2,
+                    "children": [
+                      {
+                        "type": "Icon",
+                        "name": "profile-card",
+                        "size": "lg"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Col",
+                    "gap": 1,
+                    "children": [
+                      {
+                        "type": "Text",
+                        "value": "Casey Jordan",
+                        "size": "sm",
+                        "weight": "semibold"
+                      },
+                      {
+                        "type": "Caption",
+                        "value": "VP, Finance",
+                        "color": "secondary"
+                      },
+                      {
+                        "type": "Text",
+                        "value": "Owns ERP modernization initiatives and signs off on AI pilots.",
+                        "size": "sm",
+                        "color": "secondary",
+                        "maxLines": 2
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Spacer"
+                  },
+                  {
+                    "type": "Badge",
+                    "label": "Score 92%",
+                    "color": "success",
+                    "variant": "soft"
+                  },
+                  {
+                    "type": "Button",
+                    "label": "View",
+                    "variant": "outline",
+                    "onClickAction": {
+                      "type": "crm.profile.open",
+                      "payload": {
+                        "id": "profile-1"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
