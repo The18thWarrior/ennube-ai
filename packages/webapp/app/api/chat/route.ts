@@ -41,6 +41,10 @@ export async function POST(req: NextRequest) {
     if (!model) {
       return NextResponse.json({ error: 'AI model not configured' }, { status: 500 });
     }
+
+    // Check learning feature flag
+    const learningEnabled = process.env.LEARNING_FLAG === 'true';
+
     await storeFilesFromMessages(messages, userSub);
     const systemPrompt = `${await getPrompt(agent as 'data-steward' | 'prospect-finder' | 'contract-reader')} Today's date is ${today}.`;
     const tools = await getTools(agent as 'data-steward' | 'prospect-finder' | 'contract-reader', userSub, webSearch);
@@ -54,7 +58,7 @@ export async function POST(req: NextRequest) {
     // Set up the OpenAI model
     // Run the agent with tools
     //const steps = await taskManager({ prompt: userMessage, messageHistory: _messages.slice(0, -1), tools: Object.keys(tools).map(t => ({ name: t, description: tools[t].description })) });
-    return chatAgent({ model, systemPrompt, tools, _messages });
+    return chatAgent({ model, systemPrompt, tools, _messages, userSub, agent: agent as string, learningEnabled });
     //return NextResponse.json(result);
   } catch (error) {
     console.log('Error in chat route:', error);

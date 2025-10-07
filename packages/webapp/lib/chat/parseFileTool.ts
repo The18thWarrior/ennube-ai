@@ -21,10 +21,10 @@ export const parseFileTool = (subId: string) => {
   return tool({
     description:
       'Parse an attachment (DOCX, PDF, images, zip, etc.) using the doc-reader API. Provide a base64 payload or a File object, and the tool will chunk, upload, and return the final analysis.',
-    execute: async ({ fileName, fileType }: {fileName: string; fileType?: string; }) => {
+    execute: async ({ file, fileName, fileType }: {file: string; fileName: string; fileType?: string; }) => {
       console.log('parseFileTool called');
-      const blob = await getFile(fileName, subId);
-      if (!blob) throw new Error('No files found for the given id.')
+      const blob = await fetch(file);
+      if (!blob) throw new Error('No files found for the given id.');
       const arrayBuffer = await blob.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
       if (!buffer || buffer.byteLength === 0) throw new Error('Decoded payload is empty');
@@ -75,7 +75,7 @@ export const parseFileTool = (subId: string) => {
       //   .instanceof(File)
       //   .optional()
       //   .describe('The file object to parse. If provided, base64 is ignored.'),
-     
+      file: z.url().describe('The URL of the file to parse.'),
       fileName: z.string().describe('Optional original filename (e.g., document.docx).'),
       fileType: z.string().optional().describe('Optional MIME type (e.g., application/pdf).'),
     }),

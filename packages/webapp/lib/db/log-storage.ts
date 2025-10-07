@@ -11,7 +11,7 @@
 // Notes:
 //   - Requires MONGO_CONNECTION_STRING environment variable
 //   - Every log must have a userId
-
+'use server';
 import { MongoClient, Db, Collection } from 'mongodb';
 
 export interface Log {
@@ -29,15 +29,19 @@ let db: Db | null = null;
 /**
  * Get MongoDB database connection
  */
-async function getDatabase(): Promise<Db> {
+export async function getDatabase(): Promise<Db> {
   if (!db) {
     const connectionString = process.env.MONGO_CONNECTION_STRING;
     if (!connectionString) {
       throw new Error('MONGO_CONNECTION_STRING environment variable is not set');
     }
-
-    client = new MongoClient(connectionString);
+    console.log('connecting to MongoDB...', connectionString);
+    client = new MongoClient(connectionString, {
+      // good practice in Next dev to avoid too many sockets
+      maxPoolSize: 10,
+    });
     await client.connect();
+    console.log('client connected to MongoDB');
     db = client.db('dev'); // Use default database from connection string
     console.log('connected to MongoDB database:', db.databaseName);
   }
@@ -64,6 +68,7 @@ export async function insertLog(logData: Omit<Log, 'id' | 'created'>): Promise<s
     }
 
     const collection = await getLogsCollection();
+    console.log('log collection retrieved')
     const id = crypto.randomUUID(); // Generate UUID
     const log: Log = {
       ...logData,
@@ -186,3 +191,4 @@ export async function closeConnection(): Promise<void> {
  *   - All logs require a userId
  *   - Uses UUID for log IDs
  */
+

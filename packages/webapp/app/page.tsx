@@ -8,7 +8,7 @@ export default async function LandingPage() {
   const session = await auth()
   
   if (session && session.accessToken) {
-    redirect("/dashboard")
+    redirect("/apps")
   } else {
     redirect("/auth/login")
   }

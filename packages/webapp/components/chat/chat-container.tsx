@@ -203,7 +203,7 @@ const ChatContainer = ({
                                     msg.role === 'user' ? styles.userRow : styles.botRow,
                                 ].join(' ')}
                             >
-                                {renderMessage(msg, idx, Agent, theme, session, updateThreadFromTool)}
+                                {renderMessage(msg, idx, Agent, theme, session, updateThreadFromTool, session?.user?.auth0?.sub, selectedAvatar)}
                             </div>
                         ))}
                         <div ref={messagesEndRef}></div>

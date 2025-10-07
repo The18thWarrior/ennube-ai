@@ -24,6 +24,7 @@ export const PlanStepSchema = z.object({
   // toolInput: z.any().nullable().optional().describe('Optional structured input the tool should receive'),
   // mustRunSequentially: z.boolean().optional().describe('Whether this step must run after previous steps'),
   // estimatedMinutes: z.number().int().nullable().optional().describe('Estimated time to complete this step in minutes'),
+  referenceCaseIds: z.array(z.string()).optional().describe('IDs of memory cases referenced for this step'),
 });
 
 /**
@@ -68,7 +69,7 @@ function buildContext(prompt: ModelMessage, messageHistory?: ModelMessage[], too
   return context;
 }
 
-export async function orchestrator ({ prompt, messageHistory, tools }: { prompt: ModelMessage; messageHistory?: ModelMessage[]; tools?: Record<string, Tool> }) {
+export async function orchestrator ({ prompt, messageHistory, tools, memoryContext, referenceCaseIds }: { prompt: ModelMessage; messageHistory?: ModelMessage[]; tools?: Record<string, Tool>; memoryContext?: string; referenceCaseIds?: string[] }) {
       if (!prompt) {
         throw new Error('prompt is required');
       }
@@ -82,6 +83,8 @@ export async function orchestrator ({ prompt, messageHistory, tools }: { prompt:
 
       const generationPrompt = `
         You are an expert task planner for an autonomous agent. Given a user goal, message history, and a list of available tools, produce a concise, ordered plan the agent should follow to accomplish the goal.
+
+        ${memoryContext ? `Relevant past experiences:\n${memoryContext}\n` : ''}
 
         Rules:
         - Return only the structured object matching the schema provided.
@@ -118,7 +121,7 @@ export async function orchestrator ({ prompt, messageHistory, tools }: { prompt:
       }
 
       // Normalize ordering
-      const steps = parsed.data.steps.sort((a, b) => a.order - b.order).map((s, idx) => ({ ...s, order: s.order ?? idx }));
+      const steps = parsed.data.steps.sort((a, b) => a.order - b.order).map((s, idx) => ({ ...s, order: s.order ?? idx, referenceCaseIds }));
       //console.log('Generated plan:', { summary: parsed.data.summary, steps });
       return {
         summary: parsed.data.summary,

@@ -995,6 +995,9 @@ importers:
       overtype:
         specifier: ^1.2.3
         version: 1.2.3
+      pako:
+        specifier: ^2.1.0
+        version: 2.1.0
       pg:
         specifier: ^8.16.0
         version: 8.16.3
@@ -1065,6 +1068,9 @@ importers:
       '@types/node':
         specifier: ^20.12.8
         version: 20.19.11
+      '@types/pako':
+        specifier: ^2.0.4
+        version: 2.0.4
       '@types/pg':
         specifier: ^8.15.2
         version: 8.15.5
@@ -6963,6 +6969,10 @@ packages:
     dependencies:
       undici-types: 6.21.0
 
+  /@types/pako@2.0.4:
+    resolution: {integrity: sha512-VWDCbrLeVXJM9fihYodcLiIv0ku+AlOa/TQ1SvYOaBuyrSKgEcro95LJyIsJ4vSo6BXIxOKxiJAat04CmST9Fw==}
+    dev: true
+
   /@types/pg@8.15.5:
     resolution: {integrity: sha512-LF7lF6zWEKxuT3/OR8wAZGzkg4ENGXFNyiV/JeOt9z5B+0ZVwbql9McqX5c/WStFq1GaGso7H1AzP/qSzmlCKQ==}
     dependencies:
@@ -10852,7 +10862,7 @@ packages:
       react-markdown: '>=9.0.0'
     dependencies:
       react: 18.3.1
-      react-markdown: 10.1.0(@types/react@19.1.12)(react@18.3.1)
+      react-markdown: 10.1.0(@types/react@18.3.24)(react@18.3.1)
     dev: false
 
   /has-bigints@1.1.0:
@@ -14148,6 +14158,10 @@ packages:
 
   /pako@0.2.9:
     resolution: {integrity: sha512-NUcwaKxUxWrZLpDG+z/xZaCgQITkA/Dv4V/T6bw7VON6l1Xz/VnrBqrYjZQ12TamKHzITTfOEIYUj48y2KXImA==}
+    dev: false
+
+  /pako@2.1.0:
+    resolution: {integrity: sha512-w+eufiZ1WuJYgPXbV/PO3NCMEc3xqylkKHzp8bxp1uW4qaSNQUkwmLLEc3kKsfz8lpV1F8Ht3U1Cm+9Srog2ug==}
     dev: false
 
   /parent-module@1.0.1:

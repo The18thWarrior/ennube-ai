@@ -2,102 +2,44 @@ import { LanguageModel, Tool, ModelMessage, UIMessage, streamText, stepCountIs, 
 //import { StepProgress, ExecutorOptions, executePlanSequentially } from "./planExecutor";
 import { orchestrator } from "./orchestrator";
 import {nanoid} from "nanoid";
+import { memoryRetriever, memoryWriter } from "../memory";
+import { createHash } from "crypto";
 
-// export async function chatAgent_old({ model, systemPrompt, tools, _messages }: { model: LanguageModel; systemPrompt: string; tools: Record<string, Tool>; _messages: ModelMessage[]; }) {
-//   // If the latest user message asked for a plan execution, attempt to generate a plan and run it.
-//   // Heuristic: if the last user message includes the word "plan" or "execute steps" we will try to create a plan.
-//   const lastMsg = _messages && _messages.length ? _messages[_messages.length - 1] : undefined;
-
-//   const shouldGeneratePlan = lastMsg && !(/plan|steps|execute/i.test(String(lastMsg.content)));
-
-//   if (shouldGeneratePlan) {
-//     // Build a ModelMessage prompt object for taskManager
-//     const promptMsg: ModelMessage = lastMsg as ModelMessage;
-
-//     // Generate plan using taskManager
-//     const plan = await orchestrator({ prompt: promptMsg, messageHistory: _messages, tools: tools });
-
-//     // Create a ReadableStream that emits UI message events compatible with the SDK stream protocol
-//     const stream = new ReadableStream({
-//       async start(controller) {
-//         const enqueue = (obj: any) => controller.enqueue(obj);
-
-//         // generate simple ids
-//         let messageCounter = 1;
-//         const generateId = () => `msg-${Date.now()}-${messageCounter++}`;
-
-//         // Emit start envelope similar to SDK
-//         enqueue({ type: 'start' });
-
-//         // Executor callbacks
-//         const onProgress = async (ev: StepProgress) => {
-//           // step start
-//           enqueue({ type: 'start-step', id: ev.stepId, order: ev.order });
-//         };
-
-//         const onChunk = async (chunkEv: { stepId: string; order: number; chunk: string }) => {
-//           // Emit text stream events: text-start (first chunk), text-delta, text-end when step completes
-//           // For simplicity we use one text id per step
-//           const textId = `text-${chunkEv.stepId}`;
-//           // Send delta
-//           enqueue({ type: 'text-delta', id: textId, delta: chunkEv.chunk });
-//         };
-
-//         const execOptions: ExecutorOptions = { timeoutMs: 60_000, retries: 1, abortOnFailure: true, onProgress, onChunk };
-
-//         try {
-//           // Execute plan; onChunk will stream incremental text deltas
-//           await executePlanSequentially(plan, tools as Record<string, any>, execOptions);
-
-//           // After all steps finish, emit end events
-//           enqueue({ type: 'text-end' });
-//           enqueue({ type: 'finish-step' });
-//           enqueue({ type: 'finish', finishReason: 'completed' });
-//         } catch (err: any) {
-//           enqueue({ type: 'finish', finishReason: 'error', error: String(err.message || err) });
-//         } finally {
-//           controller.close();
-//         }
-//       }
-//     });
-
-//     return createUIMessageStreamResponse({ stream });
-//   }
-
-//   // Fallback: default chat streaming behavior
-//   const result = await streamText({
-//       model: model,
-//       system: systemPrompt,
-//       providerOptions: {
-//         openrouter: {
-//           transforms: ["middle-out"],
-//           parallelToolCalls: false
-//         }
-//       },
-//       tools: tools,
-//       messages: _messages,
-//       stopWhen: stepCountIs(5),
-//       //toolCallStreaming: true,
-//       onError: (error) => {
-//         console.log('Error during tool execution:', error);
-//       },
-//       onFinish: (response) => {
-//         console.log('Response finished:', response.finishReason);
-//       },
-//       onStepFinish: (step) => {
-//         console.log('Step finished', step.finishReason);
-//       },
-      
-//       //metadata: { subId: metadata.subId },
-//     });
-//     return result.toUIMessageStreamResponse();
-// }
-
-export async function chatAgent({ model, systemPrompt, tools, _messages }: { model: LanguageModel; systemPrompt: string; tools: Record<string, Tool>; _messages: ModelMessage[]; }) {
+export async function chatAgent({ 
+  model, 
+  systemPrompt, 
+  tools, 
+  _messages, 
+  userSub, 
+  agent, 
+  learningEnabled 
+}: { 
+  model: LanguageModel; 
+  systemPrompt: string; 
+  tools: Record<string, Tool>; 
+  _messages: ModelMessage[];
+  userSub: string;
+  agent: string;
+  learningEnabled: boolean;
+}) {
   // If the latest user message asked for a plan execution, attempt to generate a plan and run it.
   // Heuristic: if the last user message includes the word "plan" or "execute steps" we will try to create a plan.
   const lastMsg = _messages && _messages.length ? _messages[_messages.length - 1] : undefined;
   //console.log('chatAgent - lastMsg:', lastMsg);
+  // Memory retrieval for learning-enabled agents
+  let memoryContext = '';
+  let referenceCaseIds: string[] = [];
+  if (learningEnabled && lastMsg) {
+    try {
+      const queryText = String(lastMsg.content);
+      const memoryResult = await memoryRetriever.retrieveMemories(userSub, agent, queryText, 4);
+      memoryContext = memoryRetriever.formatMemoryContext(memoryResult.cases);
+      referenceCaseIds = memoryResult.cases.map(c => c.id);
+    } catch (error) {
+      console.warn('Memory retrieval failed:', error);
+    }
+  }
+
   const shouldGeneratePlan = lastMsg && !(/plan|steps|execute/i.test(String(lastMsg.content)));
 
   if (shouldGeneratePlan) {
@@ -106,7 +48,7 @@ export async function chatAgent({ model, systemPrompt, tools, _messages }: { mod
 
     // Generate plan using taskManager
     console.log('entering plan generation');
-    const plan = await orchestrator({ prompt: promptMsg, messageHistory: _messages, tools: tools });
+    const plan = await orchestrator({ prompt: promptMsg, messageHistory: _messages, tools: tools, memoryContext, referenceCaseIds });
     console.log('plan generated');
     const planMessage = { role: 'assistant', content: `Generated plan:\n${JSON.stringify(plan, null, 2)}`, id: `plan-${nanoid()}` } as AssistantModelMessage;
     _messages.push(planMessage);
@@ -130,8 +72,32 @@ export async function chatAgent({ model, systemPrompt, tools, _messages }: { mod
       onError: (error) => {
         console.log('Error during execution:', error);
       },
-      onFinish: (response) => {
+      onFinish: async (response) => {
         console.log('Response finished:', response.finishReason);
+        // Memory write-back
+        if (learningEnabled) {
+          try {
+            const messageHash = createHash('sha256').update(JSON.stringify(lastMsg)).digest('hex');
+            await memoryWriter.enqueue({
+              userSub,
+              agentKey: agent,
+              messageHash,
+              promptSnapshot: { query: String(lastMsg.content), systemPrompt },
+              planSummary: plan,
+              toolTraces: response.toolCalls ? Object.fromEntries(
+                response.toolCalls.map(call => [call.toolCallId, { 
+                  name: call.toolName,
+                  success: true // TODO: determine success from result
+                }])
+              ) : {},
+              outcome: response.finishReason === 'stop' ? 'success' : 'failure',
+              tags: [], // TODO: extract tags from content
+              referenceCaseIds,
+            });
+          } catch (error) {
+            console.warn('Memory write-back failed:', error);
+          }
+        }
       },
       onStepFinish: (step) => {
         console.log('Step finished', step.finishReason);
@@ -159,8 +125,32 @@ export async function chatAgent({ model, systemPrompt, tools, _messages }: { mod
       onError: (error) => {
         console.log('Error during tool execution:', error);
       },
-      onFinish: (response) => {
+      onFinish: async (response) => {
         console.log('Response finished:', response.finishReason);
+        // Memory write-back for fallback case
+        if (learningEnabled && lastMsg) {
+          try {
+            const messageHash = createHash('sha256').update(JSON.stringify(lastMsg)).digest('hex');
+            await memoryWriter.enqueue({
+              userSub,
+              agentKey: agent,
+              messageHash,
+              promptSnapshot: { query: String(lastMsg.content), systemPrompt },
+              planSummary: undefined, // No plan generated
+              toolTraces: response.toolCalls ? Object.fromEntries(
+                response.toolCalls.map(call => [call.toolCallId, { 
+                  name: call.toolName,
+                  success: true // TODO: determine success from result
+                }])
+              ) : {},
+              outcome: response.finishReason === 'stop' ? 'success' : 'failure',
+              tags: [],
+              referenceCaseIds,
+            });
+          } catch (error) {
+            console.warn('Memory write-back failed:', error);
+          }
+        }
       },
       onStepFinish: (step) => {
         console.log('Step finished', step.finishReason);

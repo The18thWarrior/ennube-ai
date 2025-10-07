@@ -90,7 +90,8 @@ async function executeAgentRequest(
   agent: 'data-steward' | 'prospect-finder' | 'contract-reader',
   model: LanguageModel,
   systemPrompt: string,
-  tools: Record<string, Tool>
+  tools: Record<string, Tool>,
+  userSub: string
 ): Promise<{ response: string; timeTakenMs: number }> {
   const startTime = Date.now();
   
@@ -109,7 +110,7 @@ async function executeAgentRequest(
     // Instead of the full chatAgent which returns streaming responses,
     // we'll use the core streamText functionality directly for easier response handling
     
-    const result = await chatAgent({ model, systemPrompt, tools, _messages: messages });
+    const result = await chatAgent({ model, systemPrompt, tools, _messages: messages, userSub, agent, learningEnabled: false });
     const reader = result.body?.getReader();
     if (!reader) {
       console.error('Failed to get reader from response body');
@@ -214,7 +215,8 @@ async function processSingleQuery(
   model: LanguageModel,
   systemPrompt: string,
   tools: Record<string, Tool>,
-  evaluationModel: LanguageModel
+  evaluationModel: LanguageModel,
+  userSub: string
 ): Promise<BenchmarkResult> {
   
   // Execute agent request
@@ -223,7 +225,8 @@ async function processSingleQuery(
     agent,
     model,
     systemPrompt,
-    tools
+    tools,
+    userSub
   );
   
   // Evaluate response
@@ -367,7 +370,7 @@ async function main(question: string) {
     //   console.log(`✅ Batch completed. Progress: ${results.length}/${queryPrompts.length}`);
     // }
     
-    const result = await processSingleQuery(queryPrompts[0], agent, model, systemPrompt, tools, evaluationModel)
+    const result = await processSingleQuery(queryPrompts[0], agent, model, systemPrompt, tools, evaluationModel, mockUserSub)
     // Generate summary statistics
     const totalTime = results.reduce((sum, r) => sum + r.TimeTakenMs, 0);
     const avgTime = totalTime / results.length;

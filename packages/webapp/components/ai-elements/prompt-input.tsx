@@ -207,7 +207,7 @@ export type PromptInputProps = Omit<
   maxFiles?: number;
   maxFileSize?: number; // bytes
   onError?: (err: {
-    code: "max_files" | "max_file_size" | "accept";
+    code: "max_files" | "max_file_size" | "accept" | "upload";
     message: string;
   }) => void;
   onSubmit: (
@@ -267,7 +267,7 @@ export const PromptInput = ({
   );
 
   const add = useCallback(
-    (files: File[] | FileList) => {
+    async (files: File[] | FileList) => {
       const incoming = Array.from(files);
       const accepted = incoming.filter((f) => matchesAccept(f));
       if (accepted.length === 0) {
@@ -287,60 +287,48 @@ export const PromptInput = ({
         });
         return;
       }
-      // ALT WAY
-      // const prev = items;
-      // const capacity =
-      //   typeof maxFiles === "number"
-      //     ? Math.max(0, maxFiles - prev.length)
-      //     : undefined;
-      // const capped =
-      //   typeof capacity === "number" ? sized.slice(0, capacity) : sized;
-      // if (typeof capacity === "number" && sized.length > capacity) {
-      //   onError?.({
-      //     code: "max_files",
-      //     message: "Too many files. Some were not added.",
-      //   });
-      // }
-      // const next: (FileUIPart & { id: string })[] = [];
-      // for (const file of capped) {
-      //   //const url = await toBase64(file);//URL.createObjectURL(file);
-      //   // console.log('file url', url);
-      //   next.push({
-      //     id: nanoid(),
-      //     type: "file",
-      //     url: URL.createObjectURL(file),
-      //     mediaType: file.type,
-      //     filename: file.name,
-      //   });
-      // }
-      // setItems(prev.concat(next));
-      setItems((prev) => {
-        const capacity =
-          typeof maxFiles === "number"
-            ? Math.max(0, maxFiles - prev.length)
-            : undefined;
-        const capped =
-          typeof capacity === "number" ? sized.slice(0, capacity) : sized;
-        if (typeof capacity === "number" && sized.length > capacity) {
-          onError?.({
-            code: "max_files",
-            message: "Too many files. Some were not added.",
-          });
+      const capacity =
+        typeof maxFiles === "number"
+          ? Math.max(0, maxFiles - items.length)
+          : undefined;
+      const capped =
+        typeof capacity === "number" ? sized.slice(0, capacity) : sized;
+      if (typeof capacity === "number" && sized.length > capacity) {
+        onError?.({
+          code: "max_files",
+          message: "Too many files. Some were not added.",
+        });
+      }
+      const uploadPromises = capped.map(async (file) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        const response = await fetch('/api/file', {
+          method: 'POST',
+          body: formData,
+        });
+        if (!response.ok) {
+          throw new Error('Upload failed');
         }
-        const next: (FileUIPart & { id: string })[] = [];
-        for (const file of capped) {
-          next.push({
-            id: nanoid(),
-            type: "file",
-            url: URL.createObjectURL(file),
-            mediaType: file.type,
-            filename: file.name,
-          });
-        }
-        return prev.concat(next);
+        const { url } = await response.json();
+        return {
+          id: nanoid(),
+          type: "file" as const,
+          url,
+          mediaType: file.type,
+          filename: file.name,
+        };
       });
+      try {
+        const uploaded = await Promise.all(uploadPromises);
+        setItems((prev) => prev.concat(uploaded));
+      } catch (error) {
+        onError?.({
+          code: "upload",
+          message: "Failed to upload files.",
+        });
+      }
     },
-    [matchesAccept, maxFiles, maxFileSize, onError]
+    [matchesAccept, maxFiles, maxFileSize, onError, items.length]
   );
 
   const remove = useCallback((id: string) => {
