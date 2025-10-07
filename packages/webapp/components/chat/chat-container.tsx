@@ -212,7 +212,7 @@ const ChatContainer = ({
             </Card>
             <div className={`h-[10dvh] flex-none bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60`}>
                 {error && <div className="text-red-500 mb-2">Error: {error.message}</div>}
-                <PromptInput globalDrop={true} onSubmit={handleSubmitPromptInput} className="mt-4 relative">
+                <PromptInput globalDrop={true} onSubmit={handleSubmitPromptInput} className="mt-4 relative" accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/*,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
                   <PromptInputBody className={'flex flex-row'}>
                     <PromptInputTextarea onChange={handlePromptInputChange} value={input} />
                   </PromptInputBody>
