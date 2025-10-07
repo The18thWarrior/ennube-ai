@@ -47,6 +47,8 @@ import {
   useRef,
   useState,
 } from "react";
+import { Tooltip, TooltipContent, TooltipTrigger } from '../ui';
+import { TooltipProvider } from '@radix-ui/react-tooltip';
 
 type AttachmentsContext = {
   files: (FileUIPart & { id: string })[];
@@ -84,35 +86,45 @@ export function PromptInputAttachment({
   const attachments = usePromptInputAttachments();
 
   return (
-    <div
-      className={cn("group relative h-10 w-10 rounded-md border", className)}
-      key={data.id}
-      {...props}
-    >
-      {data.mediaType?.startsWith("image/") && data.url ? (
-        <img
-          alt={data.filename || "attachment"}
-          className="size-full rounded-md object-cover"
-          height={56}
-          src={data.url}
-          width={56}
-        />
-      ) : (
-        <div className="flex size-full items-center justify-center text-muted-foreground">
-          <PaperclipIcon className="size-4" />
-        </div>
-      )}
-      <Button
-        aria-label="Remove attachment"
-        className="-right-1.5 -top-1.5 absolute h-6 w-6 rounded-full opacity-0 group-hover:opacity-100"
-        onClick={() => attachments.remove(data.id)}
-        size="icon"
-        type="button"
-        variant="outline"
-      >
-        <XIcon className="h-3 w-3" />
-      </Button>
-    </div>
+    <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div
+              className={cn("group relative h-10 w-10 rounded-md border", className)}
+              key={data.id}
+              {...props}
+            >
+              {data.mediaType?.startsWith("image/") && data.url ? (
+                <img
+                  alt={data.filename || "attachment"}
+                  className="size-full rounded-md object-cover"
+                  height={56}
+                  src={data.url}
+                  width={56}
+                />
+              ) : (
+                <div className="flex size-full items-center justify-center text-muted-foreground">
+                  <PaperclipIcon className="size-4" />
+                </div>
+              )}
+              <Button
+                aria-label="Remove attachment"
+                className="-right-1.5 -top-1.5 absolute h-6 w-6 rounded-full opacity-0 group-hover:opacity-100"
+                onClick={() => attachments.remove(data.id)}
+                title={data.filename || data.url}
+                size="icon"
+                type="button"
+                variant="outline"
+              >
+                <XIcon className="h-3 w-3" />
+              </Button>
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{data.filename || data.url || 'attachment'}</p>
+          </TooltipContent>
+        </Tooltip>
+    </TooltipProvider>
   );
 }
 
@@ -310,6 +322,7 @@ export const PromptInput = ({
           throw new Error('Upload failed');
         }
         const { url } = await response.json();
+        console.log('File uploaded to:', url);
         return {
           id: nanoid(),
           type: "file" as const,
@@ -320,8 +333,10 @@ export const PromptInput = ({
       });
       try {
         const uploaded = await Promise.all(uploadPromises);
+        console.log('Uploaded files:', uploaded);
         setItems((prev) => prev.concat(uploaded));
       } catch (error) {
+        console.log(error);
         onError?.({
           code: "upload",
           message: "Failed to upload files.",

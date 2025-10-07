@@ -45,7 +45,7 @@ export const getTools = async (agent: 'data-steward' | 'prospect-finder' | 'cont
     getSFDCDataTool: generateQueryTool(userId),
     proposeUpdateSFDCDataTool: proposeUpdateDataTool(userId),
     getSFDCFileTool: getFileTool(userId),
-    parseFileTool: parseFileTool(userId),
+    //parseFileTool: parseFileTool(userId),
     //getPostgresDataTool: getPostgresDataTool(userId),
     //getPostgresDescribeTool: getPostgresDescribeTool(userId),
   };

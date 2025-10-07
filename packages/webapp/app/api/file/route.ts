@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Upload to Vercel Blob with public access
-    const blob = await put(file.name+nanoid(), file, {
+    const blob = await put(`${nanoid()}_${file.name}`, file, {
       access: 'public',
     });
 

@@ -30,14 +30,14 @@ export async function chatAgent({
   let memoryContext = '';
   let referenceCaseIds: string[] = [];
   if (learningEnabled && lastMsg) {
-    try {
-      const queryText = String(lastMsg.content);
-      const memoryResult = await memoryRetriever.retrieveMemories(userSub, agent, queryText, 4);
-      memoryContext = memoryRetriever.formatMemoryContext(memoryResult.cases);
-      referenceCaseIds = memoryResult.cases.map(c => c.id);
-    } catch (error) {
-      console.warn('Memory retrieval failed:', error);
-    }
+    // try {
+    //   const queryText = String(lastMsg.content);
+    //   const memoryResult = await memoryRetriever.retrieveMemories(userSub, agent, queryText, 4);
+    //   memoryContext = memoryRetriever.formatMemoryContext(memoryResult.cases);
+    //   referenceCaseIds = memoryResult.cases.map(c => c.id);
+    // } catch (error) {
+    //   console.warn('Memory retrieval failed:', error);
+    // }
   }
 
   const shouldGeneratePlan = lastMsg && !(/plan|steps|execute/i.test(String(lastMsg.content)));
@@ -72,32 +72,32 @@ export async function chatAgent({
       onError: (error) => {
         console.log('Error during execution:', error);
       },
-      onFinish: async (response) => {
+      onFinish: (response) => {
         console.log('Response finished:', response.finishReason);
         // Memory write-back
-        if (learningEnabled) {
-          try {
-            const messageHash = createHash('sha256').update(JSON.stringify(lastMsg)).digest('hex');
-            await memoryWriter.enqueue({
-              userSub,
-              agentKey: agent,
-              messageHash,
-              promptSnapshot: { query: String(lastMsg.content), systemPrompt },
-              planSummary: plan,
-              toolTraces: response.toolCalls ? Object.fromEntries(
-                response.toolCalls.map(call => [call.toolCallId, { 
-                  name: call.toolName,
-                  success: true // TODO: determine success from result
-                }])
-              ) : {},
-              outcome: response.finishReason === 'stop' ? 'success' : 'failure',
-              tags: [], // TODO: extract tags from content
-              referenceCaseIds,
-            });
-          } catch (error) {
-            console.warn('Memory write-back failed:', error);
-          }
-        }
+        // if (learningEnabled) {
+        //   try {
+        //     const messageHash = createHash('sha256').update(JSON.stringify(lastMsg)).digest('hex');
+        //     await memoryWriter.enqueue({
+        //       userSub,
+        //       agentKey: agent,
+        //       messageHash,
+        //       promptSnapshot: { query: String(lastMsg.content), systemPrompt },
+        //       planSummary: plan,
+        //       toolTraces: response.toolCalls ? Object.fromEntries(
+        //         response.toolCalls.map(call => [call.toolCallId, { 
+        //           name: call.toolName,
+        //           success: true // TODO: determine success from result
+        //         }])
+        //       ) : {},
+        //       outcome: response.finishReason === 'stop' ? 'success' : 'failure',
+        //       tags: [], // TODO: extract tags from content
+        //       referenceCaseIds,
+        //     });
+        //   } catch (error) {
+        //     console.warn('Memory write-back failed:', error);
+        //   }
+        // }
       },
       onStepFinish: (step) => {
         console.log('Step finished', step.finishReason);
@@ -125,32 +125,32 @@ export async function chatAgent({
       onError: (error) => {
         console.log('Error during tool execution:', error);
       },
-      onFinish: async (response) => {
+      onFinish: (response) => {
         console.log('Response finished:', response.finishReason);
         // Memory write-back for fallback case
-        if (learningEnabled && lastMsg) {
-          try {
-            const messageHash = createHash('sha256').update(JSON.stringify(lastMsg)).digest('hex');
-            await memoryWriter.enqueue({
-              userSub,
-              agentKey: agent,
-              messageHash,
-              promptSnapshot: { query: String(lastMsg.content), systemPrompt },
-              planSummary: undefined, // No plan generated
-              toolTraces: response.toolCalls ? Object.fromEntries(
-                response.toolCalls.map(call => [call.toolCallId, { 
-                  name: call.toolName,
-                  success: true // TODO: determine success from result
-                }])
-              ) : {},
-              outcome: response.finishReason === 'stop' ? 'success' : 'failure',
-              tags: [],
-              referenceCaseIds,
-            });
-          } catch (error) {
-            console.warn('Memory write-back failed:', error);
-          }
-        }
+        // if (learningEnabled && lastMsg) {
+        //   try {
+        //     const messageHash = createHash('sha256').update(JSON.stringify(lastMsg)).digest('hex');
+        //     await memoryWriter.enqueue({
+        //       userSub,
+        //       agentKey: agent,
+        //       messageHash,
+        //       promptSnapshot: { query: String(lastMsg.content), systemPrompt },
+        //       planSummary: undefined, // No plan generated
+        //       toolTraces: response.toolCalls ? Object.fromEntries(
+        //         response.toolCalls.map(call => [call.toolCallId, { 
+        //           name: call.toolName,
+        //           success: true // TODO: determine success from result
+        //         }])
+        //       ) : {},
+        //       outcome: response.finishReason === 'stop' ? 'success' : 'failure',
+        //       tags: [],
+        //       referenceCaseIds,
+        //     });
+        //   } catch (error) {
+        //     console.warn('Memory write-back failed:', error);
+        //   }
+        // }
       },
       onStepFinish: (step) => {
         console.log('Step finished', step.finishReason);

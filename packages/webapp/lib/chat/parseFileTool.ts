@@ -9,7 +9,7 @@
 //  - Accepts raw base64 payloads or File objects and handles chunking automatically when size limits are exceeded.
 
 import { tool } from "ai";
-import z from "zod/v4";
+import z, { ZodFile } from "zod/v4";
 import { getBaseUrl } from "./helper";
 import { createDocReaderClient } from "@/lib/external";
 import type { ExtractResponse } from "@/lib/external/docReaderClient";
@@ -21,11 +21,10 @@ export const parseFileTool = (subId: string) => {
   return tool({
     description:
       'Parse an attachment (DOCX, PDF, images, zip, etc.) using the doc-reader API. Provide a base64 payload or a File object, and the tool will chunk, upload, and return the final analysis.',
-    execute: async ({ file, fileName, fileType }: {file: string; fileName: string; fileType?: string; }) => {
-      console.log('parseFileTool called');
-      const blob = await fetch(file);
-      if (!blob) throw new Error('No files found for the given id.');
-      const arrayBuffer = await blob.arrayBuffer();
+    execute: async ({ file, fileName, fileType }: { file?: string; fileName: string; fileType?: string; }) => {
+      console.log('parseFileTool called :', { fileName, fileType, file });
+      if (!file) throw new Error('No file provided to parseFileTool');
+      const arrayBuffer = await (await fetch(file)).arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
       if (!buffer || buffer.byteLength === 0) throw new Error('Decoded payload is empty');
 
@@ -37,6 +36,7 @@ export const parseFileTool = (subId: string) => {
           const response = await client.extractDocx({ base64: buffer.toString('base64'), fileName, fileType });
           return extractFinalAnalysis(response);
         } catch (err: any) {
+          console.log(err);
           throw new Error(`Doc-reader extract failed: ${err?.message ?? String(err)}`);
         }
       }
@@ -63,6 +63,7 @@ export const parseFileTool = (subId: string) => {
         const processed = await client.processChunks(sessionId);
         return extractFinalAnalysis(processed);
       } catch (err: any) {
+          console.log(err);
         throw new Error(`Doc-reader chunked upload failed: ${err?.message ?? String(err)}`);
       }
     },
@@ -74,8 +75,8 @@ export const parseFileTool = (subId: string) => {
       // file: z
       //   .instanceof(File)
       //   .optional()
-      //   .describe('The file object to parse. If provided, base64 is ignored.'),
-      file: z.url().describe('The URL of the file to parse.'),
+      //   .describe('The file object to parse'),
+      file: z.string().describe('Base64-encoded file content (no data: prefix). The tool will chunk automatically as needed.'),
       fileName: z.string().describe('Optional original filename (e.g., document.docx).'),
       fileType: z.string().optional().describe('Optional MIME type (e.g., application/pdf).'),
     }),
