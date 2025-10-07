@@ -105,7 +105,7 @@ async function parseJsonSafe<T>(res: Response): Promise<T | null> {
  * Factory that returns a client with methods for each public endpoint.
  */
 export function createDocReaderClient(opts: ClientOptions = {}) {
-  const baseUrl = opts.baseUrl ?? process.env.DOC_READER_BASE_URL ?? 'https://agent-doc-tool.vercel.app';
+  const baseUrl = process.env.DOC_READER_BASE_URL ?? 'https://agent-doc-tool.vercel.app';
   const defaultHeaders = opts.defaultHeaders ?? { 'Content-Type': 'application/json' };
 
   async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
