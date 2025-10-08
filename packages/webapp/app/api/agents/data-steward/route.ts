@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
+import { getAgentSetting } from '@/lib/db/agent-settings-storage';
 
 /**
  * Data Steward Agent API
@@ -36,9 +37,9 @@ export async function GET(request: NextRequest) {
         { status: 400 }
       );
     }
-    
-    // Get the webhook URL from environment variable
-    const webhookUrl = provider === 'sfdc' ? process.env.DATASTEWARD_WEBHOOK_URL : process.env.DATABASE_WEBHOOK_URL_HUBSPOT;
+    const setting = await getAgentSetting(userSub, 'data-steward');
+    const webhookUrl = setting?.customWorkflow || (provider === 'sfdc' ? process.env.DATASTEWARD_WEBHOOK_URL : process.env.DATABASE_WEBHOOK_URL_HUBSPOT);
+        
     if (!webhookUrl) {
       return NextResponse.json(
         { error: 'Data steward webhook URL is not configured' },

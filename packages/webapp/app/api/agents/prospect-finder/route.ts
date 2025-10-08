@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
+import { getAgentSetting } from '@/lib/db/agent-settings-storage';
 
 /**
  * Prospect Finder Agent API
@@ -24,6 +25,8 @@ export async function GET(request: NextRequest) {
     
     // Get query parameters
     const searchParams = request.nextUrl.searchParams;
+    const provider = searchParams.get('provider') || 'sfdc'; // Default to 10 if not specified
+    
     const limit = searchParams.get('limit') || '10'; // Default to 10 if not specified
     
     // Validate the limit parameter is a number
@@ -34,8 +37,9 @@ export async function GET(request: NextRequest) {
       );
     }
     
-    // Get the webhook URL from environment variable
-    const webhookUrl = process.env.PROSPECTFINDER_WEBHOOK_URL;
+    const setting = await getAgentSetting(userSub, 'prospect-finder');
+    const webhookUrl = setting?.customWorkflow || (provider === 'sfdc' ? process.env.PROSPECTFINDER_WEBHOOK_URL : process.env.PROSPECTFINDER_WEBHOOK_URL);
+         
     if (!webhookUrl) {
       return NextResponse.json(
         { error: 'Prospect Finder webhook URL is not configured' },
