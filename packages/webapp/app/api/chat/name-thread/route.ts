@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
 			},
 		});
 
-    console.log(result);
+    //console.log(result);
 
 		// read generated text
 		const text = result.text ?? '';

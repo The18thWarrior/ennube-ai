@@ -61,7 +61,6 @@ export default function UserDetailPage({ params }: { params: Promise<{ subId: st
         }
         
         const data = await response.json();
-        console.log('Fetched users:', data);
         const userDetail = (data.users || []).find((u: User) => u.user_id === userId);
         
         if (!userDetail) {

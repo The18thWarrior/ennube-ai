@@ -7,7 +7,6 @@ import { getSalesforceCredentialsById } from "@/lib/db/salesforce-storage"
 
 export default async function SalesforceAccounts() {
   const session = await auth()
-  console.log('Session:', session?.user?.auth0)
   // Check if we have a Salesforce client from either OAuth or direct authentication
   const salesforceCredentials = await getSalesforceCredentialsById()
   if (!salesforceCredentials) {

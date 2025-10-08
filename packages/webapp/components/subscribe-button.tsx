@@ -12,7 +12,6 @@ export function SubscribeButton() {
   const { createCheckoutSession, isLoading } = useStripe();
 
   const handleSubscribe = async () => {
-    console.log('Session:', session);
     if (!session) {
       // Redirect to sign in if not authenticated
       window.location.href = '/api/auth/signin';

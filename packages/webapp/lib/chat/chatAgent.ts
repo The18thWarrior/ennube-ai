@@ -1,4 +1,4 @@
-import { LanguageModel, Tool, ModelMessage, UIMessage, streamText, stepCountIs, createUIMessageStreamResponse, AssistantModelMessage, SystemModelMessage } from "ai";
+import { LanguageModel, Tool, ModelMessage, UIMessage, streamText, stepCountIs, createUIMessageStreamResponse, AssistantModelMessage, SystemModelMessage, createUIMessageStream } from "ai";
 //import { StepProgress, ExecutorOptions, executePlanSequentially } from "./planExecutor";
 import { orchestrator } from "./orchestrator";
 import {nanoid} from "nanoid";
@@ -45,67 +45,80 @@ export async function chatAgent({
   if (shouldGeneratePlan) {
     // Build a ModelMessage prompt object for taskManager
     const promptMsg: ModelMessage = lastMsg as ModelMessage;
+    const stream = createUIMessageStream<UIMessage>({
+      execute: async ({ writer }) => {
+        // 1. Send initial status (transient - won't be added to message history)
+        writer.write({
+          type: 'data-planning',
+          data: { message: 'Planning your request...', level: 'info' },
+          transient: false, // This part won't be added to message history
+        });
+        // Generate plan using taskManager
+        console.log('entering plan generation');
+        const plan = await orchestrator({ prompt: promptMsg, messageHistory: _messages, tools: tools, memoryContext, referenceCaseIds });
+        console.log('plan generated');
+        const planMessage = { role: 'assistant', content: `Generated plan:\n${JSON.stringify(plan, null, 2)}`, id: `plan-${nanoid()}` } as AssistantModelMessage;
+        _messages.push(planMessage);
+        //console.log('Generated plan:', JSON.stringify(plan, null, 2));
+        //console.log('Generated plan:', plan);
+        // Create a ReadableStream that emits UI message events compatible with the SDK stream protocol
+        console.log('creating stream');
+        const result = await streamText({
+          model: model,
+          system: systemPrompt,
+          providerOptions: {
+            openrouter: {
+              transforms: ["middle-out"],
+              parallelToolCalls: false
+            }
+          },
+          tools: tools,
+          messages: _messages,
+          stopWhen: stepCountIs(5),
+          //toolCallStreaming: true,
+          onError: (error) => {
+            console.log('Error during execution:', error);
+          },
+          onFinish: (response) => {
+            console.log('Response finished:', response.finishReason);
+            // Memory write-back
+            // if (learningEnabled) {
+            //   try {
+            //     const messageHash = createHash('sha256').update(JSON.stringify(lastMsg)).digest('hex');
+            //     await memoryWriter.enqueue({
+            //       userSub,
+            //       agentKey: agent,
+            //       messageHash,
+            //       promptSnapshot: { query: String(lastMsg.content), systemPrompt },
+            //       planSummary: plan,
+            //       toolTraces: response.toolCalls ? Object.fromEntries(
+            //         response.toolCalls.map(call => [call.toolCallId, { 
+            //           name: call.toolName,
+            //           success: true // TODO: determine success from result
+            //         }])
+            //       ) : {},
+            //       outcome: response.finishReason === 'stop' ? 'success' : 'failure',
+            //       tags: [], // TODO: extract tags from content
+            //       referenceCaseIds,
+            //     });
+            //   } catch (error) {
+            //     console.warn('Memory write-back failed:', error);
+            //   }
+            // }
+          },
+          onStepFinish: (step) => {
+            console.log('Step finished', step.finishReason);
+          },
+          
+          //metadata: { subId: metadata.subId },
+        });
+        //return result.toUIMessageStreamResponse();
 
-    // Generate plan using taskManager
-    console.log('entering plan generation');
-    const plan = await orchestrator({ prompt: promptMsg, messageHistory: _messages, tools: tools, memoryContext, referenceCaseIds });
-    console.log('plan generated');
-    const planMessage = { role: 'assistant', content: `Generated plan:\n${JSON.stringify(plan, null, 2)}`, id: `plan-${nanoid()}` } as AssistantModelMessage;
-    _messages.push(planMessage);
-    //console.log('Generated plan:', JSON.stringify(plan, null, 2));
-    //console.log('Generated plan:', plan);
-    // Create a ReadableStream that emits UI message events compatible with the SDK stream protocol
-    console.log('creating stream');
-    const result = await streamText({
-      model: model,
-      system: systemPrompt,
-      providerOptions: {
-        openrouter: {
-          transforms: ["middle-out"],
-          parallelToolCalls: false
-        }
+        writer.merge(result.toUIMessageStream());
       },
-      tools: tools,
-      messages: _messages,
-      stopWhen: stepCountIs(5),
-      //toolCallStreaming: true,
-      onError: (error) => {
-        console.log('Error during execution:', error);
-      },
-      onFinish: (response) => {
-        console.log('Response finished:', response.finishReason);
-        // Memory write-back
-        // if (learningEnabled) {
-        //   try {
-        //     const messageHash = createHash('sha256').update(JSON.stringify(lastMsg)).digest('hex');
-        //     await memoryWriter.enqueue({
-        //       userSub,
-        //       agentKey: agent,
-        //       messageHash,
-        //       promptSnapshot: { query: String(lastMsg.content), systemPrompt },
-        //       planSummary: plan,
-        //       toolTraces: response.toolCalls ? Object.fromEntries(
-        //         response.toolCalls.map(call => [call.toolCallId, { 
-        //           name: call.toolName,
-        //           success: true // TODO: determine success from result
-        //         }])
-        //       ) : {},
-        //       outcome: response.finishReason === 'stop' ? 'success' : 'failure',
-        //       tags: [], // TODO: extract tags from content
-        //       referenceCaseIds,
-        //     });
-        //   } catch (error) {
-        //     console.warn('Memory write-back failed:', error);
-        //   }
-        // }
-      },
-      onStepFinish: (step) => {
-        console.log('Step finished', step.finishReason);
-      },
-      
-      //metadata: { subId: metadata.subId },
     });
-    return result.toUIMessageStreamResponse();
+
+    return createUIMessageStreamResponse({ stream });
   }
 
   // Fallback: default chat streaming behavior

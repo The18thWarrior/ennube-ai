@@ -23,6 +23,7 @@ import RenderGetCustomProfileToolCallComponent from './tools/render-get-custom-p
 import { ProposalResponse } from '@/types/sfdc-update';
 import { Reasoning, ReasoningContent, ReasoningTrigger } from '../ai-elements/reasoning';
 import { Tool, ToolHeader, ToolContent, ToolInput, ToolOutput } from '../ai-elements/tool';
+import PlanningComponent from './default/planning-component';
 
 // Custom message rendering
 export const renderMessage = (msg: UIMessage, idx: number, agent: ReactNode, theme: 'dark' | 'light' | 'lavender', session: Session | null, updateThreadFromTool: (updatedMessage: UIMessage, newMessage?: UIMessage) => void, userSub?: string, agentKey?: string) => {
@@ -46,7 +47,9 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, the
             >
                 <CardContent className="px-4 py-2 text-base">
                     {Component}
-
+                    {msg.parts && msg.parts.filter(part => part.type === 'data-planning').map((part) => (
+                      <PlanningComponent key={nanoid()} level={(part as any).data?.level || 'info'} message={(part as any).data?.message || ''} />
+                    ))}
                     {msg.parts && msg.parts.filter(part => isToolUIPart(part)  /*&& (part.toolInvocation.toolName === 'getSFDCDataTool' || part.toolInvocation.toolName === 'getPostgresDataTool' || part.toolInvocation.toolName === 'getCount' || part.toolInvocation.toolName === 'callWorkflowTool')*/).map((part) => (
                         <span
                             className={[
