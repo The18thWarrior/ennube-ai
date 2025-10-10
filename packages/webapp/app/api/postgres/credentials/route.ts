@@ -76,7 +76,7 @@ export async function GET(request: NextRequest) {
     
     return NextResponse.json(sanitizedResponse);
   } catch (error) {
-    console.error('Error retrieving PostgreSQL credentials:', error);
+    console.log('Error retrieving PostgreSQL credentials:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -144,7 +144,7 @@ export async function POST(request: NextRequest) {
       sessionId
     });
   } catch (error) {
-    console.error('Error storing PostgreSQL credentials:', error);
+    console.log('Error storing PostgreSQL credentials:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -188,7 +188,7 @@ export async function DELETE(request: NextRequest) {
       message: 'PostgreSQL credentials removed successfully'
     });
   } catch (error) {
-    console.error('Error removing PostgreSQL credentials:', error);
+    console.log('Error removing PostgreSQL credentials:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

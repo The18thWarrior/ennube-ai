@@ -10,7 +10,7 @@
 
 // import { getUserCustomerProfiles } from "@/lib/db/customer-profile-storage";
 import { tool } from "ai";
-import z from "zod";
+import z from "zod/v4";
 import { getBaseUrl } from "../helper";
 import { buildCalloutWithHeader } from "@/lib/n8n/utils";
 
@@ -27,8 +27,8 @@ import { buildCalloutWithHeader } from "@/lib/n8n/utils";
 export const getCustomerProfilesTool = (userId: string) => {
     return tool({
       description: "Retrieve all customer profiles for a user by userId.",
-      parameters: z.object({}),
-      async execute({ }) {
+      inputSchema: z.object({}),
+      execute: async ({ }) => {
         if (!userId) {
           return { success: false, message: "Unauthorized: userId is required" };
         }
@@ -36,7 +36,7 @@ export const getCustomerProfilesTool = (userId: string) => {
         try {
           const res = await buildCalloutWithHeader(`/api/customer-profile?subId=${encodeURIComponent(userId)}`, null, 'GET');
           if (!res.ok) {
-            console.error("API error:", res.status, await res.text());
+            console.log("API error:", res.status, await res.text());
             return { success: false, message: `API error: ${res.status}` };
           }
           const data = await res.json();
@@ -45,7 +45,7 @@ export const getCustomerProfilesTool = (userId: string) => {
           }
           return { profiles: data };
         } catch (error) {
-          console.error("Fetch error:", error);
+          console.log("Fetch error:", error);
           return { success: false, message: `Fetch error: ${error instanceof Error ? error.message : String(error)}` };
         }
       }

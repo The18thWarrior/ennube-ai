@@ -4,7 +4,7 @@ import { auth } from '@/auth';
 
 // Initialize Stripe with your secret key
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2025-07-30.basil', // Use the latest API version,
+  apiVersion: '2025-08-27.basil', // Use the latest API version,
   typescript: true,
 });
 
@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
     try {
       event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
     } catch (err: any) {
-      console.error(`⚠️ Webhook signature verification failed: ${err.message}`);
+      console.log(`⚠️ Webhook signature verification failed: ${err.message}`);
       return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
     }
 
@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ received: true });
   } catch (error: any) {
-    console.error('Error handling webhook:', error);
+    console.log('Error handling webhook:', error);
     return NextResponse.json(
       { error: error.message || 'Error processing webhook' },
       { status: 500 }

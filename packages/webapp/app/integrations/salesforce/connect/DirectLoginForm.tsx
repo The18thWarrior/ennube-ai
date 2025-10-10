@@ -39,7 +39,7 @@ export default function DirectLoginForm({ onSubmit }: OAuth2LoginFormProps) {
     <div className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="loginUrl">
-          Salesforce Instance URL <span className="text-sm text-gray-500">(Optional)</span>
+          Salesforce Instance URL <span className="text-sm text-muted-foreground">(Optional)</span>
         </Label>
         <Input
           id="loginUrl"
@@ -49,7 +49,7 @@ export default function DirectLoginForm({ onSubmit }: OAuth2LoginFormProps) {
           defaultValue="https://login.salesforce.com"
           onChange={(e) => setInstanceUrl(e.target.value)}
         />
-        <p className="text-xs text-gray-500">
+        <p className="text-xs text-muted-foreground">
           Use test.salesforce.com for sandboxes
         </p>
       </div>
@@ -69,7 +69,7 @@ export default function DirectLoginForm({ onSubmit }: OAuth2LoginFormProps) {
         {isSubmitting ? "Redirecting..." : "Connect with Salesforce"}
       </Button>
       
-      <div className="mt-4 text-center text-sm text-gray-500">
+      <div className="mt-4 text-center text-sm text-muted-foreground">
         <p>
           You will be redirected to Salesforce to authorize this application.
           No credentials are stored in this application when using OAuth.

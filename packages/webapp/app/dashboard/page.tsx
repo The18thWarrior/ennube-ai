@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useUsageLogs } from "@/hooks/useUsageLogs"
 import { nanoid } from "nanoid"
 import dayjs from "dayjs";
-import { getAgentImage } from "@/lib/utils"
+import { getAgentImage, mapUsageLogToExecution } from "@/lib/utils"
 
 function ExecutionsPageComponent() {
   const searchParams = useSearchParams()
@@ -21,21 +21,9 @@ function ExecutionsPageComponent() {
   const [selectedExecution, setSelectedExecution] = useState<string | null>(null)
   //const [executions, setExecutions] = useState(mockExecutions)
   const [isPanelOpen, setIsPanelOpen] = useState(false)
-  const { logs, refresh } = useUsageLogs(50);
+  const { logs, loading, refresh, deleteUsageLogs } = useUsageLogs(50);
   const executions = logs.map((log) => {
-    return {
-      id: log.signature + log.timestamp,
-      agent_name: log.agent,
-      image_url: getAgentImage(log.agent),
-      status: log.status || "unknown",
-      execution_time: dayjs(log.updatedAt).diff(dayjs(log.createdAt), "seconds"),
-      created_at: log.createdAt || dayjs(log.timestamp).toISOString(),
-      response_data: log.responseData || {
-        execution_summary: `Created ${log.recordsCreated} records and updated ${log.recordsUpdated} records`,
-        error: null,
-        error_code: null,
-      },
-    }
+    return mapUsageLogToExecution(log)
   });
   // Check if there's an execution ID in the URL params
   useEffect(() => {
@@ -46,10 +34,6 @@ function ExecutionsPageComponent() {
     }
   }, [searchParams])
 
-  useEffect(() => {
-    // Fetch logs from the API
-    console.log("Fetched logs:", logs);
-  }, [logs]);
   useEffect(() => {
     // Fetch logs from the API
     console.log("All executions:", executions);
@@ -92,6 +76,18 @@ function ExecutionsPageComponent() {
   const handleExecutionSelect = (id: string) => {
     setSelectedExecution(id)
     setIsPanelOpen(true)
+  }
+
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteUsageLogs(id)
+      // Optionally refresh the logs after deletion
+      await refresh()
+      setSelectedExecution(null)
+      setIsPanelOpen(false)
+    } catch (error) {
+      console.error("Failed to delete usage logs:", error)
+    }
   }
 
   const handleClosePanel = () => {
@@ -162,7 +158,7 @@ function ExecutionsPageComponent() {
           variant="outline"
           onClick={() => refresh()}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9 9 0 0 0-9 9 9 9 0 0 0 9 9 9 9 0 0 0 4.5-1.2"/><polyline points="21 12 21 3 12 12"/></svg>
+          {loading ? <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9 9 0 0 0-9 9 9 9 0 0 0 9 9 9 9 0 0 0 4.5-1.2"/><polyline points="21 12 21 3 12 12"/></svg> : <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9 9 0 0 0-9 9 9 9 0 0 0 9 9 9 9 0 0 0 4.5-1.2"/><polyline points="21 12 21 3 12 12"/></svg>}
           Refresh
         </Button>
       </div>
@@ -177,8 +173,8 @@ function ExecutionsPageComponent() {
         </div>
 
         {isPanelOpen && (
-          <div className="lg:w-1/2 transition-all duration-300 ease-in-out">
-            <ExecutionDetailsPanel execution={selectedExecutionData} onClose={handleClosePanel} />
+          <div className="lg:w-1/2 transition-all duration-300 ease-in-out sticky top-4 self-start z-10">
+            <ExecutionDetailsPanel onDelete={handleDelete} execution={selectedExecutionData} onClose={handleClosePanel} className={`h-full max-h-[90vh] overflow-y-auto scrollbar`}/>
           </div>
         )}
       </div>

@@ -12,7 +12,7 @@ export default function DashboardLayout({
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/*<div className="bg-white dark:bg-gray-800 shadow">
+      {/*<div className="  shadow">
         <div className="container mx-auto py-4">
           <nav className="flex space-x-4">
             <Link 
@@ -20,7 +20,7 @@ export default function DashboardLayout({
               className={`px-3 py-2 rounded-md text-sm font-medium ${
                 pathname === '/dashboard'
                   ? 'bg-gray-900 text-white'
-                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                  : 'text-muted-foreground  hover:bg-muted '
               }`}
             >
               Agents
@@ -30,7 +30,7 @@ export default function DashboardLayout({
               className={`px-3 py-2 rounded-md text-sm font-medium ${
                 pathname === '/dashboard/usage-logs'
                   ? 'bg-gray-900 text-white'
-                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                  : 'text-muted-foreground  hover:bg-muted '
               }`}
             >
               Usage Logs

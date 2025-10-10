@@ -5,6 +5,8 @@ import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/component
 import styles from './crm-record-detail-card.module.css';
 import React from "react"
 import { Separator } from "@/components/ui/separator"
+import { useTheme } from "@/components/theme-provider";
+import { LucideIcon } from "lucide-react";
 
 // A small sub-component for displaying an editable field
 const EditableField = ({
@@ -12,7 +14,7 @@ const EditableField = ({
   label,
   children,
 }: {
-  icon: React.ElementType
+  icon: LucideIcon
   label: string
   children: React.ReactNode
 }) => (
@@ -35,12 +37,12 @@ const EditableField = ({
 
 // Main component props
 interface CrmRecordDetailCardProps {
-  icon: React.ElementType
+  icon: LucideIcon
   recordType: string
   title: string
   subtitle?: string
   fields: {
-    icon: React.ElementType
+    icon: LucideIcon
     label: string
     value: React.ReactNode
   }[]
@@ -65,15 +67,17 @@ export function CrmRecordDetailCard({
   listButtonText,
   goToList
 }: CrmRecordDetailCardProps) {
+  const { theme } = useTheme();
   const [open, setOpen] = React.useState(false)
   const FIELDS_SHOWN = 6
-  const hasExtraFields = fields.length > FIELDS_SHOWN
+  const filteredFields = fields.filter(field => typeof field.value !== 'object');
+  const hasExtraFields = filteredFields.length > FIELDS_SHOWN
   return (
     <Card className="my-2 border-purple-500 w-full max-w-md flex flex-col">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           {showListButton && 
-            <Button variant='ghost' size="sm" className={'w-fit'} onClick={goToList}>{listButtonText || 'Back to List'}</Button>
+            <Button variant={theme === 'dark' ? 'ghost' : 'outline'} size="sm" className={'w-fit'} onClick={goToList}>{listButtonText || 'Back to List'}</Button>
           }
           {/* {
             <CrmDataLoaderModal
@@ -98,7 +102,7 @@ export function CrmRecordDetailCard({
       <CardContent className="space-y-4 flex-1">
         <Collapsible open={open} onOpenChange={setOpen}>
           {/* Always show the first 6 fields */}
-          {fields.slice(0, FIELDS_SHOWN).map((field, index) => (
+          {filteredFields.slice(0, FIELDS_SHOWN).map((field, index) => (
             <EditableField key={index} icon={field.icon} label={field.label}>
               {field.value}
             </EditableField>
@@ -108,7 +112,7 @@ export function CrmRecordDetailCard({
             <CollapsibleContent
               className={`${styles.CollapsibleContent} data-[state=closed]:max-h-0 data-[state=open]:max-h-content`}
             >
-              {fields.slice(FIELDS_SHOWN).map((field, index) => (
+              {filteredFields.slice(FIELDS_SHOWN).map((field, index) => (
                 <EditableField key={FIELDS_SHOWN + index} icon={field.icon} label={field.label}>
                   {field.value}
                 </EditableField>

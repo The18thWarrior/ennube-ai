@@ -19,7 +19,7 @@ const pool = new Pool({
 // Test the connection and log success or error
 // pool.query('SELECT NOW()', (err, res) => {
 //   if (err) {
-//     console.error('Error connecting to PostgreSQL database:', err);
+//     console.log('Error connecting to PostgreSQL database:', err);
 //   } else {
 //     console.log('PostgreSQL connected successfully');
 //   }
@@ -53,7 +53,7 @@ export async function storeGSuiteCredentials(authResult: GSuiteAuthResult): Prom
   const session = await auth();
 
   if (!session || !session.user || !session.user.auth0) {
-    console.error("No session found");
+    console.log("No session found");
     return null;
   }
 
@@ -120,7 +120,7 @@ export async function storeGSuiteCredentials(authResult: GSuiteAuthResult): Prom
     
     return sessionId;
   } catch (error) {
-    console.error("Error storing GSuite credentials:", error);
+    console.log("Error storing GSuite credentials:", error);
     return null;
   }
 }
@@ -132,7 +132,7 @@ export async function getGSuiteCredentialsById(): Promise<StoredGSuiteCredential
   try {
     const session = await auth();
     if (!session || !session.user || !session.user.auth0) {
-      console.error("No session found");
+      console.log("No session found");
       return null;
     }
     
@@ -155,7 +155,7 @@ export async function getGSuiteCredentialsById(): Promise<StoredGSuiteCredential
     );
     
     if (result.rows.length === 0) {
-      console.error("No GSuite credentials found for user:", userSub);
+      console.log("No GSuite credentials found for user:", userSub);
       return null;
     }
     
@@ -169,7 +169,7 @@ export async function getGSuiteCredentialsById(): Promise<StoredGSuiteCredential
 
     return credentials;
   } catch (error) {
-    console.error("Error retrieving GSuite credentials:", error);
+    console.log("Error retrieving GSuite credentials:", error);
     return null;
   }
 }
@@ -197,7 +197,7 @@ export async function getGSuiteCredentialsBySub(sub: string): Promise<StoredGSui
     );
     
     if (result.rows.length === 0) {
-      console.error("No GSuite credentials found for sub:", sub);
+      console.log("No GSuite credentials found for sub:", sub);
       return null;
     }
     
@@ -211,7 +211,7 @@ export async function getGSuiteCredentialsBySub(sub: string): Promise<StoredGSui
 
     return credentials;
   } catch (error) {
-    console.error("Error retrieving GSuite credentials:", error);
+    console.log("Error retrieving GSuite credentials:", error);
     return null;
   }
 }
@@ -223,7 +223,7 @@ export async function removeGSuiteCredentials(): Promise<boolean> {
   try {
     const session = await auth();
     if (!session || !session.user || !session.user.auth0) {
-      console.error("No session found");
+      console.log("No session found");
       return false;
     }
     
@@ -235,7 +235,7 @@ export async function removeGSuiteCredentials(): Promise<boolean> {
     
     return true;
   } catch (error) {
-    console.error("Error removing GSuite credentials:", error);
+    console.log("Error removing GSuite credentials:", error);
     return false;
   }
 }
@@ -247,7 +247,7 @@ export async function updateGSuiteCredentials(updatedCredentials: Partial<Stored
   try {
     const session = await auth();
     if (!session || !session.user || !session.user.auth0) {
-      console.error("No session found");
+      console.log("No session found");
       return false;
     }
     
@@ -262,7 +262,7 @@ export async function updateGSuiteCredentials(updatedCredentials: Partial<Stored
     );
     
     if (parseInt(checkResult.rows[0].count) === 0) {
-      console.error("No existing GSuite credentials found to update");
+      console.log("No existing GSuite credentials found to update");
       return false;
     }
     
@@ -283,7 +283,7 @@ export async function updateGSuiteCredentials(updatedCredentials: Partial<Stored
     
     return true;
   } catch (error) {
-    console.error("Error updating GSuite credentials:", error);
+    console.log("Error updating GSuite credentials:", error);
     return false;
   }
 }
@@ -296,6 +296,6 @@ export async function closeConnection(): Promise<void> {
     await pool.end();
     console.log('PostgreSQL connection pool closed');
   } catch (error) {
-    console.error('Error closing PostgreSQL connection pool:', error);
+    console.log('Error closing PostgreSQL connection pool:', error);
   }
 }

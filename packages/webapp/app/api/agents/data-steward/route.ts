@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
+import { getAgentSetting } from '@/lib/db/agent-settings-storage';
 
 /**
  * Data Steward Agent API
@@ -27,7 +28,8 @@ export async function GET(request: NextRequest) {
     const limit = searchParams.get('limit') || '10'; // Default to 10 if not specified
     const provider = searchParams.get('provider') || 'sfdc'; // Default to 10 if not specified
     const usageId = searchParams.get('usageId'); // Default to data steward if not specified
-
+    const _accountIds = searchParams.get('accountIds'); // Default to data steward if not specified
+    const accountIds = _accountIds ? _accountIds.split(',') : [];
     // Validate the limit parameter is a number
     if (isNaN(Number(limit))) {
       return NextResponse.json(
@@ -35,9 +37,9 @@ export async function GET(request: NextRequest) {
         { status: 400 }
       );
     }
-    
-    // Get the webhook URL from environment variable
-    const webhookUrl = provider === 'sfdc' ? process.env.DATASTEWARD_WEBHOOK_URL : process.env.DATABASE_WEBHOOK_URL_HUBSPOT;
+    const setting = await getAgentSetting(userSub, 'data-steward');
+    const webhookUrl = setting?.customWorkflow || (provider === 'sfdc' ? process.env.DATASTEWARD_WEBHOOK_URL : process.env.DATABASE_WEBHOOK_URL_HUBSPOT);
+        
     if (!webhookUrl) {
       return NextResponse.json(
         { error: 'Data steward webhook URL is not configured' },
@@ -50,7 +52,7 @@ export async function GET(request: NextRequest) {
     // url.searchParams.append('limit', limit);
     // url.searchParams.append('limit', "1");
     // url.searchParams.append('sub', userSub);
-    const url2 = `${webhookUrl}?limit=${limit}&subId=${userSub}${usageId ? `&usageId=${usageId}` : ''}`;
+    const url2 = `${webhookUrl}?limit=${limit}&subId=${userSub}${usageId ? `&usageId=${usageId}` : ''}${accountIds.length > 0 ? `&accountIds=${accountIds.join(',')}` : ''}`;
     console.log(`Data steward webhook URL: ${url2}`);
     // Make the request to the data steward webhooks
     const response = await fetch(url2, {
@@ -63,7 +65,7 @@ export async function GET(request: NextRequest) {
     // Handle non-200 responses from the webhook
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(`Error from data steward webhook: ${errorText}`);
+      console.log(`Error from data steward webhook: ${errorText}`);
       return NextResponse.json(
         { 
           error: 'Error from data steward service',
@@ -78,7 +80,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(data);
     
   } catch (error: any) {
-    console.error('Error accessing data steward agent:', error);
+    console.log('Error accessing data steward agent:', error);
     return NextResponse.json(
       { 
         error: 'Failed to access data steward agent',

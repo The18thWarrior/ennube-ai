@@ -6,7 +6,10 @@ import {
   TextNode,
   Node as HtmlNode
 } from 'node-html-parser';
-import z from "zod";
+import z from "zod/v4";
+import { SubscriptionStatus, Execution, UsageLogEntry } from "./types";
+import dayjs from "dayjs";
+import crypto, { createHash } from "crypto";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -185,6 +188,7 @@ const agentImageMap: Record<string, string> = {
   "ProspectFinder": "/prospect-finder.png",
   "MeetingsBooker": "/meetings-booker.png",
   "MarketNurturer": "/market-nurturer.png",
+  "ContractReader": "/contracts-reader.png"
 }
 
 const agentLinkMap: Record<string, string> = {
@@ -192,6 +196,7 @@ const agentLinkMap: Record<string, string> = {
   "ProspectFinder": "/agents/prospect-finder",
   "MeetingsBooker": "/agents/meetings-booker",
   "MarketNurturer": "/agents/market-nurturer",
+  "ContractReader": "/agents/contract-reader",
 }
 
 export const getAgentImage = (agentName: string) => {
@@ -212,4 +217,88 @@ const salesforceIdRegex = /^[a-zA-Z0-9]{15,18}$/;
 
 export function isValidSalesforceId(id: string): boolean {
   return salesforceIdRegex.test(id);
+}
+
+
+export function getSubscriptionLimit(subscription: SubscriptionStatus | null): {
+  usageLimit: number;
+  isPro: boolean;
+  isSubscribed: boolean;
+  licenseCount: number;
+} {
+  if (!subscription) return { usageLimit: 100, isPro: false, isSubscribed: false, licenseCount: 0 };
+  const isSubscribed = getIsSubscribed(subscription);
+  const isPro = getIsPro(subscription);
+  const usageLimit = isSubscribed ? (isPro ? 25000 : 2500) : 100;
+  const licenseCount = subscription.items?.data[0]?.quantity || 0;
+
+  return {
+    usageLimit,
+    isPro,
+    isSubscribed,
+    licenseCount
+  };
+}
+
+function getIsPro(subscription: SubscriptionStatus | null): boolean {
+  if (!subscription || !subscription.items || !subscription.items.data) return false;
+  //console.log('Checking if user is Pro:', subscription);
+  const isPro = subscription.items.data.some(item => {
+    if (!item.price || !item.price.id) return false;
+    return item.price?.id === process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO;
+  });
+  return isPro;
+}
+
+function getIsSubscribed(subscription: SubscriptionStatus | null): boolean {
+  if (!subscription) return false;
+
+  const status = subscription.status;
+  return status === 'active' || status === 'trialing';
+}
+
+
+export const mapUsageLogToExecution = (log: UsageLogEntry): Execution => {
+  return {
+        id: log.id,
+        agent_name: log.agent,
+        image_url: getAgentImage(log.agent),
+        status: log.status || "unknown",
+        execution_time: dayjs(log.updatedAt).diff(dayjs(log.createdAt), "seconds"),
+        created_at: log.createdAt || dayjs(log.timestamp).toISOString(),
+        response_data: log.responseData || {
+          execution_summary: `Created ${log.recordsCreated} records and updated ${log.recordsUpdated} records`,
+          error: null,
+          error_code: null,
+        },
+  }
+}
+
+export function sha256(input: string): string {
+  // Create a new hash object using the 'sha256' algorithm
+  const hash = createHash('sha256');
+
+  // Update the hash object with the input data.
+  // It's crucial to specify the encoding of the input string,
+  // which is almost always 'utf-8'.
+  hash.update(input, 'utf-8');
+
+  // Calculate the digest of the data passed to the hash.
+  // 'hex' encoding is the most common and readable format for hashes.
+  return hash.digest('hex');
+}
+
+export function generateApiKey(prefix = 'ennube', length = 32) {
+  /**
+   * Generates a secure, random API key with a given prefix.
+   * The final key length will be prefix.length + 1 + length.
+   */
+  // Generate random bytes. We generate half the desired length because
+  // converting to hex doubles the size (1 byte = 2 hex characters).
+  const randomBytes = crypto.randomBytes(Math.ceil(length / 2));
+  
+  // Convert the bytes to a hexadecimal string and take the required length
+  const randomPart = randomBytes.toString('hex').slice(0, length);
+
+  return `${prefix}_${randomPart}`;
 }

@@ -12,6 +12,7 @@ CREATE TABLE AgentSettings(
     active BOOLEAN DEFAULT TRUE,
     frequency frequency_type NOT NULL,
     provider provider_type NOT NULL DEFAULT 'sfdc',
+    custom_workflow TEXT
 );
 
 -- Table comments for AgentSettings
@@ -26,3 +27,5 @@ COMMENT ON COLUMN AgentSettings.frequency IS 'How often the agent should run (bu
 COMMENT ON COLUMN AgentSettings.batch_size IS 'Number of items to process in each batch when the agent runs';
 
 COMMENT ON COLUMN AgentSettings.provider IS 'The integration provider for this agent (sfdc, hubspot, gmail, msoffice)';
+
+COMMENT ON COLUMN AgentSettings.custom_workflow IS 'Custom workflow for the agent';

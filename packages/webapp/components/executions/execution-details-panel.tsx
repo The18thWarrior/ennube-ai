@@ -12,36 +12,30 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { X, CheckCircle, XCircle, Clock, RefreshCw, Workflow, ChevronDown, ChevronUp } from "lucide-react"
 import { JsonView } from "../ui/json-view"
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "../ui/collapsible"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip"
 import ExecutionRecordDetailItem from "./execution-record-detail-item"
 import { Agent } from "http"
 import Link from "next/link"
 import { getAgentLink } from "@/lib/utils"
+import { Execution } from "@/lib/types"
+import { useTheme } from "../theme-provider"
+import { useSfdcRecord } from "@/hooks/useSfdcRecord"
 
-
-
-interface Execution {
-  id: string
-  agent_name: string
-  image_url: string
-  status: string
-  execution_time: number | null
-  created_at: string
-  response_data: any
-}
-
-interface ExecutionDetailsPanelProps {
+interface ExecutionDetailsPanelProps extends React.HTMLAttributes<HTMLDivElement> {
   execution: Execution | undefined
   onClose: (() => void) | null
   coloredBorder?: boolean
   collapsible?: boolean
   layout?: 'portrait' | 'landscape'
+  onDelete?: (id: string) => void
 }
 
-export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, collapsible, layout = 'portrait' }: ExecutionDetailsPanelProps) {
+export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, collapsible, layout = 'portrait', className, onDelete }: ExecutionDetailsPanelProps) {
   // Support collapsible state
   const [open, setOpen] = React.useState(collapsible ? false : true);
-  
+  const {theme} = useTheme();
   // Flip animation state
+  const { instanceUrl } = useSfdcRecord({}, '');
   const [selectedRecordId, setSelectedRecordId] = React.useState<string | null>(null);
   const [flip, setFlip] = React.useState(false);
   const [flipping, setFlipping] = React.useState(false);
@@ -75,18 +69,9 @@ export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, colla
   const executionSummary = !hasResponseData ? "" : (execution.response_data.recordsUpdated || execution.response_data.recordsCreated) ? `Created ${execution.response_data.recordsCreated || 0} records and updated ${execution.response_data.recordsUpdated || 0} records` : execution.response_data.execution_summary;
   const rawData = !hasResponseData ? {} : {...execution.response_data, execution_summary: executionSummary};
   const recordIds = !hasResponseData ? [] : execution.response_data.records || [];
-
-  const handleSelectRecord = (recordId: string) => {
-    setSelectedRecordId(recordId);
-    setFlipping(true);
-    setTimeout(() => {
-      setFlip(true);
-      setTimeout(() => {
-        setFlipping(false);
-      }, 500);
-    }, 50);
-  };
-
+  const errorRecordIds = !hasResponseData ? [] : execution.response_data.errorRecords || [];
+  const errorMessages = !hasResponseData ? [] : execution.response_data.errorMessages || [];
+  
   const handleGoToList = () => {
     console.log("Going back to list");
     setFlipping(true);
@@ -101,7 +86,7 @@ export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, colla
   const AgentHeader = () => {
     return (
       <div className="flex items-center gap-4 flex-auto">
-        <div className="h-16 w-16 rounded-full overflow-hidden flex-shrink-0 border border-gray-200">
+        <div className="h-16 w-16 rounded-full overflow-hidden flex-shrink-0 border ">
           <Link href={getAgentLink(execution.agent_name)}>
             <Image
               src={execution.image_url || "/placeholder.svg"}
@@ -127,7 +112,7 @@ export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, colla
   }
   const FrontCard = () => {
     return (
-      <Card className={`h-full ${coloredBorder ? "border-blue-500" : ""}`}>
+      <Card className={`${className ? className : "h-full"} ${coloredBorder ? "border-blue-500" : ""}`}>
         <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-xl flex items-center">
               <Workflow className="mr-2 h-6 w-6 text-blue-500 flex-shrink-0" />
@@ -137,7 +122,7 @@ export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, colla
             </CardTitle>
           <div className="flex items-center gap-2">
             {selectedRecordId && (
-              <Button variant="ghost" size="sm" onClick={handleGoToList}>
+              <Button variant={theme === 'dark' ? 'ghost' : 'outline'} size="sm" onClick={handleGoToList}>
                 ← Back to List
               </Button>
             )}
@@ -153,20 +138,20 @@ export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, colla
           <AgentHeader />
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <h3 className="text-sm font-medium text-gray-500">EXECUTION ID</h3>
-              <p className="font-mono dark:text-gray-400">{execution.id}</p>
+            <div className="bg-muted p-4 rounded-lg">
+              <h3 className="text-sm font-medium text-muted-foreground">EXECUTION ID</h3>
+              <p className="font-mono ">{execution.id}</p>
             </div>
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <h3 className="text-sm font-medium text-gray-500">EXECUTION TIME</h3>
-              <p className="dark:text-gray-400">{execution.execution_time ? `${(execution.execution_time).toFixed(2)} seconds` : execution.status === "success" || execution.status === "failed" ? "Unknown" :"Running..."}</p>
+            <div className="bg-muted p-4 rounded-lg">
+              <h3 className="text-sm font-medium text-muted-foreground">EXECUTION TIME</h3>
+              <p className="">{execution.execution_time ? `${(execution.execution_time).toFixed(2)} seconds` : execution.status === "success" || execution.status === "failed" ? "Unknown" :"Running..."}</p>
             </div>
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <h3 className="text-sm font-medium text-gray-500">DATE</h3>
-              <p className=" dark:text-gray-400">{new Date(execution.created_at).toLocaleString()}</p>
+            <div className="bg-muted p-4 rounded-lg">
+              <h3 className="text-sm font-medium text-muted-foreground">DATE</h3>
+              <p className=" ">{new Date(execution.created_at).toLocaleString()}</p>
             </div>
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <h3 className="text-sm font-medium text-gray-500">STATUS</h3>
+            <div className="bg-muted p-4 rounded-lg">
+              <h3 className="text-sm font-medium text-muted-foreground">STATUS</h3>
               <StatusBadge status={execution.status} />
             </div>
           </div>
@@ -217,18 +202,45 @@ export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, colla
                   <li key={id+index} >
                     <Badge
                       variant="outline"
-                      className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                      onClick={() => handleSelectRecord(id)}
+                      className="cursor-pointer hover:bg-muted  transition-colors"
+                      // onClick={() => handleSelectRecord(id)}
                     >
-                      <span className="truncate">{id}</span>
+                      <Link href={instanceUrl ? `${instanceUrl}/${id}` : `https://login.salesforce.com/${id}`} rel="noopener noreferrer" target="_blank"><span className="truncate">{id}</span></Link>
                     </Badge>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="text-sm text-gray-500">No records processed.</p>
+              <p className="text-sm text-muted-foreground">No records processed.</p>
             )}
-          </div>        
+          </div>
+          {errorRecordIds.length > 0 && (
+            <div>
+              <h3 className="text-lg font-medium mb-2">Error Records</h3>
+              <TooltipProvider>
+                <ul className="list-disc pl-5 space-y-1">
+                  {errorRecordIds.map((id: string, index: number) => (
+                    <li key={'error:'+id+index} >
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Badge
+                            variant="outline"
+                            className="cursor-pointer hover:bg-muted  transition-colors"
+                            // onClick={() => handleSelectRecord(id)}
+                          >
+                            <Link href={instanceUrl ? `${instanceUrl}/${id}` : `https://login.salesforce.com/${id}`} rel="noopener noreferrer" target="_blank"><span className="truncate">{id}</span></Link>
+                          </Badge>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>{errorMessages[index]}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </li>
+                  ))}
+                </ul>
+              </TooltipProvider>
+            </div>
+          )}        
 
           <div>
             <h3 className="text-lg font-medium mb-2">Response Data</h3>
@@ -237,14 +249,22 @@ export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, colla
                 <TabsTrigger value="formatted">Formatted</TabsTrigger>
                 <TabsTrigger value="raw">Raw</TabsTrigger>
               </TabsList>
-              <TabsContent value="formatted" className="p-4 bg-gray-50 dark:bg-gray-800 rounded-md">
+              <TabsContent value="formatted" className="p-4 bg-muted  rounded-md">
                 <JsonView data={rawData} />
               </TabsContent>
-              <TabsContent value="raw" className="p-4 bg-gray-50 dark:bg-gray-800 rounded-md overflow-auto max-h-96">
+              <TabsContent value="raw" className="p-4 bg-muted  rounded-md overflow-auto max-h-96">
                 <pre className="text-xs">{JSON.stringify(rawData, null, 2)}</pre>
               </TabsContent>
             </Tabs>
           </div>
+
+          {onDelete && execution && (
+            <div className="flex justify-end pt-4">
+              <Button variant="destructive" size="sm" title="Delete Execution" onClick={() => onDelete(execution.id)}>
+                <XCircle className="h-4 w-4 mr-2" /> Delete Execution
+              </Button>
+            </div>
+          )}
         </CardContent>
       </Card>
     )
@@ -253,7 +273,7 @@ export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, colla
   const FrontCardCollapsible = () => {
     return (
       <Collapsible open={open} onOpenChange={setOpen}>
-        <Card className={`h-full ${coloredBorder ? "border-blue-500" : ""}`}>
+        <Card className={`${className ? className : "h-full"} ${coloredBorder ? "border-blue-500" : ""}`}>
           <CardHeader className="flex flex-row items-center justify-between cursor-pointer select-none">
             <CardTitle className="text-xl flex items-center">
               <Workflow className="mr-2 h-6 w-6 text-blue-500 flex-shrink-0" />
@@ -261,7 +281,7 @@ export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, colla
             </CardTitle>
             <div className="flex items-center gap-2">
               {selectedRecordId && (
-                <Button variant="ghost" size="sm" onClick={handleGoToList}>
+                <Button variant={theme === 'dark' ? 'ghost' : 'outline'} size="sm" onClick={handleGoToList}>
                   ← Back to List
                 </Button>
               )}
@@ -311,7 +331,7 @@ export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, colla
             )}
             <div className="flex justify-center pt-2">
               <CollapsibleTrigger asChild>
-                <Button variant="ghost" className={`${open ? "hidden" : ""}`} size="sm" aria-label={open ? "Collapse" : "Expand"} >
+                <Button variant={theme === 'dark' ? 'ghost' : 'outline'} className={`${open ? "hidden" : ""}`} size="sm" aria-label={open ? "Collapse" : "Expand"} >
                   {open ? "Show less" : `Show more`}
                 </Button>
               </CollapsibleTrigger>
@@ -325,20 +345,20 @@ export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, colla
                   
                 </div>
                 <div className="grid grid-cols-4 gap-4 flex-1">
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                      <h3 className="text-sm font-medium text-gray-500">EXECUTION ID</h3>
-                      <p className="font-mono dark:text-gray-400">{execution.id}</p>
+                    <div className="bg-muted p-4 rounded-lg">
+                      <h3 className="text-sm font-medium text-muted-foreground">EXECUTION ID</h3>
+                      <p className="font-mono ">{execution.id}</p>
                     </div>
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                      <h3 className="text-sm font-medium text-gray-500">EXECUTION TIME</h3>
-                      <p className="dark:text-gray-400">{execution.execution_time ? `${(execution.execution_time).toFixed(2)} seconds` : "Running..."}</p>
+                    <div className="bg-muted p-4 rounded-lg">
+                      <h3 className="text-sm font-medium text-muted-foreground">EXECUTION TIME</h3>
+                      <p className="">{execution.execution_time ? `${(execution.execution_time).toFixed(2)} seconds` : "Running..."}</p>
                     </div>
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                      <h3 className="text-sm font-medium text-gray-500">DATE</h3>
-                      <p className=" dark:text-gray-400">{new Date(execution.created_at).toLocaleString()}</p>
+                    <div className="bg-muted p-4 rounded-lg">
+                      <h3 className="text-sm font-medium text-muted-foreground">DATE</h3>
+                      <p className=" ">{new Date(execution.created_at).toLocaleString()}</p>
                     </div>
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                      <h3 className="text-sm font-medium text-gray-500">STATUS</h3>
+                    <div className="bg-muted p-4 rounded-lg">
+                      <h3 className="text-sm font-medium text-muted-foreground">STATUS</h3>
                       <StatusBadge status={execution.status} />
                     </div>
                   </div>
@@ -349,17 +369,17 @@ export function ExecutionDetailsPanel({ execution, onClose, coloredBorder, colla
                     <TabsTrigger value="formatted">Formatted</TabsTrigger>
                     <TabsTrigger value="raw">Raw</TabsTrigger>
                   </TabsList>
-                  <TabsContent value="formatted" className="p-4 bg-gray-50 dark:bg-gray-800 rounded-md">
+                  <TabsContent value="formatted" className="p-4 bg-muted  rounded-md">
                     <JsonView data={rawData} />
                   </TabsContent>
-                  <TabsContent value="raw" className="p-4 bg-gray-50 dark:bg-gray-800 rounded-md overflow-auto max-h-96">
+                  <TabsContent value="raw" className="p-4 bg-muted  rounded-md overflow-auto max-h-96">
                     <pre className="text-xs">{JSON.stringify(rawData, null, 2)}</pre>
                   </TabsContent>
                 </Tabs>
               </div>
               <div className="flex justify-center pt-2">
                 <CollapsibleTrigger asChild>
-                  <Button variant="ghost" className={`${open ? "" : "hidden"}`} size="sm" aria-label={open ? "Collapse" : "Expand"}>
+                  <Button variant={theme === 'dark' ? 'ghost' : 'outline'} className={`${open ? "" : "hidden"}`} size="sm" aria-label={open ? "Collapse" : "Expand"}>
                     {open ? "Show less" : `Show more`}
                   </Button>
                 </CollapsibleTrigger>
@@ -440,33 +460,33 @@ function StatusBadge({ status }: { status: string }) {
   switch (status) {
     case "success":
       return (
-        <Badge variant="success" className="flex items-center gap-1 text-green-700">
+        <Badge variant="success" className="flex items-center gap-1 bg-green-50 text-green-700 border-green-200">
           <CheckCircle className="h-3 w-3" />
           <span>Completed</span>
         </Badge>
       )
     case "failed":
       return (
-        <Badge variant="destructive" className="flex items-center gap-1 text-red-700">
+        <Badge variant="destructive" className="flex items-center gap-1 bg-red-50 text-red-700 border-red-200">
           <XCircle className="h-3 w-3" />
           <span>Failed</span>
         </Badge>
       )
     case "in_progress":
       return (
-        <Badge variant="outline" className="flex items-center gap-1 dark:text-gray-700">
+        <Badge variant="outline" className="flex items-center gap-1 ">
           <Clock className="h-3 w-3" />
           <span>In Progress</span>
         </Badge>
       )
     case "In Progress":
       return (
-        <Badge variant="outline" className="flex items-center gap-1 dark:text-gray-500">
+        <Badge variant="outline" className="flex items-center gap-1 ">
           <Clock className="h-3 w-3" />
           <span>In Progress</span>
         </Badge>
       )
     default:
-      return <Badge variant="outline" className="dark:text-gray-500">{status}</Badge>
+      return <Badge variant="outline" className="">{status}</Badge>
   }
 }

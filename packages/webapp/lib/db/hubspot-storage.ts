@@ -50,7 +50,7 @@ export async function storeHubSpotCredentials(authResult: HubSpotAuthResult): Pr
     // Get the current user's ID
     const session = await auth();
     if (!session || !session.user || !session.user.auth0) {
-      console.error("No session found");
+      console.log("No session found");
       return;
     }
     
@@ -115,7 +115,7 @@ export async function storeHubSpotCredentials(authResult: HubSpotAuthResult): Pr
 
     console.log(`HubSpot credentials stored for user: ${userId}`);
   } catch (error) {
-    console.error('Error storing HubSpot credentials:', error);
+    console.log('Error storing HubSpot credentials:', error);
     throw error;
   }
 }
@@ -128,7 +128,7 @@ export async function getHubSpotCredentialsById(): Promise<StoredHubSpotCredenti
     // Get the current user's ID
     const session = await auth();
     if (!session || !session.user || !session.user.auth0) {
-      console.error("No session found");
+      console.log("No session found");
       return null;
     }
     
@@ -166,7 +166,7 @@ export async function getHubSpotCredentialsById(): Promise<StoredHubSpotCredenti
     );
     
     if (result.rows.length === 0 || !result.rows[0]) {
-      console.error("No credentials found for user:", userSub);
+      console.log("No credentials found for user:", userSub);
       return null;
     }
     
@@ -180,7 +180,7 @@ export async function getHubSpotCredentialsById(): Promise<StoredHubSpotCredenti
 
     return {...credentials, userId: userSub }; // Include userId in the returned object
   } catch (error) {
-    console.error('Error retrieving HubSpot credentials:', error);
+    console.log('Error retrieving HubSpot credentials:', error);
     throw error;
   }
 }
@@ -211,7 +211,7 @@ export async function getHubspotCredentialsBySub(sub: string): Promise<StoredHub
     );
     
     if (result.rows.length === 0) {
-      console.error("No credentials found for sub:", sub);
+      console.log("No credentials found for sub:", sub);
       return null;
     }
     
@@ -225,7 +225,7 @@ export async function getHubspotCredentialsBySub(sub: string): Promise<StoredHub
 
     return {...credentials, userId: sub};
   } catch (error) {
-    console.error("Error retrieving HubSpot credentials:", error);
+    console.log("Error retrieving HubSpot credentials:", error);
     return null;
   }
 }
@@ -271,7 +271,7 @@ export async function updateHubSpotCredentials(
 
     console.log(`HubSpot credentials updated for user: ${userId}`);
   } catch (error) {
-    console.error('Error updating HubSpot credentials:', error);
+    console.log('Error updating HubSpot credentials:', error);
     throw error;
   }
 }
@@ -299,7 +299,7 @@ export async function removeHubSpotCredentials(): Promise<void> {
 
     console.log(`HubSpot credentials removed for user: ${userId}`);
   } catch (error) {
-    console.error('Error removing HubSpot credentials:', error);
+    console.log('Error removing HubSpot credentials:', error);
     throw error;
   }
 }
@@ -312,7 +312,7 @@ export async function hasHubSpotCredentials(): Promise<boolean> {
     const credentials = await getHubSpotCredentialsById();
     return credentials !== null;
   } catch (error) {
-    console.error('Error checking for HubSpot credentials:', error);
+    console.log('Error checking for HubSpot credentials:', error);
     return false;
   }
 }
@@ -353,7 +353,7 @@ export async function updateHubSpotTimestampField(timestampField: string): Promi
     console.log(`HubSpot timestamp field updated to ${timestampField} for user: ${userId}`);
     return true;
   } catch (error) {
-    console.error('Error updating HubSpot timestamp field:', error);
+    console.log('Error updating HubSpot timestamp field:', error);
     return false;
   }
 }

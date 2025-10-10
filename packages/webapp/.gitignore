@@ -18,3 +18,5 @@ next-env.d.ts
 .next
 .vercel
 .env*.local
+benchmark/output/*
+benchmark/dist

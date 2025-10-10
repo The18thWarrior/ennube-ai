@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
       jobRole: profile.jobRole,
     });
   } catch (error) {
-    console.error('Error fetching profile:', error);
+    console.log('Error fetching profile:', error);
     return NextResponse.json({ error: 'Failed to fetch profile data' }, { status: 500 });
   }
 }
@@ -92,7 +92,7 @@ export async function PUT(request: NextRequest) {
       jobRole: jobRole || existingProfile?.jobRole || '',
     });
   } catch (error) {
-    console.error('Error updating profile:', error);
+    console.log('Error updating profile:', error);
     return NextResponse.json({ error: 'Failed to update profile data' }, { status: 500 });
   }
 }

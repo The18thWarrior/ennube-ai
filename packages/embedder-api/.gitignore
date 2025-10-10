@@ -1,0 +1,4 @@
+.env.local
+/tmp/embedder-api-cache
+.env
+.hf_cache

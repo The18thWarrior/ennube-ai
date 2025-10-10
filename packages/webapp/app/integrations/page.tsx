@@ -1,10 +1,16 @@
+export const dynamic = "force-dynamic";
 import IntegrationCard from "@/components/integration-card"
 import { getGSuiteCredentialsById } from "@/lib/db/gsuite-storage";
 import { getSalesforceCredentialsById } from "@/lib/db/salesforce-storage"
 import { getHubSpotCredentialsById } from "@/lib/db/hubspot-storage"
 import { getPostgresUrlById } from "@/lib/db/postgres-storage"
 
-export default async function IntegrationsPage() {
+async function getServerData() : Promise<{
+    hasSalesforce: boolean,
+    hasGSuite: boolean,
+    hasHubSpot: boolean,
+    hasPostgres: boolean
+}> {
     const sf_credential = await getSalesforceCredentialsById()
     const hasSalesforce = Boolean(sf_credential && sf_credential.accessToken);
     const gs_credential = await getGSuiteCredentialsById();
@@ -14,10 +20,23 @@ export default async function IntegrationsPage() {
     const pg_credential = await getPostgresUrlById();
     const hasPostgres = Boolean(pg_credential && pg_credential.instanceUrl);
       
+  return new Promise((resolve) =>
+    
+      resolve({
+        hasSalesforce,
+        hasGSuite,
+        hasHubSpot,
+        hasPostgres
+      })
+  )
+}
+
+export default async function IntegrationsPage() {
+    const { hasSalesforce, hasGSuite, hasHubSpot, hasPostgres } = await getServerData();
     return (
         <div className="container mx-auto py-10 px-4">
             <h1 className="text-3xl font-bold mb-6">Integrations</h1>
-            <p className="text-gray-600 mb-8">Connect your favorite tools and services to enhance your agent capabilities.</p>
+            <p className="text-muted-foreground mb-8">Connect your favorite tools and services to enhance your agent capabilities.</p>
 
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 <IntegrationCard

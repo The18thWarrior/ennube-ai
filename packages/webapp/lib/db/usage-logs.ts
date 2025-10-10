@@ -4,6 +4,7 @@
 import { Pool } from 'pg';
 import { nanoid } from "nanoid";
 import { auth } from '@/auth';
+import { UsageLogEntry } from '../types';
 
 const AGENTNAMES = {
   prospectFinder: 'ProspectFinder',
@@ -23,7 +24,7 @@ const pool = new Pool({
 // Test the connection and log success or error
 // pool.query('SELECT NOW()', (err, res) => {
 //   if (err) {
-//     console.error('Error connecting to PostgreSQL database:', err);
+//     console.log('Error connecting to PostgreSQL database:', err);
 //   } else {
 //     console.log('PostgreSQL connected successfully');
 //   }
@@ -31,32 +32,6 @@ const pool = new Pool({
 
 // Table name for usage logs
 const USAGE_LOG_TABLE = "usage_log";
-
-export interface UsageLogEntry {
-  id: string;
-  timestamp: number;
-  userSub: string;
-  agent: string;
-  recordsUpdated: number;
-  recordsCreated: number;
-  meetingsBooked: number;
-  queriesExecuted: number;
-  signature: string;
-  nonce: number;
-  usage: number;
-  createdAt?: string;
-  updatedAt?: string;
-  status?: string;
-  responseData?: {
-    execution_summary?: string,
-    recordsUpdated?: number,
-    recordsCreated?: number,
-    meetingsBooked?: number,
-    queriesExecuted?: number,
-    errors?: number,
-    records?: string[]
-  };
-}
 
 interface StoreUsageParams {
   userSub: string,
@@ -70,7 +45,7 @@ interface StoreUsageParams {
   logId: string | null,
   isNew: boolean | null,
   status: string | null,
-  errors: string | null,
+  errors: string[] | null,
   recordId: string | null,
 }
 
@@ -104,17 +79,28 @@ export async function storeUsageLog(
           const recordsCreated = Number(params.recordsCreated || 0) + Number(existing.recordsCreated);
           const meetingsBooked = Number(params.meetingsBooked || 0) + Number(existing.meetingsBooked);
           const queriesExecuted = Number(params.queriesExecuted || 0) + Number(existing.queriesExecuted);
-
           const responseData = existing.responseData || {};
+          const errorCount = Number(params.errors ? params.errors.length : 0) + Number(responseData.errorMessages ? responseData.errorMessages.length : 0);
+          
           let updatedResponseData;
           const usage = recordsCreated + recordsUpdated + meetingsBooked + queriesExecuted;
           if (params.status === "failed" && (existing.recordsCreated > 0 || existing.recordsUpdated > 0)) {
-            const errorCount = responseData.errors ? responseData.errors + 1 : 1;
             updatedResponseData = {
               ...responseData,
               usage,
               execution_summary: newMessage,
-              errors: errorCount
+              errors: errorCount,
+              errorMessages: [...(responseData.errorMessages || []), ...(params.errors ? [...params.errors] : [])],
+              errorRecords: [...(responseData.errorRecords || []), ...(params.recordId ? [params.recordId] : [])],
+            };
+          } else if (params.status === "failed") {
+            updatedResponseData = {
+              ...responseData,
+              usage,
+              execution_summary: newMessage,
+              errors: errorCount,
+              errorMessages: [...(responseData.errorMessages || []), ...(params.errors ? [...params.errors] : [])],
+              errorRecords: [...(responseData.errorRecords || []), ...(params.recordId ? [params.recordId] : [])],
             };
           } else {
             // Update response data with new values
@@ -125,10 +111,12 @@ export async function storeUsageLog(
               meetingsBooked: meetingsBooked,
               queriesExecuted: queriesExecuted,
               usage,
+              errorMessages: [...(responseData.errorMessages || [])],
               errors: Number(responseData.errors || 0),
               records: params.recordId 
                 ? [...(responseData.records || []), params.recordId] 
-                : (responseData.records || [])
+                : (responseData.records || []),
+              errorRecords: [...(responseData.errorRecords || [])]
             };
           }
           
@@ -178,9 +166,11 @@ export async function storeUsageLog(
             queriesExecuted: queriesExecuted,
             usage,
             errors: Number(responseData.errors || 0),
-            records: params.recordId 
-              ? [...(responseData.records || []), params.recordId] 
-              : (responseData.records || [])
+            records: params.recordId
+              ? [...(responseData.records || []), ...(params.status !== 'failed' ? [params.recordId] : [])]
+              : (responseData.records || []),
+            errorMessages: [...(responseData.errorMessages || []), ...(params.errors ? [...params.errors] : [])],
+            errorRecords: [...(responseData.errorRecords || []), ...(params.recordId && params.status === "failed" ? [params.recordId] : [])],
           };
           
           // Update the database record
@@ -204,7 +194,7 @@ export async function storeUsageLog(
               queriesExecuted,
               params.signature || existing.signature,
               params.nonce || existing.nonce,
-              params.status || existing.status,
+              existing.status === "success" ? existing.status : params.status,
               usage,
               JSON.stringify(updatedResponseData),
               logId
@@ -226,7 +216,9 @@ export async function storeUsageLog(
       queriesExecuted: params.queriesExecuted || 0,
       usage,
       errors: 0,
-      records: params.recordId ? [params.recordId] : []
+      records: params.recordId ? [params.recordId] : [],
+      errorMessages: [],
+      errorRecords: []
     };
 
     // Insert the new record
@@ -254,7 +246,7 @@ export async function storeUsageLog(
 
     return logId;
   } catch (error) {
-    console.error("Error storing usage log:", error);
+    console.log("Error storing usage log:", error);
     return null;
   }
 }
@@ -269,14 +261,14 @@ export async function getUserUsageLogs(
   try {
     const session = await auth();
     if (!session || !session.user || !session.user.auth0) {
-      console.error("No session found");
+      console.log("No session found");
       return [];
     }
     
     const userSub = session.user.auth0.sub;
     return await getUserUsageLogsBySub(userSub, limit, offset);
   } catch (error) {
-    console.error("Error retrieving user usage logs:", error);
+    console.log("Error retrieving user usage logs:", error);
     return [];
   }
 }
@@ -290,7 +282,7 @@ export async function getUserUsageLog(
   try {
     const session = await auth();
     if (!session || !session.user || !session.user.auth0) {
-      console.error("No session found");
+      console.log("No session found");
       return null;
     }
     
@@ -298,7 +290,8 @@ export async function getUserUsageLog(
     const result = await pool.query(
       `SELECT * FROM ${USAGE_LOG_TABLE} 
        WHERE user_sub = $1
-       AND id = $2`,
+       AND id = $2
+       AND archived = FALSE`,
       [userSub, usageId]
     );
 
@@ -308,7 +301,7 @@ export async function getUserUsageLog(
 
     return null;
   } catch (error) {
-    console.error("Error retrieving user usage log:", error);
+    console.log("Error retrieving user usage log:", error);
     return null;
   }
 }
@@ -328,7 +321,7 @@ export async function getUserUsageLogsBySub(
     if (filter && filter.length > 0) {
       const result = await pool.query(
         `SELECT * FROM ${USAGE_LOG_TABLE} 
-        WHERE user_sub = $1 AND agent = $4
+        WHERE user_sub = $1 AND agent = $4 AND archived = FALSE
         ORDER BY timestamp DESC
         LIMIT $2 OFFSET $3`,
         [sub, limit, offset, filter]
@@ -339,7 +332,7 @@ export async function getUserUsageLogsBySub(
     }
     const result = await pool.query(
       `SELECT * FROM ${USAGE_LOG_TABLE} 
-       WHERE user_sub = $1 
+       WHERE user_sub = $1 AND archived = FALSE
        ORDER BY timestamp DESC
        LIMIT $2 OFFSET $3`,
       [sub, limit, offset]
@@ -348,7 +341,7 @@ export async function getUserUsageLogsBySub(
     // Map the results to our interface format
     return result.rows.map(mapDbToUsageLogEntry);
   } catch (error) {
-    console.error("Error retrieving usage logs by sub:", error);
+    console.log("Error retrieving usage logs by sub:", error);
     return [];
   }
 }
@@ -368,14 +361,14 @@ export async function getUsageSummary(
   try {
     const session = await auth();
     if (!session || !session.user || !session.user.auth0) {
-      console.error("No session found");
+      console.log("No session found");
       return { recordsUpdated: 0, recordsCreated: 0, meetingsBooked: 0, queriesExecuted: 0 };
     }
     
     const userSub = session.user.auth0.sub;
     return await getUsageSummaryBySub(userSub, startTime, endTime);
   } catch (error) {
-    console.error("Error retrieving usage summary:", error);
+    console.log("Error retrieving usage summary:", error);
     return { recordsUpdated: 0, recordsCreated: 0, meetingsBooked: 0, queriesExecuted: 0 };
   }
 }
@@ -423,7 +416,7 @@ export async function getUsageSummaryBySub(
 
     return { recordsUpdated: 0, recordsCreated: 0, meetingsBooked: 0, queriesExecuted: 0, usage: 0 };
   } catch (error) {
-    console.error("Error retrieving usage summary by sub:", error);
+    console.log("Error retrieving usage summary by sub:", error);
     return { recordsUpdated: 0, recordsCreated: 0, meetingsBooked: 0, queriesExecuted: 0, usage: 0 };
   }
 }
@@ -435,14 +428,14 @@ export async function clearUserUsageLogs(): Promise<boolean> {
   try {
     const session = await auth();
     if (!session || !session.user || !session.user.auth0) {
-      console.error("No session found");
+      console.log("No session found");
       return false;
     }
     
     const userSub = session.user.auth0.sub;
     return await clearUserUsageLogsBySub(userSub);
   } catch (error) {
-    console.error("Error clearing user usage logs:", error);
+    console.log("Error clearing user usage logs:", error);
     return false;
   }
 }
@@ -459,7 +452,24 @@ export async function clearUserUsageLogsBySub(sub: string): Promise<boolean> {
     
     return true;
   } catch (error) {
-    console.error("Error clearing user usage logs by sub:", error);
+    console.log("Error clearing user usage logs by sub:", error);
+    return false;
+  }
+}
+
+/**
+ * Clear all usage logs for a specific user by their sub ID
+ */
+export async function clearUserUsageLogBySub(id: string, sub: string): Promise<boolean> {
+  try {
+    await pool.query(
+      `UPDATE ${USAGE_LOG_TABLE} SET archived = TRUE WHERE id = $1 AND user_sub = $2`,
+      [id, sub]
+    );
+    
+    return true;
+  } catch (error) {
+    console.log("Error clearing user usage logs by sub:", error);
     return false;
   }
 }
@@ -477,14 +487,14 @@ export async function getMonthlyRecordOperationsTotal(
   try {
     const session = await auth();
     if (!session || !session.user || !session.user.auth0) {
-      console.error("No session found");
+      console.log("No session found");
       return 0;
     }
     
     const userSub = session.user.auth0.sub;
     return await getMonthlyRecordOperationsTotalBySub(userSub, year, month);
   } catch (error) {
-    console.error("Error retrieving monthly record operations total:", error);
+    console.log("Error retrieving monthly record operations total:", error);
     return 0;
   }
 }
@@ -523,7 +533,7 @@ export async function getMonthlyRecordOperationsTotalBySub(
     // Return the result
     return Number(result.rows[0]?.total_operations || 0);
   } catch (error) {
-    console.error("Error retrieving monthly record operations total by sub:", error);
+    console.log("Error retrieving monthly record operations total by sub:", error);
     return 0;
   }
 }
@@ -559,7 +569,7 @@ export async function closeConnection(): Promise<void> {
     await pool.end();
     console.log('PostgreSQL connection pool closed');
   } catch (error) {
-    console.error('Error closing PostgreSQL connection pool:', error);
+    console.log('Error closing PostgreSQL connection pool:', error);
   }
 }
 

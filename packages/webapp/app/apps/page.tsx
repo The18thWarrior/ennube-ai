@@ -1,4 +1,6 @@
 
+import WelcomeMessage from '@/components/account/welcome-message';
+import { Badge } from '@/components/ui';
 import Image from 'next/image';
 
 import Link from 'next/link';
@@ -10,13 +12,7 @@ const apps = [
 		author: '',
 		image: '/logo.png',
 		url: '/agents',
-	},
-	{
-		name: 'Data Loader',
-		description: 'Upload and manage your CRM data with ease',
-		author: '',
-		image: '/robot-admin-avatar.png',
-		url: '/dataloader',
+    active: true
 	},
 	{
 		name: 'Chat',
@@ -24,6 +20,15 @@ const apps = [
 		author: '',
 		image: '/ai-interface.png',
 		url: '/chat',
+    active: true
+	},
+	{
+		name: 'Data Loader',
+		description: 'Upload and manage your CRM data with ease',
+		author: '',
+		image: '/robot-admin-avatar.png',
+		url: '/dataloader',
+    active: false
 	},
 	// {
 	// 	name: 'DesignerGPT',
@@ -50,19 +55,21 @@ const apps = [
 
 export default function AppsLayout() {
        return (
-	       <main className="min-h-screen bg-white dark:bg-neutral-950 text-black dark:text-white py-12 px-4">
+	       <main className="min-h-screen py-12 px-4">
+            <WelcomeMessage />
 		       <div className="max-w-4xl mx-auto">
-			       <h1 className="text-xl text-black dark:text-white font-bold mb-2">Apps</h1>
-			       <p className="text-neutral-600 dark:text-neutral-400 mb-8">AI Agent powered applications that enhance your productivity and seamlessly connect your business systems.</p>
+			       <h1 className="text-xl font-bold mb-2">Apps</h1>
+			       <p className="mb-8">AI Agent powered applications that enhance your productivity and seamlessly connect your business systems.</p>
 			       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
 				       {apps.map((app, idx) => (
+                      app.active ? (
 							       <Link
 								       key={app.name}
 								       href={app.url}
-								       className="bg-neutral-100 dark:bg-neutral-900 rounded-xl shadow-lg p-6 flex flex-col items-center hover:scale-105 transition-transform border border-neutral-200 dark:border-neutral-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+								       className="rounded-xl shadow-lg p-6 flex flex-col items-center hover:scale-105 transition-transform border focus:outline-none focus:ring-2 focus:ring-blue-500"
 								       tabIndex={0}
 							       >
-								       <div className="w-16 h-16 mb-4 flex items-center justify-center rounded-full bg-neutral-200 dark:bg-neutral-800">
+								       <div className="w-16 h-16 mb-4 flex items-center justify-center rounded-full ">
 									       <Image
 										       src={app.image}
 										       alt={app.name}
@@ -71,14 +78,36 @@ export default function AppsLayout() {
 										       className="object-contain rounded-full"
 									       />
 								       </div>
-								       <div className="text-lg font-semibold text-center mb-1 text-black dark:text-white">{app.name}</div>
-								       <div className="text-sm text-neutral-600 dark:text-neutral-400 text-center mb-2">{app.description}</div>
-								       {/* <div className="text-xs text-neutral-500 text-center">By {app.author}</div> */}
+								       <div className="text-lg font-semibold text-center mb-1 ">{app.name}</div>
+								       <div className="text-sm text-center mb-2">{app.description}</div>
+								       {/* <div className="text-xs text-muted text-center">By {app.author}</div> */}
 							       </Link>
+                      ): (
+                        <div
+                          key={app.name}
+                          className="bg-muted rounded-xl shadow-lg p-6 flex flex-col items-center hover:scale-105 transition-transform border focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          tabIndex={0}
+                        >
+                          <div className="w-16 h-16 mb-4 flex items-center justify-center rounded-full ">
+                            <Image
+                              src={app.image}
+                              alt={app.name}
+                              width={48}
+                              height={48}
+                              className="object-contain rounded-full"
+                            />
+                          </div>
+                          <div className="text-lg font-semibold text-center mb-1">{app.name}</div>
+                          <div className={`text-sm text-center mb-2`}>{app.description}</div>
+
+                          <Badge variant={'success'} className={'float-right'}>Coming Soon</Badge>
+                          {/* <div className="text-xs text-muted text-center">By {app.author}</div> */}
+                        </div>
+                      )
 				       ))}
 			       </div>
 			       {/* <div className="flex justify-center mt-10">
-				       <button className="bg-neutral-200 dark:bg-neutral-800 text-black dark:text-white px-6 py-2 rounded-full hover:bg-neutral-300 dark:hover:bg-neutral-700 transition">See more</button>
+				       <button className="bg-muted  text-black dark:text-white px-6 py-2 rounded-full hover:bg-muted dark:hover:bg-muted transition">See more</button>
 			       </div> */}
 		       </div>
 	       </main>

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { getSalesforceCredentialsById, storeSalesforceCredentials } from '@/lib/db/salesforce-storage';
+import { getSalesforceCredentialsById, storeSalesforceCredentials, removeSalesforceCredentials } from '@/lib/db/salesforce-storage';
 import { createSalesforceClient } from '@/lib/salesforce';
 import dayjs from 'dayjs';
 import { Connection, OAuth2 } from 'jsforce';
@@ -49,6 +49,7 @@ export async function GET(request: NextRequest) {
           instanceUrl: credentials.instanceUrl,
           refreshToken: credentials.refreshToken,
           success: true,
+          userId: session.user.auth0.sub,
           clientId: process.env.SALESFORCE_CLIENT_ID as string,
           clientSecret: process.env.SALESFORCE_CLIENT_SECRET as string,
         }
@@ -72,6 +73,7 @@ export async function GET(request: NextRequest) {
 
       await storeSalesforceCredentials({
         success: true,
+        userId: session.user.auth0.sub,
         accessToken: credentialsFinal.accessToken as string,
         refreshToken: credentialsFinal.refreshToken as string,
         instanceUrl: credentialsFinal.instanceUrl as string,
@@ -105,10 +107,34 @@ export async function GET(request: NextRequest) {
     
     return NextResponse.json(sanitizedCredentials);
   } catch (error) {
-    console.error('Error retrieving Salesforce credentials:', error);
+    console.log('Error retrieving Salesforce credentials:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
     );
+  }
+}
+
+/**
+ * DELETE /api/salesforce/credentials
+ * Removes Salesforce credentials for the authenticated user
+ * Request body: { id: string }
+ * Response:
+ * - 200 OK: Credentials deleted
+ * - 400 Bad Request: Missing/invalid ID
+ * - 401 Unauthorized: User not authenticated
+ * - 500 Internal Server Error: Server error
+ */
+export async function DELETE(request: NextRequest) {
+  try {
+    const session = await auth();
+    if (!session?.user?.id || !session?.user?.auth0?.sub) {
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+    }
+    const result = await removeSalesforceCredentials();
+    return NextResponse.json({ success: result });
+  } catch (error) {
+    console.log('Error deleting Salesforce credentials:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

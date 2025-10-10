@@ -12,7 +12,7 @@ export default function SubscriptionCancelPage() {
         </svg>
       </div>
       <h1 className="text-2xl font-bold mb-2">Subscription Cancelled</h1>
-      <p className="text-gray-600 mb-6 text-center max-w-md">
+      <p className="text-muted-foreground mb-6 text-center max-w-md">
         Your subscription process was cancelled. No charges have been made to your account.
       </p>
       <Link href="/">

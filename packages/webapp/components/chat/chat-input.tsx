@@ -32,16 +32,16 @@ export default function ChatInput({ input, handleInputChange, handleSubmit, isLo
 
   return (
     <form onSubmit={handleSubmit} className="flex items-center gap-2">
-      <InputTextArea
+      <Input
         value={input}
         onChange={handleInputChange}
-        onKeyDown={handleKeyDown}
+        //onKeyDown={handleKeyDown}
         placeholder="Type your message..."
-        rows={2}
+        //rows={2}
         disabled={isLoading}
-        className="flex-1"
+        className="flex-1 focus:border-purple-400"
       />
-      <Button type="submit" disabled={isLoading || !input.trim()} size="icon" className={styles.sendButton}>
+      <Button type="submit" disabled={isLoading || !input.trim()} size="icon" className={`${styles.sendButton} `}>
         <Send className={`h-4 w-4 text-white`} />
         <span className="sr-only">Send message</span>
       </Button>

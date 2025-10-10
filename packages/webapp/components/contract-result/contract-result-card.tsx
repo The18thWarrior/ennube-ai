@@ -10,6 +10,8 @@
 
 import React, { useState } from 'react';
 import { ContractResult, useContractResult } from '@/hooks/useContractResult';
+import { JsonRecord } from '../generalized-result';
+import dayjs from 'dayjs';
 
 interface ContractResultCardProps {
   result: ContractResult;
@@ -58,24 +60,24 @@ export const ContractResultCard: React.FC<ContractResultCardProps> = ({ result, 
   };
 
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-6 w-full mx-auto">
+    <div className="bg-background rounded-lg shadow p-6 w-full mx-auto">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-xl font-semibold text-blue-700 dark:text-blue-300">Contract Result</h3>
         <div className="flex gap-2">
-          {!editMode ? (
+          {/* {!editMode ? (
             <button
               className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded"
               onClick={() => setEditMode(true)}
             >Edit</button>
           ) : (
             <button
-              className="bg-gray-300 hover:bg-gray-400 text-gray-800 text-sm px-4 py-2 rounded"
+              className="bg-gray-300 hover:bg-muted text-muted-foreground text-sm px-4 py-2 rounded"
               onClick={() => { setEditMode(false); setForm({ ...result }); setSuccess(null); }}
             >Cancel</button>
-          )}
+          )} */}
           {typeof onClose === 'function' && (
             <button
-              className="bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm px-4 py-2 rounded"
+              className="bg-gray-200 hover:bg-muted text-muted-foreground text-sm px-4 py-2 rounded"
               onClick={onClose}
               type="button"
               aria-label="Close"
@@ -89,13 +91,13 @@ export const ContractResultCard: React.FC<ContractResultCardProps> = ({ result, 
       {error && <div className="mb-2 text-red-500 dark:text-red-400 text-sm">{error}</div>}
       <form className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4" onSubmit={e => { e.preventDefault(); handleSave(); }}>
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Provider</label>
+          <label className="block text-sm font-medium text-muted-foreground ">Provider</label>
           {editMode ? (
             <select
               name="provider"
               value={form.provider || ''}
               onChange={handleChange}
-              className="mt-1 block w-full outline outline-gray-300 dark:outline-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
+              className="mt-1 block w-full outline outline-gray-300 dark:outline-gray-700   rounded px-3 py-2"
               required
             >
               <option value="">Select provider</option>
@@ -105,31 +107,36 @@ export const ContractResultCard: React.FC<ContractResultCardProps> = ({ result, 
               <option value="msoffice">MS Office</option>
             </select>
           ) : (
-            <span className="text-gray-700 dark:text-gray-300">{form.provider}</span>
+            <span className="text-muted-foreground ">{form.provider}</span>
           )}
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Source ID</label>
+          <label className="block text-sm font-medium text-muted-foreground ">Source ID</label>
           <input
             type="text"
             name="source_id"
             value={form.source_id || ''}
             onChange={handleChange}
             disabled={!editMode}
-            className="mt-1 block w-full outline outline-gray-300 dark:outline-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
+            className="mt-1 block w-full outline outline-gray-300 dark:outline-gray-700   rounded px-3 py-2"
             required
           />
         </div>
         <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Contract Data (JSON)</label>
-          <textarea
+          <label className="block text-sm font-medium text-muted-foreground ">Contract Data (JSON)</label>
+          {/* <textarea
             name="contract_data"
             value={JSON.stringify(form.contract_data, null, 2)}
             onChange={handleContractDataChange}
             disabled={!editMode}
-            className="mt-1 block w-full outline outline-gray-300 dark:outline-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2 font-mono"
-            rows={6}
+            className="mt-1 block w-full outline outline-gray-300 dark:outline-gray-700   rounded px-3 py-2 font-mono text-sm"
+            rows={15}
             required
+          /> */}
+          <JsonRecord
+            data={form.contract_data}
+            rootLabel='Contract Data'
+            className="mt-1 block w-full shadow-none   rounded px-3 py-2 font-mono text-sm max-h-[50vh] overflow-auto"
           />
         </div>
         {editMode && (
@@ -144,9 +151,9 @@ export const ContractResultCard: React.FC<ContractResultCardProps> = ({ result, 
           </div>
         )}
       </form>
-      <div className="mt-4 text-xs text-gray-400 dark:text-gray-500">
-        Created: {result.created_at ? new Date(result.created_at).toLocaleDateString() : '\u2014'}<br />
-        Updated: {result.updated_at ? new Date(result.updated_at).toLocaleDateString() : '\u2014'}
+      <div className="mt-4 text-xs text-muted ">
+        Created: {result.created_at ? dayjs(result.created_at).format('MMMM D, YYYY h:mm A') : '\u2014'}<br />
+        Updated: {result.updated_at ? dayjs(result.updated_at).format('MMMM D, YYYY h:mm A') : '\u2014'}
       </div>
     </div>
   );

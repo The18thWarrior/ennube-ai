@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { auth } from "@/auth"
 import { getSalesforceCredentialsById } from "@/lib/db/salesforce-storage"
 import { redirect } from "next/navigation"

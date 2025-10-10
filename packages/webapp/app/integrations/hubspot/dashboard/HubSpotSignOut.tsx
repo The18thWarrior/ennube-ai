@@ -26,7 +26,7 @@ export default function HubSpotSignOut() {
       router.push("/integrations/hubspot/connect");
       router.refresh();
     } catch (error) {
-      console.error("Failed to sign out:", error);
+      console.log("Failed to sign out:", error);
       setIsSigningOut(false);
     }
   };

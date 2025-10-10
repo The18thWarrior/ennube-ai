@@ -50,7 +50,7 @@ export function useBillingUsage(options: UseBillingUsageOptions = {}): UseBillin
       const data = await response.json();
       setUsage(data.total);
     } catch (err) {
-      console.error('Error fetching monthly usage:', err);
+      console.log('Error fetching monthly usage:', err);
       setError('Failed to load usage data');
     } finally {
       setLoading(false);

@@ -1,35 +1,29 @@
-import ExecuteButton from "./agents/data-steward/data-steward-execute-button"
-import UsageButton from "./agents/usage-button"
-import CustomLink from "./custom-link"
-import { MainNav } from "./main-nav"
-import { ThemeToggle } from "./theme-toggle"
-import UserButton from "./user-button"
-import { Button } from "@/components/ui/button"
-import Image from "next/image"
 
+import { auth } from "@/auth"
+import { isAdmin } from "@/lib/admin"
+import HeaderClient from "./header-client"
+import { SignIn } from "./auth-components";
+
+interface SessionUser { name: string | undefined | null; email: string | undefined | null; image: string | undefined | null};
 
 export default async function Header() {
-  return (
-    <header className="sticky flex justify-center border-b bg-transparent">
-      <div className="mx-auto flex h-16 w-full items-center justify-between px-4 sm:px-6">
-        <CustomLink href="/">
-          <Button variant="none" className="p-0 text-lg font-bold content-end flex items-center gap-2">
-            <Image
-              src="/logo.png"
-              alt="Home"
-              width="48"
-              height="48"
-              className="min-w-8"
-            />
-            Ennube.ai
-          </Button>
-        </CustomLink>
-        <MainNav />
-        <div className="flex items-center gap-4">
-          <ThemeToggle />
-          <UserButton />
-        </div>
-      </div>
-    </header>
-  )
+  const session = await auth();
+
+  // If there's no authenticated user, preserve the previous minimal header.
+  if (!session?.user) {
+    return null;
+    // return (
+    //   <header className="fixed top-0 left-0 right-0 z-40 bg-transparent">
+    //     <div className="mx-auto flex h-16 w-full items-center justify-between px-4 sm:px-6">
+    //       <SignIn provider={'auth0'} />
+    //     </div>
+    //   </header>
+    // )
+  }
+
+  const checkAdmin = isAdmin(session?.user?.auth0?.sub || '')
+
+  // Render a client component that will read the current pathname and
+  // manage the sticky positioning, floating button, and page padding.
+  return <HeaderClient checkAdmin={checkAdmin} user={session.user as SessionUser | null} />
 }

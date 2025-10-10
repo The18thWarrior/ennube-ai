@@ -11,6 +11,7 @@ import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 import { ArrowLeft, Save, Trash } from 'lucide-react';
+import { useTheme } from '@/components/theme-provider';
 
 interface User {
   user_id: string;
@@ -30,7 +31,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ subId: st
   const router = useRouter();
   const {subId} = use(params);
   const userId = decodeURI(subId);
-  
+  const { theme } = useTheme();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -60,7 +61,6 @@ export default function UserDetailPage({ params }: { params: Promise<{ subId: st
         }
         
         const data = await response.json();
-        console.log('Fetched users:', data);
         const userDetail = (data.users || []).find((u: User) => u.user_id === userId);
         
         if (!userDetail) {
@@ -78,7 +78,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ subId: st
           status: userDetail.status || 'active'
         });
       } catch (error) {
-        console.error('Error fetching user details:', error);
+        console.log('Error fetching user details:', error);
         toast.error('Failed to load user details');
         router.push('/account/users');
       } finally {
@@ -140,7 +140,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ subId: st
       
       toast.success('User updated successfully');
     } catch (error: any) {
-      console.error('Error updating user:', error);
+      console.log('Error updating user:', error);
       toast.error(error.message || 'Failed to update user');
     } finally {
       setIsSaving(false);
@@ -167,7 +167,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ subId: st
       toast.success('User deleted successfully');
       router.push('/account/users');
     } catch (error) {
-      console.error('Error deleting user:', error);
+      console.log('Error deleting user:', error);
       toast.error('Failed to delete user');
       setIsDeleting(false);
     }
@@ -187,7 +187,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ subId: st
     <div className="p-6">
       <div className="flex items-center gap-4 mb-6">
         <Button
-          variant="ghost"
+          variant={theme === 'dark' ? 'ghost' : 'outline'}
           size="sm"
           onClick={() => router.push('/account/users')}
           className="flex items-center gap-2"
@@ -256,7 +256,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ subId: st
             <div className="flex items-center justify-between pt-4">
               <div className="space-y-0.5">
                 <Label htmlFor="status">Active Status</Label>
-                <div className="text-sm text-gray-500">
+                <div className="text-sm text-muted-foreground">
                   {userForm.status === 'active' 
                     ? 'User can access the system' 
                     : 'User access is disabled'}
@@ -279,13 +279,13 @@ export default function UserDetailPage({ params }: { params: Promise<{ subId: st
             <CardContent>
               <dl className="space-y-4">
                 <div className="flex justify-between">
-                  <dt className="font-medium text-gray-500">User ID:</dt>
-                  <dd className="text-gray-700">{user?.user_id}</dd>
+                  <dt className="font-medium text-muted-foreground">User ID:</dt>
+                  <dd className="text-muted-foreground">{user?.user_id}</dd>
                 </div>
                 <Separator />
                 <div className="flex justify-between">
-                  <dt className="font-medium text-gray-500">Last Updated:</dt>
-                  <dd className="text-gray-700">
+                  <dt className="font-medium text-muted-foreground">Last Updated:</dt>
+                  <dd className="text-muted-foreground">
                     {user?.user_metadata?.lastUpdated 
                       ? new Date(user.user_metadata.lastUpdated).toLocaleString() 
                       : 'N/A'}
@@ -293,8 +293,8 @@ export default function UserDetailPage({ params }: { params: Promise<{ subId: st
                 </div>
                 <Separator />
                 <div className="flex justify-between">
-                  <dt className="font-medium text-gray-500">Created By:</dt>
-                  <dd className="text-gray-700">
+                  <dt className="font-medium text-muted-foreground">Created By:</dt>
+                  <dd className="text-muted-foreground">
                     {user?.user_metadata?.createdBy || 'N/A'}
                   </dd>
                 </div>

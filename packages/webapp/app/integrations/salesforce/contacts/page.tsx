@@ -10,7 +10,7 @@ export default async function SalesforceContacts() {
   
   // If user is not connected to Salesforce, redirect to connect page
   if (!session?.user?.salesforce) {
-    redirect("/salesforce/connect")
+    redirect("/integrations/salesforce/connect")
   }
   
   // Get Salesforce client
@@ -28,7 +28,7 @@ export default async function SalesforceContacts() {
           </div>
         </div>
         <Button asChild>
-          <CustomLink href="/salesforce/connect">Reconnect to Salesforce</CustomLink>
+          <CustomLink href="/integrations/salesforce/connect">Reconnect to Salesforce</CustomLink>
         </Button>
       </div>
     )
@@ -44,7 +44,7 @@ export default async function SalesforceContacts() {
     // );
     // contacts = result.records;
   } catch (e) {
-    console.error("Failed to fetch Salesforce contacts:", e);
+    console.log("Failed to fetch Salesforce contacts:", e);
     error = e instanceof Error ? e.message : "Unknown error";
   }
   
@@ -67,45 +67,45 @@ export default async function SalesforceContacts() {
         </div>
       ) : (
         <>
-          <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
+          <div className="p-4 bg-muted  rounded-lg">
             <div className="overflow-x-auto">
               <table className="w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50 dark:bg-gray-800">
+                <thead className="bg-muted ">
                   <tr>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Name
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Title
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Email
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Phone
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200">
+                <tbody className="  divide-y divide-gray-200">
                   {contacts.length > 0 ? (
                     contacts.map((contact: { Id: Key | null | undefined; Name: string | number | bigint | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<AwaitedReactNode> | null | undefined; Title: any; Email: any; Phone: any }) => (
-                      <tr key={contact.Id} className="hover:bg-gray-50 dark:hover:bg-gray-800">
+                      <tr key={contact.Id} className="hover:bg-muted ">
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                           {contact.Name}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
                           {contact.Title || "—"}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
                           {contact.Email || "—"}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
                           {contact.Phone || "—"}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
                           <Button size="sm" variant="outline" asChild>
                             <CustomLink href={`/salesforce/contacts/${contact.Id}`}>
                               View
@@ -116,7 +116,7 @@ export default async function SalesforceContacts() {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={5} className="px-6 py-4 text-center text-sm text-gray-500">
+                      <td colSpan={5} className="px-6 py-4 text-center text-sm text-muted-foreground">
                         No contacts found
                       </td>
                     </tr>

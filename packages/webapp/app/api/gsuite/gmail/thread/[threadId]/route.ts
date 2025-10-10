@@ -72,7 +72,7 @@ export async function GET(
     }
     return NextResponse.json(thread);
   } catch (error) {
-    console.error('Error retrieving email thread:', error);
+    console.log('Error retrieving email thread:', error);
     return NextResponse.json(
       { error: 'Failed to retrieve email thread: ' + (error instanceof Error ? error.message : String(error)) },
       { status: 500 }

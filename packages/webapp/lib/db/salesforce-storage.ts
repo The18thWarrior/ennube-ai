@@ -19,7 +19,7 @@ const pool = new Pool({
 // Test the connection and log success or error
 // pool.query('SELECT NOW()', (err, res) => {
 //   if (err) {
-//     console.error('Error connecting to PostgreSQL database:', err);
+//     console.log('Error connecting to PostgreSQL database:', err);
 //   } else {
 //     console.log('PostgreSQL connected successfully');
 //   }
@@ -32,6 +32,7 @@ export interface StoredSalesforceCredentials {
   accessToken: string;
   instanceUrl: string;
   refreshToken?: string;
+  describeEmbedUrl?: string;
   userInfo?: {
     id?: string;
     organization_id?: string;
@@ -55,7 +56,7 @@ export async function storeSalesforceCredentials(authResult: SalesforceAuthResul
   const session = await auth();
 
   if (!session || !session.user || !session.user.auth0) {
-    console.error("No session found");
+    console.log("No session found");
     return null;
   }
 
@@ -80,6 +81,7 @@ export async function storeSalesforceCredentials(authResult: SalesforceAuthResul
          SET access_token = $1, instance_url = $2, refresh_token = $3, 
              user_info_id = $4, user_info_organization_id = $5, user_info_display_name = $6,
              user_info_email = $7, user_info_organization_id_alt = $8,
+         describe_embed_url = $9,
              created_at = $9, expires_at = $10
          WHERE user_id = $11 AND type = 'sfdc'`,
         [
@@ -91,6 +93,7 @@ export async function storeSalesforceCredentials(authResult: SalesforceAuthResul
           authResult.userInfo?.display_name || null,
           authResult.userInfo?.email || null,
           authResult.userInfo?.organizationId || null,
+       authResult.describeEmbedUrl || null,
           createdAt,
           expiresAt,
           userSub
@@ -102,8 +105,8 @@ export async function storeSalesforceCredentials(authResult: SalesforceAuthResul
         `INSERT INTO ${CREDENTIALS_TABLE}
          (user_id, type, access_token, instance_url, refresh_token, 
           user_info_id, user_info_organization_id, user_info_display_name, 
-          user_info_email, user_info_organization_id_alt, created_at, expires_at)
-         VALUES ($1, 'sfdc', $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
+          user_info_email, user_info_organization_id_alt, describe_embed_url, created_at, expires_at)
+         VALUES ($1, 'sfdc', $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
         [
           userSub,
           authResult.accessToken,
@@ -114,6 +117,7 @@ export async function storeSalesforceCredentials(authResult: SalesforceAuthResul
           authResult.userInfo?.display_name || null,
           authResult.userInfo?.email || null,
           authResult.userInfo?.organizationId || null,
+          authResult.describeEmbedUrl || null,
           createdAt,
           expiresAt
         ]
@@ -122,7 +126,47 @@ export async function storeSalesforceCredentials(authResult: SalesforceAuthResul
     
     return sessionId;
   } catch (error) {
-    console.error("Error storing Salesforce credentials:", error);
+    console.log("Error storing Salesforce credentials:", error);
+    return null;
+  }
+}
+
+export async function updateSalesforceCredentials(authResult: SalesforceAuthResult): Promise<string | null> {
+  if (!authResult.success || !authResult.accessToken || !authResult.instanceUrl) {
+    return null;
+  }
+
+  try {
+    const createdAt = Date.now();
+    const expiresAt = createdAt + 2 * 60 * 60 * 1000; // 2 hours
+
+    // Check if user already has credentials stored
+    const checkResult = await pool.query(
+      `SELECT COUNT(*) FROM ${CREDENTIALS_TABLE} WHERE user_id = $1 AND type = 'sfdc'`,
+      [authResult.userId]
+    );
+    
+    const exists = parseInt(checkResult.rows[0].count) > 0;
+    
+    if (exists) {
+      // Update existing credentials
+      await pool.query(
+        `UPDATE ${CREDENTIALS_TABLE} 
+         SET access_token = $1, expires_at = $2
+         WHERE user_id = $3 AND type = 'sfdc'`,
+        [
+          authResult.accessToken,
+          expiresAt,
+          authResult.userId
+        ]
+      );
+    } else {
+     return null;
+    }
+    
+    return null;
+  } catch (error) {
+    console.log("Error storing Salesforce credentials:", error);
     return null;
   }
 }
@@ -134,7 +178,7 @@ export async function getSalesforceCredentialsById(): Promise<StoredSalesforceCr
   try {
     const session = await auth();
     if (!session || !session.user || !session.user.auth0) {
-      console.error("No session found");
+      console.log("No session found");
       return null;
     }
     
@@ -144,6 +188,7 @@ export async function getSalesforceCredentialsById(): Promise<StoredSalesforceCr
         access_token as "accessToken", 
         instance_url as "instanceUrl", 
         refresh_token as "refreshToken",
+  describe_embed_url as "describeEmbedUrl",
         created_at as "createdAt",
         expires_at as "expiresAt",
         jsonb_build_object(
@@ -159,7 +204,7 @@ export async function getSalesforceCredentialsById(): Promise<StoredSalesforceCr
     );
     
     if (result.rows.length === 0) {
-      console.error("No credentials found for user:", userSub);
+      console.log("No credentials found for user:", userSub);
       return null;
     }
     
@@ -173,7 +218,7 @@ export async function getSalesforceCredentialsById(): Promise<StoredSalesforceCr
 
     return credentials;
   } catch (error) {
-    console.error("Error retrieving Salesforce credentials:", error);
+    console.log("Error retrieving Salesforce credentials:", error);
     return null;
   }
 }
@@ -188,6 +233,7 @@ export async function getSalesforceCredentialsBySub(sub: string): Promise<Stored
         access_token as "accessToken", 
         instance_url as "instanceUrl", 
         refresh_token as "refreshToken",
+        describe_embed_url as "describeEmbedUrl",
         created_at as "createdAt",
         expires_at as "expiresAt",
         jsonb_build_object(
@@ -203,7 +249,7 @@ export async function getSalesforceCredentialsBySub(sub: string): Promise<Stored
     );
     
     if (result.rows.length === 0) {
-      console.error("No credentials found for sub:", sub);
+      console.log("No credentials found for sub:", sub);
       return null;
     }
     
@@ -217,7 +263,7 @@ export async function getSalesforceCredentialsBySub(sub: string): Promise<Stored
 
     return credentials;
   } catch (error) {
-    console.error("Error retrieving Salesforce credentials:", error);
+    console.log("Error retrieving Salesforce credentials:", error);
     return null;
   }
 }
@@ -229,7 +275,7 @@ export async function removeSalesforceCredentials(): Promise<boolean> {
   try {
     const session = await auth();
     if (!session || !session.user || !session.user.auth0) {
-      console.error("No session found");
+      console.log("No session found");
       return false;
     }
     
@@ -241,7 +287,34 @@ export async function removeSalesforceCredentials(): Promise<boolean> {
     
     return true;
   } catch (error) {
-    console.error("Error removing Salesforce credentials:", error);
+    console.log("Error removing Salesforce credentials:", error);
+    return false;
+  }
+}
+
+/**
+ * Update the describe_embed_url column for a specific user and credential type
+ * @param userId - the user's auth0 sub or identifier stored in user_id column
+ * @param type - credential type (e.g. 'sfdc')
+ * @param describeEmbedUrl - the new describe embed URL to set (or null to clear)
+ * @returns boolean - true if a row was updated, false otherwise
+ */
+export async function updateDescribeEmbedUrlByUserAndType(
+  userId: string,
+  describeEmbedUrl: string | null
+): Promise<boolean> {
+  try {
+    const result = await pool.query(
+      `UPDATE ${CREDENTIALS_TABLE}
+       SET describe_embed_url = $1
+       WHERE user_id = $2 AND type = 'sfdc'`,
+      [describeEmbedUrl, userId]
+    );
+
+    // rowCount > 0 means at least one row was updated
+    return (result.rowCount ?? 0) > 0;
+  } catch (error) {
+    console.log('Error updating describe_embed_url:', error);
     return false;
   }
 }
@@ -254,6 +327,6 @@ export async function closeConnection(): Promise<void> {
     await pool.end();
     console.log('PostgreSQL connection pool closed');
   } catch (error) {
-    console.error('Error closing PostgreSQL connection pool:', error);
+    console.log('Error closing PostgreSQL connection pool:', error);
   }
 }

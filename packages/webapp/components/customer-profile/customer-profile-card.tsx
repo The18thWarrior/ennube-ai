@@ -8,8 +8,12 @@
 // Notes:
 //   - Inline editing, validation, error handling
 
+"use client"
+
 import React, { useState } from 'react';
 import { CustomerProfile, useCustomerProfile } from '@/hooks/useCustomerProfile';
+import { Button, Input, Textarea } from '../ui';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
 
 interface CustomerProfileCardProps {
   profile: CustomerProfile;
@@ -28,7 +32,7 @@ interface CustomerProfileCardProps {
  */
 
 export const CustomerProfileCard: React.FC<CustomerProfileCardProps> = ({ profile, onSave, onClose }) => {
-  const { updateProfile, loading, error } = useCustomerProfile();
+  const { updateProfile, deleteProfile, loading, error } = useCustomerProfile();
   const [editMode, setEditMode] = useState(false);
   const [form, setForm] = useState<Partial<CustomerProfile>>({ ...profile });
   const [success, setSuccess] = useState<string | null>(null);
@@ -50,9 +54,9 @@ export const CustomerProfileCard: React.FC<CustomerProfileCardProps> = ({ profil
   };
 
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-6 w-full mx-auto">
+    <div className="bg-popover rounded-lg shadow p-6 w-full mx-auto max-h-[98dvh] scrollbar overflow-y-auto">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-xl font-semibold text-blue-700 dark:text-blue-300">{form.customerProfileName || 'Untitled Profile'}</h3>
+        <h3 className="text-xl font-semibold">{form.customerProfileName || 'Untitled Profile'}</h3>
         <div className="flex gap-2">
           {!editMode ? (
             <button
@@ -61,20 +65,26 @@ export const CustomerProfileCard: React.FC<CustomerProfileCardProps> = ({ profil
             >Edit</button>
           ) : (
             <button
-              className="bg-gray-300 hover:bg-gray-400 text-gray-800 text-sm px-4 py-2 rounded"
+              className="bg-gray-300 hover:bg-muted text-muted-foreground text-sm px-4 py-2 rounded"
               onClick={() => { setEditMode(false); setForm({ ...profile }); setSuccess(null); }}
             >Cancel</button>
           )}
+          <button
+            className="bg-red-600 hover:bg-red-700 text-white text-sm px-4 py-2 rounded"
+            onClick={async () => { const ok = await deleteProfile(profile.id!); if (ok && onClose) onClose(); }}
+            disabled={loading}
+          >Delete</button>
           {/* Close button */}
           {typeof onClose === 'function' && (
-            <button
-              className="bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm px-4 py-2 rounded"
+            <Button
+              variant="outline"
+              className="text-sm px-4 py-2 rounded"
               onClick={onClose}
               type="button"
               aria-label="Close"
             >
               Close
-            </button>
+            </Button>
           )}
         </div>
       </div>
@@ -82,18 +92,20 @@ export const CustomerProfileCard: React.FC<CustomerProfileCardProps> = ({ profil
       {error && <div className="mb-2 text-red-500 dark:text-red-400 text-sm">{error}</div>}
       <form className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4" onSubmit={e => { e.preventDefault(); handleSave(); }}>
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Active</label>
+          <label className="block text-sm font-medium text-muted-foreground ">Active</label>
           {editMode ? (
-            <select
-              name="active"
+            <Select
               value={form.active ? 'true' : 'false'}
-              onChange={e => setForm(f => ({ ...f, active: e.target.value === 'true' }))}
-              className="mt-1 block w-full outline outline-gray-300 dark:outline-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
-              required
+              onValueChange={(val: string) => setForm(f => ({ ...f, active: val === 'true' }))}
             >
-              <option value="true">Active</option>
-              <option value="false">Inactive</option>
-            </select>
+              <SelectTrigger className="">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="true">Active</SelectItem>
+                <SelectItem value="false">Inactive</SelectItem>
+              </SelectContent>
+            </Select>
           ) : (
             <span className={form.active ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400'}>
               {form.active ? 'Active' : 'Inactive'}
@@ -101,121 +113,121 @@ export const CustomerProfileCard: React.FC<CustomerProfileCardProps> = ({ profil
           )}
         </div>
         <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Profile Name</label>
-          <input
+          <label className="block text-sm font-medium text-muted-foreground ">Profile Name</label>
+          <Input
             type="text"
             name="customerProfileName"
             value={form.customerProfileName || ''}
             onChange={handleChange}
             disabled={!editMode}
-            className="mt-1 block w-full outline outline-gray-300 dark:outline-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
+            className="mt-1 block w-full outline rounded px-3 py-2"
             required
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Industries</label>
-          <input
+          <label className="block text-sm font-medium text-muted-foreground ">Industries</label>
+          <Input
             type="text"
             name="commonIndustries"
             value={form.commonIndustries || ''}
             onChange={handleChange}
             disabled={!editMode}
-            className="mt-1 block w-full outline outline-gray-300 dark:outline-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
+            className="mt-1 block w-full outline rounded px-3 py-2"
             placeholder="e.g. Finance;Healthcare"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Products</label>
-          <input
+          <label className="block text-sm font-medium text-muted-foreground ">Products</label>
+          <Input
             type="text"
             name="frequentlyPurchasedProducts"
             value={form.frequentlyPurchasedProducts || ''}
             onChange={handleChange}
             disabled={!editMode}
-            className="mt-1 block w-full outline outline-gray-300 dark:outline-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
+            className="mt-1 block w-full outline rounded px-3 py-2"
             placeholder="e.g. CRM;Analytics"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Regions</label>
-          <input
+          <label className="block text-sm font-medium text-muted-foreground ">Regions</label>
+          <Input
             type="text"
             name="geographicRegions"
             value={form.geographicRegions || ''}
             onChange={handleChange}
             disabled={!editMode}
-            className="mt-1 block w-full outline outline-gray-300 dark:outline-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
+            className="mt-1 block w-full outline rounded px-3 py-2"
             placeholder="e.g. US;Europe"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Avg Days to Close</label>
-          <input
+          <label className="block text-sm font-medium text-muted-foreground ">Avg Days to Close</label>
+          <Input
             type="number"
             name="averageDaysToClose"
             value={form.averageDaysToClose ?? ''}
             onChange={handleChange}
             disabled={!editMode}
-            className="mt-1 block w-full outline outline-gray-300 dark:outline-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
+            className="mt-1 block w-full outline rounded px-3 py-2"
             min={0}
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Social Media Presence</label>
-          <input
+          <label className="block text-sm font-medium text-muted-foreground ">Social Media Presence</label>
+          <Input
             type="text"
             name="socialMediaPresence"
             value={form.socialMediaPresence || ''}
             onChange={handleChange}
             disabled={!editMode}
-            className="mt-1 block w-full outline outline-gray-300 dark:outline-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
+            className="mt-1 block w-full outline rounded px-3 py-2"
             placeholder="e.g. Strong;Weak"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Channel Recommendation</label>
-          <input
+          <label className="block text-sm font-medium text-muted-foreground ">Channel Recommendation</label>
+          <Input
             type="text"
             name="channelRecommendation"
             value={form.channelRecommendation || ''}
             onChange={handleChange}
             disabled={!editMode}
-            className="mt-1 block w-full outline outline-gray-300 dark:outline-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
+            className="mt-1 block w-full outline rounded px-3 py-2"
             placeholder="e.g. Email;Phone"
           />
         </div>
         <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Account Strategy</label>
-          <textarea
+          <label className="block text-sm font-medium text-muted-foreground ">Account Strategy</label>
+          <Textarea
             name="accountStrategy"
             value={form.accountStrategy || ''}
             onChange={handleChange}
             disabled={!editMode}
-            className="mt-1 block w-full outline outline-gray-300 dark:outline-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
+            className="mt-1 block w-full outline rounded px-3 py-2"
             rows={2}
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Employee Size</label>
-          <input
+          <label className="block text-sm font-medium text-muted-foreground ">Employee Size</label>
+          <Input
             type="text"
             name="accountEmployeeSize"
             value={form.accountEmployeeSize || ''}
             onChange={handleChange}
             disabled={!editMode}
-            className="mt-1 block w-full outline outline-gray-300 dark:outline-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
+            className="mt-1 block w-full outline rounded px-3 py-2"
             placeholder="e.g. 5-10"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Lifecycle</label>
-          <input
+          <label className="block text-sm font-medium text-muted-foreground ">Lifecycle</label>
+          <Input
             type="text"
             name="accountLifecycle"
             value={form.accountLifecycle || ''}
             onChange={handleChange}
             disabled={!editMode}
-            className="mt-1 block w-full outline outline-gray-300 dark:outline-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
+            className="mt-1 block w-full outline rounded px-3 py-2"
             placeholder="e.g. Enterprise"
           />
         </div>
@@ -231,7 +243,7 @@ export const CustomerProfileCard: React.FC<CustomerProfileCardProps> = ({ profil
           </div>
         )}
       </form>
-      <div className="mt-4 text-xs text-gray-400 dark:text-gray-500">
+      <div className="mt-4 text-xs text-muted ">
         Created: {profile.createdAt ? new Date(profile.createdAt).toLocaleDateString() : '—'}<br />
         Updated: {profile.updatedAt ? new Date(profile.updatedAt).toLocaleDateString() : '—'}
       </div>

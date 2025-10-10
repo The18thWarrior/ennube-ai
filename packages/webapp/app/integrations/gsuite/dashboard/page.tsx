@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { auth } from "@/auth"
 import { Button } from "@/components/ui/button"
 import CustomLink from "@/components/custom-link"
@@ -40,7 +41,7 @@ export default async function GSuiteDashboard() {
   try {
     userInfo = await gsuiteClient.getUserInfo();
   } catch (e) {
-    console.error("Failed to fetch Google user info:", e);
+    console.log("Failed to fetch Google user info:", e);
     error = e instanceof Error ? e.message : "Unknown error";
   }
   
@@ -73,7 +74,7 @@ export default async function GSuiteDashboard() {
           
           {/* User Info */}
           {userInfo && (
-            <div className="p-6 bg-gray-50 dark:bg-gray-900 rounded-lg">
+            <div className="p-6 bg-popover  rounded-lg">
               <h2 className="text-xl font-semibold mb-4">Account Information</h2>
               <div className="flex items-center gap-4 mb-4">
                 <Avatar className="h-16 w-16">
@@ -82,7 +83,7 @@ export default async function GSuiteDashboard() {
                 </Avatar>
                 <div>
                   <p className="text-lg font-medium">{userInfo.name}</p>
-                  <p className="text-gray-500">{userInfo.email}</p>
+                  <p className="text-muted-foreground">{userInfo.email}</p>
                   <div className="flex mt-1 space-x-2">
                     <Badge variant="outline" className="bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300 border-blue-200">
                       Google Workspace
@@ -94,7 +95,7 @@ export default async function GSuiteDashboard() {
           )}
           
           {/* Quick Actions */}
-          {displayQuickActions &&  <div className="p-6 bg-gray-50 dark:bg-gray-900 rounded-lg">
+          {displayQuickActions &&  <div className="p-6 bg-popover  rounded-lg">
             <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Button asChild variant="outline" className="h-auto py-4 px-6 flex flex-col items-center justify-center gap-2">
@@ -125,7 +126,7 @@ export default async function GSuiteDashboard() {
       )}
       
       {/* Administration Section */}
-      <div className="p-6 bg-gray-50 dark:bg-gray-900 rounded-lg">
+      <div className="p-6 bg-muted  rounded-lg">
         <h2 className="text-xl font-semibold mb-4">Administration</h2>
         <div className="flex flex-col space-y-4">
           <div className="flex flex-row space-x-4">

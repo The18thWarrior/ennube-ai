@@ -4,7 +4,7 @@
  * This class provides methods for creating and managing secondary users
  * and their license relationships with the primary account.
  */
-import { ManagementClient } from 'auth0';
+import { ManagementClient, RequiredError } from 'auth0';
 import { auth } from '@/auth';
 import { createLicense, updateLicenseParent, LicenseStatus, updateLicenseStatus } from '@/lib/db/license-storage';
 
@@ -56,14 +56,14 @@ class Auth0Manager {
     // this.managementClient.stats.getActiveUsersCount().then((result) => {
     //     console.log('Active users count:', result.data);
     // }).catch((error) => {
-    //     console.error('Error fetching active users count:', error)
+    //     console.log('Error fetching active users count:', error)
     // });
   }
 
   /**
    * Create a secondary user and associate them with the current user via license
    */
-  async createSecondaryUser(params: CreateUserParams): Promise<Auth0User | null> {
+  async createSecondaryUser(params: CreateUserParams): Promise<Auth0User | unknown> {
     try {
       // Get the current user's session to extract their sub ID
       const session = await auth();
@@ -107,9 +107,9 @@ class Auth0Manager {
       
       console.log(`Secondary user created: ${newUser.email} (${newUser.user_id})`);
       return newUser;
-    } catch (error) {
-      console.error('Error creating secondary user:', error);
-      return null;
+    } catch (error: RequiredError | any) {
+      console.log('Error creating secondary user:', error);
+      return error.msg as string || 'Error creating secondary user';
     }
   }
 
@@ -173,7 +173,7 @@ class Auth0Manager {
       console.log(`Secondary user updated: ${updatedUser.email} (${updatedUser.user_id})`);
       return updatedUser;
     } catch (error) {
-      console.error('Error updating secondary user:', error);
+      console.log('Error updating secondary user:', error);
       return null;
     }
   }
@@ -202,7 +202,7 @@ class Auth0Manager {
       
       return users;
     } catch (error) {
-      console.error('Error getting secondary users:',);
+      console.log('Error getting secondary users:',);
       return [];
     }
   }
@@ -227,7 +227,7 @@ class Auth0Manager {
       console.log(`Secondary user deleted: ${userId}`);
       return true;
     } catch (error) {
-      console.error('Error deleting secondary user:', error);
+      console.log('Error deleting secondary user:', error);
       return false;
     }
   }
@@ -276,7 +276,7 @@ class Auth0Manager {
       console.log(`Transferred ${updateCount} secondary users to new parent: ${newParentSubId}`);
       return updateCount;
     } catch (error) {
-      console.error('Error transferring secondary users:', error);
+      console.log('Error transferring secondary users:', error);
       return 0;
     }
   }
@@ -304,7 +304,7 @@ export async function getToken() {
       const data = await response.json();
       return data.access_token;
   } catch (error) {
-      console.error('Error fetching token:', error);
+      console.log('Error fetching token:', error);
       return null;
   }
 };

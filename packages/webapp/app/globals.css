@@ -12,57 +12,96 @@
 
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
+    
+    /* The vibrant magenta/pink used in the primary "Get Started" buttons. */
+    --primary: 326 85% 60%; 
+    /* White text for buttons with a primary background. */
+    --primary-foreground: 0 0% 100%; 
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* The purple/lavender color used for the active "Home" link and as the start of gradients. */
+    --accent: 265 58% 65%;
+    /* Dark text for use on a potential secondary background. */
+    --accent-foreground: 222.2 84% 4.9%;
+
+    --muted: 210 40% 96.1%;
+    /* The gray text for paragraphs and inactive navigation links. */
+    --muted-foreground: 215.4 16.3% 46.9%;
 
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
+    /* The light gray border for the "Chat Demo" button. */
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --ring: 265 58% 65%;
 
+    /* The border radius for the buttons, visually closer to 0.75rem. */
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
+    --background: 240 10% 3.9%;
     --foreground: 210 40% 98%;
 
-    --card: 222.2 84% 4.9%;
+    --card: 240 10% 3.9%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 222.2 84% 4.9%;
+    --popover: 240 10% 3.9%;
     --popover-foreground: 210 40% 98%;
+    
+    /* The vibrant magenta from the light theme, which remains accessible on a dark background. */
+    --primary: 326 85% 60%; 
+    /* White text provides high contrast on the primary button color. */
+    --primary-foreground: 0 0% 100%; 
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    /* The purple/lavender from the light theme, used for links and gradients. */
+    --accent: 265 58% 65%;
+    /* White text for use on a potential secondary background. */
+    --accent-foreground: 0 0% 100%;
+
+    --muted: 217.2 32.6% 17.5%;
+    /* A lighter gray for secondary text to ensure readability. */
+    --muted-foreground: 240 5% 64.9%;
 
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
+    /* A subtle, dark border that's slightly visible against the background. */
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    /* The on-brand secondary color is used for focus rings to make them pop. */
+    --ring: 265 58% 65%;
+  }
+
+  .lavender {
+    --background: 270 40% 8%;
+    --foreground: 240 33% 96%;
+
+    --card: 265 48% 14%;
+    --card-foreground: 240 33% 96%;
+
+    --popover: 265 48% 14%;
+    --popover-foreground: 240 33% 96%;
+
+    --primary: 265 58% 65%;
+    --primary-foreground: 240 33% 96%;
+    --secondary: 220 85% 60%;
+    --secondary-foreground: 220 85% 96%;
+    --muted: 265 48% 54%;
+    --muted-foreground: 248 48% 78%;
+    --accent: 298 69% 64%;
+    --accent-foreground: 240 33% 96%;
+    --destructive: 0 79% 61%;
+    --destructive-foreground: 240 33% 96%;
+    --border: 0 0% 20%;
+    --input: 260 27% 23%;
+    --ring: 265 58% 65%;
   }
 }
 

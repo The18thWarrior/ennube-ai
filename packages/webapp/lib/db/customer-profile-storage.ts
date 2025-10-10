@@ -48,7 +48,7 @@ export interface CustomerProfile {
 export async function saveCustomerProfile(profile: Omit<CustomerProfile, 'id' | 'createdAt' | 'updatedAt'>): Promise<string | null> {
   try {
     if (!profile.userId || !profile.customerProfileName) {
-      console.error('Cannot save customer profile: Missing userId or customerProfileName');
+      console.log('Cannot save customer profile: Missing userId or customerProfileName');
       return null;
     }
     const now = new Date().toISOString();
@@ -78,7 +78,7 @@ export async function saveCustomerProfile(profile: Omit<CustomerProfile, 'id' | 
     );
     return insertResult.rows[0].id;
   } catch (error) {
-    console.error('Error saving customer profile:', error);
+    console.log('Error saving customer profile:', error);
     return null;
   }
 }
@@ -89,7 +89,7 @@ export async function saveCustomerProfile(profile: Omit<CustomerProfile, 'id' | 
 export async function getCustomerProfile(id: string): Promise<CustomerProfile | null> {
   try {
     if (!id) {
-      console.error('Cannot get customer profile: No ID provided');
+      console.log('Cannot get customer profile: No ID provided');
       return null;
     }
     const result = await pool.query(
@@ -107,7 +107,7 @@ export async function getCustomerProfile(id: string): Promise<CustomerProfile | 
     }
     return null;
   } catch (error) {
-    console.error('Error getting customer profile:', error);
+    console.log('Error getting customer profile:', error);
     return null;
   }
 }
@@ -118,7 +118,7 @@ export async function getCustomerProfile(id: string): Promise<CustomerProfile | 
 export async function getUserCustomerProfiles(userId: string): Promise<CustomerProfile[]> {
   try {
     if (!userId) {
-      console.error('Cannot get customer profiles: No userId provided');
+      console.log('Cannot get customer profiles: No userId provided');
       return [];
     }
     const result = await pool.query(
@@ -133,7 +133,7 @@ export async function getUserCustomerProfiles(userId: string): Promise<CustomerP
     );
     return result.rows as CustomerProfile[];
   } catch (error) {
-    console.error('Error getting user customer profiles:', error);
+    console.log('Error getting user customer profiles:', error);
     return [];
   }
 }
@@ -144,7 +144,7 @@ export async function getUserCustomerProfiles(userId: string): Promise<CustomerP
 export async function updateCustomerProfile(id: string, updates: Partial<Omit<CustomerProfile, 'id' | 'createdAt' | 'updatedAt'>>): Promise<boolean> {
   try {
     if (!id) {
-      console.error('Cannot update customer profile: No ID provided');
+      console.log('Cannot update customer profile: No ID provided');
       return false;
     }
     const updateFields: string[] = [];
@@ -167,7 +167,7 @@ export async function updateCustomerProfile(id: string, updates: Partial<Omit<Cu
     );
     return result.rows.length > 0;
   } catch (error) {
-    console.error('Error updating customer profile:', error);
+    console.log('Error updating customer profile:', error);
     return false;
   }
 }
@@ -178,7 +178,7 @@ export async function updateCustomerProfile(id: string, updates: Partial<Omit<Cu
 export async function deleteCustomerProfile(id: string): Promise<boolean> {
   try {
     if (!id) {
-      console.error('Cannot delete customer profile: No ID provided');
+      console.log('Cannot delete customer profile: No ID provided');
       return false;
     }
     const result = await pool.query(
@@ -187,7 +187,7 @@ export async function deleteCustomerProfile(id: string): Promise<boolean> {
     );
     return result.rows.length > 0;
   } catch (error) {
-    console.error('Error deleting customer profile:', error);
+    console.log('Error deleting customer profile:', error);
     return false;
   }
 }

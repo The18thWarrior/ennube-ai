@@ -29,14 +29,14 @@ export async function GET(request: NextRequest) {
       
       return NextResponse.redirect(authorizationUrl);
     } catch (error) {
-      console.error('Error generating GSuite authorization URL:', error);
+      console.log('Error generating GSuite authorization URL:', error);
       return NextResponse.json(
         { error: 'Failed to generate authorization URL' },
         { status: 500 }
       );
     }
   } catch (error) {
-    console.error('Error processing authorization request:', error);
+    console.log('Error processing authorization request:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

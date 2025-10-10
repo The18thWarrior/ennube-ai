@@ -1,11 +1,11 @@
 import { getAllActiveSettings, FrequencyType } from '@/lib/db/agent-settings-storage';
-import { getUserUsageLogsBySub, UsageLogEntry } from '@/lib/db/usage-logs';
+import { getUserUsageLogsBySub } from '@/lib/db/usage-logs';
 import { getCustomerSubscription } from '@/lib/stripe';
-import { getSubscriptionLimit } from '@/lib/stripe-context';
+import { getSubscriptionLimit } from '@/lib/utils';
 import { NextResponse } from 'next/server';
 export async function GET(request: Request) {
   try {
-
+    console.log('api/webhooks/agent/execute called')
     if (request.headers.get('Authorization') !== `Bearer ${process.env.CRON_SECRET}`) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -110,18 +110,24 @@ export async function GET(request: Request) {
           
           // Call the appropriate agent API
           try {
-            const response = await fetch(`${url.origin}/api/agents/${setting.agent}`, {
-              method: 'POST',
+            const webhookUrl = setting.agent === 'prospect-finder' ? process.env.PROSPECTFINDER_WEBHOOK_URL : process.env.DATASTEWARD_WEBHOOK_URL;
+            if (!webhookUrl) {
+              return NextResponse.json(
+                { error: `${setting.agent} webhook URL is not configured` },
+                { status: 500 }
+              );
+            }
+            
+            const url2 = `${webhookUrl}?limit=${safeBatchSize}&subId=${setting.userId}`;
+            console.log(`${setting.agent} webhook URL: ${url2}`);
+            // Make the request to the agent webhook
+            const response = await fetch(url2, {
+              method: 'GET',
               headers: {
                 'Content-Type': 'application/json',
               },
-              body: JSON.stringify({
-                userId: setting.userId,
-                batchSize: safeBatchSize,
-                automated: true,
-                frequency: frequency
-              })
             });
+            console.log(`Calling agent API at ${url2} with userId ${setting.userId} and batchSize ${safeBatchSize}`);
             
             if (!response.ok) {
               throw new Error(`Agent API returned ${response.status}: ${response.statusText}`);
@@ -129,7 +135,7 @@ export async function GET(request: Request) {
             
             agentResponse = await response.json();
           } catch (agentError: any) {
-            console.error(`Error calling agent ${setting.agent} for user ${setting.userId}:`, agentError);
+            console.log(`Error calling agent ${setting.agent} for user ${setting.userId}:`, agentError);
             results.push({
               userId: setting.userId,
               agent: setting.agent,
@@ -154,7 +160,7 @@ export async function GET(request: Request) {
           });
         }
       } catch (error: any) {
-        console.error(`Error processing setting for user ${setting.userId}, agent ${setting.agent}:`, error);
+        console.log(`Error processing setting for user ${setting.userId}, agent ${setting.agent}:`, error);
         results.push({
           userId: setting.userId,
           agent: setting.agent,
@@ -183,7 +189,7 @@ export async function GET(request: Request) {
       results
     });
   } catch (error: any) {
-    console.error('Error executing agents:', error);
+    console.log('Error executing agents:', error);
     return NextResponse.json({ 
       timestamp: new Date().toISOString(),
       error: error.message || 'An unexpected error occurred',
@@ -191,3 +197,4 @@ export async function GET(request: Request) {
     }, { status: 500 });
   }
 }
+export const dynamic = 'force-dynamic';

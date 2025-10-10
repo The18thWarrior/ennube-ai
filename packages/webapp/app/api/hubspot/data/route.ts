@@ -109,7 +109,7 @@ export async function GET(request: NextRequest) {
     
     return NextResponse.json({ success: true, data: record });
   } catch (error) {
-    console.error('Error retrieving HubSpot record:', error);
+    console.log('Error retrieving HubSpot record:', error);
     return NextResponse.json(
       {
         error: error instanceof Error ? error.message : 'An unexpected error occurred'
@@ -141,7 +141,7 @@ export async function POST(request: NextRequest) {
     
     return NextResponse.json({ success: true, id });
   } catch (error) {
-    console.error('Error creating HubSpot record:', error);
+    console.log('Error creating HubSpot record:', error);
     return NextResponse.json(
       {
         error: error instanceof Error ? error.message : 'An unexpected error occurred'
@@ -180,24 +180,26 @@ export async function PUT(request: NextRequest) {
     const data = await request.json();
     let mappedData: Record<string, any> = {};
     let notes: string[] = [];
+
+    console.log('data to update:', data);
     if (objectType === 'companies') {
       const {fields, notes: companyNotes} = mapFieldsCompany(data, companyFields);
       mappedData = fields;
       notes = companyNotes;
     }
-
+    mappedData = { ...mappedData, 'ennube_enrichment_description': JSON.stringify(data) };
     console.info('Mapped data for HubSpot update:', mappedData);
     // Update the record
     const success = await client!.update(objectType!, id, mappedData);
 
     if (notes.length > 0) {
       // Add notes if provided
-      await client!.addNotes(objectType!, id, notes);
+      //await client!.addNotes(objectType!, id, notes);
     }
     
     return NextResponse.json({ success });
   } catch (error) {
-    console.error('Error updating HubSpot record:', error);
+    console.log('Error updating HubSpot record:', error);
     return NextResponse.json(
       {
         error: error instanceof Error ? error.message : 'An unexpected error occurred'
@@ -235,7 +237,7 @@ export async function DELETE(request: NextRequest) {
     
     return NextResponse.json({ success });
   } catch (error) {
-    console.error('Error deleting HubSpot record:', error);
+    console.log('Error deleting HubSpot record:', error);
     return NextResponse.json(
       {
         error: error instanceof Error ? error.message : 'An unexpected error occurred'
@@ -289,7 +291,7 @@ export async function PATCH(request: NextRequest) {
     
     return NextResponse.json({ success: true, results });
   } catch (error) {
-    console.error('Error executing HubSpot batch operation:', error);
+    console.log('Error executing HubSpot batch operation:', error);
     return NextResponse.json(
       {
         error: error instanceof Error ? error.message : 'An unexpected error occurred'

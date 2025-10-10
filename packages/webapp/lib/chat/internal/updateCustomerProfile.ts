@@ -10,7 +10,7 @@
 
 // import { updateCustomerProfile } from "@/lib/db/customer-profile-storage";
 import { tool } from "ai";
-import z from "zod";
+import z from "zod/v4";
 import { getBaseUrl } from "../helper";
 import { buildCalloutWithHeader } from "@/lib/n8n/utils";
 
@@ -27,13 +27,15 @@ import { buildCalloutWithHeader } from "@/lib/n8n/utils";
 export const updateCustomerProfileTool = (userId: string) => {
     return tool({
         description: "Update a customer profile by ID. Accepts partial fields to update.",
-        parameters: z.object({
+        inputSchema: z.object({
             id: z.string().min(1, "id is required"),
-            updates: z.record(z.any()).refine(obj => Object.keys(obj).length > 0, {
-            message: "At least one field to update is required."
+            // Accept arbitrary update fields as a record — ensures unknown keys are preserved
+            // z.record in this zod version requires (keyType, valueType)
+            updates: z.record(z.string(), z.any()).refine(obj => Object.keys(obj).length > 0, {
+                message: "At least one field to update is required."
             })
         }),
-        async execute({ id, updates }) {
+        execute: async ({ id, updates }) => {
             if (!userId) {
                 return { success: false, message: "Unauthorized: userId is required" };
             }

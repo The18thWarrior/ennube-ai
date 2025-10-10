@@ -64,7 +64,7 @@ export async function storePostgresUrl(instanceUrl: string): Promise<string | nu
   if (!instanceUrl) return null;
   const session = await auth();
   if (!session || !session.user || !session.user.auth0) {
-    console.error('No session found');
+    console.log('No session found');
     return null;
   }
   try {
@@ -91,7 +91,7 @@ export async function storePostgresUrl(instanceUrl: string): Promise<string | nu
     }
     return sessionId;
   } catch (error) {
-    console.error('Error storing Postgres URL:', error);
+    console.log('Error storing Postgres URL:', error);
     return null;
   }
 }
@@ -103,7 +103,7 @@ export async function getPostgresUrlById(): Promise<StoredPostgresUrl | null> {
   try {
     const session = await auth();
     if (!session || !session.user || !session.user.auth0) {
-      console.error('No session found');
+      console.log('No session found');
       return null;
     }
     const userSub = session.user.auth0.sub;
@@ -121,7 +121,7 @@ export async function getPostgresUrlById(): Promise<StoredPostgresUrl | null> {
     }
     return urlObj;
   } catch (error) {
-    console.error('Error retrieving Postgres URL:', error);
+    console.log('Error retrieving Postgres URL:', error);
     return null;
   }
 }
@@ -145,7 +145,7 @@ export async function getPostgresUrlBySub(sub: string): Promise<StoredPostgresUr
     }
     return urlObj;
   } catch (error) {
-    console.error('Error retrieving Postgres URL:', error);
+    console.log('Error retrieving Postgres URL:', error);
     return null;
   }
 }
@@ -157,7 +157,7 @@ export async function removePostgresUrl(): Promise<boolean> {
   try {
     const session = await auth();
     if (!session || !session.user || !session.user.auth0) {
-      console.error('No session found');
+      console.log('No session found');
       return false;
     }
     const userSub = session.user.auth0.sub;
@@ -167,7 +167,7 @@ export async function removePostgresUrl(): Promise<boolean> {
     );
     return true;
   } catch (error) {
-    console.error('Error removing Postgres URL:', error);
+    console.log('Error removing Postgres URL:', error);
     return false;
   }
 }
@@ -179,7 +179,7 @@ export async function updatePostgresUrl(instanceUrl: string): Promise<boolean> {
   try {
     const session = await auth();
     if (!session || !session.user || !session.user.auth0) {
-      console.error('No session found');
+      console.log('No session found');
       return false;
     }
     const userSub = session.user.auth0.sub;
@@ -190,7 +190,7 @@ export async function updatePostgresUrl(instanceUrl: string): Promise<boolean> {
       [userSub]
     );
     if (parseInt(checkResult.rows[0].count) === 0) {
-      console.error('No existing Postgres URL found to update');
+      console.log('No existing Postgres URL found to update');
       return false;
     }
     await pool.query(
@@ -199,7 +199,7 @@ export async function updatePostgresUrl(instanceUrl: string): Promise<boolean> {
     );
     return true;
   } catch (error) {
-    console.error('Error updating Postgres URL:', error);
+    console.log('Error updating Postgres URL:', error);
     return false;
   }
 }
@@ -212,7 +212,7 @@ export async function closeConnection(): Promise<void> {
     await pool.end();
     console.log('PostgreSQL connection pool closed');
   } catch (error) {
-    console.error('Error closing PostgreSQL connection pool:', error);
+    console.log('Error closing PostgreSQL connection pool:', error);
   }
 }
 

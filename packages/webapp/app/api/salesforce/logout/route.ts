@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error removing Salesforce credentials:', error);
+    console.log('Error removing Salesforce credentials:', error);
     return NextResponse.json({ 
       success: false, 
       error: error instanceof Error ? error.message : 'An unexpected error occurred' 

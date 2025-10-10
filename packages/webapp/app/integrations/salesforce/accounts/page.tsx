@@ -7,14 +7,13 @@ import { getSalesforceCredentialsById } from "@/lib/db/salesforce-storage"
 
 export default async function SalesforceAccounts() {
   const session = await auth()
-  console.log('Session:', session?.user?.auth0)
   // Check if we have a Salesforce client from either OAuth or direct authentication
   const salesforceCredentials = await getSalesforceCredentialsById()
   if (!salesforceCredentials) {
     console.log('No Salesforce credentials found, redirecting to connect page')
     redirect("/integrations/salesforce/connect");
   }
-  const salesforceClient = new SalesforceClient(salesforceCredentials.accessToken, salesforceCredentials.instanceUrl, salesforceCredentials.refreshToken);
+  const salesforceClient = new SalesforceClient(salesforceCredentials.accessToken, salesforceCredentials.instanceUrl, salesforceCredentials.refreshToken as string);
   // If no Salesforce client available and no OAuth session, redirect to connect page
   if (!salesforceClient) {
     console.log('No Salesforce client found, redirecting to connect page')
@@ -50,7 +49,7 @@ export default async function SalesforceAccounts() {
     );
     accounts = result.records;
   } catch (e) {
-    console.error("Failed to fetch Salesforce accounts:", e);
+    console.log("Failed to fetch Salesforce accounts:", e);
     error = e instanceof Error ? e.message : "Unknown error";
   }
   
@@ -73,55 +72,55 @@ export default async function SalesforceAccounts() {
         </div>
       ) : (
         <>
-          <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
+          <div className="p-4 bg-muted  rounded-lg">
             <div className="overflow-x-auto">
               <table className="w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50 dark:bg-gray-800">
+                <thead className="bg-muted ">
                   <tr>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Name
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Type
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Industry
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Phone
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Website
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200">
+                <tbody className="  divide-y divide-gray-200">
                   {accounts.length > 0 ? (
                     accounts.map((account) => (
-                      <tr key={account.Id} className="hover:bg-gray-50 dark:hover:bg-gray-800">
+                      <tr key={account.Id} className="hover:bg-muted ">
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                           {account.Name}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
                           {account.Type || "—"}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
                           {account.Industry || "—"}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
                           {account.Phone || "—"}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
                           {account.Website ? (
                             <a href={account.Website} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
                               {account.Website}
                             </a>
                           ) : "—"}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
                           <Button size="sm" variant="outline" asChild>
                             <CustomLink href={`/integrations/salesforce/accounts/${account.Id}`}>
                               View
@@ -132,7 +131,7 @@ export default async function SalesforceAccounts() {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={6} className="px-6 py-4 text-center text-sm text-gray-500">
+                      <td colSpan={6} className="px-6 py-4 text-center text-sm text-muted-foreground">
                         No accounts found
                       </td>
                     </tr>

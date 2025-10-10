@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
       message: 'Successfully disconnected Google account'
     });
   } catch (error) {
-    console.error('Error logging out of GSuite:', error);
+    console.log('Error logging out of GSuite:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

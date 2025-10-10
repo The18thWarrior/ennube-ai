@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSalesforceCredentialsBySub } from '@/lib/db/salesforce-storage';
 import { createSalesforceClient, SalesforceClient } from '@/lib/salesforce';
 import { SalesforceAuthResult } from '@/lib/types';
+import { insertLog } from '@/lib/db/log-storage';
 /**
  * Helper function to get a Salesforce client from the sub parameter
  */
@@ -55,6 +56,7 @@ async function getSalesforceClientFromSub(request: NextRequest): Promise<{
   // Create a Salesforce client from the stored credentials
   const authResult: SalesforceAuthResult = {
     success: true,
+    userId: sub,
     accessToken: credentials.accessToken,
     instanceUrl: credentials.instanceUrl,
     refreshToken: credentials.refreshToken,
@@ -110,7 +112,12 @@ export async function POST(request: NextRequest) {
     const sub = request.nextUrl.searchParams.get('sub') as string;
     const agent = request.nextUrl.searchParams.get('agent') as string;
     //await logUsage(sub, agent, 'create', 1, 0, sobjectType);
-    
+    await insertLog({
+      userId: sub,
+      type: 'save',
+      action: `Created record: ${sobjectType} with ID ${recordId}`,
+      credits: 1 // Assuming each query costs 1 credit, adjust as needed
+    });
     // Return the ID of the newly created record
     return NextResponse.json({ 
       success: true, 
@@ -119,7 +126,7 @@ export async function POST(request: NextRequest) {
     });
     
   } catch (error) {
-    console.error('Error creating Salesforce record:', error);
+    console.log('Error creating Salesforce record:', error);
     return NextResponse.json(
       { 
         error: 'Failed to create Salesforce record',
@@ -182,6 +189,12 @@ export async function PUT(request: NextRequest) {
       console.log('Record updated successfully:', success);
       const sub = request.nextUrl.searchParams.get('sub') as string;
       const agent = request.nextUrl.searchParams.get('agent') as string;
+      await insertLog({
+        userId: sub,
+        type: 'save',
+        action: `Updated record: ${sobjectType} with ID ${data.Id}`,
+        credits: 1 // Assuming each query costs 1 credit, adjust as needed
+      });
       //await logUsage(sub, agent, 'update', 0, 1, sobjectType);
     }
     
@@ -193,7 +206,7 @@ export async function PUT(request: NextRequest) {
     });
     
   } catch (error) {
-    console.error('Error updating Salesforce record:', error);
+    console.log('Error updating Salesforce record:', error);
     return NextResponse.json(
       { 
         error: 'Failed to update Salesforce record',
@@ -243,6 +256,12 @@ export async function DELETE(request: NextRequest) {
     if (success) {
       const sub = request.nextUrl.searchParams.get('sub') as string;
       const agent = request.nextUrl.searchParams.get('agent') as string;
+      await insertLog({
+        userId: sub,
+        type: 'save',
+        action: `Deleted record: ${sobjectType} with ID ${id}`,
+        credits: 1 // Assuming each query costs 1 credit, adjust as needed
+      });
       //await logUsage(sub, agent, 'delete', 0, 0, sobjectType);
     }
     
@@ -254,7 +273,7 @@ export async function DELETE(request: NextRequest) {
     });
     
   } catch (error) {
-    console.error('Error deleting Salesforce record:', error);
+    console.log('Error deleting Salesforce record:', error);
     return NextResponse.json(
       { 
         error: 'Failed to delete Salesforce record',

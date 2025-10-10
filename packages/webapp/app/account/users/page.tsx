@@ -18,6 +18,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
+import SignupError from '@/components/account/auth0/signup-error';
 
 interface User {
   user_id: string;
@@ -37,7 +38,7 @@ export default function UsersPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+  const [error, setError] = useState<React.ReactNode | null>(null);
   // Form state
   const [newUser, setNewUser] = useState({
     email: '',
@@ -61,7 +62,7 @@ export default function UsersPage() {
         const data = await response.json();
         setUsers(data.users || []);
       } catch (error) {
-        console.error('Error fetching users:', error);
+        console.log('Error fetching users:', error);
         toast.error('Failed to load users');
       } finally {
         setIsLoading(false);
@@ -88,7 +89,7 @@ export default function UsersPage() {
     
     try {
       setIsSubmitting(true);
-      
+      setError(null);  
       const response = await fetch('/api/account/users', {
         method: 'POST',
         headers: {
@@ -98,8 +99,14 @@ export default function UsersPage() {
       });
       
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Failed to create user');
+        const payload = await response.json();
+        console.log('Error response from server:', payload);
+        // toast.error(payload.error || 'Failed to create user', {
+        //   description: payload.details || ''
+        // });
+        setError(<SignupError signupError={{ error: payload.error || 'Error', details: payload.details || '' }} />);
+        // throw new Error(error.message || 'Failed to create user');
+        return;
       }
       
       const data = await response.json();
@@ -119,7 +126,7 @@ export default function UsersPage() {
       
       toast.success('User created successfully');
     } catch (error: any) {
-      console.error('Error creating user:', error);
+      console.log('Error creating user:', error);
       toast.error(error.message || 'Failed to create user');
     } finally {
       setIsSubmitting(false);
@@ -150,7 +157,7 @@ export default function UsersPage() {
       setUsers(prev => prev.filter(user => user.user_id !== userId));
       toast.success('User deleted successfully');
     } catch (error) {
-      console.error('Error deleting user:', error);
+      console.log('Error deleting user:', error);
       toast.error('Failed to delete user');
     }
   };
@@ -168,7 +175,7 @@ export default function UsersPage() {
             <DialogHeader>
               <DialogTitle>Create New User</DialogTitle>
             </DialogHeader>
-            
+            {error}
             <form onSubmit={handleCreateUser} className="space-y-4 py-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -257,8 +264,8 @@ export default function UsersPage() {
       ) : users.length === 0 ? (
         <Card>
           <CardContent className="py-10 text-center">
-            <p className="text-gray-500">No secondary users found.</p>
-            <p className="mt-2 text-gray-500">Create your first user to get started.</p>
+            <p className="text-muted-foreground">No secondary users found.</p>
+            <p className="mt-2 text-muted-foreground">Create your first user to get started.</p>
           </CardContent>
         </Card>
       ) : (

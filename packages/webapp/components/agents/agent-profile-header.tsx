@@ -47,7 +47,7 @@ export function AgentProfileHeader({
             </div>
           </div>
           <div className="text-center md:text-left">
-            <div className="inline-block px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm text-sm mb-2">
+            <div className="inline-block px-3 py-1 rounded-full /20 backdrop-blur-sm text-sm mb-2">
               {status}
             </div>
             <h1 className="text-4xl font-bold">{name}</h1>

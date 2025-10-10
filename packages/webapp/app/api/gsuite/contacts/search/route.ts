@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
     
     return NextResponse.json(searchResults);
   } catch (error) {
-    console.error('Error searching contacts:', error);
+    console.log('Error searching contacts:', error);
     return NextResponse.json(
       { error: 'Failed to search contacts: ' + (error instanceof Error ? error.message : String(error)) },
       { status: 500 }

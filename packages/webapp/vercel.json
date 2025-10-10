@@ -1,5 +1,7 @@
 {
-    "crons": [
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "python3 -m pip install setuptools && next build",
+  "crons": [
         {
             "path": "/api/webhooks/agent/execute?frequency=business_hours",
             "schedule": "0 6-18 * * 1-5"

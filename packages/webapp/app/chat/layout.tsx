@@ -20,10 +20,11 @@ import {
   useSidebar,
 } from '../../components/ui/sidebar';
 import { useRouter, usePathname } from 'next/navigation';
-import { Delete, History, SquarePlus, Trash2 } from 'lucide-react';
+import { Delete, History, SquarePlus, Menu, Trash2, ArrowRightToLine, ArrowLeftToLine} from 'lucide-react';
 import { nanoid } from 'nanoid';
 import { agents } from '@/resources/agent-defintion';
 import Image from 'next/image';
+import { Button } from '@/components/ui';
 
 // ThreadHistory type from lib/cache/message-history
 type Message = {
@@ -37,6 +38,7 @@ type ThreadHistory = {
   messages: Message[];
   lastUpdated: number;
   name: string | null;
+  currentAgent?: string;
 };
 
 function ChatSidebar({
@@ -63,108 +65,123 @@ function ChatSidebar({
   setShowAgentSelect: (show: boolean) => void;
 }) {
 
-  const { toggleSidebar } = useSidebar()
+  const { toggleSidebar, open } = useSidebar()
   return (
-      <Sidebar className="min-h-50 " variant={'floating'} collapsible={'icon'}>
+      <Sidebar className="min-h-50 max-h-[75dvh] " variant={'floating'} collapsible={'icon'}>
         <SidebarHeader>
-          
-          <div className="flex items-center justify-between">
-            <span className="font-semibold text-lg">Chats</span>
+
+          <div className={`flex items-center ${open ? 'justify-between' : 'justify-center'}`}>
+            {/* <span className="font-semibold text-lg">Chats</span> */}
+            <Button variant="ghost" size="icon" onClick={toggleSidebar} className="">
+              {/* {open ? <ArrowLeftToLine /> : <ArrowRightToLine />} */}
+              <Menu />
+            </Button>
           </div>
         </SidebarHeader>
-        <SidebarContent className="overflow-y-auto scrollbar">
-          <SidebarGroup>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  onClick={() => setShowAgentSelect(!showAgentSelect)}
-                  disabled={loading}
-                  aria-expanded={showAgentSelect}
-                  aria-controls="agent-select-section"
-                >
-                 <SquarePlus /> New Chat
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              { (
-                <div id="agent-select-section" className={`rounded transition-height duration-300 ease-in-out ${showAgentSelect ? 'h-auto p-2 mt-2' : 'h-0 overflow-hidden m-0 p-0'}`}>
-                  {/* <div className="mb-2 text-xs font-semibold text-muted-foreground">Select an agent:</div> */}
-                  <ul className="space-y-1">
-                    {agents.map((agent) => (
-                      <li key={agent.id} className={'my-2'}>
-                        <button
-                          className="w-full rounded text-left px-2 py-2 hover:bg-accent hover:bg-gray-200 dark:hover:bg-gray-900 focus:bg-accent focus:outline-none"
-                          onClick={() => onSelectAgent(agent.apiName)}
-                          disabled={loading}
-                        >
-                          <span className={'flex start gap-2 mb-1 items-center'}>
-                            <Image src={agent.icon || '/logo.png'} alt={agent.name} width={35} height={35} className="rounded-full" />
-                            <span>
-                              <span className="flex-1 text-sm font-bold">{agent.name}</span>
-                              {agent.description && (
-                                <span className="block text-xs text-muted-foreground">{agent.description}</span>
-                              )}
-                            </span>
-                          </span>
-                          
-                          
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </SidebarMenu>
-          </SidebarGroup>
-          <SidebarGroup>
-            <SidebarMenuButton
-                  onClick={() => {}}
-                  disabled={loading}
-                  className='hover:cursor-default'
-                  aria-expanded={showAgentSelect}
-                  aria-controls="open-threads-section"
-                >
-                 <History /> Threads
-            </SidebarMenuButton>
-            <SidebarMenu>
-              {threads.length === 0 && (
-                <div className="p-2 text-xs text-muted-foreground">No chats yet.</div>
-              )}
-              {threads.map((thread) => (
-                <SidebarMenuItem key={thread.threadId}>
-                  <SidebarMenuButton
-                    isActive={thread.threadId === activeThreadId}
-                    onClick={() => {
-                      if (thread.threadId !== activeThreadId) {
-                        window.location.href = `/chat/${thread.threadId}`;
-                      }
-                    }}
-                  >
-                    <span className="truncate flex-1 font-bold">
-                      {thread.name || thread.messages[0]?.content?.slice(0, 30) || 'Untitled'}
-                    </span>
-                  </SidebarMenuButton>
-                  <SidebarMenuAction
-                    aria-label="Delete Chat"
-                    onClick={() => onDeleteThread(thread.threadId)}
-                    disabled={loading}
-                  >
-                    <Trash2 size={16} />
-                  </SidebarMenuAction>
+        
+          <SidebarContent className="overflow-y-auto scrollbar">
+            <SidebarGroup>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  {open &&
+                    <SidebarMenuButton
+                      onClick={() => setShowAgentSelect(!showAgentSelect)}
+                      disabled={loading}
+                      aria-expanded={showAgentSelect}
+                      aria-controls="agent-select-section"
+                    >
+                      <SquarePlus /> {` New Chat`}
+                    </SidebarMenuButton>
+                  }
                 </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroup>
-        </SidebarContent>
-        <SidebarFooter>
-          <button
-            className="w-full rounded bg-destructive px-2 py-1 text-xs text-white hover:bg-destructive/80"
-            onClick={onDeleteAll}
-            disabled={loading || threads.length === 0}
-            aria-label="Delete All Chats"
-          >
-            Delete All
-          </button>
-        </SidebarFooter>
+                { (
+                  <div id="agent-select-section" className={`rounded transition-height duration-300 ease-in-out ${showAgentSelect || !open ? 'h-auto ' : 'h-0 overflow-hidden m-0 p-0'}`}>
+                    {/* <div className="mb-2 text-xs font-semibold text-muted-foreground">Select an agent:</div> */}
+                    <ul className="space-y-1">
+                      {agents.map((agent) => (
+                        <li key={agent.id} className={'my-2'}>
+                          <button
+                            className="w-full rounded text-left px-2 py-2 hover:bg-accent hover:bg-muted  focus:bg-accent focus:outline-none"
+                            onClick={() => onSelectAgent(agent.apiName)}
+                            disabled={loading}
+                          > 
+                            {open ? 
+                              <span className={'flex start gap-2 mb-1 items-center'}>
+                                <Image src={agent.icon || '/logo.png'} alt={agent.name} width={35} height={35} className="rounded-full" />
+                                <span>
+                                  <span className="flex-1 text-sm font-bold">{agent.name}</span>
+                                  {agent.description && (
+                                    <span className="block text-xs text-muted-foreground">{agent.description}</span>
+                                  )}
+                                </span>
+                              </span> :
+                              <Image src={agent.icon || '/logo.png'} alt={agent.name} width={35} height={35} className="rounded-full" />
+                            }
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </SidebarMenu>
+            </SidebarGroup>
+            {open && 
+              <SidebarGroup>
+                <SidebarMenuButton
+                      onClick={() => {}}
+                      disabled={loading}
+                      className='hover:cursor-default'
+                      aria-expanded={showAgentSelect}
+                      aria-controls="open-threads-section"
+                    >
+                    <History /> History
+                </SidebarMenuButton>
+                <SidebarMenu>
+                  {threads.length === 0 && (
+                    <div className="p-2 text-xs text-muted-foreground">No chats yet.</div>
+                  )}
+                  {threads.map((thread) => (
+                    <SidebarMenuItem key={thread.threadId}>
+                      <SidebarMenuButton
+                        isActive={thread.threadId === activeThreadId}
+                        onClick={() => {
+                          if (thread.threadId !== activeThreadId) {
+                            window.location.href = `/chat/${thread.threadId}`;
+                          }
+                        }}
+                      >
+                        <Image src={agents.find((agent) => agent.apiName === thread.currentAgent)?.icon || '/logo.png'} alt={thread.currentAgent || 'Unknown Agent'} width={25} height={25} className="rounded-full" />
+                        <span className="truncate flex-1 font-bold">
+                          {thread.name || thread.messages[0]?.content?.slice(0, 30) || 'Untitled'}
+                        </span>
+                      </SidebarMenuButton>
+                      <SidebarMenuAction
+                        aria-label="Delete Chat"
+                        onClick={() => onDeleteThread(thread.threadId)}
+                        disabled={loading}
+                      >
+                        <Trash2 size={16} />
+                      </SidebarMenuAction>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroup>
+            }
+          </SidebarContent>
+        
+        {open && 
+          <SidebarFooter>
+            <button
+              className="w-full rounded bg-destructive px-2 py-1 text-xs text-white hover:bg-destructive/80"
+              onClick={onDeleteAll}
+              disabled={loading || threads.length === 0}
+              aria-label="Delete All Chats"
+            >
+              Delete All
+            </button>
+          </SidebarFooter>
+        }
+        
       </Sidebar>
   );
 }
@@ -199,7 +216,10 @@ export default function ChatLayout({ children }: { children: React.ReactNode }) 
     setLoading(true);
     try {
       const data = await getAll();
-      setThreads(Array.isArray(data) ? data : []);
+      const _threads = Array.isArray(data) ? data as ThreadHistory[] : [];
+      const sortedThreads = _threads.sort((a, b) => b.lastUpdated - a.lastUpdated);
+      //console.log('Fetched threads:', data);
+      setThreads(sortedThreads);
     } catch {
       setThreads([]);
     } finally {
@@ -249,7 +269,7 @@ export default function ChatLayout({ children }: { children: React.ReactNode }) 
   return (
     <div className="">
       {/* <div className="flex"> */}
-        <SidebarProvider>
+        <SidebarProvider className={`flex items-stretch`}>
           <ChatSidebar
             threads={threads}
             onNewChat={() => setShowAgentSelect((v) => !v)}
@@ -263,7 +283,7 @@ export default function ChatLayout({ children }: { children: React.ReactNode }) 
             setShowAgentSelect={setShowAgentSelect}
           />
           <SidebarInset className="flex flex-col bg-lavender-chat">
-            <div className="flex-1 overflow-auto">{children}</div>
+            <div className="flex-1 ">{children}</div>
           </SidebarInset>
         </SidebarProvider>
       {/* </div> */}

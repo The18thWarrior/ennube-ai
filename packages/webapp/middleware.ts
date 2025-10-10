@@ -27,6 +27,7 @@ export async function middleware(request: NextRequest) {
 
   // If the path is protected, verify authentication
   if (isPathProtected) {
+    console.log('middleware path is protected:', path)
     const session = await auth()
     
     // If not authenticated, redirect to signin page

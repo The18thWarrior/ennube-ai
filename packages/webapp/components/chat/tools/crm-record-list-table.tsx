@@ -15,8 +15,9 @@ import {
   DropdownMenuCheckboxItem,
 } from "@/components/ui/dropdown-menu"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Settings, FilterIcon, ChevronDown, GripVertical, X, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react"
+import { Settings, FilterIcon, ChevronDown, GripVertical, X, ArrowUpDown, ArrowUp, ArrowDown, ChevronLeft, ChevronRight } from "lucide-react"
 import { cn, truncateText } from "@/lib/utils"
+import { useTheme } from "@/components/theme-provider"
 
 interface CrmRecord {
   id: string
@@ -59,6 +60,7 @@ export function CrmRecordListTable({
   onRecordSelect,
   onRecordsSelect,
 }: CrmRecordListTableProps) {
+  const {theme} = useTheme();
   const [columns, setColumns] = useState<Column[]>(initialColumns)
   const [filters, setFilters] = useState<{ field: string; operator: string; value: string }[]>([])
   const [sortConfig, setSortConfig] = useState<SortConfig | null>(null)
@@ -67,6 +69,9 @@ export function CrmRecordListTable({
   const [resizingColumn, setResizingColumn] = useState<string | null>(null)
   const [resizeStartX, setResizeStartX] = useState(0)
   const [resizeStartWidth, setResizeStartWidth] = useState(0)
+  // Pagination
+  const [currentPage, setCurrentPage] = useState<number>(1)
+  const pageSize = 10
   const tableRef = useRef<HTMLDivElement>(null)
 
   const visibleColumns = columns.filter((col) => col.visible)
@@ -107,6 +112,22 @@ export function CrmRecordListTable({
         }
       })
     : filteredRecords
+
+  // Ensure current page is valid when data changes (filters/sort/records)
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [filters, sortConfig, records.length])
+
+  // If current page is out of range after filtering/sorting, clamp it
+  useEffect(() => {
+    const totalPages = Math.max(1, Math.ceil(sortedRecords.length / pageSize))
+    if (currentPage > totalPages) setCurrentPage(totalPages)
+  }, [sortedRecords.length, currentPage])
+
+  const totalPages = Math.max(1, Math.ceil(sortedRecords.length / pageSize))
+  const startIndex = (currentPage - 1) * pageSize
+  const endIndex = Math.min(startIndex + pageSize, sortedRecords.length)
+  const displayedRecords = sortedRecords.slice(startIndex, endIndex)
 
   // Handle column reordering
   const handleColumnDragStart = (columnId: string) => {
@@ -214,39 +235,14 @@ export function CrmRecordListTable({
   }
 
   return (
-    <Card className="w-full" style={{scrollbarWidth: 'none'}}>
+    <Card className="w-full min-w-[50vw]" style={{scrollbarWidth: 'none'}}>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           {title.length > 0 && <CardTitle className="text-lg">{title}</CardTitle>}
           <div className="flex items-center gap-2">
-            {/* <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline" size="sm">
-                  <FilterIcon className="h-4 w-4 mr-2" />
-                  Filters {filters.length > 0 && `(${filters.length})`}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-80">
-                <div className="space-y-4">
-                  <h4 className="font-medium">Add Filter</h4>
-                  {visibleColumns
-                    .filter((col) => col.filterable)
-                    .map((column) => (
-                      <FilterRow
-                        key={column.id}
-                        column={column}
-                        existingFilter={filters.find((f) => f.field === column.field)}
-                        onAddFilter={addFilter}
-                        onRemoveFilter={removeFilter}
-                      />
-                    ))}
-                </div>
-              </PopoverContent>
-            </Popover> */}
-
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm">
+                <Button variant={theme === 'dark' ? 'ghost' : 'outline_green'} size="sm">
                   <Settings className="h-4 w-4 mr-2" />
                   Columns
                 </Button>
@@ -308,14 +304,12 @@ export function CrmRecordListTable({
                     onCheckedChange={handleSelectAll}
                   />
                 </th> */}
-                <th className="relative text-left p-2 font-medium text-sm border-r border-border/50 select-none">
-                  <span className="flex-1 truncate">{`Actions`}</span>
-                </th>
+
                 {visibleColumns.map((column) => (
                   <th
                     key={column.id}
                     className="relative text-left p-2 font-medium text-sm border-r border-border/50 select-none"
-                    style={{ width: column.width }}
+                    style={{ width: column.width*2 }}
                     draggable
                     onDragStart={() => handleColumnDragStart(column.id)}
                     onDragOver={(e) => handleColumnDragOver(e, column.id)}
@@ -341,10 +335,13 @@ export function CrmRecordListTable({
                     />
                   </th>
                 ))}
+                <th className="relative text-left p-2 font-medium text-sm border-r border-border/50 select-none" style={{ width: 50 }}>
+                  <span className="flex-1 truncate">{`Actions`}</span>
+                </th>
               </tr>
             </thead>
             <tbody>
-              {sortedRecords.map((record, index) => (
+              {displayedRecords.map((record, index) => (
                 <tr
                   key={record.id}
                   className={cn(
@@ -360,11 +357,6 @@ export function CrmRecordListTable({
                     />
                   </td> */}
 
-                  <td className="p-2 text-sm border-r border-border/20">
-                    <Button variant="ghost" size="sm" onClick={() => handleRecordSelect(record.id)}>
-                      {`>`}
-                    </Button>
-                  </td>
                   {visibleColumns.map((column) => (
                     <td
                       key={column.id}
@@ -374,6 +366,12 @@ export function CrmRecordListTable({
                       {formatCellValue(record.fields.find(field => field.label === column.field)?.value, column.type)}
                     </td>
                   ))}
+
+                  <td className="p-2 text-sm border-r border-border/20">
+                    <Button variant="ghost" size="sm" onClick={() => handleRecordSelect(record.id)}>
+                      {`>`}
+                    </Button>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -384,9 +382,37 @@ export function CrmRecordListTable({
           )}
         </div>
 
-        <div className="p-4 border-t bg-muted/20 text-sm text-muted-foreground">
-          Showing {sortedRecords.length} of {records.length} records
-          {selectedRecords.length > 0 && ` • ${selectedRecords.length} selected`}
+        <div className="p-4 border-t bg-muted/20 text-sm text-muted-foreground flex items-center justify-between">
+          <div>
+            {sortedRecords.length === 0 ? (
+              `Showing 0 of ${records.length} records`
+            ) : (
+              <>Showing {startIndex + 1}–{endIndex} of {records.length} records</>
+            )}
+            {selectedRecords.length > 0 && ` • ${selectedRecords.length} selected`}
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+
+            <div className="text-sm text-muted-foreground">Page {currentPage} of {totalPages}</div>
+
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>

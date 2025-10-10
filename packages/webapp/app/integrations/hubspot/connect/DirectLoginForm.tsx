@@ -38,7 +38,7 @@ export default function DirectLoginForm() {
         {isSubmitting ? "Redirecting..." : "Connect with HubSpot"}
       </Button>
       
-      <div className="mt-4 text-center text-sm text-gray-500">
+      <div className="mt-4 text-center text-sm text-muted-foreground">
         <p>
           You will be redirected to HubSpot to authorize this application.
           No credentials are stored in this application when using OAuth.

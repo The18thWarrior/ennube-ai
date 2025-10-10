@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 // === analytics/page.tsx ===
 // Created: 2025-07-21 10:25
 // Purpose: PostgreSQL analytics and metrics page

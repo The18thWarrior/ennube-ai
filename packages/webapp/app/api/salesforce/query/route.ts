@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSalesforceCredentialsBySub } from '@/lib/db/salesforce-storage';
 import { SalesforceClient, createSalesforceClient } from '@/lib/salesforce';
 import { SalesforceAuthResult } from '@/lib/types';
+import { insertLog } from '@/lib/db/log-storage';
 
 /**
  * API endpoint to run a Salesforce SOQL query
@@ -19,7 +20,7 @@ export async function GET(request: NextRequest) {
     
     // Validate required parameters
     if (!sub) {
-      console.error('Missing required parameter: sub');
+      console.log('Missing required parameter: sub');
       return NextResponse.json(
         { error: 'Missing required parameter: sub' },
         { status: 400 }
@@ -27,7 +28,7 @@ export async function GET(request: NextRequest) {
     }
     
     if (!soql) {
-      console.error('Missing required parameter: soql');
+      console.log('Missing required parameter: soql');
       return NextResponse.json(
         { error: 'Missing required parameter: soql' },
         { status: 400 }
@@ -38,32 +39,39 @@ export async function GET(request: NextRequest) {
     const credentials = await getSalesforceCredentialsBySub(sub);
     
     if (!credentials) {
-      console.error(`No Salesforce credentials found for user: ${sub}`);
+      console.log(`No Salesforce credentials found for user: ${sub}`);
       return NextResponse.json(
         { error: 'No Salesforce credentials found for this user' },
         { status: 404 }
       );
     }
-    
     // Create a Salesforce client from the stored credentials
     const authResult: SalesforceAuthResult = {
       success: true,
+      userId: sub,
       accessToken: credentials.accessToken,
       instanceUrl: credentials.instanceUrl,
       refreshToken: credentials.refreshToken,
       userInfo: credentials.userInfo
     };
-    
+    //console.log('Salesforce credentials:', credentials);
     const salesforceClient = createSalesforceClient(authResult);
     
     // Execute the SOQL query
     const queryResult = await salesforceClient.query(soql);
     
+    await insertLog({
+      userId: sub,
+      type: 'query',
+      action: `Executed SOQL: ${soql}`,
+      credits: 1 // Assuming each query costs 1 credit, adjust as needed
+    });
+
     // Return the query results
     return NextResponse.json(queryResult);
     
   } catch (error) {
-    console.error('Error executing Salesforce query:', error);
+    console.log('Error executing Salesforce query:', error instanceof Error ? error.message : String(error));
     return NextResponse.json(
       { 
         error: 'Failed to execute Salesforce query',

@@ -4,7 +4,7 @@ import { auth } from '@/auth';
 
 // Initialize Stripe with your secret key
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2025-07-30.basil',
+  apiVersion: '2025-08-27.basil',
   typescript: true,
 });
 
@@ -53,7 +53,7 @@ export async function GET(req: NextRequest) {
     // Redirect to the dashboard
     return NextResponse.redirect(new URL('/subscription/success?session_id=' + sessionId, req.url));
   } catch (error: any) {
-    console.error('Error handling subscription success:', error);
+    console.log('Error handling subscription success:', error);
     // return NextResponse.json(
     //   { error: error.message || 'Failed to process successful subscription' },
     //   { status: 500 }

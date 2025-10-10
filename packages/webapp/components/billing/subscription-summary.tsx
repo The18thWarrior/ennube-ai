@@ -31,7 +31,7 @@ export default function SubscriptionSummary() {
     const { url, error } = await createCheckoutSession();
     
     if (error) {
-      console.error('Error creating checkout session:', error);
+      console.log('Error creating checkout session:', error);
       return;
     }
     
@@ -44,7 +44,7 @@ export default function SubscriptionSummary() {
     const { url, error } = await createCheckoutSession(true);
     
     if (error) {
-      console.error('Error creating checkout session:', error);
+      console.log('Error creating checkout session:', error);
       return;
     }
     
@@ -55,13 +55,13 @@ export default function SubscriptionSummary() {
 
   const handleManageSubscription = async () => {
     if (!session?.user?.auth0?.sub) {
-      console.error('No customer ID found');
+      console.log('No customer ID found');
       return;
     }
     const { url, error } = await createPortalLink();
 
     if (error) {
-      console.error('Error creating portal link:', error);
+      console.log('Error creating portal link:', error);
       return;
     }
     
@@ -99,7 +99,7 @@ export default function SubscriptionSummary() {
           <div className={`px-3 py-1 rounded-full text-sm font-medium ${
             isActive 
               ? 'bg-green-100 text-green-800' 
-              : 'bg-gray-100 text-gray-800'
+              : 'bg-gray-100 text-muted-foreground'
           }`}>
             {isActive ? 'Active' : 'Inactive'}
           </div>
@@ -172,7 +172,7 @@ export default function SubscriptionSummary() {
                       <svg className="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
-                      <strong>2,500 record operations</strong> per month (25x free tier)
+                      <strong className={'mr-1'}>2,500 record operations</strong> per month (25x free tier)
                     </li>
                     <li className="flex items-center">
                       <svg className="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -208,7 +208,7 @@ export default function SubscriptionSummary() {
                       <svg className="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
-                      <strong>25,000 record operations</strong> per month (5x starter tier)
+                      <strong className={'mr-1'}>25,000 record operations</strong> per month (5x starter tier)
                     </li>
                     <li className="flex items-center">
                       <svg className="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

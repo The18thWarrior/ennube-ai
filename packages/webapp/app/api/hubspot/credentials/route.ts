@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
       expiresAt: credentials.expiresAt
     });
   } catch (error) {
-    console.error('Error retrieving HubSpot credentials:', error);
+    console.log('Error retrieving HubSpot credentials:', error);
     return NextResponse.json(
       { 
         error: error instanceof Error ? error.message : 'An unexpected error occurred',

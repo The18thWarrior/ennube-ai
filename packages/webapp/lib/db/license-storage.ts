@@ -17,7 +17,7 @@ const pool = new Pool({
 // Test the connection and log success or error
 // pool.query('SELECT NOW()', (err, res) => {
 //   if (err) {
-//     console.error('Error connecting to PostgreSQL database:', err);
+//     console.log('Error connecting to PostgreSQL database:', err);
 //   } else {
 //     console.log('PostgreSQL connected successfully');
 //   }
@@ -47,7 +47,7 @@ export async function createLicense(
 ): Promise<number | null> {
   try {
     if (!subId) {
-      console.error("Cannot create license: No subscription ID provided");
+      console.log("Cannot create license: No subscription ID provided");
       return null;
     }
     
@@ -65,7 +65,7 @@ export async function createLicense(
     
     return null;
   } catch (error) {
-    console.error("Error creating license:", error);
+    console.log("Error creating license:", error);
     return null;
   }
 }
@@ -76,7 +76,7 @@ export async function createLicense(
 export async function getLicenseBySubId(subId: string): Promise<License | null> {
   try {
     if (!subId) {
-      console.error("Cannot get license: No subscription ID provided");
+      console.log("Cannot get license: No subscription ID provided");
       return null;
     }
     
@@ -99,7 +99,7 @@ export async function getLicenseBySubId(subId: string): Promise<License | null> 
     
     return null;
   } catch (error) {
-    console.error("Error getting license by subscription ID:", error);
+    console.log("Error getting license by subscription ID:", error);
     return null;
   }
 }
@@ -110,7 +110,7 @@ export async function getLicenseBySubId(subId: string): Promise<License | null> 
 export async function getLicensesByParentSubId(parentSubId: string): Promise<License[]> {
   try {
     if (!parentSubId) {
-      console.error("Cannot get licenses: No parent subscription ID provided");
+      console.log("Cannot get licenses: No parent subscription ID provided");
       return [];
     }
     
@@ -130,7 +130,7 @@ export async function getLicensesByParentSubId(parentSubId: string): Promise<Lic
     
     return result.rows.map(mapDbToLicense);
   } catch (error) {
-    console.error("Error getting licenses by parent subscription ID:", error);
+    console.log("Error getting licenses by parent subscription ID:", error);
     return [];
   }
 }
@@ -156,7 +156,7 @@ export async function getLicensesByStatus(status: LicenseStatus): Promise<Licens
     
     return result.rows.map(mapDbToLicense);
   } catch (error) {
-    console.error(`Error getting licenses with status '${status}':`, error);
+    console.log(`Error getting licenses with status '${status}':`, error);
     return [];
   }
 }
@@ -168,14 +168,14 @@ export async function getCurrentUserLicense(): Promise<License | null> {
   try {
     const session = await auth();
     if (!session || !session.user || !session.user.auth0) {
-      console.error("No session found");
+      console.log("No session found");
       return null;
     }
     
     const userSub = session.user.auth0.sub;
     return await getLicenseBySubId(userSub);
   } catch (error) {
-    console.error("Error retrieving current user license:", error);
+    console.log("Error retrieving current user license:", error);
     return null;
   }
 }
@@ -189,7 +189,7 @@ export async function updateLicenseParent(
 ): Promise<boolean> {
   try {
     if (!subId) {
-      console.error("Cannot update license: No subscription ID provided");
+      console.log("Cannot update license: No subscription ID provided");
       return false;
     }
     
@@ -203,7 +203,7 @@ export async function updateLicenseParent(
     
     return true;
   } catch (error) {
-    console.error("Error updating license parent:", error);
+    console.log("Error updating license parent:", error);
     return false;
   }
 }
@@ -217,7 +217,7 @@ export async function updateLicenseStatus(
 ): Promise<boolean> {
   try {
     if (!subId) {
-      console.error("Cannot update license status: No subscription ID provided");
+      console.log("Cannot update license status: No subscription ID provided");
       return false;
     }
     
@@ -231,7 +231,7 @@ export async function updateLicenseStatus(
     
     return true;
   } catch (error) {
-    console.error("Error updating license status:", error);
+    console.log("Error updating license status:", error);
     return false;
   }
 }
@@ -242,7 +242,7 @@ export async function updateLicenseStatus(
 export async function deleteLicense(subId: string): Promise<boolean> {
   try {
     if (!subId) {
-      console.error("Cannot delete license: No subscription ID provided");
+      console.log("Cannot delete license: No subscription ID provided");
       return false;
     }
     
@@ -255,7 +255,7 @@ export async function deleteLicense(subId: string): Promise<boolean> {
     
     return result.rows.length > 0;
   } catch (error) {
-    console.error("Error deleting license:", error);
+    console.log("Error deleting license:", error);
     return false;
   }
 }
@@ -266,7 +266,7 @@ export async function deleteLicense(subId: string): Promise<boolean> {
 export async function countLicensesByParent(parentSubId: string): Promise<number> {
   try {
     if (!parentSubId) {
-      console.error("Cannot count licenses: No parent subscription ID provided");
+      console.log("Cannot count licenses: No parent subscription ID provided");
       return 0;
     }
     
@@ -279,7 +279,7 @@ export async function countLicensesByParent(parentSubId: string): Promise<number
     
     return parseInt(result.rows[0].count, 10);
   } catch (error) {
-    console.error("Error counting licenses by parent:", error);
+    console.log("Error counting licenses by parent:", error);
     return 0;
   }
 }
@@ -293,7 +293,7 @@ export async function transferLicenses(
 ): Promise<number> {
   try {
     if (!oldParentSubId || !newParentSubId) {
-      console.error("Cannot transfer licenses: Missing parent subscription IDs");
+      console.log("Cannot transfer licenses: Missing parent subscription IDs");
       return 0;
     }
     
@@ -308,7 +308,7 @@ export async function transferLicenses(
     
     return result.rows.length;
   } catch (error) {
-    console.error("Error transferring licenses:", error);
+    console.log("Error transferring licenses:", error);
     return 0;
   }
 }
@@ -335,6 +335,6 @@ export async function closeConnection(): Promise<void> {
     await pool.end();
     console.log('PostgreSQL connection pool closed');
   } catch (error) {
-    console.error('Error closing PostgreSQL connection pool:', error);
+    console.log('Error closing PostgreSQL connection pool:', error);
   }
 }

@@ -30,48 +30,48 @@ export default function UsageLogs() {
         </div>
       )}
       
-      <div className="overflow-x-auto bg-white dark:bg-gray-800 shadow-md rounded-lg">
+      <div className="overflow-x-auto   shadow-md rounded-lg">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead className="bg-gray-50 dark:bg-gray-700">
+          <thead className="bg-muted ">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Timestamp</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Agent</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Records Updated</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Records Created</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Meetings Booked</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground  uppercase tracking-wider">Timestamp</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground  uppercase tracking-wider">Agent</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground  uppercase tracking-wider">Records Updated</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground  uppercase tracking-wider">Records Created</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground  uppercase tracking-wider">Meetings Booked</th>
             </tr>
           </thead>
-          <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+          <tbody className="  divide-y divide-gray-200 dark:divide-gray-700">
             {loading ? (
               <tr>
                 <td colSpan={5} className="px-6 py-4 text-center">
                   <div className="flex justify-center">
-                    <div className="animate-spin h-5 w-5 border-2 border-gray-500 rounded-full border-t-transparent"></div>
+                    <div className="animate-spin h-5 w-5 border-2  rounded-full border-t-transparent"></div>
                   </div>
                 </td>
               </tr>
             ) : logs.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
+                <td colSpan={5} className="px-6 py-4 text-center text-sm text-muted-foreground ">
                   No usage logs found
                 </td>
               </tr>
             ) : (
               logs.map((log, index) => (
-                <tr key={`${log.userSub}-${log.timestamp}-${index}`} className="hover:bg-gray-50 dark:hover:bg-gray-700">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                <tr key={`${log.userSub}-${log.timestamp}-${index}`} className="hover:bg-muted ">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground ">
                     {formatTimestamp(log.timestamp)}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground ">
                     {log.agent}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground ">
                     {log.recordsUpdated}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground ">
                     {log.recordsCreated}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground ">
                     {log.meetingsBooked}
                   </td>
                 </tr>

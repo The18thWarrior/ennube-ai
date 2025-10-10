@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 // === schema/page.tsx ===
 // Created: 2025-07-21 10:25
 // Purpose: PostgreSQL schema browser page

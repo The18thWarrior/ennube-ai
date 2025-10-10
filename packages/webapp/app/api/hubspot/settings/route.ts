@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
       account_timestamp_field: credentials.account_timestamp_field || ""
     });
   } catch (error) {
-    console.error("Error fetching HubSpot settings:", error);
+    console.log("Error fetching HubSpot settings:", error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Unknown error occurred" },
       { status: 500 }
@@ -71,7 +71,7 @@ export async function PATCH(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Error updating HubSpot settings:", error);
+    console.log("Error updating HubSpot settings:", error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Unknown error occurred" },
       { status: 500 }

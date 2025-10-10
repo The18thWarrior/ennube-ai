@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
     
     return NextResponse.json(response);
   } catch (error) {
-    console.error("Error fetching integration status:", error);
+    console.log("Error fetching integration status:", error);
     return NextResponse.json(
       { error: "Failed to retrieve integration status" },
       { status: 500 }

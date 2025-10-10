@@ -31,11 +31,11 @@ export default function PostgresSignOut() {
         // Redirect to connect page after successful disconnection
         router.push('/integrations/postgres/connect')
       } else {
-        console.error('Failed to disconnect from PostgreSQL')
+        console.log('Failed to disconnect from PostgreSQL')
         // You might want to show a toast notification here
       }
     } catch (error) {
-      console.error('Error disconnecting from PostgreSQL:', error)
+      console.log('Error disconnecting from PostgreSQL:', error)
       // You might want to show a toast notification here
     } finally {
       setIsLoading(false)

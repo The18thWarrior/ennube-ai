@@ -20,7 +20,7 @@ export default function MeetingsBookerHeader() {
         >
           <div className="relative max-w-4xl max-h-[90vh]">
             <button
-              className="absolute -top-12 right-0 p-2 text-white hover:text-gray-300 transition-colors"
+              className="absolute -top-12 right-0 p-2 text-white hover:text-muted transition-colors"
               onClick={() => setIsImageModalOpen(false)}
             >
               <Image

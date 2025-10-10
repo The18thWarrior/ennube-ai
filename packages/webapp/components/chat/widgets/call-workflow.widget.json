@@ -1,0 +1,248 @@
+{
+  "version": "1.0",
+  "name": "Workflow execution",
+  "description": "Summarizes a workflow or agent run triggered from chat.",
+  "template": "{\"type\":\"Card\",\"size\":\"sm\",\"status\":{\"text\":{{ (statusLabel) | tojson }},\"icon\":{{ (statusIcon | default('sparkle-double')) | tojson }}},\"children\":[{\"type\":\"Col\",\"gap\":3,\"children\":[{\"type\":\"Title\",\"value\":{{ (title | default('Workflow run')) | tojson }},\"size\":\"md\",\"weight\":\"semibold\"},{\"type\":\"Row\",\"align\":\"center\",\"gap\":2,\"children\":[{\"type\":\"Badge\",\"label\":{{ (statusBadge.label | default('Completed')) | tojson }},\"color\":{{ (statusBadge.color | default('success')) | tojson }},\"variant\":\"soft\"},{% if duration %}{\"type\":\"Caption\",\"value\":{{ ('Duration ' ~ duration) | tojson }},\"color\":\"secondary\"},{% endif %}{% if startedAt %}{\"type\":\"Caption\",\"value\":{{ (startedAt) | tojson }},\"color\":\"secondary\"}{% endif %}]},{\"type\":\"Col\",\"gap\":1,\"children\":[{% if agentName %}{\"type\":\"Text\",\"value\":{{ ('Agent: ' ~ agentName) | tojson }},\"size\":\"sm\",\"weight\":\"semibold\"},{% endif %}{% if summary %}{\"type\":\"Text\",\"value\":{{ summary | tojson }},\"size\":\"sm\",\"color\":\"secondary\",\"maxLines\":3},{% endif %}{% if primaryMetric %}{\"type\":\"Badge\",\"label\":{{ primaryMetric.label | tojson }},\"color\":{{ (primaryMetric.color | default('info')) | tojson }},\"variant\":\"soft\"}{% endif %}]},{% if nextAction %}{\"type\":\"Row\",\"gap\":2,\"children\":[{\"type\":\"Button\",\"label\":{{ (nextAction.label | default('View details')) | tojson }},\"style\":{{ (nextAction.style | default('primary')) | tojson }},\"onClickAction\":{\"type\":{{ (nextAction.action.type | default('workflow.open')) | tojson }},\"payload\":{{ (nextAction.action.payload | default({})) | tojson }}}},{% if secondaryAction %}{\"type\":\"Button\",\"label\":{{ (secondaryAction.label) | tojson }},\"variant\":\"outline\",\"onClickAction\":{\"type\":{{ (secondaryAction.action.type) | tojson }},\"payload\":{{ (secondaryAction.action.payload | default({})) | tojson }}}{% endif %}]}{% endif %}]}]} ",
+  "jsonSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "workflow-execution-widget",
+    "type": "object",
+    "properties": {
+      "title": {
+        "type": "string",
+        "maxLength": 60
+      },
+      "statusLabel": {
+        "type": "string",
+        "default": "Workflow status"
+      },
+      "statusIcon": {
+        "type": "string",
+        "default": "sparkle-double"
+      },
+      "statusBadge": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "default": "Completed"
+          },
+          "color": {
+            "type": "string",
+            "enum": [
+              "success",
+              "warning",
+              "danger",
+              "info"
+            ],
+            "default": "success"
+          }
+        },
+        "additionalProperties": false
+      },
+      "duration": {
+        "type": "string",
+        "maxLength": 40
+      },
+      "startedAt": {
+        "type": "string",
+        "maxLength": 60
+      },
+      "agentName": {
+        "type": "string",
+        "maxLength": 80
+      },
+      "summary": {
+        "type": "string",
+        "maxLength": 180
+      },
+      "primaryMetric": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "maxLength": 40
+          },
+          "color": {
+            "type": "string",
+            "enum": [
+              "success",
+              "info",
+              "warning",
+              "danger"
+            ],
+            "default": "info"
+          }
+        },
+        "additionalProperties": false
+      },
+      "nextAction": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "default": "View details"
+          },
+          "style": {
+            "type": "string",
+            "enum": [
+              "primary",
+              "secondary"
+            ],
+            "default": "primary"
+          },
+          "action": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "default": "workflow.open"
+              },
+              "payload": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "type"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "action"
+        ],
+        "additionalProperties": false
+      },
+      "secondaryAction": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "action": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string"
+              },
+              "payload": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "type"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "label",
+          "action"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "required": [
+      "statusLabel"
+    ],
+    "additionalProperties": false
+  },
+  "outputJsonPreview": {
+    "type": "Card",
+    "size": "sm",
+    "status": {
+      "text": "Usage log #42",
+      "icon": "sparkle-double"
+    },
+    "children": [
+      {
+        "type": "Col",
+        "gap": 3,
+        "children": [
+          {
+            "type": "Title",
+            "value": "Call renewal workflow",
+            "size": "md",
+            "weight": "semibold"
+          },
+          {
+            "type": "Row",
+            "align": "center",
+            "gap": 2,
+            "children": [
+              {
+                "type": "Badge",
+                "label": "Completed",
+                "color": "success",
+                "variant": "soft"
+              },
+              {
+                "type": "Caption",
+                "value": "Duration 18s",
+                "color": "secondary"
+              },
+              {
+                "type": "Caption",
+                "value": "Started 2025-10-07 14:02",
+                "color": "secondary"
+              }
+            ]
+          },
+          {
+            "type": "Col",
+            "gap": 1,
+            "children": [
+              {
+                "type": "Text",
+                "value": "Agent: RevOps Assistant",
+                "size": "sm",
+                "weight": "semibold"
+              },
+              {
+                "type": "Text",
+                "value": "Created 3 opportunities, updated 11 contacts, queued follow-up emails.",
+                "size": "sm",
+                "color": "secondary",
+                "maxLines": 3
+              },
+              {
+                "type": "Badge",
+                "label": "Records touched 14",
+                "color": "info",
+                "variant": "soft"
+              }
+            ]
+          },
+          {
+            "type": "Row",
+            "gap": 2,
+            "children": [
+              {
+                "type": "Button",
+                "label": "View details",
+                "style": "primary",
+                "onClickAction": {
+                  "type": "workflow.open",
+                  "payload": {
+                    "usageId": "abc123"
+                  }
+                }
+              },
+              {
+                "type": "Button",
+                "label": "Share",
+                "variant": "outline",
+                "onClickAction": {
+                  "type": "workflow.share",
+                  "payload": {
+                    "usageId": "abc123"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

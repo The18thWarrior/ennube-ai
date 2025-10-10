@@ -113,7 +113,7 @@ export async function POST(request: NextRequest) {
       message: 'Calendar event created successfully'
     });
   } catch (error) {
-    console.error('Error creating calendar event:', error);
+    console.log('Error creating calendar event:', error);
     return NextResponse.json(
       { error: 'Failed to create calendar event: ' + (error instanceof Error ? error.message : String(error)) },
       { status: 500 }

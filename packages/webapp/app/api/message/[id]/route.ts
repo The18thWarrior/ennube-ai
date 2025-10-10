@@ -4,7 +4,7 @@ import {
   getThread,
   setThread,
   deleteThread,
-} from '../../../../lib/cache/message-history';
+} from '@/lib/cache/message-history';
 import { auth } from '@/auth';
 
 // /api/message/[id]?subId=...

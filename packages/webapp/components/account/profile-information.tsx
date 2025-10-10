@@ -129,7 +129,7 @@ export default function ProfileInformation() {
                       value={email}
                       disabled={true}
                       placeholder="Your email address"
-                      className="bg-gray-50 dark:bg-gray-800"
+                      className="bg-muted "
                       type="text"
                       />
                       <p className="text-xs text-muted-foreground mt-1">

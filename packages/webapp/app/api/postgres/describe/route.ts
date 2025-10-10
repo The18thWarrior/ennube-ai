@@ -145,7 +145,7 @@ export async function GET(request: NextRequest) {
     }
     
   } catch (error) {
-    console.error('Error describing PostgreSQL database:', error);
+    console.log('Error describing PostgreSQL database:', error);
     return NextResponse.json(
       { 
         error: 'Failed to describe PostgreSQL database',

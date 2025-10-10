@@ -56,7 +56,7 @@ export default function DataStewardExecuteButton() {
       route.push('/dashboard');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unexpected error occurred');
-      console.error('Error executing data steward agent:', err);
+      console.log('Error executing data steward agent:', err);
     } finally {
       setIsLoading(false);
     }

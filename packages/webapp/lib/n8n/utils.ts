@@ -58,9 +58,8 @@ interface SessionValidationResponse {
 
 export async function validateSession(req: NextRequest): Promise<SessionValidationResponse> {
     const session = await auth();
-    console.log(session);
     if (!session?.user?.auth0?.sub && !(await validateHeader(req))) {
-        console.log(session?.user?.auth0?.sub, 'Invalid session or header');
+        console.log( 'Invalid session or header');
         return { isValid: false, userId: null };
     }
 
@@ -72,7 +71,7 @@ export async function buildCalloutWithHeader(url: string, body: any, method: 'GE
     const basicAuth = process.env.N8N_BASIC_AUTH;
     const basicHeader = Buffer.from(basicAuth as string).toString('base64');
     const baseUrl = await getBaseUrl();
-    if (body) {
+    if (body && method !== 'GET') {
         return fetch(`${baseUrl}${url}`, {
             method: method,
             headers: {

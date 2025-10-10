@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
     console.log('Completed storage of HubSpot credentials');
     return NextResponse.redirect(url);
   } catch (error) {
-    console.error('Error handling HubSpot OAuth callback:', error);
+    console.log('Error handling HubSpot OAuth callback:', error);
     return NextResponse.json({ 
       success: false, 
       error: error instanceof Error ? error.message : 'An unexpected error occurred' 

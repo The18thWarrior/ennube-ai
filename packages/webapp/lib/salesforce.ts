@@ -1,8 +1,9 @@
 import { auth } from "@/auth";
 import { Session } from "next-auth";
-import {Connection, SaveResult, OAuth2, Schema} from 'jsforce';
+import {Connection, SaveResult, OAuth2, Schema, DescribeGlobalResult, DescribeSObjectResult} from 'jsforce';
 import { RefreshTokenResponse, SalesforceAuthResult, SalesforceQueryResult, SalesforceUserInfo } from "./types";
 import { IngestJobV2Results, JobInfoV2, QueryJobInfoV2 } from "jsforce/lib/api/bulk2";
+import { storeSalesforceCredentials, updateSalesforceCredentials } from "./db/salesforce-storage";
 
 
 
@@ -16,22 +17,27 @@ export class SalesforceClient {
   private clientId?: string;
   private clientSecret?: string;
   private refreshToken?: string;
+  private userId: string;
 
   constructor(
     accessToken: string, 
     instanceUrl: string, 
+    _userId: string,
     _refreshToken?: string, 
     clientId?: string, 
-    clientSecret?: string
+    clientSecret?: string,
   ) {
     // Initialize jsforce connection with OAuth credentials
     //console.log(accessToken, instanceUrl, _refreshToken, clientId, clientSecret);
+    this.clientId = clientId || process.env.SALESFORCE_CLIENT_ID;
+    this.clientSecret = clientSecret || process.env.SALESFORCE_CLIENT_SECRET;
     const connectionData = {
       oauth2: new OAuth2({
         clientId: clientId || process.env.SALESFORCE_CLIENT_ID,
         clientSecret: clientSecret || process.env.SALESFORCE_CLIENT_SECRET,
         redirectUri : process.env.SALESFORCE_REDIRECT_URI,
       }),
+      loginUrl: instanceUrl.includes('sandbox') ? 'https://test.salesforce.com' : 'https://login.salesforce.com',
       instanceUrl: instanceUrl,
       accessToken: accessToken,
       refreshToken: _refreshToken,
@@ -51,9 +57,12 @@ export class SalesforceClient {
       this.oauth2 = new OAuth2({
         clientId: finalClientId,
         clientSecret: finalClientSecret,
+        loginUrl: instanceUrl.includes('sandbox') ? 'https://test.salesforce.com' : 'https://login.salesforce.com',
         redirectUri: undefined, // Not needed for refresh token flow
       });
     }
+
+    this.userId = _userId;
   }
 
   /**
@@ -78,25 +87,44 @@ export class SalesforceClient {
         if (envClientId && envClientSecret) {
           this.oauth2 = new OAuth2({
             clientId: envClientId,
-            clientSecret: envClientSecret
+            clientSecret: envClientSecret,
+            loginUrl: this.connection.instanceUrl.includes('sandbox') ? 'https://test.salesforce.com' : 'https://login.salesforce.com',
           });
         }
       }
       
       if (!this.oauth2 || !this.refreshToken) {
-        console.warn('Cannot refresh token: Missing OAuth2 configuration or refresh token');
+        console.log('Cannot refresh token: Missing OAuth2 configuration or refresh token');
         return null;
       }
-
+      // console.log(this.oauth2, this.connection)
+      
       const refreshResult = await this.oauth2.refreshToken(this.refreshToken);
-      
+      console.log('Refresh result refreshAccessToken:', refreshResult);
       // Update the connection with the new access token
+      const oldAccessToken = this.connection.accessToken as string;
       this.connection.accessToken = refreshResult.access_token;
-      
+      const newCredentials : SalesforceAuthResult = {
+        success: true,
+        userId: this.userId,
+        accessToken: refreshResult.access_token,
+        instanceUrl: this.connection.instanceUrl,
+        refreshToken: refreshResult.refresh_token || this.refreshToken, // Use existing if not provided
+        clientId: this.clientId,
+        clientSecret: this.clientSecret,
+        userInfo: {
+          id: this.connection.userInfo?.id,
+          organization_id: this.connection.userInfo?.organizationId,
+        }
+      }
+      console.log('storeSalesforceCredentials newCredentials:', newCredentials.refreshToken, newCredentials.accessToken);
+      console.log('old value:', this.refreshToken, oldAccessToken);
+      await updateSalesforceCredentials(newCredentials);
+
       console.log('Successfully refreshed Salesforce access token');
       return refreshResult;
     } catch (error) {
-      console.error('Error refreshing Salesforce access token:', error);
+      console.log('Error refreshing Salesforce access token:', error);
       return null;
     }
   }
@@ -111,18 +139,21 @@ export class SalesforceClient {
       // First attempt
       return await apiCall();
     } catch (error) {
-      console.log('Error during Salesforce API call:');
+      console.log('Error during Salesforce API call:', error);
       // Check if the error is due to an expired session
       const errorMsg = error instanceof Error ? error.message : String(error);
+      console.log('withTokenRefresh errorMsg:', errorMsg);
       const isSessionExpired = errorMsg.includes('INVALID_SESSION_ID') || 
                               errorMsg.includes('Session expired') ||
                               errorMsg.includes('invalid session') ||
-                              errorMsg.includes('Bad_OAuth_Token');
+                              errorMsg.includes('Bad_OAuth_Token') || 
+                              errorMsg.includes('expired access/refresh token') || 
+                              errorMsg.includes('expired');
       //('Is session expired:', isSessionExpired,  this.refreshToken);
       if (isSessionExpired && this.refreshToken) {
         console.log('Salesforce session expired. Attempting to refresh token...');
         const refreshResult = await this.refreshAccessToken();
-        
+        console.log('Refresh result in withTokenRefresh:', refreshResult);
         if (refreshResult) {
           // Retry the API call with the new token
           return await apiCall();
@@ -146,7 +177,7 @@ export class SalesforceClient {
         const userInfo = await this.connection.identity();
         return userInfo as unknown as SalesforceUserInfo;
       } catch (error) {
-        console.error('Error fetching Salesforce user info:');
+        console.log('Error fetching Salesforce user info:');
         throw new Error(`Failed to fetch user info: ${error instanceof Error ? error.message : String(error)}`);
       }
     });
@@ -167,7 +198,7 @@ export class SalesforceClient {
           nextRecordsUrl: queryResult.nextRecordsUrl
         };
       } catch (error) {
-        console.error('Error executing Salesforce SOQL query:', error);
+        console.log('Error executing Salesforce SOQL query:', error);
         throw new Error(`SOQL query failed: ${error instanceof Error ? error.message : String(error)}`);
       }
     });
@@ -188,7 +219,7 @@ export class SalesforceClient {
         }
         return result.id;
       } catch (error) {
-        console.error(`Error creating ${sobjectType}:`, error);
+        console.log(`Error creating ${sobjectType}:`, error);
         throw new Error(`Failed to create ${sobjectType}: ${error instanceof Error ? error.message : String(error)}`);
       }
     });
@@ -213,7 +244,7 @@ export class SalesforceClient {
         }
         return true;
       } catch (error) {
-        console.error(`Error updating ${sobjectType}:`, error);
+        console.log(`Error updating ${sobjectType}:`, error);
         throw new Error(`Failed to update ${sobjectType}: ${error instanceof Error ? error.message : String(error)}`);
       }
     });
@@ -234,7 +265,7 @@ export class SalesforceClient {
         }
         return true;
       } catch (error) {
-        console.error(`Error deleting ${sobjectType}:`, error);
+        console.log(`Error deleting ${sobjectType}:`, error);
         throw new Error(`Failed to delete ${sobjectType}: ${error instanceof Error ? error.message : String(error)}`);
       }
     });
@@ -265,7 +296,7 @@ export class SalesforceClient {
           return await this.connection.sobject(sobjectType).retrieve(id) as T;
         }
       } catch (error) {
-        console.error(`Error retrieving ${sobjectType}:`, error);
+        console.log(`Error retrieving ${sobjectType}:`, error);
         throw new Error(`Failed to retrieve ${sobjectType}: ${error instanceof Error ? error.message : String(error)}`);
       }
     });
@@ -307,12 +338,12 @@ export class SalesforceClient {
           .map(r => `ID: ${r.id}, Errors: ${r.errors.join(', ')}`);
         
         if (errors.length > 0) {
-          console.error(`Batch ${operation} errors:`, errors);
+          console.log(`Batch ${operation} errors:`, errors);
         }
         
         return results;
       } catch (error) {
-        console.error(`Error in batch ${operation}:`, error);
+        console.log(`Error in batch ${operation}:`, error);
         throw new Error(`Batch ${operation} failed: ${error instanceof Error ? error.message : String(error)}`);
       }
     });
@@ -396,7 +427,7 @@ export class SalesforceClient {
           return result;
         }
       } catch (error) {
-        console.error(`Error checking batch status for ID ${batchId}:`, error);
+        console.log(`Error checking batch status for ID ${batchId}:`, error);
         throw new Error(`Failed to check batch status: ${error instanceof Error ? error.message : String(error)}`);
       }
     });
@@ -406,13 +437,13 @@ export class SalesforceClient {
    * Describe a Salesforce object (get metadata)
    * @param sobjectType The API name of the Salesforce object
    */
-  async describe(sobjectType: string): Promise<any> {
+  async describe(sobjectType: string): Promise<DescribeSObjectResult> {
     return this.withTokenRefresh(async () => {
       try {
         const result = await this.connection.sobject(sobjectType).describe();
         return result;
       } catch (error) {
-        console.error(`Error describing ${sobjectType}:`, error);
+        console.log(`Error describing ${sobjectType}:`, error);
         throw new Error(`Failed to describe ${sobjectType}: ${error instanceof Error ? error.message : String(error)}`);
       }
     });
@@ -421,14 +452,82 @@ export class SalesforceClient {
   /**
    * Get a list of all available objects in the org
    */
-  async describeGlobal(): Promise<any> {
+  async describeGlobal(): Promise<DescribeGlobalResult> {
     return this.withTokenRefresh(async () => {
       try {
         const result = await this.connection.describeGlobal();
         return result;
       } catch (error) {
-        console.error('Error retrieving global object descriptions:', error);
+        console.log('Error retrieving global object descriptions:', error);
         throw new Error(`Failed to retrieve object list: ${error instanceof Error ? error.message : String(error)}`);
+      }
+    });
+  }
+
+  /**
+   * Perform a raw GET request to a Salesforce REST API endpoint
+   * @param url The relative or absolute Salesforce REST API URL
+   * @returns The result of the GET request
+   */
+  async getByUrl<T = any>(url: string): Promise<T> {
+    return this.withTokenRefresh(async () => {
+      try {
+        return await this.connection.requestGet(url);
+      } catch (error) {
+        console.log(`Error performing GET request to ${url}:`, error);
+        throw new Error(`Failed to GET from Salesforce: ${error instanceof Error ? error.message : String(error)}`);
+      }
+    });
+  }
+
+
+  async streamContentVersion(
+    contentVersionId: string
+  ): Promise<NodeJS.ReadableStream> {
+    return this.withTokenRefresh(async () => {
+      try {
+        return this.connection.sobject('ContentVersion').record(contentVersionId).blob('VersionData');
+      } catch (error) {
+        console.log(`Error streaming content version ${contentVersionId}:`, error);
+        throw new Error(`Failed to stream content version: ${error instanceof Error ? error.message : String(error)}`);
+      }
+    });
+  }
+  
+  /**
+   * Check if a managed package is installed in the org
+   * @param namespacePrefix The namespace prefix of the managed package
+   * @returns The InstalledSubscriberPackage record if installed, otherwise null
+   *
+   * Usage:
+   *   const pkg = await client.isPackageInstalled('my_ns');
+   *   if (pkg) { ... }
+   */
+  async isPackageInstalled(namespacePrefix: string): Promise<{installed: boolean, validVersion: boolean} | null> {
+    return this.withTokenRefresh(async () => {
+      try {
+        // Query the Tooling API for InstalledSubscriberPackage by NamespacePrefix
+        const soql = `SELECT Id, SubscriberPackageId, SubscriberPackage.NamespacePrefix, SubscriberPackage.Name, SubscriberPackageVersionId FROM InstalledSubscriberPackage`;
+        const result = await this.connection.tooling.query<any>(soql);
+        if (result.records && result.records.length > 0) {
+          const _package = result.records.find((packageRecord: any) => {
+            if (packageRecord.SubscriberPackage.NamespacePrefix === namespacePrefix) {
+              return true;
+            }
+          });
+          if (_package) {
+            console.log(`Package ${namespacePrefix} is installed with version:`, _package.SubscriberPackageVersionId);
+            return {
+              installed: true,
+              validVersion: _package.SubscriberPackageVersionId === process.env.NEXT_PUBLIC_SFDC_MANAGED_PACKAGE_VERSION
+            };
+          }
+        }
+        return { installed: false, validVersion: false };
+      } catch (error) {
+        console.log(`Error checking package installation for namespace '${namespacePrefix}':`, error);
+        //throw new Error(`Failed to check package installation: ${error instanceof Error ? error.message : String(error)}`);
+        return { installed: false, validVersion: false };
       }
     });
   }
@@ -443,6 +542,7 @@ export class SalesforceClient {
  * @returns Authentication result with access token and instance URL
  */
 export async function connectToSalesforce(
+  userId: string,
   username: string,
   password: string,
   securityToken: string = '',
@@ -461,6 +561,7 @@ export async function connectToSalesforce(
     
     return {
       success: true,
+      userId,
       accessToken: conn.accessToken as string,
       instanceUrl: conn.instanceUrl as string,
       refreshToken: conn.refreshToken as string,
@@ -472,9 +573,10 @@ export async function connectToSalesforce(
       }
     };
   } catch (error) {
-    console.error('Salesforce authentication error:', error);
+    console.log('Salesforce authentication error:', error);
     return {
       success: false,
+      userId,
       error: error instanceof Error ? error.message : String(error)
     };
   }
@@ -531,6 +633,15 @@ export async function handleOAuthCallback(
   redirectUri?: string,
   loginUrl: string = 'https://login.salesforce.com'
 ): Promise<SalesforceAuthResult> {
+  const session = await auth();
+  const userId = session?.user?.auth0?.sub;
+  if (!userId) {
+    return {
+      success: false,
+      userId: '',
+      error: 'No user ID found in session'
+    }
+  }
   try {
     // Use provided credentials or fall back to environment variables
     const finalClientId = clientId || process.env.SALESFORCE_CLIENT_ID;
@@ -554,6 +665,7 @@ export async function handleOAuthCallback(
     //console.log('User Info:', userInfo, conn.refreshToken, conn.accessToken);
     return {
       success: true,
+      userId,
       accessToken: conn.accessToken as string,
       refreshToken: conn.refreshToken as string,
       instanceUrl: conn.instanceUrl as string,
@@ -565,9 +677,10 @@ export async function handleOAuthCallback(
       }
     };
   } catch (error) {
-    console.error('Error handling OAuth callback:', error);
+    console.log('Error handling OAuth callback:', error);
     return {
       success: false,
+      userId: '',
       error: error instanceof Error ? error.message : String(error)
     };
   }
@@ -588,53 +701,10 @@ export function createSalesforceClient(authResult: SalesforceAuthResult): Salesf
   return new SalesforceClient(
     authResult.accessToken,
     authResult.instanceUrl,
+    authResult.userId,
     authResult.refreshToken,
     authResult.clientId,
     authResult.clientSecret
   );
 }
 
-/**
- * Helper function to refresh a Salesforce access token directly
- * @param refreshToken The refresh token obtained during OAuth
- * @param clientId OAuth2 client ID (optional, will use env var if not provided)
- * @param clientSecret OAuth2 client secret (optional, will use env var if not provided)
- * @returns New auth result with refreshed tokens
- */
-export async function refreshSalesforceToken(
-  refreshToken: string,
-  clientId?: string,
-  clientSecret?: string
-): Promise<SalesforceAuthResult> {
-  try {
-    // Use provided credentials or fall back to environment variables
-    const finalClientId = clientId || process.env.SALESFORCE_CLIENT_ID;
-    const finalClientSecret = clientSecret || process.env.SALESFORCE_CLIENT_SECRET;
-    
-    if (!finalClientId || !finalClientSecret) {
-      throw new Error('Missing Salesforce OAuth credentials. Provide parameters or set environment variables.');
-    }
-    
-    const oauth2 = new OAuth2({
-      clientId: finalClientId,
-      clientSecret: finalClientSecret
-    });
-    
-    const refreshResult = await oauth2.refreshToken(refreshToken);
-    
-    return {
-      success: true,
-      accessToken: refreshResult.access_token,
-      refreshToken: refreshResult.refresh_token || refreshToken, // Use new one if provided, otherwise keep the old one
-      instanceUrl: refreshResult.instance_url,
-      clientId: finalClientId,
-      clientSecret: finalClientSecret
-    };
-  } catch (error) {
-    console.error('Error refreshing Salesforce token:', error);
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : String(error)
-    };
-  }
-}

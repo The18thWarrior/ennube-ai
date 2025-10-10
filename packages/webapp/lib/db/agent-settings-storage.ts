@@ -16,7 +16,7 @@ const pool = new Pool({
 // Test the connection and log success or error
 // pool.query('SELECT NOW()', (err, res) => {
 //   if (err) {
-//     console.error('Error connecting to PostgreSQL database:', err);
+//     console.log('Error connecting to PostgreSQL database:', err);
 //   } else {
 //     console.log('PostgreSQL connected successfully');
 //   }
@@ -35,6 +35,7 @@ export interface AgentSetting {
   frequency: FrequencyType;
   batchSize?: number;
   provider: ProviderType;
+  customWorkflow?: string;
 }
 
 /**
@@ -43,7 +44,7 @@ export interface AgentSetting {
 export async function saveAgentSetting(agentSetting: Omit<AgentSetting, 'id' | 'createdAt' | 'updatedAt'>): Promise<string | null> {
   try {
     if (!agentSetting.userId) {
-      console.error('Cannot save agent setting: No user ID provided');
+      console.log('Cannot save agent setting: No user ID provided');
       return null;
     }
 
@@ -102,7 +103,7 @@ export async function saveAgentSetting(agentSetting: Omit<AgentSetting, 'id' | '
       return id;
     }
   } catch (error) {
-    console.error('Error saving agent setting:', error);
+    console.log('Error saving agent setting:', error);
     return null;
   }
 }
@@ -113,13 +114,13 @@ export async function saveAgentSetting(agentSetting: Omit<AgentSetting, 'id' | '
 export async function getAgentSetting(userId: string, agent: string): Promise<AgentSetting | null> {
   try {
     if (!userId || !agent) {
-      console.error('Cannot get agent setting: Missing user ID or agent name');
+      console.log('Cannot get agent setting: Missing user ID or agent name');
       return null;
     }
     
     const result = await pool.query(
       `SELECT id, user_id as "userId", agent, created_at as "createdAt", 
-              updated_at as "updatedAt", active, frequency, batch_size as "batchSize", provider
+              updated_at as "updatedAt", active, frequency, batch_size as "batchSize", provider, custom_workflow as "customWorkflow"
        FROM AgentSettings
        WHERE user_id = $1 AND agent = $2`,
       [userId, agent]
@@ -131,7 +132,7 @@ export async function getAgentSetting(userId: string, agent: string): Promise<Ag
     
     return null;
   } catch (error) {
-    console.error('Error getting agent setting:', error);
+    console.log('Error getting agent setting:', error);
     return null;
   }
 }
@@ -142,13 +143,13 @@ export async function getAgentSetting(userId: string, agent: string): Promise<Ag
 export async function getUserAgentSettings(userId: string): Promise<AgentSetting[]> {
   try {
     if (!userId) {
-      console.error('Cannot get agent settings: No user ID provided');
+      console.log('Cannot get agent settings: No user ID provided');
       return [];
     }
     
     const result = await pool.query(
       `SELECT id, user_id as "userId", agent, created_at as "createdAt", 
-              updated_at as "updatedAt", active, frequency, batch_size as "batchSize", provider
+              updated_at as "updatedAt", active, frequency, batch_size as "batchSize", provider, custom_workflow as "customWorkflow"
        FROM AgentSettings
        WHERE user_id = $1
        ORDER BY agent`,
@@ -157,7 +158,7 @@ export async function getUserAgentSettings(userId: string): Promise<AgentSetting
     
     return result.rows as AgentSetting[];
   } catch (error) {
-    console.error('Error getting user agent settings:', error);
+    console.log('Error getting user agent settings:', error);
     return [];
   }
 }
@@ -171,7 +172,7 @@ export async function updateAgentSetting(
 ): Promise<boolean> {
   try {
     if (!settingId) {
-      console.error('Cannot update agent setting: No setting ID provided');
+      console.log('Cannot update agent setting: No setting ID provided');
       return false;
     }
     
@@ -223,7 +224,7 @@ export async function updateAgentSetting(
     
     return result.rows.length > 0;
   } catch (error) {
-    console.error('Error updating agent setting:', error);
+    console.log('Error updating agent setting:', error);
     return false;
   }
 }
@@ -234,7 +235,7 @@ export async function updateAgentSetting(
 export async function toggleAgentActive(settingId: string): Promise<boolean> {
   try {
     if (!settingId) {
-      console.error('Cannot toggle agent status: No setting ID provided');
+      console.log('Cannot toggle agent status: No setting ID provided');
       return false;
     }
     
@@ -254,7 +255,7 @@ export async function toggleAgentActive(settingId: string): Promise<boolean> {
     
     return false;
   } catch (error) {
-    console.error('Error toggling agent status:', error);
+    console.log('Error toggling agent status:', error);
     return false;
   }
 }
@@ -265,7 +266,7 @@ export async function toggleAgentActive(settingId: string): Promise<boolean> {
 export async function deleteAgentSetting(settingId: string): Promise<boolean> {
   try {
     if (!settingId) {
-      console.error('Cannot delete agent setting: No setting ID provided');
+      console.log('Cannot delete agent setting: No setting ID provided');
       return false;
     }
     
@@ -276,7 +277,7 @@ export async function deleteAgentSetting(settingId: string): Promise<boolean> {
     
     return result.rows.length > 0;
   } catch (error) {
-    console.error('Error deleting agent setting:', error);
+    console.log('Error deleting agent setting:', error);
     return false;
   }
 }
@@ -287,7 +288,7 @@ export async function deleteAgentSetting(settingId: string): Promise<boolean> {
 export async function deleteUserAgentSettings(userId: string): Promise<number> {
   try {
     if (!userId) {
-      console.error('Cannot delete user agent settings: No user ID provided');
+      console.log('Cannot delete user agent settings: No user ID provided');
       return 0;
     }
     
@@ -300,7 +301,7 @@ export async function deleteUserAgentSettings(userId: string): Promise<number> {
     console.log(`Deleted ${count} agent settings for user ${userId}`);
     return count;
   } catch (error) {
-    console.error('Error deleting user agent settings:', error);
+    console.log('Error deleting user agent settings:', error);
     return 0;
   }
 }
@@ -312,7 +313,7 @@ export async function getAllActiveSettings(): Promise<AgentSetting[]> {
   try {
     const result = await pool.query(
       `SELECT id, user_id as "userId", agent, created_at as "createdAt", 
-              updated_at as "updatedAt", active, frequency, batch_size as "batchSize", provider
+              updated_at as "updatedAt", active, frequency, batch_size as "batchSize", provider, custom_workflow as "customWorkflow"
        FROM AgentSettings
        WHERE active = true
        ORDER BY user_id, agent`
@@ -320,7 +321,7 @@ export async function getAllActiveSettings(): Promise<AgentSetting[]> {
     
     return result.rows as AgentSetting[];
   } catch (error) {
-    console.error('Error getting active agent settings:', error);
+    console.log('Error getting active agent settings:', error);
     return [];
   }
 }

@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.redirect(authUrl);
   } catch (error) {
-    console.error('Error getting HubSpot auth URL:', error);
+    console.log('Error getting HubSpot auth URL:', error);
     return NextResponse.json({ 
       success: false, 
       error: error instanceof Error ? error.message : 'An unexpected error occurred' 

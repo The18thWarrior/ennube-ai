@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import {
   getAllUserHistories,
   deleteAllUserThreads,
-} from '../../../lib/cache/message-history';
+} from '@/lib/cache/message-history';
 import { auth } from '@/auth';
 
 // /api/message?subId=...

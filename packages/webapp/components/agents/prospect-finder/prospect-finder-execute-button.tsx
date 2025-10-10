@@ -43,7 +43,7 @@ export default function ProspectFinderExecuteButton() {
       route.push('/dashboard');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unexpected error occurred');
-      console.error('Error executing prospect finder:', err);
+      console.log('Error executing prospect finder:', err);
     } finally {
       setIsLoading(false);
     }

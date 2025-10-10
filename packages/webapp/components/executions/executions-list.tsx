@@ -53,7 +53,7 @@ export function ExecutionsList({ executions, onSelectExecution, selectedExecutio
         >
           <CardContent className="p-4">
             <div className="flex items-center gap-4">
-              <div className="h-12 w-12 rounded-full overflow-hidden flex-shrink-0 border border-gray-200">
+              <div className="h-12 w-12 rounded-full overflow-hidden flex-shrink-0 border ">
                 <Image
                   src={execution.image_url || "/placeholder.svg"}
                   alt={execution.agent_name}

@@ -2,24 +2,30 @@
 
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { signOut } from "next-auth/react";
 
 export default function SalesforceSignOut() {
   const router = useRouter();
   
   const handleSignOut = async () => {
     try {
-      // Use NextAuth's signOut function for OAuth2 logout
-      await signOut({ 
-        redirect: true,
-        callbackUrl: "/integrations/salesforce/connect" 
+      // Remove Salesforce credentials via API
+      const res = await fetch("/api/salesforce/credentials", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        // No body required per API spec
       });
-      
-      // If redirect is false, manually redirect
-      // router.push("/salesforce/connect");
-      // router.refresh();
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Failed to delete credentials");
+      }
+      // Optionally sign out from NextAuth
+      // await signOut({ redirect: true, callbackUrl: "/integrations/salesforce/connect" });
+      // Optionally refresh or redirect
+      router.push("/integrations/salesforce/connect");
+      router.refresh();
     } catch (error) {
-      console.error("Error signing out from Salesforce:", error);
+      console.log("Error signing out from Salesforce:", error);
+      // Optionally show user feedback
     }
   };
   

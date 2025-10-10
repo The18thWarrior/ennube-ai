@@ -4,7 +4,7 @@ import { auth } from '@/auth';
 
 // Initialize Stripe with your secret key
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2025-07-30.basil', // Use the latest API version,
+  apiVersion: '2025-08-27.basil', // Use the latest API version,
   typescript: true,
 });
 export async function GET(req: NextRequest) {
@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ customerId: null });
   } catch (error: any) {
-    console.error('Error checking subscription status:', error);
+    console.log('Error checking subscription status:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to check subscription status' },
       { status: 500 }

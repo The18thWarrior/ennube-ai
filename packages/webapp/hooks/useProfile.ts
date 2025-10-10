@@ -39,7 +39,7 @@ export function useProfile(): UseProfileReturn {
         //console.log(profileData);
         setProfile(profileData);
       } catch (err) {
-        console.error('Error loading profile:', err);
+        console.log('Error loading profile:', err);
         setError('Failed to load your profile information');
       } finally {
         setIsLoading(false);
@@ -79,7 +79,7 @@ export function useProfile(): UseProfileReturn {
       
       return true;
     } catch (err) {
-      console.error('Error updating profile:', err);
+      console.log('Error updating profile:', err);
       setError('Failed to update your profile information');
       return false;
     } finally {

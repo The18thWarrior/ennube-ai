@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
     console.log('Salesforce auth URL:', authUrl);
     return NextResponse.redirect(authUrl);
   } catch (error) {
-    console.error('Error getting Salesforce auth url:', error);
+    console.log('Error getting Salesforce auth url:', error);
     return NextResponse.json({ 
       success: false, 
       error: error instanceof Error ? error.message : 'An unexpected error occurred' 

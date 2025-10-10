@@ -1,3 +1,4 @@
+import Stripe from "stripe";
 import { StoredHubSpotCredentials } from "./db/hubspot-storage";
 
 // Define RefreshTokenResponse type for jsforce
@@ -12,11 +13,13 @@ export interface RefreshTokenResponse {
 
 export interface SalesforceAuthResult {
   success: boolean;
+  userId: string;
   accessToken?: string;
   refreshToken?: string;
   instanceUrl?: string;
   clientId?: string;
   clientSecret?: string;
+  describeEmbedUrl?: string;
   userInfo?: {
     id?: string;
     organization_id?: string;
@@ -89,4 +92,58 @@ export interface Agent {
   systemPrompt: string
   description?: string
   avatar?: string
+}
+
+export interface SubscriptionStatus {
+  id: string;
+  customer: string;
+  items? : {
+    data: Stripe.SubscriptionItem[]
+  },
+  days_until_due?: number;
+  status: 'active' | 'canceled' | 'incomplete' | 'incomplete_expired' | 'past_due' | 'paused' | 'trialing' | 'unpaid';
+}
+
+export interface Execution {
+  id: string
+  agent_name: string
+  image_url: string
+  status: string
+  execution_time: number | null
+  created_at: string
+  response_data: any
+}
+
+export interface UsageLogEntry {
+  id: string;
+  timestamp: number;
+  userSub: string;
+  agent: string;
+  recordsUpdated: number;
+  recordsCreated: number;
+  meetingsBooked: number;
+  queriesExecuted: number;
+  signature: string;
+  nonce: number;
+  usage: number;
+  createdAt?: string;
+  updatedAt?: string;
+  status?: string;
+  responseData?: {
+    execution_summary?: string,
+    recordsUpdated?: number,
+    recordsCreated?: number,
+    meetingsBooked?: number,
+    queriesExecuted?: number,
+    errors?: number,
+    errorMessages?: string[],
+    errorRecords?: string[],
+    records?: string[]
+  };
+}
+
+export interface QueryResult {
+  id: string;
+  payload: Record<string, unknown> | undefined;
+  score: number;
 }

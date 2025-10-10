@@ -72,18 +72,18 @@ export const ContractResultCreateCard: React.FC<ContractResultCreateCardProps> =
   };
 
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-6 w-full mx-auto">
+    <div className="  rounded-lg shadow p-6 w-full mx-auto">
       <h3 className="text-xl font-semibold text-blue-700 dark:text-blue-300 mb-4">Create New Contract Result</h3>
       {success && <div className="mb-2 text-green-600 dark:text-green-400 text-sm">{success}</div>}
       {error && <div className="mb-2 text-red-500 dark:text-red-400 text-sm">{error}</div>}
       <form className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4" onSubmit={handleSubmit}>
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Provider</label>
+          <label className="block text-sm font-medium text-muted-foreground ">Provider</label>
           <select
             name="provider"
             value={form.provider}
             onChange={handleChange}
-            className="mt-1 block w-full outline outline-gray-300 dark:outline-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
+            className="mt-1 block w-full outline outline-gray-300 dark:outline-gray-700   rounded px-3 py-2"
             required
           >
             <option value="sfdc">Salesforce</option>
@@ -93,23 +93,23 @@ export const ContractResultCreateCard: React.FC<ContractResultCreateCardProps> =
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Source ID</label>
+          <label className="block text-sm font-medium text-muted-foreground ">Source ID</label>
           <input
             type="text"
             name="source_id"
             value={form.source_id}
             onChange={handleChange}
-            className="mt-1 block w-full outline outline-gray-300 dark:outline-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2"
+            className="mt-1 block w-full outline outline-gray-300 dark:outline-gray-700   rounded px-3 py-2"
             required
           />
         </div>
         <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Contract Data (JSON)</label>
+          <label className="block text-sm font-medium text-muted-foreground ">Contract Data (JSON)</label>
           <textarea
             name="contract_data"
             value={contractDataText}
             onChange={handleContractDataChange}
-            className="mt-1 block w-full outline outline-gray-300 dark:outline-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded px-3 py-2 font-mono"
+            className="mt-1 block w-full outline outline-gray-300 dark:outline-gray-700   rounded px-3 py-2 font-mono"
             rows={6}
             required
             placeholder={'{\n  "field": "value"\n}'}
@@ -125,7 +125,7 @@ export const ContractResultCreateCard: React.FC<ContractResultCreateCardProps> =
           </button>
           <button
             type="button"
-            className="bg-gray-300 hover:bg-gray-400 text-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200 px-4 py-2 rounded"
+            className="bg-gray-300 hover:bg-muted text-muted-foreground    px-4 py-2 rounded"
             onClick={onClose}
           >
             Cancel

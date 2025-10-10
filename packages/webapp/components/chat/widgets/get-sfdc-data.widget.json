@@ -1,0 +1,249 @@
+{
+  "version": "1.0",
+  "name": "CRM query summary",
+  "description": "Compact list of top CRM records returned by Salesforce data tools.",
+  "template": "{\"type\":\"ListView\",\"status\":{\"text\":{{ (statusText) | tojson }},\"icon\":{{ (statusIcon | default('sparkle')) | tojson }}},\"limit\":{{ (limit | default(5)) | tojson }},\"children\":[{%- set _c -%}{%- for item in records -%},{\"type\":\"ListViewItem\",\"key\":{{ (item.id) | tojson }},\"gap\":3,\"onClickAction\":{\"type\":{{ (item.selectAction.type | default('crm.select')) | tojson }},\"payload\":{{ (item.selectAction.payload | default({\"id\": item.id})) | tojson }}},\"children\":[{\"type\":\"Box\",\"background\":\"alpha-10\",\"radius\":\"sm\",\"padding\":2,\"children\":[{\"type\":\"Icon\",\"name\":{{ (item.icon | default('profile')) | tojson }},\"size\":\"lg\"}]},{\"type\":\"Col\",\"gap\":0,\"children\":[{\"type\":\"Text\",\"value\":{{ (item.primary) | tojson }},\"size\":\"sm\",\"weight\":\"semibold\"},{\"type\":\"Caption\",\"value\":{{ (item.secondary | default('')) | tojson }}}]},{\"type\":\"Spacer\"},{% if item.objectType %}{\"type\":\"Badge\",\"label\":{{ (item.objectType) | tojson }}},{% endif %}{% if item.cta %}{\"type\":\"Button\",\"label\":{{ (item.cta.label | default('Open')) | tojson }},\"variant\":{{ (item.cta.variant | default('outline')) | tojson }},\"onClickAction\":{\"type\":{{ (item.cta.action.type | default('crm.open')) | tojson }},\"payload\":{{ (item.cta.action.payload | default({\"id\": item.id})) | tojson }}}}{% endif %}]}{%- endfor -%}{%- endset -%}{{- (_c[1:] if _c and _c[0] == ',' else _c) -}}]} ",
+  "jsonSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "crm-query-summary-widget",
+    "type": "object",
+    "properties": {
+      "statusText": {
+        "type": "string",
+        "description": "Header line summarizing the result set (e.g., '15 contacts • Filter: Industry = Tech')."
+      },
+      "statusIcon": {
+        "type": "string",
+        "description": "Optional icon token for the header badge.",
+        "default": "sparkle"
+      },
+      "limit": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 10,
+        "default": 5
+      },
+      "records": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "icon": {
+              "type": "string",
+              "default": "profile"
+            },
+            "primary": {
+              "type": "string",
+              "maxLength": 80
+            },
+            "secondary": {
+              "type": "string",
+              "maxLength": 120
+            },
+            "objectType": {
+              "type": "string",
+              "maxLength": 40
+            },
+            "selectAction": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "default": "crm.select"
+                },
+                "payload": {
+                  "type": "object"
+                }
+              },
+              "additionalProperties": false
+            },
+            "cta": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "default": "Open"
+                },
+                "variant": {
+                  "type": "string",
+                  "enum": [
+                    "solid",
+                    "outline",
+                    "soft"
+                  ],
+                  "default": "outline"
+                },
+                "action": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "default": "crm.open"
+                    },
+                    "payload": {
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "payload"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "action"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "id",
+            "primary"
+          ],
+          "additionalProperties": false
+        },
+        "minItems": 1,
+        "maxItems": 10
+      }
+    },
+    "required": [
+      "statusText",
+      "records"
+    ],
+    "additionalProperties": false
+  },
+  "outputJsonPreview": {
+    "type": "ListView",
+    "status": {
+      "text": "15 contacts • Filter: Industry = Tech",
+      "icon": "sparkle"
+    },
+    "limit": 5,
+    "children": [
+      {
+        "type": "ListViewItem",
+        "key": "001XX0000123456",
+        "gap": 3,
+        "onClickAction": {
+          "type": "crm.select",
+          "payload": {
+            "id": "001XX0000123456"
+          }
+        },
+        "children": [
+          {
+            "type": "Box",
+            "background": "alpha-10",
+            "radius": "sm",
+            "padding": 2,
+            "children": [
+              {
+                "type": "Icon",
+                "name": "profile",
+                "size": "lg"
+              }
+            ]
+          },
+          {
+            "type": "Col",
+            "gap": 0,
+            "children": [
+              {
+                "type": "Text",
+                "value": "Acme Industries",
+                "size": "sm",
+                "weight": "semibold"
+              },
+              {
+                "type": "Caption",
+                "value": "Owner: Morgan Patel"
+              }
+            ]
+          },
+          {
+            "type": "Spacer"
+          },
+          {
+            "type": "Badge",
+            "label": "Account"
+          },
+          {
+            "type": "Button",
+            "label": "Open",
+            "variant": "outline",
+            "onClickAction": {
+              "type": "crm.open",
+              "payload": {
+                "id": "001XX0000123456"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "ListViewItem",
+        "key": "001XX0000123470",
+        "gap": 3,
+        "onClickAction": {
+          "type": "crm.select",
+          "payload": {
+            "id": "001XX0000123470"
+          }
+        },
+        "children": [
+          {
+            "type": "Box",
+            "background": "alpha-10",
+            "radius": "sm",
+            "padding": 2,
+            "children": [
+              {
+                "type": "Icon",
+                "name": "profile-card",
+                "size": "lg"
+              }
+            ]
+          },
+          {
+            "type": "Col",
+            "gap": 0,
+            "children": [
+              {
+                "type": "Text",
+                "value": "Helios AI",
+                "size": "sm",
+                "weight": "semibold"
+              },
+              {
+                "type": "Caption",
+                "value": "Owner: Alex Rivera"
+              }
+            ]
+          },
+          {
+            "type": "Spacer"
+          },
+          {
+            "type": "Badge",
+            "label": "Account"
+          },
+          {
+            "type": "Button",
+            "label": "Open",
+            "variant": "outline",
+            "onClickAction": {
+              "type": "crm.open",
+              "payload": {
+                "id": "001XX0000123470"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -5,6 +5,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { CrmRecordDetailCard } from "../chat/tools/crm-record-detail-card";
 import { RecordIcon, RecordType } from "../chat/tools/icon-map";
 import { Button } from "../ui";
+import { useTheme } from "../theme-provider";
 
 interface SfdcRecordCardProps {
   id: string;
@@ -13,6 +14,7 @@ interface SfdcRecordCardProps {
 
 const ExecutionRecordDetailItem: React.FC<SfdcRecordCardProps> = ({ id, goBack }) => {
   const { record, loading, error, sobject, updatedAt } = useSfdcId(id);
+  const {theme} = useTheme();
   const filteredFields = record?.fields.filter((field) => field.label !== 'Id' && field.value && field.label !== 'attributes').map((field) => ({
             label: field.label,
             value: field.value,
@@ -26,7 +28,7 @@ const ExecutionRecordDetailItem: React.FC<SfdcRecordCardProps> = ({ id, goBack }
         {goBack && (
           <Button
             className="text-sm px-3 py-1 rounded ml-2" 
-            variant='ghost'
+            variant={theme === 'dark' ? 'ghost' : 'outline'}
             onClick={goBack}
           >
             ← Back to Execution
@@ -46,7 +48,7 @@ const ExecutionRecordDetailItem: React.FC<SfdcRecordCardProps> = ({ id, goBack }
         {goBack && (
           <Button
             className="text-sm px-3 py-1 rounded ml-2" 
-            variant='ghost'
+            variant={theme === 'dark' ? 'ghost' : 'outline'}
             onClick={goBack}
           >
             ← Back to Execution
@@ -66,7 +68,7 @@ const ExecutionRecordDetailItem: React.FC<SfdcRecordCardProps> = ({ id, goBack }
         {goBack && (
           <Button
             className="text-sm px-3 py-1 rounded ml-2" 
-            variant='ghost'
+            variant={theme === 'dark' ? 'ghost' : 'outline'}
             onClick={goBack}
           >
             ← Back to Execution
@@ -86,7 +88,7 @@ const ExecutionRecordDetailItem: React.FC<SfdcRecordCardProps> = ({ id, goBack }
         {goBack && (
           <Button
             className="text-sm px-3 py-1 rounded ml-2" 
-            variant='ghost'
+            variant={theme === 'dark' ? 'ghost' : 'outline'}
             onClick={goBack}
           >
             ← Back to Execution

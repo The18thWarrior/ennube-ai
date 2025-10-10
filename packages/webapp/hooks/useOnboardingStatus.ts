@@ -39,63 +39,41 @@ export function useOnboardingStatus(): UseOnboardingStatusReturn {
     setError(null);
 
     try {
-      // Step 1: Check if the user has any credentials
-      const credentialResponse = await fetch('/api/salesforce/credentials');
-      
-      // If user doesn't have credentials, they're at the first stage
-      if (!credentialResponse.ok) {
-        console.error('Failed to fetch credentials:', credentialResponse);
+      // Call consolidated onboarding endpoint which returns
+      // { hasCredentials, hasAgentSettings, hasSuccessfulExecution }
+      const resp = await fetch('/api/salesforce/check-onboarding');
+
+      if (!resp.ok) {
+        console.log('Failed to fetch onboarding summary:', resp);
+        // If the endpoint fails, conservatively mark as needs credential
         setStage('needs_credential');
         return;
       }
 
-      const credentials = await credentialResponse.json();
-      if (!credentials || credentials.hasCredentials === false) {
-        console.error('Failed to fetch credentials:', credentials);
+      const data = await resp.json();
+
+      const hasCredentials = Boolean(data?.hasCredentials);
+      const hasAgentSettings = Boolean(data?.hasAgentSettings);
+      const hasSuccessfulExecution = Boolean(data?.hasSuccessfulExecution);
+
+      if (!hasCredentials) {
         setStage('needs_credential');
         return;
       }
 
-      // Step 2: Check if the user has any agent settings configured
-      const agentSettingsResponse = await fetch('/api/agents/settings');
-      
-      if (!agentSettingsResponse.ok) {
+      if (!hasAgentSettings) {
         setStage('needs_agent_config');
         return;
       }
 
-      const agentSettings = await agentSettingsResponse.json();
-      if (!agentSettings || !Array.isArray(agentSettings) || agentSettings.length === 0 || !agentSettings.some(setting => setting.active)) {
-        setStage('needs_agent_config');
-        return;
-      }
-
-      // Step 3: Check if the user has any successful execution logs
-      const usageLogsResponse = await fetch('/api/dashboard/usage?limit=10');
-      
-      if (!usageLogsResponse.ok) {
+      if (!hasSuccessfulExecution) {
         setStage('has_not_executed');
         return;
       }
 
-      const usageLogs = await usageLogsResponse.json();
-      if (
-        !usageLogs || 
-        !Array.isArray(usageLogs) || 
-        usageLogs.length === 0 ||
-        !usageLogs.some(log => 
-          (log.status === 'success' || log.status === 'Success') && 
-          (log.recordsCreated > 0 || log.recordsUpdated > 0 || log.meetingsBooked > 0)
-        )
-      ) {
-        setStage('has_not_executed');
-        return;
-      }
-
-      // If all checks pass, the user has completed onboarding
       setStage('complete');
     } catch (err) {
-      console.error('Error checking onboarding status:', err);
+      console.log('Error checking onboarding status:', err);
       const errorMessage = err instanceof Error ? err.message : 'Failed to check onboarding status';
       setError(errorMessage);
       enqueueSnackbar('Error checking your onboarding status', { variant: 'error' });

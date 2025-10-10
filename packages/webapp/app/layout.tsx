@@ -23,15 +23,15 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: React.PropsWithChildren<{}>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>          
-        <ThemeProvider defaultTheme="system" storageKey="theme">
+      <body className={`${inter.className} scrollbar`}>
+        <ThemeProvider defaultTheme="light" storageKey="theme">
           <div className="flex h-full min-h-screen w-full flex-col justify-between">
             
             <SessionProvider>
               <StripeProvider>
                   <SnackbarProvider>
                     <Header />
-                    <main className="mx-auto w-full max-w-4/5 flex-auto px-4 py-4 sm:px-6 md:py-6">
+                    <main className="mx-auto w-full max-w-4/5 flex-auto px-4 pt-2 sm:px-6 ">
                       {children}
                     </main>
                     {/* <Footer /> */}

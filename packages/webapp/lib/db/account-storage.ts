@@ -17,7 +17,7 @@ const pool = new Pool({
 // Test the connection and log success or error
 // pool.query('SELECT NOW()', (err, res) => {
 //   if (err) {
-//     console.error('Error connecting to PostgreSQL database:', err);
+//     console.log('Error connecting to PostgreSQL database:', err);
 //   } else {
 //     console.log('PostgreSQL connected successfully');
 //   }
@@ -37,7 +37,7 @@ export interface UserProfile {
 export async function saveUserProfile(userSub: string, profile: Omit<UserProfile, 'updatedAt'>): Promise<boolean> {
   try {
     if (!userSub) {
-      console.error('Cannot save profile: No user ID provided');
+      console.log('Cannot save profile: No user ID provided');
       return false;
     }
 
@@ -77,7 +77,7 @@ export async function saveUserProfile(userSub: string, profile: Omit<UserProfile
     console.log('Profile saved:', profileData.updatedAt);
     return true;
   } catch (error) {
-    console.error('Error saving user profile:', error);
+    console.log('Error saving user profile:', error);
     return false;
   }
 }
@@ -88,7 +88,7 @@ export async function saveUserProfile(userSub: string, profile: Omit<UserProfile
 export async function getUserProfile(userSub: string, session?: Session | null): Promise<UserProfile | null> {
   try {
     if (!userSub) {
-      console.error('Cannot get profile: No user ID provided');
+      console.log('Cannot get profile: No user ID provided');
       return null;
     }
     
@@ -116,7 +116,7 @@ export async function getUserProfile(userSub: string, session?: Session | null):
     
     return null;
   } catch (error) {
-    console.error('Error getting user profile:', error);
+    console.log('Error getting user profile:', error);
     return null;
   }
 }
@@ -130,7 +130,7 @@ export async function updateUserProfile(
 ): Promise<boolean> {
   try {
     if (!userSub) {
-      console.error('Cannot update profile: No user ID provided');
+      console.log('Cannot update profile: No user ID provided');
       return false;
     }
     
@@ -141,7 +141,7 @@ export async function updateUserProfile(
     );
     
     if (checkResult.rows.length === 0) {
-      console.error('Cannot update profile: Profile not found');
+      console.log('Cannot update profile: Profile not found');
       return false;
     }
     
@@ -184,7 +184,7 @@ export async function updateUserProfile(
     
     return true;
   } catch (error) {
-    console.error('Error updating user profile:', error);
+    console.log('Error updating user profile:', error);
     return false;
   }
 }
@@ -195,7 +195,7 @@ export async function updateUserProfile(
 export async function deleteUserProfile(userSub: string): Promise<boolean> {
   try {
     if (!userSub) {
-      console.error('Cannot delete profile: No user ID provided');
+      console.log('Cannot delete profile: No user ID provided');
       return false;
     }
     
@@ -206,7 +206,7 @@ export async function deleteUserProfile(userSub: string): Promise<boolean> {
     
     return true;
   } catch (error) {
-    console.error('Error deleting user profile:', error);
+    console.log('Error deleting user profile:', error);
     return false;
   }
 }
@@ -219,6 +219,6 @@ export async function closeConnection(): Promise<void> {
     await pool.end();
     console.log('PostgreSQL connection pool closed');
   } catch (error) {
-    console.error('Error closing PostgreSQL connection pool:', error);
+    console.log('Error closing PostgreSQL connection pool:', error);
   }
 }

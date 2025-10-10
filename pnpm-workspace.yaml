@@ -1,5 +1,9 @@
 packages:
   - 'packages/*'
   - 'packages/dataValidation'
-  - 'packages/responseVisualizer'
   - 'packages/webapp'
+  - 'packages/ennube-salesforce'
+  - 'packages/embedder-api'
+
+catalog:
+  zod: ^3.25.76

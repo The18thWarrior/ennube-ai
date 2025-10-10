@@ -1,0 +1,9 @@
+.overtype-container > div && .overtype-wrapper {
+  border-radius: .4rem !important;
+  padding:10000px !important;
+}
+
+.sendButton {
+  transition: background 0.2s;
+  background: linear-gradient(135deg, #3b82f6 0%, #a21caf 100%);
+}

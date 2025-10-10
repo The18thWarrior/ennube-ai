@@ -81,3 +81,20 @@ export const createConnection = async (accessToken: string, instanceUrl: string,
     });
     return connection;
 };
+
+export const isPackageInstalled = async (connection: Connection, namespacePrefix: string): Promise<boolean | null> => {
+      try {
+        // Query the Tooling API for InstalledSubscriberPackage by NamespacePrefix
+        const soql = `SELECT Id, SubscriberPackageId, SubscriberPackage.NamespacePrefix, SubscriberPackage.Name, SubscriberPackageVersionId FROM InstalledSubscriberPackage WHERE SubscriberPackage.NamespacePrefix = '${namespacePrefix}' LIMIT 1`;
+        const result = await connection.tooling.query<any>(soql);
+        if (result.records && result.records.length > 0) {
+          return true;
+        }
+        return false;
+      } catch (error) {
+        console.log(`Error checking package installation for namespace '${namespacePrefix}':`, error);
+        //throw new Error(`Failed to check package installation: ${error instanceof Error ? error.message : String(error)}`);
+        return false;
+      }
+    
+  }

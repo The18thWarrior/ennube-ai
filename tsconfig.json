@@ -21,11 +21,12 @@
     ],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["*"],
-      "auth": ["auth"],
+      "#/*": ["packages/admin-webapp/*"],
+      "@/*": ["packages/webapp/*"],
+      "auth": ["packages/webapp/auth"],
       "@ennube/data-validation": ["packages/dataValidation/dist/index.js"],
-       "@ennube/data-validation/*": ["packages/dataValidation/dist/*"]
-    }
+      "@ennube/data-validation/*": ["packages/dataValidation/dist/*"]
+    },
   },
   "include": [
     "process.d.ts",

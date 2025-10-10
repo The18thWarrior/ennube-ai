@@ -14,6 +14,7 @@ import { getCustomerSubscription } from '@/lib/stripe';
 
 // Helper to verify the user is authorized to manage secondary users
 async function verifyPrimaryUser(request: NextRequest) {
+  
   try {
     // Get the current authenticated user
     const session = await auth();
@@ -22,7 +23,8 @@ async function verifyPrimaryUser(request: NextRequest) {
     }
 
     const userSub = session.user.auth0.sub;
-
+    // FOR LOCAL TESTING ONLY, SKIP SUBSCRIPTION CHECK
+    //return { authorized: true, userSub };
     // Check if user has a valid subscription
     const subscription = await getCustomerSubscription(userSub);
     if (!subscription || subscription.status !== 'active') {
@@ -38,7 +40,7 @@ async function verifyPrimaryUser(request: NextRequest) {
 
     return { authorized: true, userSub };
   } catch (error) {
-    console.error('Error verifying primary user:', error);
+    console.log('Error verifying primary user:', error);
     return { authorized: false, error: 'Server error during authorization', status: 500 };
   }
 }
@@ -62,7 +64,7 @@ export async function GET(request: NextRequest) {
       users
     });
   } catch (error: any) {
-    console.error('Error listing secondary users:', error);
+    console.log('Error listing secondary users:', error);
     return NextResponse.json({ 
       error: 'Failed to list secondary users',
       details: error.message 
@@ -105,21 +107,24 @@ export async function POST(request: NextRequest) {
     // Create the secondary user
     const newUser = await auth0Manager.createSecondaryUser(userParams);
 
-    if (!newUser) {
-      return NextResponse.json({
-        error: 'Failed to create user'
+    if (typeof newUser === 'string') {
+      return NextResponse.json({ 
+        error: 'Failed to create secondary user',
+        details: newUser
       }, { status: 500 });
+    } else {
+      return NextResponse.json({
+        success: !!newUser,
+        user: newUser
+      }, { status: 201 });
     }
 
-    return NextResponse.json({
-      success: true,
-      user: newUser
-    }, { status: 201 });
+    
   } catch (error: any) {
-    console.error('Error creating secondary user:', error);
+    console.log('Error creating secondary user:', error);
     return NextResponse.json({ 
       error: 'Failed to create secondary user',
-      details: error.message 
+      details: error.msg 
     }, { status: 500 });
   }
 }
@@ -177,7 +182,7 @@ export async function PATCH(request: NextRequest) {
       user: updatedUser
     });
   } catch (error: any) {
-    console.error('Error updating secondary user:', error);
+    console.log('Error updating secondary user:', error);
     return NextResponse.json({ 
       error: 'Failed to update secondary user',
       details: error.message 
@@ -220,7 +225,7 @@ export async function DELETE(request: NextRequest) {
       message: 'User successfully deleted'
     });
   } catch (error: any) {
-    console.error('Error deleting secondary user:', error);
+    console.log('Error deleting secondary user:', error);
     return NextResponse.json({ 
       error: 'Failed to delete secondary user',
       details: error.message 
