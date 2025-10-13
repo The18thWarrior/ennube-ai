@@ -19,7 +19,7 @@ export default async function GSuiteConnect() {
 
       <div className="p-6 bg-muted  rounded-lg">
         <p className="mb-4">Connect your Google Workspace (formerly G Suite) account to access and manage your Gmail, Google Calendar, and Google Contacts directly from this application.</p>
-        <GoogleLoginForm />
+        {/* <GoogleLoginForm /> */}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

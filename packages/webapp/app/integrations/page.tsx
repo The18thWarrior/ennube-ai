@@ -47,13 +47,13 @@ export default async function IntegrationsPage() {
                     connected={hasSalesforce} isAddCard={false}        
                 />
 
-                { <IntegrationCard
+                {/* { <IntegrationCard
                     title="GSuite"
                     description="Connect your GSuite account to sync emails and calendars."
                     icon="/gmail-logo.webp"
                     url={"/integrations/gsuite"}
                     connected={hasGSuite} isAddCard={false}        
-                /> }
+                /> } */}
                 
                 <IntegrationCard
                     title="HubSpot"
@@ -63,13 +63,13 @@ export default async function IntegrationsPage() {
                     connected={hasHubSpot} isAddCard={false}        
                 />
 
-                <IntegrationCard
+                {/* <IntegrationCard
                     title="PostgreSQL"
                     description="Connect your PostgreSQL database to execute queries and analyze data."
                     icon="/postgres.svg"
                     url={"/integrations/postgres"}
                     connected={hasPostgres} isAddCard={false}        
-                />
+                /> */}
 
                 <IntegrationCard
                     title="Add New Integration"
