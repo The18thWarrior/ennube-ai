@@ -51,7 +51,41 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-
+export async function GET(request: NextRequest) {
+  const {isValid} = await validateSession(request);
+  if (!isValid) {
+    console.log('GET /customer-profile - Invalid session');
+    return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
+  }
+  try {
+    const searchParams = request.nextUrl.searchParams;
+    const url = searchParams.get('url');
+    if (!url) {
+      return NextResponse.json(
+        { error: 'Missing url parameter' },
+        { status: 400 }
+      );
+    }
+    const res = await fetch(decodeURIComponent(url));
+    if (!res.ok) {
+      console.log('File fetch error:', res.status, res.statusText);
+      return NextResponse.json(
+        { error: 'Failed to fetch file from URL' },
+        { status: 500 }
+      );
+    }
+    const blob = await res.blob();
+    //const arrayBuffer = await blob.arrayBuffer();
+    //console.log('Fetched file blob:', blob.text());
+    return NextResponse.json({ data: await blob.text() });
+  } catch (error) {
+    console.error('File upload error:', error);
+    return NextResponse.json(
+      { error: 'Failed to upload file' },
+      { status: 500 }
+    );
+  }
+}
 /*
  * === app/api/file/route.ts ===
  * Updated: 2025-10-06 12:00

@@ -100,7 +100,6 @@ export class SalesforceClient {
       // console.log(this.oauth2, this.connection)
       
       const refreshResult = await this.oauth2.refreshToken(this.refreshToken);
-      console.log('Refresh result refreshAccessToken:', refreshResult);
       // Update the connection with the new access token
       const oldAccessToken = this.connection.accessToken as string;
       this.connection.accessToken = refreshResult.access_token;
@@ -117,8 +116,6 @@ export class SalesforceClient {
           organization_id: this.connection.userInfo?.organizationId,
         }
       }
-      console.log('storeSalesforceCredentials newCredentials:', newCredentials.refreshToken, newCredentials.accessToken);
-      console.log('old value:', this.refreshToken, oldAccessToken);
       await updateSalesforceCredentials(newCredentials);
 
       console.log('Successfully refreshed Salesforce access token');
@@ -139,10 +136,9 @@ export class SalesforceClient {
       // First attempt
       return await apiCall();
     } catch (error) {
-      console.log('Error during Salesforce API call:', error);
+      console.log('Error during Salesforce API call:');
       // Check if the error is due to an expired session
       const errorMsg = error instanceof Error ? error.message : String(error);
-      console.log('withTokenRefresh errorMsg:', errorMsg);
       const isSessionExpired = errorMsg.includes('INVALID_SESSION_ID') || 
                               errorMsg.includes('Session expired') ||
                               errorMsg.includes('invalid session') ||
@@ -151,9 +147,7 @@ export class SalesforceClient {
                               errorMsg.includes('expired');
       //('Is session expired:', isSessionExpired,  this.refreshToken);
       if (isSessionExpired && this.refreshToken) {
-        console.log('Salesforce session expired. Attempting to refresh token...');
         const refreshResult = await this.refreshAccessToken();
-        console.log('Refresh result in withTokenRefresh:', refreshResult);
         if (refreshResult) {
           // Retry the API call with the new token
           return await apiCall();

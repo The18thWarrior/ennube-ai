@@ -211,7 +211,12 @@ const ChatContainer = ({
             </Card>
             <div className={`h-[10dvh] flex-none bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60`}>
                 {error && <div className="text-red-500 mb-2">Error: {error.message}</div>}
-                <PromptInput globalDrop={true} onSubmit={handleSubmitPromptInput} className="mt-4 relative" accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/*,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+                <PromptInput
+                  globalDrop={true}
+                  onSubmit={handleSubmitPromptInput}
+                  className="mt-4 relative"
+                  accept="text/comma-separated-values,text/csv,application/csv,application/vnd.ms-excel,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                >
                   <PromptInputBody className={'flex flex-row'}>
                     <PromptInputTextarea onChange={handlePromptInputChange} value={input} />
                   </PromptInputBody>
@@ -222,23 +227,22 @@ const ChatContainer = ({
                         <PromptInputActionMenuContent>
                           <PromptInputActionAddAttachments />
                         </PromptInputActionMenuContent>
-                        
                       </PromptInputActionMenu>
                       <PromptInputButton
-                        variant={webSearch ? 'default' : 'ghost'}
-                        onClick={() => {
-                          console.log(`Web search toggled, old value: ${webSearch} new value: ${!webSearch}`);
-                          setWebSearch(!webSearch)
-                        }}
+                      variant={webSearch ? 'default' : 'ghost'}
+                      onClick={() => {
+                        console.log(`Web search toggled, old value: ${webSearch} new value: ${!webSearch}`);
+                        setWebSearch(!webSearch)
+                      }}
                       >
-                        <GlobeIcon size={16} />
-                        <span>Search</span>
+                      <GlobeIcon size={16} />
+                      <span>Search</span>
                       </PromptInputButton>
                       <PromptInputAttachments>
-                        {(attachment) => (
-                          <PromptInputAttachment data={attachment} />
-                        )}
-                      </PromptInputAttachments> 
+                      {(attachment) => (
+                        <PromptInputAttachment data={attachment} />
+                      )}
+                      </PromptInputAttachments>
                     </PromptInputTools>
                     <PromptInputSubmit
                       disabled={isLoading}

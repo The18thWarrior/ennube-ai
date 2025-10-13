@@ -234,7 +234,7 @@ export default function ChatLayout({ children }: { children: React.ReactNode }) 
 
   // Called when an agent is selected from the collapsible section
   const handleSelectAgent = (agentId: string) => {
-    setShowAgentSelect(false);
+    //setShowAgentSelect(false);
     // Generate a new threadId and optionally pass agentId as a query param or state
     const newId = nanoid();
     // Example: pass agentId as query param

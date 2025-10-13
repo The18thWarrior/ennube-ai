@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSalesforceCredentialsBySub } from '@/lib/db/salesforce-storage';
 import { SalesforceClient, createSalesforceClient } from '@/lib/salesforce';
-import { SalesforceAuthResult } from '@/lib/types';
+import { DescribeResultType, SalesforceAuthResult } from '@/lib/types';
 import { auth } from '@/auth';
 import { getDescribe, setDescribe, getGlobalDescribe, setGlobalDescribe } from '@/lib/cache/salesforce/describe-history';
 import { DescribeGlobalResult, DescribeSObjectResult } from 'jsforce';
@@ -55,33 +55,38 @@ export async function GET(request: NextRequest) {
         console.log('Using cached describe result');
       }
       //console.log(describe);
-      const describeResult = {
+      // Typed shape for the describe result returned to the client
+      
+
+      const describeResult: DescribeResultType = {
         name: describe.name,
         label: describe.label,
         keyPrefix: describe.keyPrefix,
-        fields: addFields ? describe.fields.map((field: { calculatedFormula: any; digits: any; externalId: any; inlineHelpText: any; label: any; length: any; name: any; picklistValues: any; precision: any; relationshipName: any; type: any; }) => {
-          return {
-            calculatedFormula: field.calculatedFormula,
-            digits: field.digits,
-            externalId: field.externalId,
-            inlineHelpText: field.inlineHelpText,
-            label: field.label,
-            length: field.length,
-            name: field.name,
-            picklistValues: field.picklistValues,
-            precision: field.precision,
-            relationshipName: field.relationshipName,
-            type: field.type
-          }
-        }) : [],
-        childRelationships: addRelationships ? describe.childRelationships.filter((child: { deprecatedAndHidden: boolean; relationshipName: any; field: any; childSObject: any; }) => child.deprecatedAndHidden === false && child.relationshipName).map((child: { childSObject: any; field: any; relationshipName: any; }) => {
-          return {
-            childSObject: child.childSObject,
-            field: child.field,
-            relationshipName: child.relationshipName
-          }
-        }) : []
-      }
+        fields: addFields
+          ? (describe.fields || []).map((field: any) => ({
+              calculatedFormula: field.calculatedFormula ?? null,
+              digits: field.digits ?? null,
+              externalId: field.externalId ?? null,
+              inlineHelpText: field.inlineHelpText ?? null,
+              label: field.label ?? null,
+              length: field.length ?? null,
+              name: field.name,
+              picklistValues: field.picklistValues ?? [],
+              precision: field.precision ?? null,
+              relationshipName: field.relationshipName ?? null,
+              type: field.type ?? null
+            }))
+          : [],
+        childRelationships: addRelationships
+          ? (describe.childRelationships || [])
+              .filter((child: any) => !child.deprecatedAndHidden && child.relationshipName)
+              .map((child: any) => ({
+                childSObject: child.childSObject,
+                field: child.field,
+                relationshipName: child.relationshipName
+              }))
+          : []
+      };
       return NextResponse.json({ describe: describeResult });
     } else {
       // Describe all objects (describeGlobal)

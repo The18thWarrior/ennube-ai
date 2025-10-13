@@ -71,66 +71,49 @@ interface DescribeResponse {
  * @param topK Number of top similar fields to consider (default: 50)
  * @returns Query execution results
  */
+
 async function generateAndExecuteQuery(
   subId: string, 
   credentials: StoredSalesforceCredentials,
   sobjectTypes: string[], 
   description: string,
-  similarFields: QueryResult[],
-  errorResult?: string
+  graphDb: GraphDatabase
 ) {
   
-  if (similarFields.length === 0) {
-    throw new Error('No relevant fields found for the given description');
+  // 5. Generate structured query object using AI
+  console.log('Generating SOQL query with AI...');
+  const model = getModel();
+  if (!model) {
+    throw new Error('AI model not configured');
   }
-  console.log(`Found ${similarFields.length} relevant fields for query generation`);
-  console.log('objects', sobjectTypes)
-  console.log('Current description', description);
-  const fieldContext = JSON.stringify(similarFields.reduce((acc, f) => {
-    if (f.payload) {
-      if (!Object.keys(acc).includes(f.payload.sobjectType as string) ) {
-        acc[f.payload.sobjectType as string] = {
-          fields: [],
-          childRelationships: []
-        };
+  
+  const textResponse = await generateText({
+    model,
+    providerOptions: {
+      openrouter: {
+        parallelToolCalls: false
       }
-      if (f.payload.fieldName) {
-        // Build field object and only add optional keys when present
-        const field: Record<string, any> = {
-          apiName: f.payload.fieldName,
-          type: f.payload.type,
-        };
+    },
+    prompt: `
+      You are an expert data analyst and SQL (Structured Query Language) generation agent. 
+      Your sole purpose is to take a user's natural language request and use the attached tools to generate a recomendation of tables and fields to use in a SQL query.
 
-        if (f.payload.relationshipName) {
-          field.relationshipName = f.payload.relationshipName;
-        }
-
-        if (Array.isArray(f.payload.picklistValues) && f.payload.picklistValues.length > 0) {
-          field.picklistValues = f.payload.picklistValues;
-        }
-
-        acc[f.payload.sobjectType as string].fields.push(field);
-      }
-
-      if (f.payload.childSObject) {
-        acc[f.payload.sobjectType as string].childRelationships.push({
-          childSObject: f.payload.childSObject,
-          field: f.payload.fieldName,
-          relationshipName: f.payload.relationshipName
-        });
-      }
-      // acc.push({
-      //   sobjectType: f.payload.sobjectType,
-      //   fieldName: f.payload.fieldName,
-      //   label: f.payload.label,
-      //   type: f.payload.type
-      // });
-    }
-    return acc;
-  }, {} as Record<string, any>));
-
-
-  const prompt = `
+      [START OF CONTEXT]
+      User request: "${description}"
+      [END OF CONTEXT]
+    `,
+    tools: {
+      getAllTableNamesTool: getAllTableNamesTool(graphDb),
+      analyzeTableRelationshipsTool: analyzeTableRelationshipsTool(graphDb),
+      getTableInfoTool: getTableInfoTool(graphDb),
+      findJoinPathTool: findJoinPathTool(graphDb)
+    },
+    toolChoice: "required",
+    stopWhen: stepCountIs(5),
+    
+  })
+  console.log('Text response:', textResponse.text);
+  const prompt =  `
     You are an expert Salesforce SOQL (Salesforce Object Query Language) generation agent. Your sole purpose is to convert a user's natural language question into a syntactically correct and efficient SOQL query based on the provided Salesforce schema. You must operate under the following rules and guidelines.
 
     Requirements:
@@ -140,6 +123,7 @@ async function generateAndExecuteQuery(
     - Focus on fields most relevant to the user's request
     - Include appropriate WHERE clauses if filtering is implied
     - Limit results to a reasonable number (e.g., LIMIT 200)
+    - Aggregate functions must be directly declared in GROUP BY and ORDER BY clauses.
     - A sub-query cannot be used in a GROUP BY or ORDER BY clause.
       -- Invalid Query: SELECT COUNT(Id), (SELECT Id FROM Contacts) FROM Account GROUP BY (SELECT Id FROM Contacts)
     - Date and DateTime Formatting: Dates and DateTimes in WHERE clauses must be in ISO 8601 format.
@@ -147,15 +131,6 @@ async function generateAndExecuteQuery(
     - Aggregate Functions and LIMIT Clause: A non-grouped query that uses an aggregate function (e.g., COUNT(), MAX(), MIN(), AVG(), SUM()) cannot also use a LIMIT clause. This is because aggregate functions already return a single result. 
       -- Invalid Query: SELECT COUNT(Id) FROM Account LIMIT 1 | Valid Query: SELECT COUNT(Id) FROM Account
 
-    Rules for Translating Joins:
-    | Type                | Direction    | Analogy           | Syntax Style   | Example                                 |
-    | ------------------- | ------------ | ----------------- | -------------- | --------------------------------------- |
-    | **Child-to-Parent** | Upward       | INNER JOIN        | Dot notation   | 'Contact → Account.Name'                |
-    | **Child-to-Parent** | Upward       | INNER JOIN        | Dot notation   | 'Contact → CustomObject__r.Name'        |
-    | **Parent-to-Child** | Downward     | LEFT OUTER JOIN   | Subquery       | '(SELECT Id FROM Contacts)'             |
-    | **Semi-Join**       | Filter-based | IN (subquery)     | WHERE + IN     | 'WHERE Id IN (SELECT AccountId FROM …)' |
-    | **Anti-Join**       | Filter-based | NOT IN (subquery) | WHERE + NOT IN | 'WHERE Id NOT IN (SELECT …)'            |
-    
     Nomenclature:
     - The 'OwnerId' field on a record points to either a User or a Queue. If ownership is being changed, resolve the new owner's 'Id' (usually a UserId) and update the record’s 'OwnerId.
 
@@ -169,6 +144,15 @@ async function generateAndExecuteQuery(
       2. From each ContentDocumentLink, get the ContentDocument.
       3. From the ContentDocument, retrieve the latest ContentVersion (IsLatest = true).
       4. Download the file from ContentVersion.VersionData.
+    
+    Rules for Translating Joins:
+    | Type                | Direction    | Analogy           | Syntax Style   | Example                                 |
+    | ------------------- | ------------ | ----------------- | -------------- | --------------------------------------- |
+    | **Child-to-Parent** | Upward       | INNER JOIN        | Dot notation   | 'Contact → Account.Name'                |
+    | **Child-to-Parent** | Upward       | INNER JOIN        | Dot notation   | 'Contact → CustomObject__r.Name'        |
+    | **Parent-to-Child** | Downward     | LEFT OUTER JOIN   | Subquery       | '(SELECT Id FROM Contacts)'             |
+    | **Semi-Join**       | Filter-based | IN (subquery)     | WHERE + IN     | 'WHERE Id IN (SELECT AccountId FROM …)' |
+    | **Anti-Join**       | Filter-based | NOT IN (subquery) | WHERE + NOT IN | 'WHERE Id NOT IN (SELECT …)'            |
 
     Return a well-formed SOQL query that addresses the user's needs.
     
@@ -177,30 +161,20 @@ async function generateAndExecuteQuery(
     "${description}"
     Current Date for Context: Assume the current date is ${new Date().toISOString()}.
     The user's id is "${credentials?.userInfo?.id}".
-
     Relevant schema definitions:
-    \`\`\`json
-    ${fieldContext}
-    \`\`\`
-
-    ${errorResult ? `Additional context: The following errors were encountered in previous query attempts: ${errorResult}` : ''}
+      \`\`\`text 
+      ${textResponse.text}
+      \`\`\`
     [END OF CONTEXT]`;
-  // 5. Generate structured query object using AI
-  console.log('Generating SOQL query with AI...');
-  const model = getModel();
-  if (!model) {
-    throw new Error('AI model not configured');
-  }
   const { object: queryResult } = await generateObject({
     model,
-    temperature: 0.2,
     providerOptions: {
       openrouter: {
         parallelToolCalls: false
       }
     },
     schema: QueryGenerationSchema,
-    prompt
+    prompt: prompt
   });
   //console.log('Generated query result:', queryResult);
   //console.log('Generated query result:', queryResult);
@@ -217,11 +191,7 @@ async function generateAndExecuteQuery(
   const queryResponse = await fetch(queryUrl);
   if (!queryResponse.ok) {
     const errorData = await queryResponse.json();
-    if (errorResult) {
-      console.log(`Previous errors encountered: ${errorResult}`);
-      throw new Error(`Query execution failed: ${errorData}`);
-    }
-    return generateAndExecuteQuery(subId, credentials, sobjectTypes, description, similarFields, `${errorData}`);
+    throw new Error(`Query execution failed: ${errorData.error} => ${errorData.details}`);
   }
   
   const queryData = await queryResponse.json();
@@ -231,8 +201,8 @@ async function generateAndExecuteQuery(
     query: queryResult,
     results: queryData,
     metadata: {
-      fieldsConsidered: similarFields.length,
-      fieldsUsed: similarFields.slice(0, 20).length,
+      fieldsConsidered: queryResult.tablesUsed.length,
+      fieldsUsed: queryResult.tablesUsed,
       sobjectTypes: '' + sobjectTypes.join(', '),
       description
     }
@@ -268,7 +238,7 @@ function validateSelectOnly(sql: string): boolean {
  * @param sobjectType Salesforce object type
  * @returns Processed field metadata
  */
-async function fetchAndProcessDescribe(credentials: StoredSalesforceCredentials, sub: string, objects: string[]): Promise<QueryResult[]> {
+async function fetchAndProcessDescribe(credentials: StoredSalesforceCredentials, sub: string, objects: string[]): Promise<GraphDatabase> {
   const authResult: SalesforceAuthResult = {
       success: true,
       userId: sub,
@@ -288,27 +258,7 @@ async function fetchAndProcessDescribe(credentials: StoredSalesforceCredentials,
         const from = GraphDatabase.fromJSON(json);
         if (from && from.success && from.data) {
           const graph = from.data;
-          const analyzer = createSchemaAnalyzer(graph);
-
-          const results: QueryResult[] = [];
-
-          // Iterate all table nodes and their columns
-          const tableNodes = graph.getNodesByType(NodeType.TABLE);
-          for (const t of tableNodes) {
-            if (!objects.includes(t.name)) continue;
-            const cols = analyzer.getTableColumns(t.id);
-            for (const col of cols) {
-              const payload: any = {
-                sobjectType: t.name,
-                fieldName: col.name,
-                label: col.name,
-                type: col.dataType,
-              };
-              results.push({ id: `${t.name}.${col.name}`, score: 1, payload });
-            }
-          }
-
-          if (results.length > 0) return results;
+          return graph;
         }
       }
     } catch (err) {
@@ -390,34 +340,7 @@ async function fetchAndProcessDescribe(credentials: StoredSalesforceCredentials,
   const fileName = `sfdc:${sub}:embed.json`;
   const { url } = await put(fileName, JSON.stringify(jsonData), { access: 'public', allowOverwrite: true });
   await updateDescribeEmbedUrlByUserAndType(sub, url);
-    
-  const analyzer = createSchemaAnalyzer(graph);
-
-  const allFields: QueryResult[] = [];
-  for (const table of tables) {
-    const tableNodes = graph.getNodesByName(table.name);
-    const tableNode = tableNodes.find((n: any) => n.type === 0) || tableNodes[0];
-    if (!tableNode) continue;
-
-    const columns = analyzer.getTableColumns(tableNode.id);
-    for (const col of columns) {
-      const key = `${table.name}.${col.name}`;
-      const info = fieldInfoMap.get(key) || {};
-      const payload: Record<string, unknown> = {
-        sobjectType: table.name,
-        fieldName: col.name,
-        label: info.label || col.name,
-        type: col.dataType,
-        picklistValues: info.picklistValues,
-        relationshipName: info.relationshipName,
-        childSObject: info.childSObject,
-      };
-
-      allFields.push({ id: `${table.name}.${col.name}`, score: 1, payload });
-    }
-  }
-
-  return allFields;
+  return graph;
 }
 
 // Tool: Generate Query
@@ -451,9 +374,8 @@ export const generateQueryTool = (subId: string) => {
 
       try {
         console.log(`Starting query generation for with description: "${description}"`);
-        const query_result = await fetchAndProcessDescribe(credentials, subId, sobjects);
-        //const graph = await fetchAndProcessDescribe2(credentials, subId, sobjects);
-        const data = await generateAndExecuteQuery(subId, credentials, sobjects, description, query_result);
+        const graph = await fetchAndProcessDescribe(credentials, subId, sobjects);
+        const data = await generateAndExecuteQuery(subId, credentials, sobjects, description, graph);
         return data;
       } catch (error: { message?: string } | any) {
         console.error('Query generation failed:', error.message);

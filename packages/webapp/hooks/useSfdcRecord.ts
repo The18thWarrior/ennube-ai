@@ -27,7 +27,6 @@ export function useSfdcRecord(initialRecord: SfdcRecord, sobject: string): UseSf
     const [record, setRecord] = useState<SfdcRecord | null>(initialRecord);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<Error | null>(null);
-    const [objectDescribe, setObjectDescribe] = useState<any>(null);
     const subId = session?.user?.auth0?.sub || null;
     // Helper to get Salesforce API base URL (customize as needed)
     const getApiBase = () => '/api/salesforce';

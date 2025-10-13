@@ -267,6 +267,7 @@ export const PromptInput = ({
   const matchesAccept = useCallback(
     (f: File) => {
       if (!accept || accept.trim() === "") {
+        console.log('No file type restrictions.');
         return true;
       }
       // Simple check: if accept includes "image/*", filter to images; otherwise allow.
@@ -280,9 +281,12 @@ export const PromptInput = ({
 
   const add = useCallback(
     async (files: File[] | FileList) => {
+      inputRef.current?.click();
       const incoming = Array.from(files);
+      console.log('Adding files:', incoming);
       const accepted = incoming.filter((f) => matchesAccept(f));
       if (accepted.length === 0) {
+        console.error('No files match the accepted types.')
         onError?.({
           code: "accept",
           message: "No files match the accepted types.",
@@ -293,6 +297,7 @@ export const PromptInput = ({
         maxFileSize ? f.size <= maxFileSize : true;
       const sized = accepted.filter(withinSize);
       if (sized.length === 0 && accepted.length > 0) {
+        console.error('All files exceed the maximum size.')
         onError?.({
           code: "max_file_size",
           message: "All files exceed the maximum size.",

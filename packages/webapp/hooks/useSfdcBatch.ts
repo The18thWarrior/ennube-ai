@@ -1,10 +1,9 @@
 
 import { useState, useEffect } from 'react';
-import { createConnection, describeGlobal as describeGlobalAsync, bulk as bulkAsync, describe as describeAsync } from '@/lib/salesforce-client';
-import { Connection } from 'jsforce';
 import { } from 'jsforce/lib/types/common'
 import { getDescribeGlobalResult, storeDescribeGlobalResult } from '@/lib/client-cache/salesforce';
 import { DescribeGlobalResult } from 'jsforce';
+import { DescribeResultType } from '@/lib/types';
 
 /**
  * Hook to fetch Salesforce credentials and return a SalesforceClient instance.
@@ -172,7 +171,7 @@ export function useSfdcBatch() {
       throw new Error(`Salesforce batch API error: ${res.status} ${res.statusText} - ${JSON.stringify(details)}`);
     }
 
-    const json = await res.json();
+    const json = await res.json() as { describe: DescribeResultType};
     return json;
   }
 
