@@ -22,7 +22,7 @@ export default async function PostgresConnect() {
 
       <div className="p-6 bg-muted  rounded-lg">
         <p className="mb-4">Connect your PostgreSQL database to access and manage your data directly from this application.</p>
-        <PostgresConnectionForm />
+        {/* <PostgresConnectionForm /> */}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
