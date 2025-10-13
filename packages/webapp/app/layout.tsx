@@ -9,15 +9,30 @@ import { SessionProvider } from "next-auth/react"
 import { SnackbarProvider } from "../components/snackbar-provider"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Analytics } from "@vercel/analytics/next"
-
+import { headers } from "next/headers"
 
 const inter = Inter({ subsets: ["latin"] })
 
-export const metadata: Metadata = {
-  title: "Ennube.ai",
-  description:
-    "Supercharge your CRM with AI Agents",
-  icons: ["/logo.png"]
+// export const metadata: Metadata = {
+//   title: "Ennube.ai",
+//   description:
+//     "Supercharge your CRM with AI Agents",
+//   icons: ["/logo.png"]
+// }
+export async function generateMetadata() {
+  const headersList = await headers();
+  //const theme = headersList.get('x-theme') || 'light'; // Get theme from headers, or default to light
+  const host = headersList.get('host');
+  const faviconPath = host ? (host?.includes('localhost') ? '/logo-dev.png' : host.includes('app') ? '/logo.png' : '/logo-dev.png') : '/logo.png'; // Default favicon path
+
+  return {
+    title: "Ennube.ai",
+    description:
+      "Supercharge your CRM with AI Agents",
+    icons: {
+      icon: faviconPath,
+    },
+  } as Metadata;
 }
 
 export default function RootLayout({ children }: React.PropsWithChildren<{}>) {
