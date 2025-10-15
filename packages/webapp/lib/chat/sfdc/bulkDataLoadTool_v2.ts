@@ -18,7 +18,7 @@ import getModel from "../getModel";
 import { FieldMappingSchema, BulkDataLoadMappingType } from "@/lib/types";
 
 // Configuration constants
-const MAX_BYTES = 12 * 1024 * 1024; // 12MB hard cap
+const MAX_BYTES = 100 * 1024 * 1024; // 100MB hard cap
 const DEFAULT_SAMPLE_SIZE = 50; // Rows to sample for type inference
 
 /**

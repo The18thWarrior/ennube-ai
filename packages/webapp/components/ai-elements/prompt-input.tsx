@@ -49,6 +49,8 @@ import {
 } from "react";
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui';
 import { TooltipProvider } from '@radix-ui/react-tooltip';
+import { type PutBlobResult } from '@vercel/blob';
+import { upload } from '@vercel/blob/client';
 
 type AttachmentsContext = {
   files: (FileUIPart & { id: string })[];
@@ -319,14 +321,18 @@ export const PromptInput = ({
       const uploadPromises = capped.map(async (file) => {
         const formData = new FormData();
         formData.append('file', file);
-        const response = await fetch('/api/file', {
-          method: 'POST',
-          body: formData,
+        const { url } = await upload(file.name, file, {
+          access: 'public',
+          handleUploadUrl: '/api/file/upload',
         });
-        if (!response.ok) {
-          throw new Error('Upload failed');
-        }
-        const { url } = await response.json();
+        // const response = await fetch('/api/file', {
+        //   method: 'POST',
+        //   body: formData,
+        // });
+        // if (!response.ok) {
+        //   throw new Error('Upload failed');
+        // }
+        // const { url } = await response.json();
         console.log('File uploaded to:', url);
         return {
           id: nanoid(),
