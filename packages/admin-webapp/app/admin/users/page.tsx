@@ -26,6 +26,7 @@ type Auth0User = {
 export default function UsersAdminPage() {
   const [data, setData] = React.useState<Auth0User[]>([])
   const [loading, setLoading] = React.useState(true)
+  const [isCreating, setIsCreating] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
   const [pagination, setPagination] = React.useState({ page: 1, limit: 50, total: 0, totalPages: 0 })
 
@@ -36,8 +37,7 @@ export default function UsersAdminPage() {
     { key: 'user_id', header: 'ID', render: (u) => u.user_id ?? '' },
     { key: 'name', header: 'Name', sortable: true, searchable: true },
     { key: 'email', header: 'Email', sortable: true, searchable: true },
-    { key: 'role', header: 'Role', render: (u) => u.app_metadata?.role ?? '' },
-  { key: 'created_at', header: 'Created', render: (u) => formatDate(u.created_at ?? '') },
+    { key: 'last_login', header: 'Last Login', render: (u) => formatDate(u.last_login ?? '') },
     { key: 'actions', header: 'Actions' }
   ]
 
@@ -75,7 +75,7 @@ export default function UsersAdminPage() {
     fetchData({ page })
   }
 
-  const handleEdit = (user: Auth0User) => { setEditingUser(user); setFormOpen(true) }
+  const handleEdit = (user: Auth0User) => { console.log('edit user called');setEditingUser(user); setIsCreating(false); setFormOpen(true) }
 
   const handleDelete = async (user: Auth0User) => {
     try {
@@ -91,9 +91,27 @@ export default function UsersAdminPage() {
     }
   }
 
-  const handleFormSubmit = async (formData: any) => {
+  const createUser = async (formData: any) => {
+    try {
+      const res = await fetch(`/api/users`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
+      if (!res.ok) {
+        const body = await res.json().catch(() => null)
+        throw new Error(body?.error || `Create failed (${res.status})`)
+      }
+      await fetchData()
+    } catch (err) {
+      setError(getErrorMessage(err))
+    }
+  }
+
+  const updateUser = async (formData: any) => {
     try {
       if (!editingUser) throw new Error('No editing user')
+
       const res = await fetch(`/api/users/${encodeURIComponent(editingUser.user_id || '')}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -106,6 +124,22 @@ export default function UsersAdminPage() {
       await fetchData()
       setFormOpen(false)
     } catch (err) {
+      setError(getErrorMessage(err))
+      throw err
+    }
+  }
+
+  const handleFormSubmit = async (formData: any) => {
+    try {
+      if (!editingUser) {
+        await createUser(formData)
+      } else {
+        // Updating existing user
+        await updateUser(formData)
+      }
+      await fetchData()
+      setFormOpen(false)
+    } catch (err) {
       throw err
     }
   }
@@ -113,6 +147,24 @@ export default function UsersAdminPage() {
   const handleCreate = () => {
     // For now, this admin page only supports edit/delete. Creating new Auth0 users often requires a password.
     // Could open a create flow in future.
+    setEditingUser(null)
+    setIsCreating(true)
+    setFormOpen(true)
+  }
+
+  const handleResetPassword = async (userId: string) => {
+    try {
+      if (!userId) throw new Error('No user ID provided for password reset')
+      const res = await fetch(`/api/users/${encodeURIComponent(userId)}/reset`, { method: 'GET' })
+      if (!res.ok) {
+        const body = await res.json().catch(() => null)
+        throw new Error(body?.error || `Password reset failed (${res.status})`)
+      }
+      alert('Password reset email sent')
+    } catch (err) {
+      setError(getErrorMessage(err))
+      throw err
+    }
   }
 
   return (
@@ -137,6 +189,7 @@ export default function UsersAdminPage() {
         onOpenChange={setFormOpen}
         user={editingUser}
         onSubmit={handleFormSubmit}
+        onResetPassword={handleResetPassword}
       />
     </AdminLayout>
   )

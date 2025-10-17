@@ -27,7 +27,7 @@
 
 type Nullable<T> = T | null;
 
-import { ManagementClient } from 'auth0';
+import { ManagementClient, UserCreate } from 'auth0';
 
 export type Auth0User = {
   user_id: string;
@@ -143,6 +143,67 @@ export class Auth0Client {
   const resp = await this.client!.users.update({ id: userId } as any, data as any);
   return ((resp && (resp.data ?? resp)) as Auth0User) as Auth0User;
   }
+
+  async createUser(data: {
+    email: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+    role?: string;
+    metadata?: Record<string, any>;
+  }): Promise<Auth0User> {
+    if (!data || !data.email || !data.password || !data.firstName || !data.lastName) {
+      throw new Auth0Error('createUser requires email, password, firstName, and lastName');
+    }
+    this.ensureClient();
+    if (!this.client) throw new Auth0Error('Auth0 client not initialized');
+    const userData: Record<string, any> = {
+      connection: 'Username-Password-Authentication', // Adjust if using a different connection
+      email: data.email,
+      password: data.password,
+      given_name: data.firstName,
+      family_name: data.lastName,
+      name: `${data.firstName} ${data.lastName}`,
+      email_verified: false,
+      verify_email: false,
+      app_metadata: {
+        role: data.role || 'user',
+        parentAccount: null // This should be set by the caller if needed
+      },
+      user_metadata: data.metadata || {}
+    };
+    const resp = await this.client.users.create(userData as UserCreate);
+    const authUser = ((resp && (resp.data ?? resp)) as Auth0User) as Auth0User;
+    const resetResult = await this.client.tickets.changePassword({
+      user_id: authUser.user_id,
+      mark_email_as_verified: true,
+      includeEmailInRedirect: false
+    });
+    //console.log('Password reset ticket created for new user:', resetResult);
+    // Note: The resetPasswordTicket.ticket URL can be emailed to the user to set their password.
+    // For security, we do not return it here.
+    return authUser;
+  } 
+
+  async resetPassword(data: {
+    userId: string;
+  }): Promise<void> {
+    if (!data || !data.userId) {
+      throw new Auth0Error('resetPassword requires userId');
+    }
+    this.ensureClient();
+    if (!this.client) throw new Auth0Error('Auth0 client not initialized');
+    console.log(data)
+    const resetResult = await this.client.tickets.changePassword({
+      user_id: data.userId,
+      mark_email_as_verified: false,
+      includeEmailInRedirect: false
+    });
+    //console.log('Password reset ticket created for new user:', resetResult);
+    // Note: The resetPasswordTicket.ticket URL can be emailed to the user to set their password.
+    // For security, we do not return it here.
+    return;
+  } 
 
   /** Delete a user by id */
   async deleteUser(userId: string): Promise<void> {
