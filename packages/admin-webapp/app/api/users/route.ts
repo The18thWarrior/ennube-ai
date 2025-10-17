@@ -28,3 +28,46 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(body, { status: err?.status ?? 500 });
   }
 }
+
+/**
+ * POST: Create a new secondary user
+ */
+export async function POST(request: NextRequest) {
+  try {
+    // Parse request body
+    const body = await request.json();
+
+    // Validate required fields
+    const { email, password, firstName, lastName, role } = body;
+    console.log(body);
+    if (!email || !password || !firstName || !lastName) {
+      return NextResponse.json({
+        error: 'Missing required fields: email, password, firstName, lastName'
+      }, { status: 400 });
+    }
+
+    // Create user params
+    const userParams = {
+      email,
+      password,
+      firstName,
+      lastName,
+      role,
+      metadata: body.metadata ?? {}
+    };
+
+    // Create the user
+    const newUser = await auth0Client.createUser(userParams);
+
+    return NextResponse.json({
+      success: true,
+      user: newUser
+    }, { status: 201 });
+  } catch (error: any) {
+    console.log('Error creating secondary user:', error);
+    return NextResponse.json({ 
+      error: 'Failed to create secondary user',
+      details: error.message 
+    }, { status: 500 });
+  }
+}
