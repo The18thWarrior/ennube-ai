@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
     // Get the current session to identify the user
     const session = await auth();
     
-    if (!session || !session.user || !session.user.auth0) {
+    if (!session || !session.user || !session.user.sub) {
       return NextResponse.json(
         { error: 'You must be signed in to access the prospect finder agent' },
         { status: 401 }
@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
     }
     
     // Get user's sub from the session
-    const userSub = session.user.auth0.sub;
+    const userSub = session.user.sub;
     
     // Get query parameters
     const searchParams = request.nextUrl.searchParams;

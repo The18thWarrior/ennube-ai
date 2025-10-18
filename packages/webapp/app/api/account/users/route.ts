@@ -18,11 +18,11 @@ async function verifyPrimaryUser(request: NextRequest) {
   try {
     // Get the current authenticated user
     const session = await auth();
-    if (!session?.user?.auth0?.sub) {
+    if (!session?.user.sub) {
       return { authorized: false, error: 'Authentication required', status: 401 };
     }
 
-    const userSub = session.user.auth0.sub;
+    const userSub = session.user.sub;
     // FOR LOCAL TESTING ONLY, SKIP SUBSCRIPTION CHECK
     //return { authorized: true, userSub };
     // Check if user has a valid subscription

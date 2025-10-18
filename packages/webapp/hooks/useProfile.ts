@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
 import { UserProfile } from '@/lib/db/account-storage';
+import { useUser } from '@auth0/nextjs-auth0';
 
 interface UseProfileReturn {
   profile: Omit<UserProfile, 'updatedAt'> | null;
@@ -13,7 +13,7 @@ interface UseProfileReturn {
 }
 
 export function useProfile(): UseProfileReturn {
-  const { data: session, status } = useSession();
+  const { user, isLoading: isUserLoading } = useUser();
   const [profile, setProfile] = useState<Omit<UserProfile, 'updatedAt'> | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
@@ -21,7 +21,7 @@ export function useProfile(): UseProfileReturn {
 
   useEffect(() => {
     async function loadProfile() {
-      if (status === 'loading' || !session?.user?.email) {
+      if (isUserLoading || !user?.email) {
         return;
       }
 
@@ -47,10 +47,10 @@ export function useProfile(): UseProfileReturn {
     }
 
     loadProfile();
-  }, [session, status]);
+  }, [user, isUserLoading]);
 
   const updateProfile = async (profileData: Partial<Omit<UserProfile, 'email' | 'updatedAt'>>): Promise<boolean> => {
-    if (!session?.user?.email) {
+    if (!user?.email) {
       setError('You must be logged in to update your profile');
       return false;
     }

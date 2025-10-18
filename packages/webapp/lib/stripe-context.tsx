@@ -1,10 +1,10 @@
 'use client';
 
-import { useSession } from 'next-auth/react';
 import Stripe from 'stripe';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { SubscriptionStatus } from './types';
 import { getSubscriptionLimit } from './utils';
+import { useUser } from '@auth0/nextjs-auth0';
 
 interface StripeContextType {
   createCheckoutSession: (pro?: boolean) => Promise<{ url: string | null; error: string | null }>;
@@ -31,10 +31,11 @@ export function StripeProvider({ children }: { children: React.ReactNode }) {
   const [isPrimary, setIsPrimary] = useState(false);
   const [licenseCount, setLicenseCount] = useState(0);
   const [limit, setLimit] = useState(10); // Default limit
-  const { data: session } = useSession();
+  const { user } = useUser();
   const [subscription, setSubscription] = useState<SubscriptionStatus | null>(null);
   const [isLoadingSubscription, setIsLoadingSubscription] = useState(true);
-
+  const session = { user }; // Mock session object for compatibility
+  
   const createCheckoutSession = async (pro = false) => {
     setIsLoading(true);
     try {
@@ -118,7 +119,7 @@ export function StripeProvider({ children }: { children: React.ReactNode }) {
 
 
   useEffect(() => {
-    if (session?.user?.auth0?.sub && subscription === null) fetchSubscriptionStatus();
+    if (session?.user?.sub && subscription === null) fetchSubscriptionStatus();
   }, [session?.user]);
   const hasSubscription = !!(subscription && (subscription.status === 'active' || subscription.status === 'trialing'));
   const value = {

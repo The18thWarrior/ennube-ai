@@ -9,7 +9,7 @@ import { agents } from '@/resources/agent-defintion';
 
 export default async function ChatDefaultPage() {
   const session = await auth();
-  if (!session?.user?.auth0?.sub) {
+  if (!session?.user.sub) {
     redirect('/login');
     return;
   }

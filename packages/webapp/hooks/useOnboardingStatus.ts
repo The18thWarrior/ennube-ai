@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
 import { useSnackbar } from 'notistack';
+import { useUser } from '@auth0/nextjs-auth0';
 
 export type OnboardingStage = 
   | 'new' 
@@ -24,14 +24,14 @@ interface UseOnboardingStatusReturn {
  * @returns The current onboarding stage and loading state
  */
 export function useOnboardingStatus(): UseOnboardingStatusReturn {
-  const { data: session, status: sessionStatus } = useSession();
+  const { user } = useUser();
   const [stage, setStage] = useState<OnboardingStage>('new');
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const { enqueueSnackbar } = useSnackbar();
 
   const checkOnboardingStatus = async () => {
-    if (!session?.user) {
+    if (!user) {
       return;
     }
 
@@ -84,13 +84,13 @@ export function useOnboardingStatus(): UseOnboardingStatusReturn {
 
   // Check onboarding status when the session changes
   useEffect(() => {
-    if (sessionStatus === 'authenticated') {
+    if (user) {
       checkOnboardingStatus();
-    } else if (sessionStatus === 'unauthenticated') {
+    } else {
       setStage('new');
       setIsLoading(false);
     }
-  }, [session, sessionStatus]);
+  }, [user]);
 
   // Function to manually refresh the onboarding status
   const refresh = async () => {

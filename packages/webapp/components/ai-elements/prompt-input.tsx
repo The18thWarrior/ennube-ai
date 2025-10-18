@@ -49,6 +49,8 @@ import {
 } from "react";
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui';
 import { TooltipProvider } from '@radix-ui/react-tooltip';
+import { type PutBlobResult } from '@vercel/blob';
+import { upload } from '@vercel/blob/client';
 
 type AttachmentsContext = {
   files: (FileUIPart & { id: string })[];
@@ -267,6 +269,7 @@ export const PromptInput = ({
   const matchesAccept = useCallback(
     (f: File) => {
       if (!accept || accept.trim() === "") {
+        console.log('No file type restrictions.');
         return true;
       }
       // Simple check: if accept includes "image/*", filter to images; otherwise allow.
@@ -280,9 +283,12 @@ export const PromptInput = ({
 
   const add = useCallback(
     async (files: File[] | FileList) => {
+      inputRef.current?.click();
       const incoming = Array.from(files);
+      console.log('Adding files:', incoming);
       const accepted = incoming.filter((f) => matchesAccept(f));
       if (accepted.length === 0) {
+        console.error('No files match the accepted types.')
         onError?.({
           code: "accept",
           message: "No files match the accepted types.",
@@ -293,6 +299,7 @@ export const PromptInput = ({
         maxFileSize ? f.size <= maxFileSize : true;
       const sized = accepted.filter(withinSize);
       if (sized.length === 0 && accepted.length > 0) {
+        console.error('All files exceed the maximum size.')
         onError?.({
           code: "max_file_size",
           message: "All files exceed the maximum size.",
@@ -314,14 +321,18 @@ export const PromptInput = ({
       const uploadPromises = capped.map(async (file) => {
         const formData = new FormData();
         formData.append('file', file);
-        const response = await fetch('/api/file', {
-          method: 'POST',
-          body: formData,
+        const { url } = await upload(file.name, file, {
+          access: 'public',
+          handleUploadUrl: '/api/file/upload',
         });
-        if (!response.ok) {
-          throw new Error('Upload failed');
-        }
-        const { url } = await response.json();
+        // const response = await fetch('/api/file', {
+        //   method: 'POST',
+        //   body: formData,
+        // });
+        // if (!response.ok) {
+        //   throw new Error('Upload failed');
+        // }
+        // const { url } = await response.json();
         console.log('File uploaded to:', url);
         return {
           id: nanoid(),

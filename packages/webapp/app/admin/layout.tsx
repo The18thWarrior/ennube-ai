@@ -27,11 +27,11 @@ const ADMIN_API = '/api/admin';
  * - Returns a simple discriminated result for the caller to act on.
  */
 async function checkAdminAccess(): Promise<AccessCheckResult> {
-  const user = await auth();
-  if (user?.user?.auth0?.sub === undefined) {
+  const session = await auth();
+  if (session?.user.sub === undefined) {
     return 'unauthenticated';
   }
-  const checkAdmin = isAdmin(user?.user?.auth0?.sub || '')
+  const checkAdmin = isAdmin(session?.user.sub || '')
   //console.log('isAdmin check:', checkAdmin);
   if (!checkAdmin) {
     return 'forbidden';

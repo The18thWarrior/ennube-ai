@@ -172,7 +172,7 @@ export async function getCurrentUserLicense(): Promise<License | null> {
       return null;
     }
     
-    const userSub = session.user.auth0.sub;
+    const userSub = session.user.sub;
     return await getLicenseBySubId(userSub);
   } catch (error) {
     console.log("Error retrieving current user license:", error);

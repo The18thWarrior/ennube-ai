@@ -31,7 +31,7 @@ export async function GET(
     // Verify the user is authenticated
     const session = await auth();
     
-    if (!session?.user?.id || !session?.user?.auth0?.sub) {
+    if (!session?.user?.id || !session?.user.sub) {
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
@@ -45,7 +45,7 @@ export async function GET(
     let result;
     if (agent) {
       // Get a specific agent setting
-      result = await getAgentSetting(session.user.auth0.sub, agent);
+      result = await getAgentSetting(session.user.sub, agent);
       if (!result) {
         return NextResponse.json(
           { error: 'Agent setting not found' },
@@ -54,7 +54,7 @@ export async function GET(
       }
     } else {
       // Get all agent settings for the user
-      result = await getUserAgentSettings(session.user.auth0.sub);
+      result = await getUserAgentSettings(session.user.sub);
     }
     
     return NextResponse.json(result);
@@ -78,7 +78,7 @@ export async function POST(
     // Verify the user is authenticated
     const session = await auth();
     
-    if (!session?.user?.id || !session?.user?.auth0?.sub) {
+    if (!session?.user?.id || session?.user.sub) {
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
@@ -128,7 +128,7 @@ export async function POST(
 
     // Save the agent setting
     const settingId = await saveAgentSetting({
-      userId: session.user.auth0.sub,
+      userId: session.user.sub,
       agent: body.agent,
       active,
       frequency: body.frequency,
@@ -144,7 +144,7 @@ export async function POST(
     }
 
     // Get the complete agent setting to return
-    const setting = await getAgentSetting(session.user.auth0.sub, body.agent);
+    const setting = await getAgentSetting(session.user.sub, body.agent);
     
     return NextResponse.json(setting, { status: 201 });
   } catch (error) {
@@ -167,7 +167,7 @@ export async function PUT(
     // Verify the user is authenticated
     const session = await auth();
     
-    if (!session?.user?.id || !session?.user?.auth0?.sub) {
+    if (!session?.user?.id || !session?.user.sub) {
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
@@ -233,7 +233,7 @@ export async function PUT(
     
     // Return the updated setting if possible
     if (agent) {
-      const updatedSetting = await getAgentSetting(session.user.auth0.sub, agent);
+      const updatedSetting = await getAgentSetting(session.user.sub, agent);
       return NextResponse.json(updatedSetting);
     }
     

@@ -1,6 +1,5 @@
 'use client';
 
-import { useSession } from 'next-auth/react';
 import { Suspense, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -8,10 +7,11 @@ import { useStripe } from '@/lib/stripe-context';
 import { useSearchParams } from 'next/navigation';
 import { useSnackbar } from 'notistack';
 import UsageProgressBar from '@/components/billing/usage-progress-bar';
+import { useUser } from '@auth0/nextjs-auth0';
 //import { useSubscription } from '@/hooks/use-subscription';
 
 export default function SubscriptionSummary() {
-  const { data: session } = useSession();
+  const { user } = useUser();
   const { createCheckoutSession, isLoading, subscription, isLoadingSubscription, createPortalLink } = useStripe();
   //const { subscription, isLoadingSubscription, refetchSubscription } = useSubscription();
   const searchParams = useSearchParams();
@@ -54,7 +54,7 @@ export default function SubscriptionSummary() {
   };
 
   const handleManageSubscription = async () => {
-    if (!session?.user?.auth0?.sub) {
+    if (!user?.sub) {
       console.log('No customer ID found');
       return;
     }
@@ -70,11 +70,11 @@ export default function SubscriptionSummary() {
     }
   };
 
-  if (!session) {
+  if (!user) {
     return (
       <div className="flex flex-col items-center justify-center h-full p-6 bg-background rounded-lg border border-border">
         <h3 className="text-lg font-medium mb-3">Sign in to manage your subscription</h3>
-        <Link href="/api/auth/signin">
+        <Link href="/auth/signin">
           <Button>Sign In</Button>
         </Link>
       </div>

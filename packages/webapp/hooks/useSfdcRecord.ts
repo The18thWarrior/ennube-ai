@@ -1,4 +1,4 @@
-import { useSession } from 'next-auth/react';
+import { useUser } from '@auth0/nextjs-auth0';
 import { useState, useCallback, useEffect } from 'react';
 
 interface SfdcRecord {
@@ -23,12 +23,11 @@ interface UseSfdcRecordResult {
  * @param sobject - The Salesforce sObject API name (e.g., 'Account')
  */
 export function useSfdcRecord(initialRecord: SfdcRecord, sobject: string): UseSfdcRecordResult {
-    const { data: session, status } = useSession();
+    const { user } = useUser();
     const [record, setRecord] = useState<SfdcRecord | null>(initialRecord);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<Error | null>(null);
-    const [objectDescribe, setObjectDescribe] = useState<any>(null);
-    const subId = session?.user?.auth0?.sub || null;
+    const subId = user?.sub || null;
     // Helper to get Salesforce API base URL (customize as needed)
     const getApiBase = () => '/api/salesforce';
     const [instanceUrl, setInstanceUrl] = useState<string | null>(null);

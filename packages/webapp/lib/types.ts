@@ -1,5 +1,6 @@
 import Stripe from "stripe";
 import { StoredHubSpotCredentials } from "./db/hubspot-storage";
+import z from "zod/v4";
 
 // Define RefreshTokenResponse type for jsforce
 export interface RefreshTokenResponse {
@@ -147,3 +148,54 @@ export interface QueryResult {
   payload: Record<string, unknown> | undefined;
   score: number;
 }
+
+export type SfdcField = {
+  calculatedFormula?: string | null;
+  digits?: number | null;
+  externalId?: boolean | null;
+  inlineHelpText?: string | null;
+  label?: string | null;
+  length?: number | null;
+  name: string;
+  picklistValues?: any[]; // keep generic to match jsforce shape; refine if needed
+  precision?: number | null;
+  relationshipName?: string | null;
+  type?: string | null;
+};
+
+export type SfdcChildRelationship = {
+  childSObject: string;
+  field: string;
+  relationshipName: string;
+};
+
+export type DescribeResultType = {
+  name: string;
+  label?: string | null;
+  keyPrefix?: string | null;
+  fields: SfdcField[];
+  childRelationships: SfdcChildRelationship[];
+};
+
+/**
+ * Schema for individual field mapping response
+ */
+export const FieldMappingSchema = z.object({
+  csvField: z.string().describe('The CSV column header name'),
+  salesforceField: z.string().describe('The corresponding Salesforce field API name'),
+  dataType: z.string().describe('The Salesforce field data type')
+});
+
+export const BulkDataLoadMappingSchema = z.object({
+  sobject: z.string().describe('The Salesforce object API name'),
+  fileUrl: z.string().describe('URL of the CSV file to be processed'),
+  dmlOperation: z.enum(['insert', 'update', 'upsert', 'delete']).describe('The type of DML operation to perform'),
+  mappings: z.array(FieldMappingSchema).describe('Array of field mappings between CSV headers and Salesforce fields'),
+  metadata: z.object({
+    totalCsvHeaders: z.number().describe('Total number of CSV headers provided'),
+    successfulMappings: z.number().describe('Number of successful field mappings generated'),
+    unmappedHeaders: z.array(z.string()).describe('List of CSV headers that could not be mapped')
+  })
+});
+
+export type BulkDataLoadMappingType = z.infer<typeof BulkDataLoadMappingSchema>;

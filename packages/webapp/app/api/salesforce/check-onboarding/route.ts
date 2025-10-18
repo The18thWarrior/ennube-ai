@@ -14,7 +14,7 @@ import { getUserUsageLogs } from '@/lib/db/usage-logs';
 export async function GET(request: NextRequest) {
   try {
     const session = await auth();
-    if (!session?.user?.id || !session?.user?.auth0?.sub) {
+    if (!session?.user?.id || !session?.user.sub) {
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
 
@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
     const hasCredentials = Boolean(credentials);
 
     // Check agent settings
-    const agentSettings = await getUserAgentSettings(session.user.auth0.sub);
+    const agentSettings = await getUserAgentSettings(session.user.sub);
     const hasAgentSettings = Array.isArray(agentSettings) && agentSettings.length > 0 && agentSettings.some(s => s.active === true);
 
     // Check recent usage logs (limit 10, same behavior as the hook)

@@ -28,7 +28,7 @@ const apps = [
 		author: '',
 		image: '/robot-admin-avatar.png',
 		url: '/dataloader',
-    active: false
+    active: true
 	},
 	// {
 	// 	name: 'DesignerGPT',

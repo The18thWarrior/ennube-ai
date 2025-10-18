@@ -9,13 +9,13 @@ export async function GET(request: NextRequest) {
   try {
     // Get the current session to identify the user
     const session = await auth();
-    if (!session || !session.user || !session.user.auth0) {
+    if (!session || !session.user || !session.user.sub) {
       return NextResponse.json(
         { error: 'You must be signed in to retrieve usage logs' },
         { status: 401 }
       );
     }    
-    const userSub = session.user.auth0.sub;
+    const userSub = session.user.sub;
     
     const limit = request.nextUrl.searchParams.get('limit') || '10';
     const offset = request.nextUrl.searchParams.get('offset') || '0';

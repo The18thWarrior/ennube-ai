@@ -71,7 +71,7 @@ export async function storePostgresUrl(instanceUrl: string): Promise<string | nu
     const sessionId = nanoid();
     const createdAt = Date.now();
     const expiresAt = createdAt + 100000000 * 60 * 60 * 1000; // 1000 hours
-    const userSub = session.user.auth0.sub;
+    const userSub = session.user.sub;
     // Check if user already has credentials stored
     const checkResult = await pool.query(
       `SELECT COUNT(*) FROM ${CREDENTIALS_TABLE} WHERE user_id = $1 AND type = 'postgres'`,
@@ -106,7 +106,7 @@ export async function getPostgresUrlById(): Promise<StoredPostgresUrl | null> {
       console.log('No session found');
       return null;
     }
-    const userSub = session.user.auth0.sub;
+    const userSub = session.user.sub;
     const result = await pool.query(
       `SELECT instance_url as "instanceUrl", created_at as "createdAt", expires_at as "expiresAt" FROM ${CREDENTIALS_TABLE} WHERE user_id = $1 AND type = 'postgres'`,
       [userSub]
@@ -160,7 +160,7 @@ export async function removePostgresUrl(): Promise<boolean> {
       console.log('No session found');
       return false;
     }
-    const userSub = session.user.auth0.sub;
+    const userSub = session.user.sub;
     await pool.query(
       `DELETE FROM ${CREDENTIALS_TABLE} WHERE user_id = $1 AND type = 'postgres'`,
       [userSub]
@@ -182,7 +182,7 @@ export async function updatePostgresUrl(instanceUrl: string): Promise<boolean> {
       console.log('No session found');
       return false;
     }
-    const userSub = session.user.auth0.sub;
+    const userSub = session.user.sub;
     const now = Date.now();
     const expiresAt = now + 2 * 60 * 60 * 1000; // 2 hours
     const checkResult = await pool.query(

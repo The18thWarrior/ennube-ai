@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
     const _sub = searchParams.get('sub');
 
     const session = await auth();
-    const sub = _sub || session?.user?.auth0?.sub;
+    const sub = _sub || session?.user.sub;
     if (!sub) {
       return NextResponse.json({ error: 'Missing required parameter: sub' }, { status: 400 });
     }    

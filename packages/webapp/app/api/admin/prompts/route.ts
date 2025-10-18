@@ -9,7 +9,7 @@ import { isAdmin } from '@/lib/admin'
 export async function GET(req: NextRequest) {
   try {
     const session = await auth()
-    const userId = session?.user?.auth0?.sub || session?.user?.id
+    const userId = session?.user.sub || session?.user?.id
     if (!userId || !isAdmin(userId)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const session = await auth()
-    const userId = session?.user?.auth0?.sub || session?.user?.id
+    const userId = session?.user.sub || session?.user?.id
     if (!userId || !isAdmin(userId)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     const body = await req.json()
@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
 export async function PUT(req: NextRequest) {
   try {
     const session = await auth()
-    const userId = session?.user?.auth0?.sub || session?.user?.id
+    const userId = session?.user.sub || session?.user?.id
     if (!userId || !isAdmin(userId)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     const body = await req.json()
@@ -63,7 +63,7 @@ export async function PUT(req: NextRequest) {
 export async function DELETE(req: NextRequest) {
   try {
     const session = await auth()
-    const userId = session?.user?.auth0?.sub || session?.user?.id
+    const userId = session?.user.sub || session?.user?.id
     if (!userId || !isAdmin(userId)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     const body = await req.json()

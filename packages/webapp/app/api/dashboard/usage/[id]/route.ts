@@ -27,14 +27,14 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
     });
   }
   const session = await auth();
-  if (!session?.user?.auth0?.sub) {
+  if (!session?.user.sub) {
     return new Response(JSON.stringify({ error: 'Authentication required' }), {
       status: 401,
       headers: { "Content-Type": "application/json" },
     });
   }
   try {
-    const result = await clearUserUsageLogBySub(id, session.user.auth0.sub);
+    const result = await clearUserUsageLogBySub(id, session.user.sub);
     return new Response(JSON.stringify({ success: true, result }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
@@ -53,13 +53,13 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     const { id: threadId } = await params;
     const session = await auth();
-    if (!session?.user?.auth0?.sub) {
+    if (!session?.user.sub) {
         return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
         );
     }
-    //const subId = session.user.auth0.sub;
+    //const subId = session.user.sub;
     if (!threadId) {
       console.log('missing thread id');
         return NextResponse.json({ error: 'Missing thread id' }, { status: 400 });

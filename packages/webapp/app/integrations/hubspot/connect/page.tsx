@@ -1,6 +1,6 @@
 import CustomLink from "@/components/custom-link"
 import { Button } from "@/components/ui/button"
-import { auth, signIn } from "@/auth"
+import { auth } from "@/auth"
 import Link from "next/link"
 import { redirect } from "next/navigation"
 import DirectLoginForm from "./DirectLoginForm"

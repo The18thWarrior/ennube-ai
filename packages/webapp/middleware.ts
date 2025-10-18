@@ -1,10 +1,12 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 import { auth } from "auth"
+import {auth0} from "@/lib/auth0Client";
 
 // Create a middleware function that wraps NextAuth middleware
 // and adds support for Salesforce direct authentication
 export async function middleware(request: NextRequest) {
+  return await auth0.middleware(request);
   // Get the pathname from the URL
   const path = request.nextUrl.pathname
 
@@ -27,15 +29,7 @@ export async function middleware(request: NextRequest) {
 
   // If the path is protected, verify authentication
   if (isPathProtected) {
-    console.log('middleware path is protected:', path)
-    const session = await auth()
-    
-    // If not authenticated, redirect to signin page
-    if (!session) {
-      const signInUrl = new URL('/', request.url)
-      signInUrl.searchParams.set('callbackUrl', path)
-      return NextResponse.redirect(signInUrl)
-    }
+    return await auth0.middleware(request);
   }
 
   return NextResponse.next()
@@ -44,4 +38,5 @@ export async function middleware(request: NextRequest) {
 // Read more: https://nextjs.org/docs/app/building-your-application/routing/middleware#matcher
 export const config = {
   matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  runtime: 'nodejs',
 }

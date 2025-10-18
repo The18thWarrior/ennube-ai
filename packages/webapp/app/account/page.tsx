@@ -1,6 +1,5 @@
 'use client';
 
-import { useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -9,13 +8,14 @@ import SubscriptionSummary from '@/components/billing/subscription-summary';
 import { useStripe } from '@/lib/stripe-context';
 import { Suspense } from 'react';
 import UsageProgressBar from '@/components/billing/usage-progress-bar';
+import { useUser } from '@auth0/nextjs-auth0';
 
 export default function AccountPage() {
-  const { data: session, status } = useSession();
+  const { user, isLoading } = useUser();
 
   const { isPrimary } = useStripe();
   // Show loading state while checking session
-  if (status === 'loading') {
+  if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh] p-6">
         <h1 className="text-2xl font-bold mb-4">Loading...</h1>
@@ -25,7 +25,7 @@ export default function AccountPage() {
   }
 
   // Redirect to sign in if not authenticated
-  if (!session) {
+  if (!user) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh] p-6">
         <h1 className="text-2xl font-bold mb-4">Sign in to view your account</h1>

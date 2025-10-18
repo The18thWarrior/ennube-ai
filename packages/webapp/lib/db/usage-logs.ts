@@ -265,7 +265,7 @@ export async function getUserUsageLogs(
       return [];
     }
     
-    const userSub = session.user.auth0.sub;
+    const userSub = session.user.sub;
     return await getUserUsageLogsBySub(userSub, limit, offset);
   } catch (error) {
     console.log("Error retrieving user usage logs:", error);
@@ -286,7 +286,7 @@ export async function getUserUsageLog(
       return null;
     }
     
-    const userSub = session.user.auth0.sub;
+    const userSub = session.user.sub;
     const result = await pool.query(
       `SELECT * FROM ${USAGE_LOG_TABLE} 
        WHERE user_sub = $1
@@ -365,7 +365,7 @@ export async function getUsageSummary(
       return { recordsUpdated: 0, recordsCreated: 0, meetingsBooked: 0, queriesExecuted: 0 };
     }
     
-    const userSub = session.user.auth0.sub;
+    const userSub = session.user.sub;
     return await getUsageSummaryBySub(userSub, startTime, endTime);
   } catch (error) {
     console.log("Error retrieving usage summary:", error);
@@ -432,7 +432,7 @@ export async function clearUserUsageLogs(): Promise<boolean> {
       return false;
     }
     
-    const userSub = session.user.auth0.sub;
+    const userSub = session.user.sub;
     return await clearUserUsageLogsBySub(userSub);
   } catch (error) {
     console.log("Error clearing user usage logs:", error);
@@ -491,7 +491,7 @@ export async function getMonthlyRecordOperationsTotal(
       return 0;
     }
     
-    const userSub = session.user.auth0.sub;
+    const userSub = session.user.sub;
     return await getMonthlyRecordOperationsTotalBySub(userSub, year, month);
   } catch (error) {
     console.log("Error retrieving monthly record operations total:", error);

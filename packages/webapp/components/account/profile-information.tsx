@@ -1,18 +1,18 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useProfile } from '@/hooks/useProfile';
 import { useToast } from '@/components/ui/use-toast';
+import { useUser } from '@auth0/nextjs-auth0';
 
 export default function ProfileInformation() {
-  const { data: session } = useSession();
+  const { user } = useUser();
   const { profile, isLoading, error, updateProfile, isUpdating } = useProfile();
   const [isEditing, setIsEditing] = useState(false);
-  const [email, setEmail] = useState(session?.user?.email || '');
+  const [email, setEmail] = useState(user?.email || '');
   // const [formData, setFormData] = useState({
   //   name: '',
   //   company: '',
@@ -26,7 +26,7 @@ export default function ProfileInformation() {
   // Update form data when profile is loaded
   useEffect(() => {
     if (profile) {
-      setEmail(profile.email || session?.user?.email || '');
+      setEmail(profile.email || user?.email || '');
       setName(profile.name );
       setCompany(profile.company);
       setJobRole(profile.jobRole);

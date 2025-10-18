@@ -6,6 +6,7 @@
  */
 import { ManagementClient, RequiredError } from 'auth0';
 import { auth } from '@/auth';
+import { Auth0Client } from "@auth0/nextjs-auth0/server";
 import { createLicense, updateLicenseParent, LicenseStatus, updateLicenseStatus } from '@/lib/db/license-storage';
 
 // Define our own User interface to match Auth0 user structure
@@ -67,11 +68,11 @@ class Auth0Manager {
     try {
       // Get the current user's session to extract their sub ID
       const session = await auth();
-      if (!session?.user?.auth0?.sub) {
+      if (!session?.user.sub) {
         throw new Error('No authenticated user found');
       }
       
-      const parentSubId = session.user.auth0.sub;
+      const parentSubId = session.user.sub;
       
       // Create the user in Auth0
       const response = await this.managementClient.users.create({
@@ -120,11 +121,11 @@ class Auth0Manager {
     try {
       // Validate that the current user is the parent of this user
       const session = await auth();
-      if (!session?.user?.auth0?.sub) {
+      if (!session?.user.sub) {
         throw new Error('No authenticated user found');
       }
       
-      const parentSubId = session.user.auth0.sub;
+      const parentSubId = session.user.sub;
       
       // Build update object for Auth0
       const updateData: any = {};
@@ -184,11 +185,11 @@ class Auth0Manager {
   async getSecondaryUsers(): Promise<Auth0User[]> {
     try {
       const session = await auth();
-      if (!session?.user?.auth0?.sub) {
+      if (!session?.user.sub) {
         throw new Error('No authenticated user found');
       }
       
-      const parentSubId = session.user.auth0.sub;
+      const parentSubId = session.user.sub;
       
       // Query for users with this parent account using Auth0 Management API
       console.log(`Fetching secondary users for parent account: ${parentSubId}`);
@@ -214,7 +215,7 @@ class Auth0Manager {
     try {
       // Validate that the current user is the parent of this user
       const session = await auth();
-      if (!session?.user?.auth0?.sub) {
+      if (!session?.user.sub) {
         throw new Error('No authenticated user found');
       }
       
@@ -238,11 +239,11 @@ class Auth0Manager {
   async transferSecondaryUsers(newParentSubId: string): Promise<number> {
     try {
       const session = await auth();
-      if (!session?.user?.auth0?.sub) {
+      if (!session?.user.sub) {
         throw new Error('No authenticated user found');
       }
       
-      const oldParentSubId = session.user.auth0.sub;
+      const oldParentSubId = session.user.sub;
       
       // Get all users with the current parent
       const response = await this.managementClient.users.getAll({
@@ -308,7 +309,6 @@ export async function getToken() {
       return null;
   }
 };
-
 // Export a singleton instance of the Auth0Manager
 //export const auth0Manager = new Auth0Manager();
 

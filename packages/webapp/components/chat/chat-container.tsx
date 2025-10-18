@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useRef, useEffect, ChangeEventHandler } from 'react';
-import { useSession } from 'next-auth/react';
+import { useUser } from '@auth0/nextjs-auth0';
 import { useTheme } from '../theme-provider';
 import styles from './chat-container.module.css';
 import { z } from 'zod';
@@ -33,7 +33,7 @@ const ChatContainer = ({
 }: { id?: string | undefined; initialMessages?: UIMessage[]; name?: string | null; agent?: string | null; reload: () => void }) => {
     const { theme } = useTheme();
     const [input, handleInputChange] = React.useState('');
-    const { data: session } = useSession();
+    const { user } = useUser();
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const setThreadTimerRef = useRef<number | null>(null);
     const [mounted, setMounted] = React.useState(false);
@@ -202,7 +202,7 @@ const ChatContainer = ({
                                     msg.role === 'user' ? styles.userRow : styles.botRow,
                                 ].join(' ')}
                             >
-                                {renderMessage(msg, idx, Agent, theme, session, updateThreadFromTool, session?.user?.auth0?.sub, selectedAvatar)}
+                                {renderMessage(msg, idx, Agent, theme, user, updateThreadFromTool, user?.sub, selectedAvatar)}
                             </div>
                         ))}
                         <div ref={messagesEndRef}></div>
@@ -211,7 +211,12 @@ const ChatContainer = ({
             </Card>
             <div className={`h-[10dvh] flex-none bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60`}>
                 {error && <div className="text-red-500 mb-2">Error: {error.message}</div>}
-                <PromptInput globalDrop={true} onSubmit={handleSubmitPromptInput} className="mt-4 relative" accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/*,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+                <PromptInput
+                  globalDrop={true}
+                  onSubmit={handleSubmitPromptInput}
+                  className="mt-4 relative"
+                  accept="text/comma-separated-values,text/csv,application/csv,application/vnd.ms-excel,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                >
                   <PromptInputBody className={'flex flex-row'}>
                     <PromptInputTextarea onChange={handlePromptInputChange} value={input} />
                   </PromptInputBody>
@@ -222,23 +227,22 @@ const ChatContainer = ({
                         <PromptInputActionMenuContent>
                           <PromptInputActionAddAttachments />
                         </PromptInputActionMenuContent>
-                        
                       </PromptInputActionMenu>
                       <PromptInputButton
-                        variant={webSearch ? 'default' : 'ghost'}
-                        onClick={() => {
-                          console.log(`Web search toggled, old value: ${webSearch} new value: ${!webSearch}`);
-                          setWebSearch(!webSearch)
-                        }}
+                      variant={webSearch ? 'default' : 'ghost'}
+                      onClick={() => {
+                        console.log(`Web search toggled, old value: ${webSearch} new value: ${!webSearch}`);
+                        setWebSearch(!webSearch)
+                      }}
                       >
-                        <GlobeIcon size={16} />
-                        <span>Search</span>
+                      <GlobeIcon size={16} />
+                      <span>Search</span>
                       </PromptInputButton>
                       <PromptInputAttachments>
-                        {(attachment) => (
-                          <PromptInputAttachment data={attachment} />
-                        )}
-                      </PromptInputAttachments> 
+                      {(attachment) => (
+                        <PromptInputAttachment data={attachment} />
+                      )}
+                      </PromptInputAttachments>
                     </PromptInputTools>
                     <PromptInputSubmit
                       disabled={isLoading}

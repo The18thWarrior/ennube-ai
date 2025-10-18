@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'User ID not found' }, { status: 400 });
     }
 
-    const profile = await getUserProfile(userSub, session);
+    const profile = await getUserProfile(userSub);
     //console.log('Fetched profile:', profile);
     if (!profile) {
       // If no profile exists, return default values from session
@@ -48,7 +48,7 @@ export async function PUT(request: NextRequest) {
   }
 
   try {
-    const userSub = session.user.id || session.user.email;
+    const userSub = session.user.sub || session.user.email;
     
     if (!userSub) {
       return NextResponse.json({ error: 'User ID not found' }, { status: 400 });
@@ -58,7 +58,7 @@ export async function PUT(request: NextRequest) {
     const { name, company, jobRole } = payload;
 
     // Check if profile exists, if not create a new one
-    const existingProfile = await getUserProfile(userSub, session);
+    const existingProfile = await getUserProfile(userSub);
     
     if (!existingProfile) {
       // Create new profile

@@ -82,7 +82,9 @@ export function CrmDataLoaderCard({ records, onComplete, borderless }: DataLoade
       setFieldsLoading(true);
       setFieldsError(null);
       try {
-        const describeResult = await describeSobject(selectedObject);
+        const {describe: describeResult} = await describeSobject(selectedObject);
+        //const describeResult = _describeResult.fields ? _describeResult : _describeResult.describe;
+        console.log('Fetched object fields:', describeResult);
         if (!cancelled && describeResult && Array.isArray(describeResult.fields)) {
           setObjectFields(describeResult.fields.map((field: any) => ({
             name: field.name,
@@ -149,6 +151,7 @@ export function CrmDataLoaderCard({ records, onComplete, borderless }: DataLoade
 
   // Initialize field mappings
   const initializeFieldMappings = useCallback(() => {
+    console.log('Initializing field mappings with:', { csvHeaders, objectFields })
     if (csvHeaders.length === 0 || objectFields.length === 0) return
     
     const mappings: FieldMapping[] = csvHeaders.map(csvField => {
@@ -231,10 +234,10 @@ export function CrmDataLoaderCard({ records, onComplete, borderless }: DataLoade
 
   // Initialize mappings when prerequisites are met
   React.useEffect(() => {
-    if (currentStep === 'mapping' && csvHeaders.length > 0 && objectFields.length > 0) {
+    if (currentStep === 'mapping') {
       initializeFieldMappings()
     }
-  }, [currentStep, csvHeaders, objectFields, initializeFieldMappings])
+  }, [currentStep])
 
   // Parse passed records and display their headers in the data input section
   React.useEffect(() => {
@@ -303,7 +306,7 @@ export function CrmDataLoaderCard({ records, onComplete, borderless }: DataLoade
         {/* Step 1: Data Input */}
         {currentStep === 'input' && (
           <div className="space-y-6">
-            {!records || (records && records.length == 0) && 
+            {(!records || (records && records.length == 0)) && 
                 <div>    
                     <div>
                         <h3 className="text-lg font-semibold mb-4">Data Input</h3>

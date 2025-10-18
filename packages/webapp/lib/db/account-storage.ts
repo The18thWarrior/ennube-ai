@@ -85,7 +85,7 @@ export async function saveUserProfile(userSub: string, profile: Omit<UserProfile
 /**
  * Get a user's profile information from PostgreSQL
  */
-export async function getUserProfile(userSub: string, session?: Session | null): Promise<UserProfile | null> {
+export async function getUserProfile(userSub: string): Promise<UserProfile | null> {
   try {
     if (!userSub) {
       console.log('Cannot get profile: No user ID provided');

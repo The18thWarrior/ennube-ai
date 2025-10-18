@@ -177,6 +177,11 @@ export class DatabaseSchemaAnalyzer {
       .filter(Boolean) as TableInfo[];
   }
 
+  getAllTableNames(schema?: string): string[] {
+    const tables = this.getAllTables(schema);
+    return tables.map(table => table.name);
+  }
+
   /**
    * Find tables by name pattern
    * @param namePattern - Pattern to match (supports wildcards)

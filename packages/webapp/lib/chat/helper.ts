@@ -23,6 +23,7 @@ import { generateQueryTool } from './sfdc/generateQueryTool';
 import { proposeUpdateDataTool } from './sfdc/proposeUpdateDataTool';
 import { getPrompt as getPromptCache } from '@/lib/cache/prompt-cache';
 import { webSearchTool } from './webSearchTool';
+import { bulkDataLoadTool } from './sfdc/bulkDataLoadTool_v2';
 
 export const getPrompt = async (agent: 'data-steward' | 'prospect-finder' | 'contract-reader') => {
   const cachePrompt = await getPromptCache(agent);
@@ -45,6 +46,7 @@ export const getTools = async (agent: 'data-steward' | 'prospect-finder' | 'cont
     getSFDCDataTool: generateQueryTool(userId),
     proposeUpdateSFDCDataTool: proposeUpdateDataTool(userId),
     getSFDCFileTool: getFileTool(userId),
+    bulkDataLoadTool: bulkDataLoadTool(userId),
     //parseFileTool: parseFileTool(userId),
     //getPostgresDataTool: getPostgresDataTool(userId),
     //getPostgresDescribeTool: getPostgresDescribeTool(userId),

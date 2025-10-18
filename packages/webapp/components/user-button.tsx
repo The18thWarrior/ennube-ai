@@ -1,4 +1,5 @@
 'use client'
+import { redirect } from "next/navigation"
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
 import { Button } from "./ui/button"
 import {
@@ -9,15 +10,15 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "./ui/dropdown-menu"
-// import { SignIn, SignOut } from "./auth-components"
-import { signOut } from "next-auth/react"
 import Link from "next/link"
 
 export default function UserButton({user}: { user: { name: string | undefined | null, email: string | undefined | null, image: string | undefined | null } | null }) {
   //const session = await auth()
   async function doLogout() {
-    await signOut({ redirectTo: "/auth/login" })
+    //await signOut({ redirectTo: "/auth/login" })
+    redirect('/auth/logout')
   }
+  console.log(user);
   if (!user) return null;
   return (
     <div className="flex items-center gap-2">

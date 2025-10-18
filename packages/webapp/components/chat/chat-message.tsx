@@ -11,7 +11,7 @@ import { UIMessage, UIDataTypes, UIMessagePart, UITools, isToolUIPart } from 'ai
 import { nanoid } from 'nanoid';
 import { Button, Card, CardContent } from '../ui';
 import { UpdateDataReviewModal } from './tools/update-data-review-modal';
-import { Loader2, User, TriangleAlert, CircleCheck, Loader, Copy } from 'lucide-react';
+import { Loader2, User as UserIcon, TriangleAlert, CircleCheck, Loader, Copy } from 'lucide-react';
 import { Session } from 'next-auth';
 import { CustomerProfile } from '@/hooks/useCustomerProfile';
 import DefaultMessageComponent from './default/default-message-component';
@@ -24,14 +24,17 @@ import { ProposalResponse } from '@/types/sfdc-update';
 import { Reasoning, ReasoningContent, ReasoningTrigger } from '../ai-elements/reasoning';
 import { Tool, ToolHeader, ToolContent, ToolInput, ToolOutput } from '../ai-elements/tool';
 import PlanningComponent from './default/planning-component';
+import { CrmDataLoaderToolCard } from './tools/crm-data-loader-tool-card';
+import { BulkDataLoadMappingType, DescribeResultType } from '@/lib/types';
+import { User } from '@auth0/nextjs-auth0/types';
 
 // Custom message rendering
-export const renderMessage = (msg: UIMessage, idx: number, agent: ReactNode, theme: 'dark' | 'light' | 'lavender', session: Session | null, updateThreadFromTool: (updatedMessage: UIMessage, newMessage?: UIMessage) => void, userSub?: string, agentKey?: string) => {
+export const renderMessage = (msg: UIMessage, idx: number, agent: ReactNode, theme: 'dark' | 'light' | 'lavender', user: User | undefined | null, updateThreadFromTool: (updatedMessage: UIMessage, newMessage?: UIMessage) => void, userSub?: string, agentKey?: string) => {
     // Default: render as text
-    return RenderHtmlComponent(DefaultMessageComponent(msg, theme), msg, theme, agent, session, updateThreadFromTool, userSub, agentKey);
+    return RenderHtmlComponent(DefaultMessageComponent(msg, theme), msg, theme, agent, user, updateThreadFromTool, userSub, agentKey);
 };
 
-const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, theme: 'dark' | 'light' | 'lavender', agent: ReactNode, session: Session | null, updateThreadFromTool: (updatedMessage: UIMessage, newMessage?: UIMessage) => void, userSub?: string, agentKey?: string) => (
+const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, theme: 'dark' | 'light' | 'lavender', agent: ReactNode, user: User | undefined | null, updateThreadFromTool: (updatedMessage: UIMessage, newMessage?: UIMessage) => void, userSub?: string, agentKey?: string) => (
     <div className={'flex items-start gap-2'}>
         {msg.role === 'assistant' ? 
             <div className="flex aspect-square size-12 items-center justify-center rounded-full overflow-hidden flex-shrink-0 mt-2 ">
@@ -278,6 +281,23 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, the
                                                 </div>
                                             )
                                         }
+                                        case 'tool-bulkDataLoadTool': {
+                                            return (
+                                                <div key={callId}>
+                                                    {
+                                                        <MessageStateComponent
+                                                            Component={part.output ? <CrmDataLoaderToolCard toolResult={part.output as BulkDataLoadMappingType} className={`${styles.jsonBubble} min-w-3/4`} /> : null}
+                                                            state={part.state}
+                                                            input={part.input}
+                                                            theme={theme}
+                                                            successMessage="Data Load Mappings Generated"
+                                                            errorMessage={part.errorText || "Error generating data load mappings"}
+                                                            toolName="Bulk Data Load Tool"
+                                                        />
+                                                    }
+                                                </div>
+                                            )
+                                        }
                                         default:
                                             // Fallback: render tool data as JSON
                                             
@@ -337,14 +357,14 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, the
         </div>
         {msg.role === 'user' ?
             <div className="flex size-12 items-center justify-center rounded-full overflow-hidden flex-shrink-0 mt-2 ">
-              {session?.user?.image ? (
+              {user?.picture ? (
                 <img height={35} width={35} className={" border  rounded-full"}
-                        src={session?.user?.image ||
+                        src={user?.picture ||
                         `/logo.png`
                         }
-                        alt={session?.user?.name ?? "User"}
+                        alt={user?.name ?? "User"}
                     />
-              ) : <User className="h-5 w-5" />
+              ) : <UserIcon className="h-5 w-5" />
               }
             </div> :
             <div className="flex aspect-square size-12 items-center justify-center rounded-full overflow-hidden flex-shrink-0 mt-2 ">
@@ -383,110 +403,4 @@ const MessageStateComponent = ({
       </ToolContent>
     </Tool>
   )
-};
-
-const MessageStateComponent_old = ({
-  Component,
-  state,
-  theme,
-  successMessage,
-  errorMessage,
-  toolName,
-  input
-}: {
-  Component: React.ReactElement | null;
-  state: "input-streaming" | "input-available" | "output-error" | "output-available";
-  theme: "dark" | "light" | "system";
-  successMessage: string;
-  errorMessage: string;
-  toolName: string;
-  input?: unknown;
-}) => {
-  const [open, setOpen] = useState(false);
-  const [hide, setHide] = useState(false);
-
-  // Sentinel: true only on the very first paint.
-  const firstRender = useRef(true);
-
-  // Flip the sentinel after the first mount.
-  useEffect(() => {
-    firstRender.current = false;
-  }, []);
-
-  // Auto-dismiss error banner (kept from your logic, moved to an effect).
-  useEffect(() => {
-    if (state === "output-error" && errorMessage.includes("Model tried to call unavailable tool")) {
-      const t = setTimeout(() => setHide(true), 5000);
-      return () => clearTimeout(t);
-    }
-  }, [state, errorMessage]);
-
-  // Auto-close success banner after 5s ONLY on non-initial renders
-  // when output is available but there's no details Component to show.
-  useEffect(() => {
-    if (state !== "output-available") return;
-
-    // Reset hide whenever we enter output-available (so it can re-animate in)
-    setHide(false);
-
-    // If there's no Component AND this is not the first render,
-    // show the banner now and auto-hide after 5s.
-    if (!Component && !firstRender.current && !open) {
-      const t = setTimeout(() => setHide(true), 5000);
-      return () => clearTimeout(t);
-    }
-  }, [state, Component, open]);
-
-  // Loading states
-  if (state === "input-streaming" || state === "input-available") {
-    return (
-      <div className="flex items-center gap-2 text-xs text-muted-foreground my-2 py-4 px-2 border rounded">
-        <Loader2 className="h-4 w-4 animate-spin" />
-        <span>{`Calling ${toolName}...`}</span>
-      </div>
-    );
-  }
-
-  // Error state
-  if (state === "output-error") {
-    return (
-      <div
-        className={`flex items-center gap-2 text-xs text-muted-foreground border rounded transition-all duration-3000 ease-in-out transition-discrete ${
-          hide ? "h-0 opacity-0" : "block py-4 px-2 my-2"
-        }`}
-      >
-        <TriangleAlert className="h-4 w-4 text-red-500" />
-        <span>{errorMessage}</span>
-      </div>
-    );
-  }
-
-  // Success state banner
-  if (state === "output-available" && !open) {
-    // ✨ Key behavior:
-    // If we're on the very first render AND there's no Component, render nothing (hide).
-    if (!Component && firstRender.current) {
-      return null; // hide on initial load
-    }
-
-    // Otherwise show the success banner (even if Component is null).
-    return (
-      <div
-        className={`flex items-center gap-2 text-xs text-muted-foreground border rounded transition-all duration-3000 ease-in-out transition-discrete ${
-          hide ? "h-0 opacity-0" : "block py-4 px-2 my-2"
-        }`}
-      >
-        <CircleCheck className="h-4 w-4 text-green-500" />
-        <span>{successMessage}</span>
-        {Component && (
-          <Button variant="outline" size="sm" className="ml-5" onClick={() => setOpen(true)}>
-            View Details
-          </Button>
-        )}
-      </div>
-    );
-  }
-
-  // Default: render the details when opened, or just the Component if present.
-  return Component;
 };

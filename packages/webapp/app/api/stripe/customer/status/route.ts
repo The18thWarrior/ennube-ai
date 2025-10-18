@@ -18,10 +18,10 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const customer = await getCustomer(session.user.auth0?.sub as string);
+    const customer = await getCustomer(session.user.sub as string);
     if (customer) return NextResponse.json({ customerId: customer.id });
 
-    const newCustomer = await createCustomer(session.user.auth0?.sub as string, session.user.email as string);
+    const newCustomer = await createCustomer(session.user.sub as string, session.user.email as string);
     if (newCustomer) return NextResponse.json({ customerId: newCustomer });
 
     return NextResponse.json({ customerId: null });

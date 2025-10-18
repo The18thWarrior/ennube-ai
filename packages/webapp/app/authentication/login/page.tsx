@@ -4,9 +4,6 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader } from "@/components/ui/card"
 import Link from "next/link"
-//import { signIn } from "@/auth"
-
-import { signIn } from "next-auth/react"
 import { useSearchParams, redirect} from "next/navigation"
 import { Suspense } from "react"
 
@@ -20,13 +17,14 @@ function LoginPage() {
   const callbackUrl = searchParams.get("callbackUrl") || "/";
 
   async function signInWithGoogle() {
-    await signIn("auth0", { redirectTo: callbackUrl })
+    //await signIn("auth0", { redirectTo: callbackUrl })
+    redirect('/auth/login')
   }
 
   async function signInWithEmail(formData: FormData) {
     const email = String(formData.get("email") || "").trim()
     if (!email) return
-    await signIn("email", { email, redirectTo: callbackUrl })
+    //await signIn("email", { email, redirectTo: callbackUrl })
   }
 
   return (

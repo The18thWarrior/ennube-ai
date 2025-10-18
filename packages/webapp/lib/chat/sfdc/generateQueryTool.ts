@@ -10,7 +10,7 @@
 //   - Uses vector store for field discovery and AI SDK for query generation
 //   - Validates SQL is SELECT-only for security
 
-import { Tool, tool, generateObject } from "ai";
+import { Tool, tool, generateObject, generateText, stepCountIs } from "ai";
 import { openai } from '@ai-sdk/openai';
 import z from "zod/v4";
 import { embedText } from "./embeddings";
@@ -22,6 +22,7 @@ import { createSalesforceClient } from "@/lib/salesforce";
 import {Searcher} from 'fast-fuzzy'
 import { loadSchemaFromJSON, createSchemaAnalyzer, GraphDatabase, NodeType } from '@/lib/graph';
 import { put } from "@vercel/blob";
+import { analyzeTableRelationshipsTool, getTableInfoTool, findJoinPathTool, getAllTableNamesTool } from "@/lib/graph/tools";
 
 /**
  * Zod schema for structured SQL generation
@@ -75,7 +76,8 @@ async function generateAndExecuteQuery(
   credentials: StoredSalesforceCredentials,
   sobjectTypes: string[], 
   description: string,
-  similarFields: QueryResult[]
+  similarFields: QueryResult[],
+  errorResult?: string
 ) {
   
   if (similarFields.length === 0) {
@@ -84,16 +86,6 @@ async function generateAndExecuteQuery(
   console.log(`Found ${similarFields.length} relevant fields for query generation`);
   console.log('objects', sobjectTypes)
   console.log('Current description', description);
-  //console.log('All fields:', similarFields.map(f => f.payload ? `${f.payload.sobjectType}.${f.payload.fieldName} ${f.score}` : '[No payload]'));
-  // 4. Build context for AI generation
-  // const fieldContext = similarFields
-  //   .slice(0, 20) // Limit to top 20 for token efficiency
-  //   .map(field => {
-  //     if (field.payload) {
-  //       return `${field.payload.sobjectType}.${field.payload.fieldName} (${field.payload.label}) - ${field.payload.type}`;
-  //     }
-  //   })
-  //   .join('\n');
   const fieldContext = JSON.stringify(similarFields.reduce((acc, f) => {
     if (f.payload) {
       if (!Object.keys(acc).includes(f.payload.sobjectType as string) ) {
@@ -148,12 +140,22 @@ async function generateAndExecuteQuery(
     - Focus on fields most relevant to the user's request
     - Include appropriate WHERE clauses if filtering is implied
     - Limit results to a reasonable number (e.g., LIMIT 200)
-    - Aggregate functions must be directly declared in GROUP BY and ORDER BY clauses.
+    - A sub-query cannot be used in a GROUP BY or ORDER BY clause.
+      -- Invalid Query: SELECT COUNT(Id), (SELECT Id FROM Contacts) FROM Account GROUP BY (SELECT Id FROM Contacts)
     - Date and DateTime Formatting: Dates and DateTimes in WHERE clauses must be in ISO 8601 format.
       -- Date: YYYY-MM-DD (e.g., 2023-01-15) | DateTime: YYYY-MM-DDThh:mm:ssZ (e.g., 2023-01-15T10:00:00Z)
     - Aggregate Functions and LIMIT Clause: A non-grouped query that uses an aggregate function (e.g., COUNT(), MAX(), MIN(), AVG(), SUM()) cannot also use a LIMIT clause. This is because aggregate functions already return a single result. 
       -- Invalid Query: SELECT COUNT(Id) FROM Account LIMIT 1 | Valid Query: SELECT COUNT(Id) FROM Account
 
+    Rules for Translating Joins:
+    | Type                | Direction    | Analogy           | Syntax Style   | Example                                 |
+    | ------------------- | ------------ | ----------------- | -------------- | --------------------------------------- |
+    | **Child-to-Parent** | Upward       | INNER JOIN        | Dot notation   | 'Contact → Account.Name'                |
+    | **Child-to-Parent** | Upward       | INNER JOIN        | Dot notation   | 'Contact → CustomObject__r.Name'        |
+    | **Parent-to-Child** | Downward     | LEFT OUTER JOIN   | Subquery       | '(SELECT Id FROM Contacts)'             |
+    | **Semi-Join**       | Filter-based | IN (subquery)     | WHERE + IN     | 'WHERE Id IN (SELECT AccountId FROM …)' |
+    | **Anti-Join**       | Filter-based | NOT IN (subquery) | WHERE + NOT IN | 'WHERE Id NOT IN (SELECT …)'            |
+    
     Nomenclature:
     - The 'OwnerId' field on a record points to either a User or a Queue. If ownership is being changed, resolve the new owner's 'Id' (usually a UserId) and update the record’s 'OwnerId.
 
@@ -180,6 +182,8 @@ async function generateAndExecuteQuery(
     \`\`\`json
     ${fieldContext}
     \`\`\`
+
+    ${errorResult ? `Additional context: The following errors were encountered in previous query attempts: ${errorResult}` : ''}
     [END OF CONTEXT]`;
   // 5. Generate structured query object using AI
   console.log('Generating SOQL query with AI...');
@@ -189,6 +193,7 @@ async function generateAndExecuteQuery(
   }
   const { object: queryResult } = await generateObject({
     model,
+    temperature: 0.2,
     providerOptions: {
       openrouter: {
         parallelToolCalls: false
@@ -212,7 +217,11 @@ async function generateAndExecuteQuery(
   const queryResponse = await fetch(queryUrl);
   if (!queryResponse.ok) {
     const errorData = await queryResponse.json();
-    throw new Error(`Query execution failed: ${errorData.error} => ${errorData.details}`);
+    if (errorResult) {
+      console.log(`Previous errors encountered: ${errorResult}`);
+      throw new Error(`Query execution failed: ${errorData}`);
+    }
+    return generateAndExecuteQuery(subId, credentials, sobjectTypes, description, similarFields, `${errorData}`);
   }
   
   const queryData = await queryResponse.json();
@@ -443,6 +452,7 @@ export const generateQueryTool = (subId: string) => {
       try {
         console.log(`Starting query generation for with description: "${description}"`);
         const query_result = await fetchAndProcessDescribe(credentials, subId, sobjects);
+        //const graph = await fetchAndProcessDescribe2(credentials, subId, sobjects);
         const data = await generateAndExecuteQuery(subId, credentials, sobjects, description, query_result);
         return data;
       } catch (error: { message?: string } | any) {
