@@ -6,7 +6,7 @@ export async function GET(request: NextRequest) {
   const session = await auth();
 
   if (!session?.user) {
-    return NextResponse.redirect(new URL('/authentication/login', request.url));
+    return NextResponse.redirect(new URL('/auth/login', request.url));
   }
   return NextResponse.redirect(new URL('/', request.url));
 
