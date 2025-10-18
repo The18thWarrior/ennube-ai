@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
     const month = monthParam ? parseInt(monthParam, 10) : currentDate.getMonth();
 
     // Get the user ID from session
-    const userId = (session.user as any).auth0?.sub || session.user.id || session.user.email;
+    const userId = (session.user as any).sub || session.user.id || session.user.email;
     if (!userId) {
       return NextResponse.json(
         { error: 'User identifier not found' },

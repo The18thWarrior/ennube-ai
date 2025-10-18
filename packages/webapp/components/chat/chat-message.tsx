@@ -11,7 +11,7 @@ import { UIMessage, UIDataTypes, UIMessagePart, UITools, isToolUIPart } from 'ai
 import { nanoid } from 'nanoid';
 import { Button, Card, CardContent } from '../ui';
 import { UpdateDataReviewModal } from './tools/update-data-review-modal';
-import { Loader2, User, TriangleAlert, CircleCheck, Loader, Copy } from 'lucide-react';
+import { Loader2, User as UserIcon, TriangleAlert, CircleCheck, Loader, Copy } from 'lucide-react';
 import { Session } from 'next-auth';
 import { CustomerProfile } from '@/hooks/useCustomerProfile';
 import DefaultMessageComponent from './default/default-message-component';
@@ -26,14 +26,15 @@ import { Tool, ToolHeader, ToolContent, ToolInput, ToolOutput } from '../ai-elem
 import PlanningComponent from './default/planning-component';
 import { CrmDataLoaderToolCard } from './tools/crm-data-loader-tool-card';
 import { BulkDataLoadMappingType, DescribeResultType } from '@/lib/types';
+import { User } from '@auth0/nextjs-auth0/types';
 
 // Custom message rendering
-export const renderMessage = (msg: UIMessage, idx: number, agent: ReactNode, theme: 'dark' | 'light' | 'lavender', session: Session | null, updateThreadFromTool: (updatedMessage: UIMessage, newMessage?: UIMessage) => void, userSub?: string, agentKey?: string) => {
+export const renderMessage = (msg: UIMessage, idx: number, agent: ReactNode, theme: 'dark' | 'light' | 'lavender', user: User | undefined | null, updateThreadFromTool: (updatedMessage: UIMessage, newMessage?: UIMessage) => void, userSub?: string, agentKey?: string) => {
     // Default: render as text
-    return RenderHtmlComponent(DefaultMessageComponent(msg, theme), msg, theme, agent, session, updateThreadFromTool, userSub, agentKey);
+    return RenderHtmlComponent(DefaultMessageComponent(msg, theme), msg, theme, agent, user, updateThreadFromTool, userSub, agentKey);
 };
 
-const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, theme: 'dark' | 'light' | 'lavender', agent: ReactNode, session: Session | null, updateThreadFromTool: (updatedMessage: UIMessage, newMessage?: UIMessage) => void, userSub?: string, agentKey?: string) => (
+const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, theme: 'dark' | 'light' | 'lavender', agent: ReactNode, user: User | undefined | null, updateThreadFromTool: (updatedMessage: UIMessage, newMessage?: UIMessage) => void, userSub?: string, agentKey?: string) => (
     <div className={'flex items-start gap-2'}>
         {msg.role === 'assistant' ? 
             <div className="flex aspect-square size-12 items-center justify-center rounded-full overflow-hidden flex-shrink-0 mt-2 ">
@@ -356,14 +357,14 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, the
         </div>
         {msg.role === 'user' ?
             <div className="flex size-12 items-center justify-center rounded-full overflow-hidden flex-shrink-0 mt-2 ">
-              {session?.user?.image ? (
+              {user?.picture ? (
                 <img height={35} width={35} className={" border  rounded-full"}
-                        src={session?.user?.image ||
+                        src={user?.picture ||
                         `/logo.png`
                         }
-                        alt={session?.user?.name ?? "User"}
+                        alt={user?.name ?? "User"}
                     />
-              ) : <User className="h-5 w-5" />
+              ) : <UserIcon className="h-5 w-5" />
               }
             </div> :
             <div className="flex aspect-square size-12 items-center justify-center rounded-full overflow-hidden flex-shrink-0 mt-2 ">

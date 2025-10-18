@@ -17,9 +17,9 @@ export async function GET(req: NextRequest) {
       );
     }
     let isPrimary = false;
-    let subscription = await getCustomerSubscription(session.user.auth0?.sub as string);
+    let subscription = await getCustomerSubscription(session.user.sub as string);
     if (!subscription) {
-      const license = await getLicenseBySubId(session.user.auth0?.sub as string);
+      const license = await getLicenseBySubId(session.user.sub as string);
       if (license && license.parentSubId) {
         // If a license is found, you can use it to create a subscription
         subscription = await getCustomerSubscription(license.parentSubId);

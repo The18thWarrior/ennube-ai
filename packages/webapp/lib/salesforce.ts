@@ -1,5 +1,4 @@
 import { auth } from "@/auth";
-import { Session } from "next-auth";
 import {Connection, SaveResult, OAuth2, Schema, DescribeGlobalResult, DescribeSObjectResult} from 'jsforce';
 import { RefreshTokenResponse, SalesforceAuthResult, SalesforceQueryResult, SalesforceUserInfo } from "./types";
 import { IngestJobV2Results, JobInfoV2, QueryJobInfoV2 } from "jsforce/lib/api/bulk2";
@@ -628,7 +627,7 @@ export async function handleOAuthCallback(
   loginUrl: string = 'https://login.salesforce.com'
 ): Promise<SalesforceAuthResult> {
   const session = await auth();
-  const userId = session?.user?.auth0?.sub;
+  const userId = session?.user.sub;
   if (!userId) {
     return {
       success: false,

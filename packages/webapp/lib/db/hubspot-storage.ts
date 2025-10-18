@@ -54,7 +54,7 @@ export async function storeHubSpotCredentials(authResult: HubSpotAuthResult): Pr
       return;
     }
     
-    const userId = session.user.auth0.sub;
+    const userId = session.user.sub;
 
     const type = 'hubspot';
     
@@ -132,7 +132,7 @@ export async function getHubSpotCredentialsById(): Promise<StoredHubSpotCredenti
       return null;
     }
     
-    const userSub = session.user.auth0.sub;
+    const userSub = session.user.sub;
     const type = 'hubspot';
 
     // Query for the credentials with individual columns
@@ -324,11 +324,11 @@ export async function updateHubSpotTimestampField(timestampField: string): Promi
   try {
     // Get the current user's ID
     const session = await auth();
-    if (!session?.user?.auth0?.sub) {
+    if (!session?.user.sub) {
       throw new Error('User not authenticated');
     }
 
-    const userId = session.user.auth0.sub;
+    const userId = session.user.sub;
     const type = 'hubspot';
 
     // Check if credentials exist for this user

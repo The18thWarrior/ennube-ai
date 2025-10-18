@@ -1,5 +1,4 @@
 import { auth } from "@/auth";
-import { Session } from "next-auth";
 import { Client } from '@hubspot/api-client';
 import { HubSpotRefreshTokenResponse, RefreshTokenResponse, HubSpotUserInfo, HubSpotQueryResult, HubSpotAuthResult } from "./types";
 import { StoredHubSpotCredentials, storeHubSpotCredentials, updateHubSpotCredentials } from "./db/hubspot-storage";

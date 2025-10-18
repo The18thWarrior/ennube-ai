@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const customer = await getCustomer(session.user.auth0?.sub as string);
+    const customer = await getCustomer(session.user.sub as string);
     if (!customer) {
         return NextResponse.json(
             { error: 'Failed to find customer' },

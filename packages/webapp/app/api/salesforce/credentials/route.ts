@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
     // Verify the user is authenticated
     const session = await auth();
     
-    if (!session?.user?.id || !session?.user?.auth0?.sub) {
+    if (!session?.user?.id || !session?.user.sub) {
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
           instanceUrl: credentials.instanceUrl,
           refreshToken: credentials.refreshToken,
           success: true,
-          userId: session.user.auth0.sub,
+          userId: session.user.sub,
           clientId: process.env.SALESFORCE_CLIENT_ID as string,
           clientSecret: process.env.SALESFORCE_CLIENT_SECRET as string,
         }
@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
 
       await storeSalesforceCredentials({
         success: true,
-        userId: session.user.auth0.sub,
+        userId: session.user.sub,
         accessToken: credentialsFinal.accessToken as string,
         refreshToken: credentialsFinal.refreshToken as string,
         instanceUrl: credentialsFinal.instanceUrl as string,
@@ -128,7 +128,7 @@ export async function GET(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     const session = await auth();
-    if (!session?.user?.id || !session?.user?.auth0?.sub) {
+    if (!session?.user?.id || !session?.user.sub) {
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
     const result = await removeSalesforceCredentials();

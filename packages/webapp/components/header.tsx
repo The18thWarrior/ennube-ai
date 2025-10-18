@@ -21,9 +21,9 @@ export default async function Header() {
     // )
   }
 
-  const checkAdmin = isAdmin(session?.user?.auth0?.sub || '')
+  const checkAdmin = isAdmin(session?.user.sub || '')
 
   // Render a client component that will read the current pathname and
   // manage the sticky positioning, floating button, and page padding.
-  return <HeaderClient checkAdmin={checkAdmin} user={session.user as SessionUser | null} />
+  return <HeaderClient checkAdmin={checkAdmin} user={{...session.user, image: session.user.image} as SessionUser | null} />
 }

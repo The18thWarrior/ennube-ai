@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
 
 		// Resolve session and user sub (supports providing sub via query for admin/debug)
 		const session = await auth();
-		const sub = _sub || session?.user?.auth0?.sub;
+		const sub = _sub || session?.user.sub;
 		if (!sub) {
 			return NextResponse.json({ error: 'Missing required parameter: sub' }, { status: 400 });
 		}
@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
 // 		const _sub = body?.sub;
 
 // 		const session = await auth();
-// 		const sub = _sub || session?.user?.auth0?.sub;
+// 		const sub = _sub || session?.user.sub;
 // 		if (!sub) {
 // 			return NextResponse.json({ error: 'Missing required parameter: sub' }, { status: 400 });
 // 		}
@@ -97,7 +97,7 @@ export async function POST(request: NextRequest) {
 		const _sub = body?.sub;
 
 		const session = await auth();
-		const sub = _sub || session?.user?.auth0?.sub;
+		const sub = _sub || session?.user.sub;
 		if (!sub) {
 			return NextResponse.json({ error: 'Missing required parameter: sub' }, { status: 400 });
 		}

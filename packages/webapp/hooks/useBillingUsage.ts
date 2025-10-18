@@ -1,5 +1,5 @@
+import { useUser } from '@auth0/nextjs-auth0';
 import { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
 
 interface UseBillingUsageOptions {
   year?: number;
@@ -20,7 +20,8 @@ interface UseBillingUsageReturn {
  * @returns Object containing usage data, loading state, error state, and refresh function
  */
 export function useBillingUsage(options: UseBillingUsageOptions = {}): UseBillingUsageReturn {
-  const { data: session } = useSession();
+  const { user } = useUser();
+  const session = user ? { user } : null; // Mock session object for compatibility
   const [usage, setUsage] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

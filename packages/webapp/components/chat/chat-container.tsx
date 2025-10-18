@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useRef, useEffect, ChangeEventHandler } from 'react';
-import { useSession } from 'next-auth/react';
+import { useUser } from '@auth0/nextjs-auth0';
 import { useTheme } from '../theme-provider';
 import styles from './chat-container.module.css';
 import { z } from 'zod';
@@ -33,7 +33,7 @@ const ChatContainer = ({
 }: { id?: string | undefined; initialMessages?: UIMessage[]; name?: string | null; agent?: string | null; reload: () => void }) => {
     const { theme } = useTheme();
     const [input, handleInputChange] = React.useState('');
-    const { data: session } = useSession();
+    const { user } = useUser();
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const setThreadTimerRef = useRef<number | null>(null);
     const [mounted, setMounted] = React.useState(false);
@@ -202,7 +202,7 @@ const ChatContainer = ({
                                     msg.role === 'user' ? styles.userRow : styles.botRow,
                                 ].join(' ')}
                             >
-                                {renderMessage(msg, idx, Agent, theme, session, updateThreadFromTool, session?.user?.auth0?.sub, selectedAvatar)}
+                                {renderMessage(msg, idx, Agent, theme, user, updateThreadFromTool, user?.sub, selectedAvatar)}
                             </div>
                         ))}
                         <div ref={messagesEndRef}></div>

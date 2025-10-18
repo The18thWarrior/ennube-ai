@@ -2,19 +2,18 @@
 
 import { useStripe } from '@/lib/stripe-context';
 import { Button } from './ui/button';
-import { useSession } from 'next-auth/react';
 import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
-import { auth } from '@/auth';
+import { useUser } from '@auth0/nextjs-auth0';
 
 export function SubscribeButton() {
-  const { data: session } = useSession()
+  const { user } = useUser();
   const { createCheckoutSession, isLoading } = useStripe();
 
   const handleSubscribe = async () => {
-    if (!session) {
+    if (!user) {
       // Redirect to sign in if not authenticated
-      window.location.href = '/api/auth/signin';
+      window.location.href = '/auth/login';
       return;
     }
 

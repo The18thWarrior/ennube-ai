@@ -58,13 +58,13 @@ interface SessionValidationResponse {
 
 export async function validateSession(req: NextRequest): Promise<SessionValidationResponse> {
     const session = await auth();
-    if (!session?.user?.auth0?.sub && !(await validateHeader(req))) {
+    if (!session?.user.sub && !(await validateHeader(req))) {
         console.log( 'Invalid session or header');
         return { isValid: false, userId: null };
     }
 
     const { searchParams } = new URL(req.url);
-    return { isValid: true, userId: session?.user?.auth0?.sub || searchParams.get('subId') || searchParams.get('sub') };
+    return { isValid: true, userId: session?.user.sub || searchParams.get('subId') || searchParams.get('sub') };
 }
 
 export async function buildCalloutWithHeader(url: string, body: any, method: 'GET' | 'POST' | 'PATCH' | 'PUT' = 'GET'): Promise<Response> {

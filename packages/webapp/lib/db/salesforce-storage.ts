@@ -64,7 +64,7 @@ export async function storeSalesforceCredentials(authResult: SalesforceAuthResul
     const sessionId = nanoid();
     const createdAt = Date.now();
     const expiresAt = createdAt + 2 * 60 * 60 * 1000; // 2 hours
-    const userSub = session.user.auth0.sub;
+    const userSub = session.user.sub;
 
     // Check if user already has credentials stored
     const checkResult = await pool.query(
@@ -177,12 +177,12 @@ export async function updateSalesforceCredentials(authResult: SalesforceAuthResu
 export async function getSalesforceCredentialsById(): Promise<StoredSalesforceCredentials | null> {
   try {
     const session = await auth();
-    if (!session || !session.user || !session.user.auth0) {
+    if (!session || !session.user || !session.user.sub) {
       console.log("No session found");
       return null;
     }
     
-    const userSub = session.user.auth0.sub;
+    const userSub = session.user.sub;
     const result = await pool.query(
       `SELECT 
         access_token as "accessToken", 
@@ -279,7 +279,7 @@ export async function removeSalesforceCredentials(): Promise<boolean> {
       return false;
     }
     
-    const userSub = session.user.auth0.sub;
+    const userSub = session.user.sub;
     await pool.query(
       `DELETE FROM ${CREDENTIALS_TABLE} WHERE user_id = $1 AND type = 'sfdc'`,
       [userSub]

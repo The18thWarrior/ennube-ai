@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
     // Get the current session to identify the user
     const session = await auth();
     
-    if (!session || !session.user || !session.user.auth0) {
+    if (!session || !session.user || !session.user.sub) {
       console.log('User is not authenticated');
       return NextResponse.json(
         { error: 'You must be signed in to access the data steward agent' },
@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
     }
     
     // Get user's sub from the session
-    const userSub = session.user.auth0.sub;
+    const userSub = session.user.sub;
     const today = dayjs().format('YYYY-MM-DD');
     const model = getModel();
     if (!model) {
@@ -68,11 +68,11 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   const session = await auth();
-  if (!session?.user?.auth0?.sub) {
+  if (!session?.user.sub) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const userSub = session.user.auth0.sub;
+  const userSub = session.user.sub;
   const searchParams = req.nextUrl.searchParams;
   const agent = searchParams.get('agent') || 'data-steward';
   // Get the chat history for the user

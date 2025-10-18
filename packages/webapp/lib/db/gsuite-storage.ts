@@ -61,7 +61,7 @@ export async function storeGSuiteCredentials(authResult: GSuiteAuthResult): Prom
     const sessionId = nanoid();
     const createdAt = Date.now();
     const expiresAt = createdAt + 2 * 60 * 60 * 1000; // 2 hours
-    const userSub = session.user.auth0.sub;
+    const userSub = session.user.sub;
 
     // Check if user already has credentials stored
     const checkResult = await pool.query(
@@ -136,7 +136,7 @@ export async function getGSuiteCredentialsById(): Promise<StoredGSuiteCredential
       return null;
     }
     
-    const userSub = session.user.auth0.sub;
+    const userSub = session.user.sub;
     const result = await pool.query(
       `SELECT 
         access_token as "accessToken", 
@@ -227,7 +227,7 @@ export async function removeGSuiteCredentials(): Promise<boolean> {
       return false;
     }
     
-    const userSub = session.user.auth0.sub;
+    const userSub = session.user.sub;
     await pool.query(
       `DELETE FROM ${CREDENTIALS_TABLE} WHERE user_id = $1 AND type = 'gsuite'`,
       [userSub]
@@ -251,7 +251,7 @@ export async function updateGSuiteCredentials(updatedCredentials: Partial<Stored
       return false;
     }
     
-    const userSub = session.user.auth0.sub;
+    const userSub = session.user.sub;
     const now = Date.now();
     const expiresAt = now + 2 * 60 * 60 * 1000; // 2 hours
     

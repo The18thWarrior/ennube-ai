@@ -1,4 +1,5 @@
 'use client'
+import { redirect } from "next/navigation"
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
 import { Button } from "./ui/button"
 import {
@@ -10,13 +11,14 @@ import {
   DropdownMenuSeparator,
 } from "./ui/dropdown-menu"
 // import { SignIn, SignOut } from "./auth-components"
-import { signOut } from "next-auth/react"
+//mport { signOut } from "next-auth/react"
 import Link from "next/link"
 
-export default function UserButton({user}: { user: { name: string | undefined | null, email: string | undefined | null, image: string | undefined | null } | null }) {
+export default function UserButton({user}: { user: { name: string | undefined | null, email: string | undefined | null, picture: string | undefined | null } | null }) {
   //const session = await auth()
   async function doLogout() {
-    await signOut({ redirectTo: "/auth/login" })
+    //await signOut({ redirectTo: "/auth/login" })
+    redirect('/auth/logout')
   }
   if (!user) return null;
   return (
@@ -30,7 +32,7 @@ export default function UserButton({user}: { user: { name: string | undefined | 
             <Avatar className="h-8 w-8">
               <AvatarImage
                 src={
-                  user.image ||
+                  user.picture ||
                   `https://api.dicebear.com/9.x/thumbs/svg?seed=1`
                 }
                 alt={user.name ?? "User"}

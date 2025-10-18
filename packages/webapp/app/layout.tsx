@@ -4,7 +4,8 @@ import { Inter } from "next/font/google"
 import Footer from "@/components/footer"
 import Header from "@/components/header"
 import { StripeProvider } from "@/lib/stripe-context"
-import { SessionProvider } from "next-auth/react"
+import { Auth0Provider } from '@auth0/nextjs-auth0';
+// import { SessionProvider } from "next-auth/react"
 //import { Session } from "next-auth"
 import { SnackbarProvider } from "../components/snackbar-provider"
 import { ThemeProvider } from "@/components/theme-provider"
@@ -42,7 +43,8 @@ export default function RootLayout({ children }: React.PropsWithChildren<{}>) {
         <ThemeProvider defaultTheme="light" storageKey="theme">
           <div className="flex h-full min-h-screen w-full flex-col justify-between">
             
-            <SessionProvider>
+            {/* <SessionProvider> */}
+            <Auth0Provider>
               <StripeProvider>
                   <SnackbarProvider>
                     <Header />
@@ -53,7 +55,8 @@ export default function RootLayout({ children }: React.PropsWithChildren<{}>) {
                     <Analytics />
                   </SnackbarProvider>
               </StripeProvider>
-            </SessionProvider>
+            </Auth0Provider>
+            {/* </SessionProvider> */}
           </div>
         </ThemeProvider>
       </body>

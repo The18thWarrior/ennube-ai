@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
   try {
     const session = await auth();
 
-    if (!session?.user?.id || !session?.user?.auth0?.sub) {
+    if (!session?.user?.id || !session?.user.sub) {
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
 

@@ -3,8 +3,8 @@ import { getDescribeGlobalResult, storeDescribeGlobalResult } from '@/lib/client
 import { createConnection, describeGlobal as describeGlobalAsync } from '@/lib/salesforce-client';
 import { getSfdcRecord, storeSfdcRecord, SfdcRecordCachePayload } from '@/lib/client-cache/sfdc-record';
 import { Connection, DescribeGlobalResult } from 'jsforce';
-import { useSession } from 'next-auth/react';
 import { useState, useCallback, useEffect } from 'react';
+import { useUser } from '@auth0/nextjs-auth0';
 
 interface SfdcRecord {
   [key: string]: any;
@@ -39,14 +39,14 @@ interface UseSfdcRecordResult {
  * @param sobject - The Salesforce sObject API name (e.g., 'Account')
  */
 export function useSfdcId(id: string): UseSfdcRecordResult {
-    const { data: session, status } = useSession();
+    const { user } = useUser();
     const [record, setRecord] = useState<CrmRecordSummary | null>(null);
     const [updateStamp, setUpdateStamp] = useState<number | undefined>(undefined);
     const [sobject, setSobject] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [describeGlobal, setDescribeGlobal] = useState<DescribeGlobalResult | null>(null);
-    const subId = session?.user?.auth0?.sub || null;
+    const subId = user?.sub || null;
     // Helper to get Salesforce API base URL (customize as needed)
     const getApiBase = () => '/api/salesforce';
 

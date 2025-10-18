@@ -1,14 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { useSession } from 'next-auth/react';
+import { useUser } from '@auth0/nextjs-auth0';
 import { Progress } from '@/components/ui/progress';
 import { useStripe } from '@/lib/stripe-context';
 import { Button } from '@/components/ui/button';
 import { useBillingUsage } from '@/hooks/useBillingUsage';
 
 export default function UsageProgressBar() {
-  const { data: session } = useSession();
+  const { user } = useUser();
   const { subscription, hasSubscription : isSubscribed, limit } = useStripe();
   // Use the new custom hook
   const { usage, loading, error, refreshing, refresh } = useBillingUsage();

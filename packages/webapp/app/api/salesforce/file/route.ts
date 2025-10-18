@@ -27,7 +27,7 @@ export async function GET(
   const contentVersionId = searchParams.get("contentVersionId");
 
   const session = await auth();
-  const sub = _sub || session?.user?.auth0?.sub;
+  const sub = _sub || session?.user.sub;
   if (!sub) {
     return NextResponse.json(
       { error: "Missing required parameter: sub" },

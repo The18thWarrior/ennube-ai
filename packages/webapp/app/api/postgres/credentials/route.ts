@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
     // Verify the user is authenticated
     const session = await auth();
     
-    if (!session?.user?.id || !session?.user?.auth0?.sub) {
+    if (!session?.user?.id || !session?.user.sub) {
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
     // Verify the user is authenticated
     const session = await auth();
     
-    if (!session?.user?.id || !session?.user?.auth0?.sub) {
+    if (!session?.user?.id || !session?.user.sub) {
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
@@ -166,7 +166,7 @@ export async function DELETE(request: NextRequest) {
     // Verify the user is authenticated
     const session = await auth();
     
-    if (!session?.user?.id || !session?.user?.auth0?.sub) {
+    if (!session?.user?.id || !session?.user.sub) {
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }

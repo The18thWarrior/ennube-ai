@@ -5,7 +5,6 @@
  * and their license relationships with the primary account.
  */
 import { ManagementClient, RequiredError } from 'auth0';
-import { auth } from '@/auth';
 import { Auth0Client } from "@auth0/nextjs-auth0/server";
 import { createLicense, updateLicenseParent, LicenseStatus, updateLicenseStatus } from '@/lib/db/license-storage';
 
@@ -39,6 +38,9 @@ export interface UpdateUserParams {
   metadata?: Record<string, any>;
   status?: LicenseStatus;
 }
+
+export const auth0 = new Auth0Client();
+export const auth = () => auth0.getSession();
 
 class Auth0Manager {
   private managementClient: ManagementClient;
@@ -318,3 +320,4 @@ export async function getToken() {
 //   return new Auth0Manager();
 // };
 export const auth0Manager = new Auth0Manager();
+

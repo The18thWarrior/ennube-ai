@@ -332,13 +332,13 @@ async function main(question: string) {
     // For benchmark purposes, we'll use a test user ID or skip tools that require authentication
     const session = await auth();
     
-    if (!session || !session.user || !session.user.auth0) {
+    if (!session || !session.user || !session.user.sub) {
       console.log('User is not authenticated');
       throw new Error('Authentication required to load user-specific tools');
     }
     
     // Get user's sub from the session
-    const mockUserSub = session.user.auth0.sub;
+    const mockUserSub = session.user.sub;
     let tools: Record<string, Tool>; 
     try {
       tools = await getTools(agent, mockUserSub);
