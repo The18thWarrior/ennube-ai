@@ -17,7 +17,7 @@ export default async function UserManagementLayout({
   const session = await auth();
   
   if (!session?.user) {
-    redirect('/authorization/login');
+    redirect('/authentication/login');
   }
 
   // Verify the user is a primary subscription holder

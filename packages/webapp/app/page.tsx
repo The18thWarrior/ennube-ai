@@ -11,7 +11,7 @@ export default async function LandingPage() {
   if (session2 && session2.user?.sub) {
     redirect("/apps")
   } else {
-    redirect("/authorization/login")
+    redirect("/authentication/login")
   }
   return <></>
  
