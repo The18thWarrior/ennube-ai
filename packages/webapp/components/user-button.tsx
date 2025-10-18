@@ -10,16 +10,15 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "./ui/dropdown-menu"
-// import { SignIn, SignOut } from "./auth-components"
-//mport { signOut } from "next-auth/react"
 import Link from "next/link"
 
-export default function UserButton({user}: { user: { name: string | undefined | null, email: string | undefined | null, picture: string | undefined | null } | null }) {
+export default function UserButton({user}: { user: { name: string | undefined | null, email: string | undefined | null, image: string | undefined | null } | null }) {
   //const session = await auth()
   async function doLogout() {
     //await signOut({ redirectTo: "/auth/login" })
     redirect('/auth/logout')
   }
+  console.log(user);
   if (!user) return null;
   return (
     <div className="flex items-center gap-2">
@@ -32,7 +31,7 @@ export default function UserButton({user}: { user: { name: string | undefined | 
             <Avatar className="h-8 w-8">
               <AvatarImage
                 src={
-                  user.picture ||
+                  user.image ||
                   `https://api.dicebear.com/9.x/thumbs/svg?seed=1`
                 }
                 alt={user.name ?? "User"}

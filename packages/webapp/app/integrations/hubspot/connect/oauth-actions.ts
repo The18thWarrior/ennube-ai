@@ -3,7 +3,6 @@
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { signOut } from "@/auth";
 
 /**
  * Server action for handling HubSpot OAuth2 logout
@@ -11,7 +10,7 @@ import { signOut } from "@/auth";
 export async function oauthHubspotLogout() {
   try {
     // Use NextAuth's signOut function to handle OAuth2 logout
-    await signOut({ redirectTo: "/integrations/hubspot" });
+    // await signOut({ redirectTo: "/integrations/hubspot" });
 
     // Revalidate the HubSpot page
     revalidatePath("/integrations/hubspot");
