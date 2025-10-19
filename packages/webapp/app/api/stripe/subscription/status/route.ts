@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
     let manualSubscription = await subscriptionCache.get(session.user.sub as string);
     // Is manual subscription take precedence?
     if (manualSubscription) {
-      console.log('Using manual subscription for user:', session.user.sub);
+      // console.log('Using manual subscription for user:', session.user.sub);
       return NextResponse.json({ subscription: JSON.parse(JSON.stringify(manualSubscription.subscription)), isPrimary: true });
     } 
 

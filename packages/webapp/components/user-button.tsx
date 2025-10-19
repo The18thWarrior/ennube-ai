@@ -11,14 +11,16 @@ import {
   DropdownMenuSeparator,
 } from "./ui/dropdown-menu"
 import Link from "next/link"
+import { useStripe } from "@/lib/stripe-context"
 
 export default function UserButton({user}: { user: { name: string | undefined | null, email: string | undefined | null, image: string | undefined | null } | null }) {
   //const session = await auth()
+  const { hasSubscription, isPrimary, isLoadingSubscription, isLoading, licenseCount } = useStripe();
   async function doLogout() {
     //await signOut({ redirectTo: "/auth/login" })
     redirect('/auth/logout')
   }
-  console.log(user);
+  
   if (!user) return null;
   return (
     <div className="flex items-center gap-2">
@@ -57,6 +59,18 @@ export default function UserButton({user}: { user: { name: string | undefined | 
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
+            <Link href="/integrations" className="cursor-pointer">
+              Connections
+            </Link>
+          </DropdownMenuItem>
+          {licenseCount >= 2 && isPrimary && (
+            <DropdownMenuItem asChild>
+              <Link href="/account/users" className="cursor-pointer">
+                Users
+              </Link>
+            </DropdownMenuItem>
+          )}
+          <DropdownMenuItem asChild>
             <Link href="/account/api-key" className="cursor-pointer">
               API Keys
             </Link>
@@ -67,6 +81,7 @@ export default function UserButton({user}: { user: { name: string | undefined | 
               Billing
             </Link>
           </DropdownMenuItem> */}
+
           <DropdownMenuSeparator />
           <DropdownMenuItem>
             <form action={doLogout}>

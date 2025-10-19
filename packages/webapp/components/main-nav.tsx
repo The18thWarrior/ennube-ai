@@ -68,16 +68,21 @@ export function MainNav() {
       title: "Activity",
       description: "View your activity statistics",
     },
+    {
+      href: "/help",
+      title: "Help",
+      description: "Get assistance and support",
+    }
     // {
     //   href: "/agents",
     //   title: "Agents",
     //   description: "Manage your applications",
     // },
-    {
-      href: "/integrations",
-      title: "Connections",
-      description: "Manage your applications",
-    }
+    // {
+    //   href: "/integrations",
+    //   title: "Connections",
+    //   description: "Manage your applications",
+    // }
   ] as NavigationListItem[];
   return (
     <div className="flex items-center gap-4">
@@ -105,7 +110,7 @@ export function MainNav() {
 
 
                 })}
-              {licenseCount >= 2 && isPrimary && 
+              {/* {licenseCount >= 2 && isPrimary && 
                 <NavigationMenuItem>
                   <NavigationMenuLink
                     href="/account/users"
@@ -114,7 +119,7 @@ export function MainNav() {
                     Users
                   </NavigationMenuLink>
                 </NavigationMenuItem>
-              }
+              } */}
               {!hasSubscription && isPrimary && 
                 <NavigationMenuItem>
                   <SubscribeButton />

@@ -1,0 +1,704 @@
+# End User Guide
+
+**Version:** 1.0  
+**Last Updated:** October 18, 2025  
+**Application:** Ennube AI Platform
+
+---
+
+## Table of Contents
+
+1. [Welcome to Ennube AI](#welcome-to-ennube-ai)
+2. [Getting Started](#getting-started)
+3. [Core Features](#core-features)
+4. [AI Agents](#ai-agents)
+5. [Chat Interface](#chat-interface)
+6. [Integrations & Connections](#integrations--connections)
+7. [Data Loader](#data-loader)
+8. [Activity Dashboard](#activity-dashboard)
+9. [Account Management](#account-management)
+10. [Subscription Plans](#subscription-plans)
+11. [Best Practices](#best-practices)
+12. [Frequently Asked Questions](#frequently-asked-questions)
+
+---
+
+## Welcome to Ennube AI
+
+Ennube AI is an intelligent automation platform that helps you manage your CRM data, find prospects, analyze contracts, and automate routine business tasks using specialized AI agents. Each agent is designed to handle specific business functions, working alongside you to improve efficiency and data quality.
+
+### What Can You Do with Ennube AI?
+
+- **Automate Data Management:** Keep your CRM clean and up-to-date automatically
+- **Find New Prospects:** Discover and qualify potential customers based on your ideal customer profile
+- **Analyze Contracts:** Extract key information from legal documents and sync with your CRM
+- **Chat with AI Agents:** Get instant help with business tasks through conversational AI
+- **Monitor Activity:** Track all agent actions and review detailed execution logs
+- **Integrate Seamlessly:** Connect with Salesforce, HubSpot, and other business tools
+
+---
+
+## Getting Started
+
+### 1. Sign Up and Sign In
+
+1. Visit the Ennube AI platform
+2. Click **"Sign In"** or **"Get Started"**
+3. Create an account using your email or sign in with an existing account
+4. Complete your profile information
+
+### 2. Connect Your First Integration
+
+After signing in, you'll be guided through a simple onboarding process:
+
+1. **Connect a CRM:** Navigate to **Connections** in the main menu
+2. Choose your CRM platform (Salesforce or HubSpot)
+3. Click **"Connect"** and authorize Ennube AI to access your account
+4. Wait for the connection to be established
+
+### 3. Configure Your First Agent
+
+Once your CRM is connected:
+
+1. Go to **Agents** from the main navigation
+2. Select an agent that matches your needs (we recommend starting with **Data Steward**)
+3. Click **"Configure"** or **"Settings"**
+4. Set your preferences:
+   - **Frequency:** Choose how often the agent should run (hourly, daily, weekly, or manual)
+   - **Connected Account:** Select which integration the agent should use
+   - **Additional Settings:** Configure any agent-specific options
+
+### 4. Run Your First Agent
+
+You can run an agent in two ways:
+
+- **Manual Execution:** Click the **"Execute"** or **"Run Now"** button on the agent's page
+- **Chat Interface:** Click **"Chat with Agent"** to have a conversational experience
+
+---
+
+## Core Features
+
+### Navigation Menu
+
+The main navigation bar at the top of the screen provides access to all key areas:
+
+- **Apps:** Overview of all available applications and features
+- **Chat:** Engage in conversations with AI agents
+- **Agents:** View and manage your AI agents
+- **Connections:** Manage integrations with external platforms
+- **Activity:** Monitor agent executions and review detailed logs
+- **Account:** Manage your profile and subscription
+
+### Theme Switcher
+
+Toggle between light and dark mode using the theme switcher icon in the top navigation bar for comfortable viewing at any time of day.
+
+---
+
+## AI Agents
+
+Ennube AI offers specialized agents, each designed for specific business functions. Here's a detailed look at each available agent:
+
+### 1. Data Steward
+
+**Role:** Data Management Expert  
+**Status:** Available Now
+
+**What It Does:**
+The Data Steward agent maintains the quality and accuracy of your CRM data. It continuously monitors your database and performs cleaning, enrichment, and standardization tasks.
+
+**Key Capabilities:**
+- **Data Cleaning:** Identifies and corrects incomplete or inaccurate records
+- **Data Enrichment:** Adds missing information by searching reliable online sources
+- **Data Verification:** Validates email addresses, phone numbers, and company information
+- **Standardization:** Ensures consistent formatting across all records
+- **Duplicate Detection:** Finds and flags potential duplicate entries
+
+**Best Used For:**
+- Maintaining a clean and accurate CRM database
+- Preparing data for marketing campaigns
+- Improving data quality before major business initiatives
+- Regular data hygiene maintenance
+
+**How to Use:**
+1. Navigate to **Agents** > **Data Steward**
+2. Review the agent overview and capabilities
+3. Click **"Configure"** to set up automated runs or click **"Execute"** for immediate action
+4. Monitor progress in the **Activity** dashboard
+
+---
+
+### 2. Prospect Finder
+
+**Role:** Lead Generation Specialist  
+**Status:** Available Now
+
+**What It Does:**
+The Prospect Finder agent helps you identify and qualify potential customers that match your ideal customer profile. It researches prospects and adds them to your CRM with enriched information.
+
+**Key Capabilities:**
+- **Customer Profile Creation:** Define your ideal customer based on industry, company size, location, and other criteria
+- **Prospect Discovery:** Searches for companies and contacts that match your criteria
+- **Lead Qualification:** Evaluates prospects based on your scoring criteria
+- **Contact Enrichment:** Gathers additional information about prospects from various sources
+- **CRM Integration:** Automatically adds qualified prospects to your CRM
+
+**Best Used For:**
+- Building a pipeline of qualified leads
+- Expanding into new markets or territories
+- Finding similar companies to your best customers
+- Continuous lead generation
+
+**How to Use:**
+1. Navigate to **Agents** > **Prospect Finder**
+2. Define your ideal customer profile (ICP) criteria
+3. Configure the agent settings and frequency
+4. Review and approve prospects found by the agent
+5. Click **"Execute"** to start finding prospects or **"Chat with Agent"** to refine your search interactively
+
+---
+
+### 3. Contract Reader
+
+**Role:** Contract Intelligence Assistant  
+**Status:** Available Now
+
+**What It Does:**
+The Contract Reader agent analyzes legal documents, extracts key terms and conditions, and synchronizes relevant information with your CRM to keep your data accurate and compliant.
+
+**Key Capabilities:**
+- **Contract Analysis:** Reads and understands legal agreements
+- **Key Term Extraction:** Identifies important dates, values, obligations, and clauses
+- **CRM Synchronization:** Updates your CRM fields with contract information
+- **Compliance Monitoring:** Tracks important dates and obligations
+- **Cross-Referencing:** Matches contracts to existing CRM records
+
+**Best Used For:**
+- Keeping CRM data in sync with signed contracts
+- Tracking renewal dates and contract values
+- Ensuring compliance with contractual obligations
+- Maintaining audit trails for legal agreements
+
+**How to Use:**
+1. Navigate to **Agents** > **Contract Reader**
+2. Upload contract documents or provide access to your document repository
+3. Configure which CRM fields should be updated
+4. Click **"Execute"** to process contracts or **"Chat with Agent"** to ask specific questions about contracts
+
+---
+
+### 4. Meetings Booker
+
+**Role:** Scheduling Specialist  
+**Status:** Coming Soon
+
+**What It Will Do:**
+The Meetings Booker agent will handle appointment scheduling with prospects, managing calendar availability, sending invitations, and providing automated reminders.
+
+**Planned Capabilities:**
+- Meeting scheduling with prospects
+- Calendar management across teams
+- Automated follow-up and reminders
+- Integration with calendar platforms
+
+---
+
+### 5. Market Nurturer
+
+**Role:** Relationship Builder  
+**Status:** Coming Soon
+
+**What It Will Do:**
+The Market Nurturer agent will help maintain relationships with long-term prospects through personalized content delivery and timely communications.
+
+**Planned Capabilities:**
+- Personalized content creation
+- Email campaign automation
+- Lead nurturing workflows
+- Relationship management
+
+---
+
+## Chat Interface
+
+The Chat interface allows you to have conversational interactions with your AI agents. This is perfect for ad-hoc tasks, asking questions, or getting specific actions completed without setting up automated runs.
+
+### Accessing Chat
+
+1. Click **"Chat"** in the main navigation
+2. You'll see a selection of available agents
+3. Click on an agent to start a new conversation, or select an existing chat thread from the sidebar
+
+### Starting a New Chat
+
+1. Click **"New Chat"** in the chat sidebar
+2. Select the agent you want to talk to
+3. Type your message or question in the input box at the bottom
+4. Press **Enter** or click the send button
+
+### Chat Features
+
+- **Multi-Agent Conversations:** Switch between different agents in different chat threads
+- **Chat History:** Access previous conversations from the sidebar
+- **Real-Time Responses:** Get immediate feedback as the agent processes your request
+- **Action Execution:** Agents can perform actions on your behalf during the conversation
+- **Context Awareness:** Agents remember the context of your conversation
+
+### Tips for Effective Conversations
+
+- **Be Specific:** Clearly describe what you need help with
+- **Provide Context:** Give relevant details about your request
+- **Ask Follow-Up Questions:** Engage in a dialogue to refine results
+- **Review Results:** Always check the outcomes of agent actions
+
+### Managing Chat Threads
+
+- **Rename Threads:** (Feature in development)
+- **Delete Threads:** Click the trash icon next to a chat to remove it
+- **Delete All Chats:** Use the "Delete All" button at the bottom of the sidebar
+
+---
+
+## Integrations & Connections
+
+Ennube AI connects with your existing business tools to provide seamless automation. All your connected accounts are managed in the **Connections** section.
+
+### Available Integrations
+
+#### Salesforce
+
+**What You Can Connect:**
+- Salesforce Sales Cloud
+- Salesforce Service Cloud
+
+**What Agents Can Do:**
+- Read and update records (Contacts, Accounts, Opportunities, Cases, etc.)
+- Run SOQL queries
+- Create and delete records
+- Access object metadata
+
+**How to Connect:**
+1. Navigate to **Connections** > **Salesforce**
+2. Click **"Connect"** or **"Connect to Salesforce"**
+3. Sign in to your Salesforce account
+4. Authorize Ennube AI to access your data
+5. You'll be redirected back when the connection is successful
+
+#### HubSpot
+
+**What You Can Connect:**
+- HubSpot CRM
+- HubSpot Marketing Hub
+
+**What Agents Can Do:**
+- Manage contacts and companies
+- Update deal pipelines
+- Access marketing data
+
+**How to Connect:**
+1. Navigate to **Connections** > **HubSpot**
+2. Click **"Connect"**
+3. Sign in to your HubSpot account
+4. Authorize the connection
+5. Return to Ennube AI when complete
+
+### Managing Connections
+
+- **View Connection Status:** Green checkmark indicates an active connection
+- **Reconnect:** If a connection expires, click **"Reconnect"** to re-authorize
+- **Disconnect:** Remove a connection by going to the integration's dashboard and clicking **"Disconnect"**
+
+---
+
+## Data Loader
+
+The Data Loader is a powerful tool for bulk uploading and managing data in your CRM. It's perfect for importing lists, migrating data, or making bulk updates.
+
+### How to Use the Data Loader
+
+1. Navigate to **Data Loader** from the Apps menu
+2. Prepare your data in a supported format (CSV, Excel)
+3. Click **"Upload File"** or drag and drop your file
+4. Map your columns to CRM fields
+5. Review the preview of your data
+6. Click **"Import"** to begin the upload
+
+### Supported Operations
+
+- **Insert:** Add new records to your CRM
+- **Update:** Modify existing records
+- **Upsert:** Insert or update based on a unique identifier
+- **Delete:** Remove records from your CRM
+
+### Best Practices for Data Loading
+
+- **Clean Your Data First:** Use the Data Steward agent to prepare data before uploading
+- **Use Unique Identifiers:** Include email addresses or record IDs for accurate matching
+- **Test with Small Batches:** Upload a few records first to verify field mapping
+- **Review After Import:** Check the results in your CRM and the Activity dashboard
+
+---
+
+## Activity Dashboard
+
+The Activity Dashboard provides complete visibility into all agent actions and executions. This is where you monitor progress, review results, and troubleshoot any issues.
+
+### Accessing the Activity Dashboard
+
+Click **"Activity"** in the main navigation to view your execution history.
+
+### Understanding Executions
+
+Each execution represents a single run of an agent. The dashboard shows:
+
+- **Agent Name:** Which agent performed the action
+- **Status:** 
+  - **Completed:** Successfully finished
+  - **In Progress:** Currently running
+  - **Failed:** Encountered an error
+- **Timestamp:** When the execution started
+- **Duration:** How long it took to complete
+- **Records Affected:** Number of records processed
+
+### Filtering and Searching
+
+Use the dashboard controls to find specific executions:
+
+- **Search Bar:** Search by agent name or status
+- **Status Filter:** Show only completed, failed, or in-progress executions
+- **Sort Options:** 
+  - Newest First (default)
+  - Oldest First
+  - By Agent Name
+  - By Status
+
+### Viewing Execution Details
+
+1. Click on any execution in the list
+2. A detailed panel will open on the right side showing:
+   - Complete execution timeline
+   - Actions taken by the agent
+   - Records created, updated, or deleted
+   - Any errors or warnings
+   - Execution logs and metadata
+
+### Managing Executions
+
+- **Refresh:** Click the refresh button to see the latest executions
+- **Delete:** Remove individual execution records (this doesn't undo changes made by the agent)
+- **Export:** (Feature in development) Download execution details for reporting
+
+---
+
+## Account Management
+
+Your Account page is the central hub for managing your profile, viewing usage statistics, and handling subscription details.
+
+### Accessing Your Account
+
+Click your profile icon in the top-right corner and select **"Account"**, or click **"Account"** in the main navigation.
+
+### Profile Information
+
+**What You Can Manage:**
+- Display name
+- Email address
+- Profile picture
+- Account preferences
+
+**To Update Your Profile:**
+1. Navigate to the Account page
+2. Click **"Edit Profile"** or edit fields directly
+3. Make your changes
+4. Click **"Save Changes"**
+
+### Usage Tracking
+
+Your account page displays:
+
+- **Record Operations Used:** How many CRM record operations you've used this month
+- **Usage Limit:** Your monthly limit based on your subscription plan
+- **Usage Progress Bar:** Visual representation of your consumption
+- **Reset Date:** When your monthly usage counter resets
+
+**Understanding Record Operations:**
+
+A record operation is counted each time an agent:
+- Creates a new record
+- Updates an existing record
+- Reads a record (in some cases)
+- Deletes a record
+
+**Example:** If the Data Steward agent updates 50 contact records, that counts as 50 operations.
+
+---
+
+## Subscription Plans
+
+Ennube AI offers flexible subscription plans to match your business needs.
+
+### Free Tier
+
+**Included:**
+- 100 record operations per month
+- Access to 1 AI agent
+- Basic support
+- All integrations
+- Chat interface access
+
+**Best For:** Testing the platform and small-scale use cases
+
+---
+
+### Starter Plan - $199/month
+
+**Included:**
+- 2,500 record operations per month (25x free tier)
+- Access to 2 AI agents of your choice
+- Standard support (email response within 24 hours)
+- Basic analytics and reporting
+- Email integration
+- All integrations
+
+**Best For:** Small businesses and teams starting to automate
+
+---
+
+### Professional Plan - $549/month
+
+**Included:**
+- 25,000 record operations per month (10x Starter)
+- Access to 5 AI agents of your choice
+- Priority support (email and chat response within 4 hours)
+- Advanced analytics and custom reporting
+- Email and calendar integration
+- Custom workflows
+- API access
+- All integrations
+
+**Best For:** Growing businesses with substantial automation needs
+
+---
+
+### Upgrading or Downgrading
+
+**To Change Your Plan:**
+
+1. Navigate to **Account** > **Subscription**
+2. Review available plans
+3. Click **"Subscribe Now"** on your desired plan
+4. Complete the payment process
+5. Your plan will be updated immediately
+
+**To Manage Your Subscription:**
+
+1. Go to **Account** > **Subscription**
+2. Click **"Manage Subscription"**
+3. You'll be taken to the billing portal where you can:
+   - Update payment methods
+   - View invoices
+   - Change or cancel your subscription
+   - Update billing information
+
+---
+
+## Best Practices
+
+### Getting the Most from Your Agents
+
+#### 1. Start Small
+- Begin with one agent and one use case
+- Get comfortable with the platform before expanding
+- Monitor results and adjust settings as needed
+
+#### 2. Define Clear Objectives
+- Know what you want each agent to accomplish
+- Set specific, measurable goals
+- Review outcomes regularly
+
+#### 3. Configure Thoughtfully
+- Set appropriate run frequencies (don't over-automate)
+- Test with manual executions before scheduling
+- Review agent settings periodically
+
+#### 4. Monitor Regularly
+- Check the Activity Dashboard weekly
+- Review execution details for any failed runs
+- Keep an eye on your usage to avoid limits
+
+#### 5. Maintain Your Integrations
+- Ensure connections remain active
+- Update credentials when they change
+- Test connections if you modify permissions in your CRM
+
+### Data Quality Tips
+
+- **Before Using Data Steward:** Review what data quality rules you want applied
+- **When Using Prospect Finder:** Define precise ICP criteria to get the best matches
+- **With Contract Reader:** Ensure contracts are in readable formats (PDF, DOCX)
+
+### Communication Tips
+
+- **In Chat:** Be specific and provide context for best results
+- **When Setting Up Agents:** Document your configuration choices
+- **For Support:** Include execution IDs when reporting issues
+
+---
+
+## Frequently Asked Questions
+
+### General Questions
+
+**Q: How do I get started with Ennube AI?**  
+A: Sign up for an account, connect your CRM (Salesforce or HubSpot), configure your first agent, and run it manually or via chat.
+
+**Q: Is my data secure?**  
+A: Yes. All connections use OAuth authentication, and we follow industry-standard security practices. Your CRM credentials are never stored directly.
+
+**Q: Can I try Ennube AI for free?**  
+A: Yes. The free tier includes 100 record operations per month and access to one agent.
+
+---
+
+### Agent Questions
+
+**Q: How do I know which agent to use?**  
+A: 
+- Use **Data Steward** for data quality and CRM cleaning
+- Use **Prospect Finder** for lead generation
+- Use **Contract Reader** for contract analysis and CRM synchronization
+
+**Q: Can I run multiple agents at the same time?**  
+A: Yes, depending on your subscription plan. The Starter plan allows 2 agents, and the Professional plan allows 5 agents.
+
+**Q: What happens if an agent fails?**  
+A: You'll see a "Failed" status in the Activity Dashboard. Click on the execution to view error details. The agent will not make any changes to your CRM if it encounters an error mid-process.
+
+**Q: Can I undo what an agent did?**  
+A: Agents make real changes to your CRM. While you can manually reverse changes, there's no automatic undo feature. Always test with a small dataset first.
+
+---
+
+### Integration Questions
+
+**Q: Which CRMs are supported?**  
+A: Currently, Salesforce and HubSpot are fully supported.
+
+**Q: Do I need admin access to connect my CRM?**  
+A: You need sufficient permissions to authorize the OAuth connection and allow Ennube AI to read and write data. Admin access is not always required, but recommended.
+
+**Q: What if my connection expires?**  
+A: You'll receive a notification. Simply go to **Connections** and click **"Reconnect"** to re-authorize.
+
+**Q: Can I connect multiple CRM accounts?**  
+A: Currently, you can connect one Salesforce instance and one HubSpot instance per Ennube AI account.
+
+---
+
+### Subscription & Billing Questions
+
+**Q: What counts as a "record operation"?**  
+A: Any time an agent creates, updates, or deletes a record in your CRM, it counts as one operation. Reading records may also count depending on the context.
+
+**Q: What happens if I exceed my monthly limit?**  
+A: Agents will stop executing automatically until your usage resets at the beginning of the next billing cycle. You can upgrade your plan to increase your limit immediately.
+
+**Q: Can I cancel my subscription at any time?**  
+A: Yes. Go to **Account** > **Subscription** > **Manage Subscription** and follow the cancellation flow. You'll retain access until the end of your current billing period.
+
+**Q: Do you offer annual billing?**  
+A: Contact our sales team for information about annual plans and potential discounts.
+
+---
+
+### Chat Questions
+
+**Q: Can I use chat instead of configuring agents?**  
+A: Yes! Chat is perfect for ad-hoc tasks and one-time requests. Configured agents are better for recurring, automated tasks.
+
+**Q: Is chat included in all plans?**  
+A: Yes, chat access is included in all plans, including the free tier.
+
+**Q: Do chat interactions count toward my record operations?**  
+A: Yes, if the agent performs actions that modify your CRM, those operations count toward your monthly limit.
+
+---
+
+### Troubleshooting
+
+**Q: Why isn't my agent running?**  
+A: Check:
+- Is your integration connected?
+- Do you have record operations remaining this month?
+- Is the agent configured correctly?
+- Check the Activity Dashboard for error details
+
+**Q: Why am I not seeing results in my CRM?**  
+A: 
+- Verify the agent execution completed successfully in the Activity Dashboard
+- Check that you're looking at the correct CRM instance
+- Refresh your CRM view
+- Review execution details for what records were affected
+
+**Q: The chat isn't responding. What should I do?**  
+A: 
+- Refresh the page
+- Check your internet connection
+- Try starting a new chat thread
+- Contact support if the issue persists
+
+---
+
+## Getting Help
+
+### Support Channels
+
+- **Email Support:** Available on all plans
+- **Chat Support:** Available on Professional plans
+- **Documentation:** Visit our docs portal for guides and tutorials
+- **Community Forum:** (Coming soon) Connect with other users
+
+### Response Times
+
+- **Free Tier:** Best effort
+- **Starter Plan:** Within 24 hours
+- **Professional Plan:** Within 4 hours
+
+### Before Contacting Support
+
+Please have ready:
+- Your account email
+- Description of the issue
+- Execution ID (if related to a specific agent run)
+- Screenshots (if applicable)
+
+---
+
+## What's Next?
+
+Ennube AI is continuously evolving. Here's what's on the roadmap:
+
+- **Additional Agents:** Meetings Booker and Market Nurturer coming soon
+- **More Integrations:** Additional CRM and business tool connections
+- **Enhanced Analytics:** Deeper insights into agent performance
+- **Custom Agents:** Build your own specialized agents (Professional plan)
+- **Team Collaboration:** Share agents and execution results with team members
+- **Workflow Builder:** Create multi-agent workflows for complex processes
+
+Stay tuned for updates and new features!
+
+---
+
+## Conclusion
+
+Ennube AI empowers you to automate routine business tasks, maintain data quality, and focus on high-value activities. Whether you're cleaning your CRM, finding new prospects, or analyzing contracts, our intelligent agents work alongside you to improve efficiency and accuracy.
+
+Start exploring today, and experience the power of AI-driven automation!
+
+---
+
+**Document Version:** 1.0  
+**Last Updated:** October 18, 2025  
+**Questions or Feedback?** Contact support@ennube.ai
+
