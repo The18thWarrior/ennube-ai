@@ -49,7 +49,7 @@ async function checkAdminAccess(): Promise<AccessCheckResult> {
  */
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const access = await checkAdminAccess();
-  console.log('Admin access check:', access);
+  //console.log('Admin access check:', access);
   if (access === 'unauthenticated') {
     // Send user to a login page. Adjust path if your app uses a different signin route.
     redirect('/login');
