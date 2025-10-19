@@ -71,7 +71,7 @@ export function StripeProvider({ children }: { children: React.ReactNode }) {
       const response = await fetch('/api/stripe/subscription/status');
       if (response.ok) {
         const data = await response.json();
-        //console.log('Fetched subscription data:', data);
+        console.log('Fetched subscription data:', data);
         setSubscription(data.subscription);
         setIsPrimary(data.isPrimary);
         const parsedLimits = getSubscriptionLimit(data.subscription);

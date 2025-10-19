@@ -3,6 +3,7 @@ import { auth } from '@/auth';
 import { getCustomerSubscription } from '@/lib/stripe';
 import { getLicenseBySubId } from '@/lib/db/license-storage';
 import { get } from 'http';
+import subscriptionCache from '@/lib/cache/subscription-cache';
 
 // Initialize Stripe with your secret key
 
@@ -18,6 +19,13 @@ export async function GET(req: NextRequest) {
     }
     let isPrimary = false;
     let subscription = await getCustomerSubscription(session.user.sub as string);
+    let manualSubscription = await subscriptionCache.get(session.user.sub as string);
+    // Is manual subscription take precedence?
+    if (manualSubscription) {
+      console.log('Using manual subscription for user:', session.user.sub);
+      return NextResponse.json({ subscription: JSON.parse(JSON.stringify(manualSubscription.subscription)), isPrimary: true });
+    } 
+
     if (!subscription) {
       const license = await getLicenseBySubId(session.user.sub as string);
       if (license && license.parentSubId) {
@@ -27,6 +35,8 @@ export async function GET(req: NextRequest) {
     } else {
       isPrimary = true;
     }
+    
+    
     //console.log('Subscription found:', subscription);
     if (!subscription) return NextResponse.json({ error: 'No subscription found' },{ status: 500 });
 

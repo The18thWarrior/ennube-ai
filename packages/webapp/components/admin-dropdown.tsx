@@ -72,6 +72,16 @@ export default function AdminDropdown(): JSX.Element {
                 Benchmark
               </Link>
             </li>
+            <li role="none">
+              <Link
+                role="menuitem"
+                href="/admin/subscriptions"
+                className="block px-4 py-2 text-sm hover:bg-muted "
+                onClick={() => setOpen(false)}
+              >
+                Subscriptions
+              </Link>
+            </li>
           </ul>
         </div>
       )}
