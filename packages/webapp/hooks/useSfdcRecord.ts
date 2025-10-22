@@ -73,7 +73,7 @@ export function useSfdcRecord(initialRecord: SfdcRecord, sobject: string): UseSf
         try {
       const headers: Record<string,string> = { 'Content-Type': 'application/json' };
       //if (instanceUrl) headers['x-salesforce-instance'] = instanceUrl;
-      const res = await fetch(`${getApiBase()}/data/${sobject}`, {
+      const res = await fetch(`${getApiBase()}/data?sub=${subId}&sobjectType=${sobject}`, {
         method: 'POST',
         headers,
         credentials: 'same-origin',

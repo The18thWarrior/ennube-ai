@@ -112,10 +112,12 @@ export async function GET(request: Request) {
           try {
             const webhookUrl = setting.agent === 'prospect-finder' ? process.env.PROSPECTFINDER_WEBHOOK_URL : process.env.DATASTEWARD_WEBHOOK_URL;
             if (!webhookUrl) {
-              return NextResponse.json(
-                { error: `${setting.agent} webhook URL is not configured` },
-                { status: 500 }
-              );
+              // return NextResponse.json(
+              //   { error: `${setting.agent} webhook URL is not configured` },
+              //   { status: 500 }
+              // );
+
+              continue;
             }
             
             const url2 = `${webhookUrl}?limit=${safeBatchSize}&subId=${setting.userId}`;

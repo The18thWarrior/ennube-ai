@@ -114,6 +114,7 @@ export function createDocReaderClient(opts: ClientOptions = {}) {
     const res = await fetch(url, { ...init, headers });
     const json = await parseJsonSafe<any>(res);
     if (!res.ok) {
+      console.log('Error response JSON:', json);
       const err: Error & { status?: number; details?: any } = new Error(
         json?.error ?? json?.message ?? `HTTP ${res.status} ${res.statusText}`
       );
