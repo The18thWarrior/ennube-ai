@@ -20,7 +20,7 @@ export const callWorkflowToolDataSteward = tool({
 	}),
 	execute: async ({ limit, accountIds }) => {
         const session = await auth();
-        if (!session || !session.user || !session.user.auth0) throw new Error('You must be signed in to call a workflow');
+        if (!session || !session.user || !session.user.sub) throw new Error('You must be signed in to call a workflow');
         const subId = session.user.sub;
 		if (!subId) throw new Error('subId is required');
     const webhookUrl = process.env.DATASTEWARD_WEBHOOK_URL;
@@ -66,7 +66,7 @@ export const callWorkflowToolProspectFinder = tool({
 	}),
 	execute: async ({ limit }) => {
     const session = await auth();
-    if (!session || !session.user || !session.user.auth0) throw new Error('You must be signed in to call a workflow');
+    if (!session || !session.user || !session.user.sub) throw new Error('You must be signed in to call a workflow');
     const subId = session.user.sub;
 		if (!subId) throw new Error('subId is required');
     const webhookUrl = process.env.PROSPECTFINDER_WEBHOOK_URL;
@@ -110,7 +110,7 @@ export const callWorkflowToolContractReader = tool({
 	}),
 	execute: async ({ limit }) => {
     const session = await auth();
-    if (!session || !session.user || !session.user.auth0) throw new Error('You must be signed in to call a workflow');
+    if (!session || !session.user || !session.user.sub) throw new Error('You must be signed in to call a workflow');
     const subId = session.user.sub;
 		if (!subId) throw new Error('subId is required');
 		const webhookUrl = process.env.CONTRACT_READER_WEBHOOK_URL;

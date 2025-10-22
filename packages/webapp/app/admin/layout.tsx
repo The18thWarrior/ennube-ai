@@ -28,10 +28,10 @@ const ADMIN_API = '/api/admin';
  */
 async function checkAdminAccess(): Promise<AccessCheckResult> {
   const session = await auth();
-  if (session?.user.sub === undefined) {
+  if (!session || !session.user.sub) {
     return 'unauthenticated';
   }
-  const checkAdmin = isAdmin(session?.user.sub || '')
+  const checkAdmin = isAdmin(session.user.sub || '')
   //console.log('isAdmin check:', checkAdmin);
   if (!checkAdmin) {
     return 'forbidden';

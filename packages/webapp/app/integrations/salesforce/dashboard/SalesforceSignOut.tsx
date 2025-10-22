@@ -24,7 +24,7 @@ export default function SalesforceSignOut() {
       router.push("/integrations/salesforce/connect");
       router.refresh();
     } catch (error) {
-      console.log("Error signing out from Salesforce:", error);
+      console.error("Error signing out from Salesforce:", error);
       // Optionally show user feedback
     }
   };

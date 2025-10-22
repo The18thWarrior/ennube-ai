@@ -6,12 +6,12 @@ import { auth } from '@/auth';
 export async function GET(request: NextRequest) {
   const session = await auth();
 
-  if (!session?.user) {
+  if (!session || !session.user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
-    const userSub = session.user.id || session.user.email;
+    const userSub = session.user.sub;
     if (!userSub) {
       return NextResponse.json({ error: 'User ID not found' }, { status: 400 });
     }
@@ -27,12 +27,12 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   const session = await auth();
 
-  if (!session?.user) {
+  if (!session || !session.user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
-    const userSub = session.user.id || session.user.email;
+    const userSub = session.user.sub;
     if (!userSub) {
       return NextResponse.json({ error: 'User ID not found' }, { status: 400 });
     }
@@ -55,12 +55,12 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   const session = await auth();
 
-  if (!session?.user) {
+  if (!session || !session.user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
-    const userSub = session.user.id || session.user.email;
+    const userSub = session.user.sub;
     if (!userSub) {
       return NextResponse.json({ error: 'User ID not found' }, { status: 400 });
     }
@@ -96,12 +96,12 @@ export async function PUT(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   const session = await auth();
 
-  if (!session?.user) {
+  if (!session || !session.user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
-    const userSub = session.user.id || session.user.email;
+    const userSub = session.user.sub;
     if (!userSub) {
       return NextResponse.json({ error: 'User ID not found' }, { status: 400 });
     }

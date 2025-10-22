@@ -167,7 +167,7 @@ export async function getLicensesByStatus(status: LicenseStatus): Promise<Licens
 export async function getCurrentUserLicense(): Promise<License | null> {
   try {
     const session = await auth();
-    if (!session || !session.user || !session.user.auth0) {
+    if (!session || !session.user || !session.user.sub) {
       console.log("No session found");
       return null;
     }

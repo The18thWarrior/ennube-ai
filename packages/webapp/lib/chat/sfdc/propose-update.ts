@@ -17,7 +17,7 @@ async function validateProposalAgainstSfdc(proposal: UpdateProposal): Promise<Va
       return errors;
     }
 
-    const client = createSalesforceClient({ success: true, userId: session?.user?.id || '', accessToken: creds.accessToken, instanceUrl: creds.instanceUrl, refreshToken: creds.refreshToken });
+    const client = createSalesforceClient({ success: true, userId: session?.user.sub || '', accessToken: creds.accessToken, instanceUrl: creds.instanceUrl, refreshToken: creds.refreshToken });
 
     for (const change of proposal.changes) {
       try {

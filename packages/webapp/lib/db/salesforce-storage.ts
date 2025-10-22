@@ -55,7 +55,7 @@ export async function storeSalesforceCredentials(authResult: SalesforceAuthResul
   }
   const session = await auth();
 
-  if (!session || !session.user || !session.user.auth0) {
+  if (!session || !session.user || !session.user.sub) {
     console.log("No session found");
     return null;
   }
@@ -274,7 +274,7 @@ export async function getSalesforceCredentialsBySub(sub: string): Promise<Stored
 export async function removeSalesforceCredentials(): Promise<boolean> {
   try {
     const session = await auth();
-    if (!session || !session.user || !session.user.auth0) {
+    if (!session || !session.user.sub) {
       console.log("No session found");
       return false;
     }

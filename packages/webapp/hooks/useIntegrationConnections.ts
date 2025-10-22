@@ -26,11 +26,14 @@ export function useIntegrationConnections() {
         }
         
         const data = await response.json();
+        console.log('Fetched integration connections:', data);
         setConnections(data);
         setError(null);
+        setIsLoading(false);
       } catch (err) {
         console.log('Error fetching integration connections:', err);
         setError(err instanceof Error ? err : new Error('Unknown error occurred'));
+        setIsLoading(false);
       } finally {
         setIsLoading(false);
       }

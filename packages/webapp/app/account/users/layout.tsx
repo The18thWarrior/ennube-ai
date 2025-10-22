@@ -16,7 +16,7 @@ export default async function UserManagementLayout({
   // Check if user is authenticated and has an active subscription
   const session = await auth();
   
-  if (!session?.user) {
+  if (!session || !session.user) {
     redirect('/authentication/login');
   }
 

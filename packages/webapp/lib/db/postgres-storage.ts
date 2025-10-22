@@ -63,7 +63,7 @@ export function parsePostgresConfigFromUrl(url: string): PostgresConfig {
 export async function storePostgresUrl(instanceUrl: string): Promise<string | null> {
   if (!instanceUrl) return null;
   const session = await auth();
-  if (!session || !session.user || !session.user.auth0) {
+  if (!session || !session.user || !session.user.sub) {
     console.log('No session found');
     return null;
   }
@@ -102,7 +102,7 @@ export async function storePostgresUrl(instanceUrl: string): Promise<string | nu
 export async function getPostgresUrlById(): Promise<StoredPostgresUrl | null> {
   try {
     const session = await auth();
-    if (!session || !session.user || !session.user.auth0) {
+    if (!session || !session.user || !session.user.sub) {
       console.log('No session found');
       return null;
     }
@@ -156,7 +156,7 @@ export async function getPostgresUrlBySub(sub: string): Promise<StoredPostgresUr
 export async function removePostgresUrl(): Promise<boolean> {
   try {
     const session = await auth();
-    if (!session || !session.user || !session.user.auth0) {
+    if (!session || !session.user || !session.user.sub) {
       console.log('No session found');
       return false;
     }
@@ -178,7 +178,7 @@ export async function removePostgresUrl(): Promise<boolean> {
 export async function updatePostgresUrl(instanceUrl: string): Promise<boolean> {
   try {
     const session = await auth();
-    if (!session || !session.user || !session.user.auth0) {
+    if (!session || !session.user || !session.user.sub) {
       console.log('No session found');
       return false;
     }
