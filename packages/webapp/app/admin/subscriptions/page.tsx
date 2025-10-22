@@ -12,7 +12,10 @@ import subscriptionCache from '@/lib/cache/subscription-cache'
 export default async function AdminSubscriptionsPage() {
   // Require authenticated admin
   const session = await auth()
-  const userId = session?.user.sub || session?.user.id
+  if (!session || !session.user) {
+    redirect('/login')
+  }
+  const userId = session.user.sub || session.user.id
   if (!userId || !isAdmin(userId)) {
     redirect('/')
   }

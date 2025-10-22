@@ -52,7 +52,7 @@ export async function storeGSuiteCredentials(authResult: GSuiteAuthResult): Prom
   }
   const session = await auth();
 
-  if (!session || !session.user || !session.user.auth0) {
+  if (!session || !session.user || !session.user.sub) {
     console.log("No session found");
     return null;
   }
@@ -131,7 +131,7 @@ export async function storeGSuiteCredentials(authResult: GSuiteAuthResult): Prom
 export async function getGSuiteCredentialsById(): Promise<StoredGSuiteCredentials | null> {
   try {
     const session = await auth();
-    if (!session || !session.user || !session.user.auth0) {
+    if (!session || !session.user || !session.user.sub) {
       console.log("No session found");
       return null;
     }
@@ -222,7 +222,7 @@ export async function getGSuiteCredentialsBySub(sub: string): Promise<StoredGSui
 export async function removeGSuiteCredentials(): Promise<boolean> {
   try {
     const session = await auth();
-    if (!session || !session.user || !session.user.auth0) {
+    if (!session || !session.user || !session.user.sub) {
       console.log("No session found");
       return false;
     }
@@ -246,7 +246,7 @@ export async function removeGSuiteCredentials(): Promise<boolean> {
 export async function updateGSuiteCredentials(updatedCredentials: Partial<StoredGSuiteCredentials>): Promise<boolean> {
   try {
     const session = await auth();
-    if (!session || !session.user || !session.user.auth0) {
+    if (!session || !session.user || !session.user.sub) {
       console.log("No session found");
       return false;
     }

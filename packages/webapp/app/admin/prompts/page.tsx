@@ -11,7 +11,10 @@ import { isAdmin } from '@/lib/admin'
 export default async function AdminPromptsPage() {
   // Require authenticated admin
   const session = await auth()
-  const userId = session?.user.sub || session?.user.id
+  if (!session || !session.user) {
+    redirect('/login')
+  }
+  const userId = session.user.sub || session.user.id
   if (!userId || !isAdmin(userId)) {
     // Redirect non-admins to the main admin landing or home
     redirect('/')

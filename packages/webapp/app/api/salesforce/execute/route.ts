@@ -5,7 +5,7 @@ import { createSalesforceClient } from '@/lib/salesforce';
 export async function POST(request: NextRequest) {
   try {
     const session = await auth();
-    if (!session?.user?.id) {
+    if (!session?.user.sub) {
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
 
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
 
     const result = {
       proposalId: proposal.proposalId,
-      executedBy: session.user.id,
+      executedBy: session.user.sub,
       timestamp: new Date().toISOString(),
       perRecord,
       overallStatus: overall

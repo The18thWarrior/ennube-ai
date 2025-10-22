@@ -49,7 +49,7 @@ export async function storeHubSpotCredentials(authResult: HubSpotAuthResult): Pr
 
     // Get the current user's ID
     const session = await auth();
-    if (!session || !session.user || !session.user.auth0) {
+    if (!session || !session.user || !session.user.sub) {
       console.log("No session found");
       return;
     }
@@ -127,7 +127,7 @@ export async function getHubSpotCredentialsById(): Promise<StoredHubSpotCredenti
   try {
     // Get the current user's ID
     const session = await auth();
-    if (!session || !session.user || !session.user.auth0) {
+    if (!session || !session.user || !session.user.sub) {
       console.log("No session found");
       return null;
     }
@@ -283,11 +283,11 @@ export async function removeHubSpotCredentials(): Promise<void> {
   try {
     // Get the current user's ID
     const session = await auth();
-    if (!session?.user?.id) {
+    if (!session?.user?.sub) {
       throw new Error('User not authenticated');
     }
 
-    const userId = session.user.id;
+    const userId = session.user.sub;
     const type = 'hubspot';
 
     // Delete the credentials

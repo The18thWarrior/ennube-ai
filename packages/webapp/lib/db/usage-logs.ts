@@ -260,7 +260,7 @@ export async function getUserUsageLogs(
 ): Promise<UsageLogEntry[]> {
   try {
     const session = await auth();
-    if (!session || !session.user || !session.user.auth0) {
+    if (!session || !session.user || !session.user.sub) {
       console.log("No session found");
       return [];
     }
@@ -281,7 +281,7 @@ export async function getUserUsageLog(
 ): Promise<UsageLogEntry | null> {
   try {
     const session = await auth();
-    if (!session || !session.user || !session.user.auth0) {
+    if (!session || !session.user || !session.user.sub) {
       console.log("No session found");
       return null;
     }
@@ -360,7 +360,7 @@ export async function getUsageSummary(
 }> {
   try {
     const session = await auth();
-    if (!session || !session.user || !session.user.auth0) {
+    if (!session || !session.user || !session.user.sub) {
       console.log("No session found");
       return { recordsUpdated: 0, recordsCreated: 0, meetingsBooked: 0, queriesExecuted: 0 };
     }
@@ -427,7 +427,7 @@ export async function getUsageSummaryBySub(
 export async function clearUserUsageLogs(): Promise<boolean> {
   try {
     const session = await auth();
-    if (!session || !session.user || !session.user.auth0) {
+    if (!session || !session.user || !session.user.sub) {
       console.log("No session found");
       return false;
     }
@@ -486,7 +486,7 @@ export async function getMonthlyRecordOperationsTotal(
 ): Promise<number> {
   try {
     const session = await auth();
-    if (!session || !session.user || !session.user.auth0) {
+    if (!session || !session.user || !session.user.sub) {
       console.log("No session found");
       return 0;
     }

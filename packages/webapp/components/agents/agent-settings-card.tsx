@@ -95,6 +95,7 @@ export function AgentSettingsCard({
         
         if (response.ok) {
           const data = await response.json();
+          console.log('Fetched agent settings:', data);
           if (data) {
             setIsActive(data.active);
             setFrequency(data.frequency);

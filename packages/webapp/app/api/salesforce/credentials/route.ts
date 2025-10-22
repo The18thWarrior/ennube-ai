@@ -128,7 +128,8 @@ export async function GET(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     const session = await auth();
-    if (!session?.user?.id || !session?.user.sub) {
+    if (!session || !session.user.sub) {
+      console.log('Unauthorized attempt to delete Salesforce credentials', session);
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
     const result = await removeSalesforceCredentials();
