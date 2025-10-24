@@ -21,7 +21,7 @@ interface UseBillingUsageReturn {
  */
 export function useBillingUsage(options: UseBillingUsageOptions = {}): UseBillingUsageReturn {
   const { user } = useUser();
-  const session = user ? { user } : null; // Mock session object for compatibility
+  //const session = user ? { user } : null; // Mock session object for compatibility
   const [usage, setUsage] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -33,7 +33,7 @@ export function useBillingUsage(options: UseBillingUsageOptions = {}): UseBillin
   const month = options.month ?? currentDate.getMonth(); // 0-indexed (0 = January)
 
   const fetchUsage = async () => {
-    if (!session?.user) return;
+    if (!user) return;
 
     setRefreshing(true);
     setError(null);
@@ -62,7 +62,7 @@ export function useBillingUsage(options: UseBillingUsageOptions = {}): UseBillin
   // Initial fetch on mount or when dependencies change
   useEffect(() => {
     fetchUsage();
-  }, [session, year, month]);
+  }, [user, year, month]);
 
   // Function to manually refresh the data
   const refresh = async () => {
