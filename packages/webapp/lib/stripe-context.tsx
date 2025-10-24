@@ -30,7 +30,7 @@ export function StripeProvider({ children }: { children: React.ReactNode }) {
   const [isPro, setIsPro] = useState(false);
   const [isPrimary, setIsPrimary] = useState(false);
   const [licenseCount, setLicenseCount] = useState(0);
-  const [limit, setLimit] = useState(10); // Default limit
+  const [limit, setLimit] = useState(100); // Default limit
   const { user } = useUser();
   const [subscription, setSubscription] = useState<SubscriptionStatus | null>(null);
   const [isLoadingSubscription, setIsLoadingSubscription] = useState(true);
