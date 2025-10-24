@@ -167,7 +167,7 @@ export async function PUT(
     // Verify the user is authenticated
     const session = await auth();
     
-    if (!session?.user?.id || !session?.user.sub) {
+    if (!session || !session.user) {
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }

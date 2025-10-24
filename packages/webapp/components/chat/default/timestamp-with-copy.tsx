@@ -3,6 +3,9 @@ import { Copy, ThumbsUp, ThumbsDown } from "lucide-react";
 import { useSnackbar } from "notistack";
 import { Action } from "@/components/ai-elements/actions";
 import { useState, useEffect } from "react";
+import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
+import { format, isToday } from "date-fns";
+import { MessageMetadata } from "@/lib/types";
 
 // Timestamp display with copy-to-clipboard and reward buttons
 const TimestampWithCopy = ({
@@ -17,7 +20,7 @@ const TimestampWithCopy = ({
     const { enqueueSnackbar } = useSnackbar();
     const [caseId, setCaseId] = useState<string | null>(null);
     const [currentReward, setCurrentReward] = useState<number | null>(null);
-
+    const metadata = msg.metadata as MessageMetadata || null;
     // Fetch the most recent memory case for this user/agent (only for assistant messages)
     useEffect(() => {
         if (msg.role === 'assistant' && userSub && agent && false) {
@@ -89,10 +92,14 @@ const TimestampWithCopy = ({
 
     return (
         <div className={`align-middle flex flex-row items-center ${msg.role === 'user' ? 'justify-end' : 'justify-start'} gap-2 mt-1 mx-2`}>
-            {/* <span className="text-xs text-muted-foreground px-2">
-                {msg.createdAt && formatDistanceToNow(msg.createdAt, { addSuffix: true })}
-                TODO : Fill date
-            </span> */}
+            {metadata && metadata.createdAt &&
+              <span className="text-xs text-muted-foreground pl-2">
+                  { 
+                    isToday(new Date(metadata.createdAt)) ? format(new Date(metadata.createdAt), 'p') : format(new Date(metadata.createdAt), 'yyyy-MM-dd HH:mm')
+                  }
+              </span> 
+            }
+
             <Action
                 tooltip="Copy message"
                 label="Copy message"

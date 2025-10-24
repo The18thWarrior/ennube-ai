@@ -14,13 +14,14 @@ import { getUserUsageLogs } from '@/lib/db/usage-logs';
 export async function GET(request: NextRequest) {
   try {
     const session = await auth();
-    if (!session?.user?.id || !session?.user.sub) {
+    if (!session || !session.user) {
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
 
     // Check credentials
     const credentials = await getSalesforceCredentialsById();
     const hasCredentials = Boolean(credentials);
+    const instanceUrl = credentials ? credentials.instanceUrl : null;
 
     // Check agent settings
     const agentSettings = await getUserAgentSettings(session.user.sub);
@@ -33,7 +34,7 @@ export async function GET(request: NextRequest) {
       (Number(log.recordsCreated || 0) > 0 || Number(log.recordsUpdated || 0) > 0 || Number(log.meetingsBooked || 0) > 0)
     );
 
-    return NextResponse.json({ hasCredentials, hasAgentSettings, hasSuccessfulExecution });
+    return NextResponse.json({ hasCredentials, hasAgentSettings, hasSuccessfulExecution, instanceUrl });
   } catch (error) {
     console.log('Error checking onboarding status (route):', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

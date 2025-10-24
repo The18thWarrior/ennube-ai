@@ -14,8 +14,9 @@ import {avatarOptions, AgentSelector} from '@/components/chat/agents';
 import NameComponent from './chat-name';
 import MarkdownEditor from './overtype-input';
 import { PromptInput, PromptInputBody, PromptInputAttachments, PromptInputAttachment, PromptInputTextarea, PromptInputToolbar, PromptInputTools, PromptInputActionMenu, PromptInputActionMenuTrigger, PromptInputActionMenuContent, PromptInputActionAddAttachments, PromptInputSubmit, PromptInputMessage, PromptInputButton } from '../ai-elements/prompt-input';
-import { Card } from '../ui';
-import { GlobeIcon } from 'lucide-react';
+import { Card, Button } from '../ui';
+import { GlobeIcon, Download } from 'lucide-react';
+import { OnboardingStatusProvider } from '@/hooks/useOnboardingStatus';
 
 /**
  * Simple chat container using n8n/chat (embed mode)
@@ -64,6 +65,7 @@ const ChatContainer = ({
             console.error('Chat error:', err);
         },
     });
+    console.log(messages);
     //console.log('Chat container initialized', messages, initialMessages);
     const isLoading = status === 'submitted' || status === 'streaming';
 
@@ -98,6 +100,45 @@ const ChatContainer = ({
             stop();
         }
     }
+
+    const handleDownloadHistory = () => {
+        // Create the export object with message history and metadata
+        const exportData = {
+            metadata: {
+                threadId,
+                threadName: _name,
+                agent: selectedAvatar,
+                exportedAt: new Date().toISOString(),
+                messageCount: messages.length,
+            },
+            messages: messages.map((msg) => ({
+                id: msg.id,
+                role: msg.role,
+                parts: msg.parts,
+            })),
+        };
+
+        // Convert to JSON string with pretty printing
+        const jsonString = JSON.stringify(exportData, null, 2);
+
+        // Create a Blob from the JSON string
+        const blob = new Blob([jsonString], { type: 'application/json' });
+
+        // Create a temporary URL for the blob
+        const url = URL.createObjectURL(blob);
+
+        // Create a temporary anchor element and trigger download
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `chat-history-${_name.replaceAll(' ', '_') || 'export'}-${Date.now()}.json`;
+        document.body.appendChild(link);
+        link.click();
+
+        // Cleanup
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    };
+
     // Only render after mount to avoid hydration mismatch
     useEffect(() => {
         setMounted(true);
@@ -171,6 +212,7 @@ const ChatContainer = ({
     if (!theme || !mounted) return <div />;
 
     return (
+      <OnboardingStatusProvider>
         <div className="flex flex-col relative mr-6" >
             <Card className={'rounded-lg border grow h-[75dvh] max-h-[75dvh] overflow-auto scrollbar'} > {/*height: "calc(100vh - 240px)",*/}
                 <div className="flex justify-between items-start group mb-4 p-3 border-b ">
@@ -229,14 +271,14 @@ const ChatContainer = ({
                         </PromptInputActionMenuContent>
                       </PromptInputActionMenu>
                       <PromptInputButton
-                      variant={webSearch ? 'default' : 'ghost'}
-                      onClick={() => {
-                        console.log(`Web search toggled, old value: ${webSearch} new value: ${!webSearch}`);
-                        setWebSearch(!webSearch)
-                      }}
+                        variant={webSearch ? 'default' : 'ghost'}
+                        onClick={() => {
+                          console.log(`Web search toggled, old value: ${webSearch} new value: ${!webSearch}`);
+                          setWebSearch(!webSearch)
+                        }}
                       >
-                      <GlobeIcon size={16} />
-                      <span>Search</span>
+                        <GlobeIcon size={16} />
+                        <span>Search</span>
                       </PromptInputButton>
                       <PromptInputAttachments>
                       {(attachment) => (
@@ -244,14 +286,22 @@ const ChatContainer = ({
                       )}
                       </PromptInputAttachments>
                     </PromptInputTools>
-                    <PromptInputSubmit
-                      disabled={isLoading}
-                      status={'ready'}
-                    />
+
+                    <div className="flex items-center gap-2">
+                      <Button variant="ghost" onClick={handleDownloadHistory} >
+                        <Download size={16} />
+                      </Button>
+                      <PromptInputSubmit
+                        disabled={isLoading}
+                        status={'ready'}
+                      />
+                    </div>
+                    
                   </PromptInputToolbar>
                 </PromptInput>
             </div>
         </div>
+      </OnboardingStatusProvider>
     );
 };
 

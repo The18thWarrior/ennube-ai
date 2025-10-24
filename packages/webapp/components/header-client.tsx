@@ -12,6 +12,7 @@ import Image from "next/image"
 import Link from "next/link"
 import AdminDropdown from "./admin-dropdown"
 import { usePathname } from "next/navigation"
+import { OnboardingStatusProvider } from "@/hooks/useOnboardingStatus"
 
 type Props = {
   checkAdmin: boolean;
@@ -127,9 +128,9 @@ export default function HeaderClient({ checkAdmin, user }: Props) {
               </div>
             )}
           </div>
-
-          <MainNav />
-
+          <OnboardingStatusProvider>
+            <MainNav />
+          </OnboardingStatusProvider>
           <div className="flex items-center gap-4">
             <ThemeToggle />
             {!isChat ? <UserButton user={user} /> : <div className={'p-2'}></div>}

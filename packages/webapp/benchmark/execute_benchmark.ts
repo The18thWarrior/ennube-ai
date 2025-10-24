@@ -8,7 +8,7 @@
 // Notes:
 //   - Processes CSV input files, executes parallel AI agent requests, and evaluates responses
 z
-import { generateObject, LanguageModel, Tool, ModelMessage, streamText, readUIMessageStream } from 'ai';
+import { generateObject, LanguageModel, Tool, ModelMessage, streamText, readUIMessageStream, UIMessage } from 'ai';
 import getModel from '../lib/chat/getModel';
 import { getPrompt, getTools } from '../lib/chat/helper';
 import { chatAgent } from '../lib/chat/chatAgent';
@@ -97,10 +97,16 @@ async function executeAgentRequest(
   
   try {
     // Simulate user message format
-    const messages: ModelMessage[] = [
+    const messages: UIMessage[] = [
       {
+        id: `msg-${Date.now()}`,
         role: 'user',
-        content: question
+        parts: [
+          { 
+            type: 'text',
+            text: question
+          }
+        ]
       }
     ];
 
@@ -110,7 +116,7 @@ async function executeAgentRequest(
     // Instead of the full chatAgent which returns streaming responses,
     // we'll use the core streamText functionality directly for easier response handling
     
-    const result = await chatAgent({ model, systemPrompt, tools, _messages: messages, userSub, agent, learningEnabled: false });
+    const result = await chatAgent({ model, systemPrompt, tools, messages: messages, userSub, agent, learningEnabled: false });
     const reader = result.body?.getReader();
     if (!reader) {
       console.error('Failed to get reader from response body');

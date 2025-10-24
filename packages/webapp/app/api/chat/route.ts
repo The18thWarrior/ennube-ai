@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
     // Set up the OpenAI model
     // Run the agent with tools
     //const steps = await taskManager({ prompt: userMessage, messageHistory: _messages.slice(0, -1), tools: Object.keys(tools).map(t => ({ name: t, description: tools[t].description })) });
-    return chatAgent({ model, systemPrompt, tools, _messages, userSub, agent: agent as string, learningEnabled });
+    return chatAgent({ model, systemPrompt, tools, messages, userSub, agent: agent as string, learningEnabled });
     //return NextResponse.json(result);
   } catch (error) {
     console.log('Error in chat route:', error);

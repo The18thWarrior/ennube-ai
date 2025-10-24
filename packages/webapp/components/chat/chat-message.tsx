@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState, ReactNode, useRef } from 'react';
 import styles from './chat-container.module.css';
-import { Streamdown } from 'streamdown';
 import Markdown from 'markdown-to-jsx'
 import ReactMarkdown from 'react-markdown'
 import { cn, getAgentImage } from '@/lib/utils';
@@ -50,14 +49,24 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, the
             >
                 <CardContent className="px-4 py-2 text-base">
                     {Component}
-                    {msg.parts && msg.parts.filter(part => part.type === 'data-planning').map((part) => (
+                    {/* {msg.parts && msg.parts.filter(part => part.type === 'data-planning' ).map((part) => (
                       <PlanningComponent key={nanoid()} level={(part as any).data?.level || 'info'} message={(part as any).data?.message || ''} />
-                    ))}
-                    {msg.parts && msg.parts.filter(part => isToolUIPart(part)  /*&& (part.toolInvocation.toolName === 'getSFDCDataTool' || part.toolInvocation.toolName === 'getPostgresDataTool' || part.toolInvocation.toolName === 'getCount' || part.toolInvocation.toolName === 'callWorkflowTool')*/).map((part) => (
+                    ))} */}
+                    {msg.parts && msg.parts.filter(part => part.type === 'reasoning').map((part) => {
+                        return <Reasoning
+                            key={nanoid()}
+                            className="w-full"
+                            isStreaming={part.state === 'streaming' && part === msg.parts[msg.parts.length - 1]}
+                        >
+                          <ReasoningTrigger />
+                          <ReasoningContent>{part.text}</ReasoningContent>
+                        </Reasoning>
+                    })}
+                    {msg.parts && msg.parts.filter(part => isToolUIPart(part)).map((part) => (
                         <span
                             className={[
-                                styles.messageBubble
-                                
+                                styles.messageBubble,
+                                'my-2'
                             ].join(' ')}
                             style={{ padding: 0, background: 'none', border: 'none' }}
                             key={isToolUIPart(part) ? part.toolCallId || nanoid() : nanoid()}
@@ -395,7 +404,7 @@ const MessageStateComponent = ({
     <Tool defaultOpen={false} >
       <ToolHeader type={toolName as `tool-${string}`} state={state} />
       <ToolContent>
-        <ToolInput input={input} />
+        {/* <ToolInput input={input} /> */}
         <ToolOutput
           output={Component}
           errorText={errorMessage}

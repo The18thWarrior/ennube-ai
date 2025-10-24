@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
 import { useSnackbar } from 'notistack';
 import { useUser } from '@auth0/nextjs-auth0';
 
@@ -13,21 +13,52 @@ export type OnboardingStage =
 
 interface UseOnboardingStatusReturn {
   stage: OnboardingStage;
+  instanceUrl: string | null;
   isLoading: boolean;
   error: string | null;
   refresh: () => Promise<void>;
 }
 
+// Create the context
+const OnboardingStatusContext = createContext<UseOnboardingStatusReturn | undefined>(undefined);
+
 /**
- * Hook to track a user's onboarding status through the various stages of setup
- * Checks if they have credentials, agent settings, and executed logs
+ * Hook to access the onboarding status context
+ * Must be used within OnboardingStatusProvider
  * @returns The current onboarding stage and loading state
  */
 export function useOnboardingStatus(): UseOnboardingStatusReturn {
+  const context = useContext(OnboardingStatusContext);
+  if (!context) {
+    throw new Error('useOnboardingStatus must be used within OnboardingStatusProvider');
+  }
+  return context;
+}
+
+/**
+ * Provider component for onboarding status context
+ * Wraps the application to provide onboarding state to all child components
+ */
+export function OnboardingStatusProvider({ children }: { children: ReactNode }) {
+  return (
+    <OnboardingStatusContext.Provider value={useOnboardingStatusLogic()}>
+      {children}
+    </OnboardingStatusContext.Provider>
+  );
+}
+
+/**
+ * Internal hook containing the onboarding status logic
+ * Tracks a user's onboarding status through the various stages of setup
+ * Checks if they have credentials, agent settings, and executed logs
+ * @returns The current onboarding stage and loading state
+ */
+function useOnboardingStatusLogic(): UseOnboardingStatusReturn {
   const { user } = useUser();
   const [stage, setStage] = useState<OnboardingStage>('new');
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [instanceUrl, setInstanceUrl] = useState<string | null>(null);
   const { enqueueSnackbar } = useSnackbar();
 
   const checkOnboardingStatus = async () => {
@@ -55,6 +86,7 @@ export function useOnboardingStatus(): UseOnboardingStatusReturn {
       const hasCredentials = Boolean(data?.hasCredentials);
       const hasAgentSettings = Boolean(data?.hasAgentSettings);
       const hasSuccessfulExecution = Boolean(data?.hasSuccessfulExecution);
+      setInstanceUrl(data?.instanceUrl || null);
 
       if (!hasCredentials) {
         setStage('needs_credential');
@@ -99,6 +131,7 @@ export function useOnboardingStatus(): UseOnboardingStatusReturn {
 
   return {
     stage,
+    instanceUrl,
     isLoading,
     error,
     refresh

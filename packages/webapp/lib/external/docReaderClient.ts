@@ -105,11 +105,12 @@ async function parseJsonSafe<T>(res: Response): Promise<T | null> {
  * Factory that returns a client with methods for each public endpoint.
  */
 export function createDocReaderClient(opts: ClientOptions = {}) {
-  const baseUrl = process.env.DOC_READER_BASE_URL ?? 'https://agent-doc-tool.vercel.app';
+  const baseUrl = process.env.DOC_READER_API ?? 'https://doc-api.ennube.ai';
   const defaultHeaders = opts.defaultHeaders ?? { 'Content-Type': 'application/json' };
 
   async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
     const url = buildUrl(baseUrl, path);
+    console.log(`docReaderClient - request: ${init.method || 'GET'} ${url}`);
     const headers = { ...(init.headers as Record<string, string> || {}), ...defaultHeaders };
     const res = await fetch(url, { ...init, headers });
     const json = await parseJsonSafe<any>(res);

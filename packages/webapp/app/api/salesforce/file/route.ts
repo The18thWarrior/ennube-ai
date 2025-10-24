@@ -25,6 +25,12 @@ export async function GET(
   const searchParams = _req.nextUrl.searchParams;
   const _sub = searchParams.get("sub");
   const contentVersionId = searchParams.get("contentVersionId");
+  if (!contentVersionId || !contentVersionId.startsWith("068")) {
+    return NextResponse.json(
+      { error: "contentVersionId appears to be the wrong object type, expected ContentVersion ID (starts with '068')" },
+      { status: 400 }
+    );
+  }
 
   const session = await auth();
   const sub = _sub || session?.user.sub;
@@ -57,11 +63,14 @@ export async function GET(
 
   if (contentVersionId) {
     // Fetch Salesforce record by URL
-
-    const contentVersion = await client.query(
-      `SELECT Id, Title, FileExtension FROM ContentVersion WHERE Id = '${contentVersionId}' LIMIT 1`
-    );
-    console.log("ContentVersion query result:", contentVersion);
+    const contentVersionQuery = `SELECT Id, Title, FileExtension FROM ContentVersion WHERE Id = '${contentVersionId}' LIMIT 1`;
+    const contentVersion = await client.query(contentVersionQuery);
+    if (contentVersion.totalSize === 0) {
+      return NextResponse.json(
+        { error: "ContentVersion not found" },
+        { status: 404 }
+      );
+    }
     const records = (
       contentVersion as {
         records: Array<{ Id: string; Title: string; FileExtension?: string }>;

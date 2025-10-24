@@ -16,8 +16,20 @@ module.exports = {
     '**/*.(test|spec).+(ts|tsx|js)'
   ],
   transform: {
-    '^.+\\.(ts|tsx)$': 'ts-jest'
+    '^.+\\.(ts|tsx)$': ['ts-jest', {
+      useESM: true,
+      tsconfig: {
+        module: 'esnext'
+      }
+    }]
   },
+  extensionsToTreatAsEsm: ['.ts', '.tsx'],
+  moduleNameMapper: {
+    '^@/(.*)$': '<rootDir>/$1'
+  },
+  transformIgnorePatterns: [
+    'node_modules/(?!(unist-util-visit|unist-util-is|unist-util-visit-parents|vfile|vfile-location)/)'
+  ],
   collectCoverageFrom: [
     'lib/**/*.{ts,tsx}',
     '!lib/**/*.d.ts',
@@ -39,9 +51,6 @@ module.exports = {
     'node'
   ],
   testTimeout: 30000,
-  moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/$1'
-  },
   // Mock Next.js modules
   modulePathIgnorePatterns: [
     '<rootDir>/.next/',

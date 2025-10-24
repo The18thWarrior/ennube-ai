@@ -199,3 +199,11 @@ export const BulkDataLoadMappingSchema = z.object({
 });
 
 export type BulkDataLoadMappingType = z.infer<typeof BulkDataLoadMappingSchema>;
+
+export const messageMetadataSchema = z.object({
+  createdAt: z.number().optional(),
+  model: z.string().optional(),
+  totalTokens: z.number().optional(),
+});
+
+export type MessageMetadata = z.infer<typeof messageMetadataSchema>;

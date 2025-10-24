@@ -1,4 +1,4 @@
-import { LanguageModel, Tool, ModelMessage, UIMessage, streamText, stepCountIs, createUIMessageStreamResponse, AssistantModelMessage, SystemModelMessage, createUIMessageStream } from "ai";
+import { LanguageModel, Tool, ModelMessage, UIMessage, streamText, stepCountIs, createUIMessageStreamResponse, AssistantModelMessage, SystemModelMessage, createUIMessageStream, convertToModelMessages } from "ai";
 //import { StepProgress, ExecutorOptions, executePlanSequentially } from "./planExecutor";
 import { orchestrator } from "./orchestrator";
 import {nanoid} from "nanoid";
@@ -9,7 +9,7 @@ export async function chatAgent({
   model, 
   systemPrompt, 
   tools, 
-  _messages, 
+  messages, 
   userSub, 
   agent, 
   learningEnabled 
@@ -17,13 +17,14 @@ export async function chatAgent({
   model: LanguageModel; 
   systemPrompt: string; 
   tools: Record<string, Tool>; 
-  _messages: ModelMessage[];
+  messages: UIMessage[];
   userSub: string;
   agent: string;
   learningEnabled: boolean;
 }) {
   // If the latest user message asked for a plan execution, attempt to generate a plan and run it.
   // Heuristic: if the last user message includes the word "plan" or "execute steps" we will try to create a plan.
+  const _messages = convertToModelMessages(messages);
   const lastMsg = _messages && _messages.length ? _messages[_messages.length - 1] : undefined;
   //console.log('chatAgent - lastMsg:', lastMsg);
   // Memory retrieval for learning-enabled agents
@@ -74,7 +75,7 @@ export async function chatAgent({
           },
           tools: tools,
           messages: _messages,
-          stopWhen: stepCountIs(5),
+          stopWhen: stepCountIs(8),
           //toolCallStreaming: true,
           onError: (error) => {
             console.log('Error during execution:', error);
@@ -114,7 +115,25 @@ export async function chatAgent({
         });
         //return result.toUIMessageStreamResponse();
 
-        writer.merge(result.toUIMessageStream());
+        writer.merge(result.toUIMessageStream({
+          originalMessages: messages, // pass this in for type-safe return objects
+          messageMetadata: ({ part }) => {
+            // Send metadata when streaming starts
+            if (part.type === 'start') {
+              return {
+                createdAt: Date.now(),
+                //model: model,
+              };
+            }
+
+            // Send additional metadata when streaming completes
+            if (part.type === 'finish') {
+              return {
+                totalTokens: part.totalUsage.totalTokens,
+              };
+            }
+          },
+        }));
       },
     });
 
@@ -133,7 +152,7 @@ export async function chatAgent({
       },
       tools: tools,
       messages: _messages,
-      stopWhen: stepCountIs(5),
+      stopWhen: stepCountIs(8),
       //toolCallStreaming: true,
       onError: (error) => {
         console.log('Error during tool execution:', error);
@@ -171,5 +190,23 @@ export async function chatAgent({
       
       //metadata: { subId: metadata.subId },
   });
-  return result.toUIMessageStreamResponse();
+  return result.toUIMessageStreamResponse({
+    originalMessages: messages, // pass this in for type-safe return objects
+    messageMetadata: ({ part }) => {
+      // Send metadata when streaming starts
+      if (part.type === 'start') {
+        return {
+          createdAt: Date.now(),
+          //model: model,
+        };
+      }
+
+      // Send additional metadata when streaming completes
+      if (part.type === 'finish') {
+        return {
+          totalTokens: part.totalUsage.totalTokens,
+        };
+      }
+    },
+  });
 }

@@ -894,6 +894,9 @@ importers:
       recharts:
         specifier: ^2.15.3
         version: 2.15.4(react-dom@18.3.1)(react@18.3.1)
+      remark-gfm:
+        specifier: ^4.0.1
+        version: 4.0.1
       shiki:
         specifier: ^3.13.0
         version: 3.13.0
@@ -915,6 +918,9 @@ importers:
       tokenlens:
         specifier: ^1.2.1
         version: 1.2.1
+      unist-util-visit:
+        specifier: ^5.0.0
+        version: 5.0.0
       unstorage:
         specifier: ^1.10.1
         version: 1.17.0(@upstash/redis@1.35.3)(@vercel/blob@1.1.1)(@vercel/kv@1.0.1)
@@ -961,6 +967,9 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@20.19.11)(ts-node@10.9.2)
+      mdast:
+        specifier: ^3.0.0
+        version: 3.0.0
       postcss:
         specifier: ^8.4.29
         version: 8.5.6
@@ -13043,6 +13052,11 @@ packages:
     dependencies:
       '@types/mdast': 4.0.4
     dev: false
+
+  /mdast@3.0.0:
+    resolution: {integrity: sha512-xySmf8g4fPKMeC07jXGz971EkLbWAJ83s4US2Tj9lEdnZ142UP5grN73H1Xd3HzrdbU5o9GYYP/y8F9ZSwLE9g==}
+    deprecated: '`mdast` was renamed to `remark`'
+    dev: true
 
   /mdurl@1.0.1:
     resolution: {integrity: sha512-/sKlQJCBYVY9Ers9hqzKou4H6V5UWc/M59TH2dvkt+84itfnq7uFOMLpOiOS4ujvHP4etln18fmIxA5R5fll0g==}

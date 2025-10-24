@@ -173,3 +173,77 @@
   min-height: calc(100vh - 240px);
   max-height: calc(100vh - 240px);
 }
+
+/* === Salesforce ID Link Styling === */
+/* 
+ * Links to Salesforce records created by the remarkSalesforceLinks plugin.
+ * These styles provide visual distinction and accessibility for Salesforce ID links.
+ */
+
+/* Base Salesforce link styling */
+a[href*="salesforce.com/"],
+a[href*="lightning.force.com/"] {
+  color: hsl(217, 84%, 55%); /* Salesforce brand blue (#0176D3) */
+  text-decoration: none;
+  border-bottom: 1px dotted currentColor;
+  transition: all 0.2s ease-in-out;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* Hover state for Salesforce links */
+a[href*="salesforce.com/"]:hover,
+a[href*="lightning.force.com/"]:hover {
+  color: hsl(217, 84%, 45%); /* Slightly darker blue */
+  border-bottom-style: solid;
+  text-decoration: underline;
+  opacity: 0.9;
+}
+
+/* Focus state for accessibility */
+a[href*="salesforce.com/"]:focus,
+a[href*="lightning.force.com/"]:focus {
+  outline: 2px solid hsl(265, 58%, 65%); /* Theme accent color */
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Active state when link is being clicked */
+a[href*="salesforce.com/"]:active,
+a[href*="lightning.force.com/"]:active {
+  color: hsl(217, 84%, 35%); /* Even darker blue */
+}
+
+/* Disable special styling in dark mode if needed, or enhance it */
+.dark a[href*="salesforce.com/"],
+.dark a[href*="lightning.force.com/"] {
+  color: hsl(217, 84%, 65%); /* Lighter blue for dark background */
+}
+
+.dark a[href*="salesforce.com/"]:hover,
+.dark a[href*="lightning.force.com/"]:hover {
+  color: hsl(217, 84%, 75%); /* Even lighter on hover in dark mode */
+}
+
+/* External link indicator icon (optional enhancement) */
+a[href*="salesforce.com/"]::after,
+a[href*="lightning.force.com/"]::after {
+  content: " ↗";
+  font-size: 0.75em;
+  opacity: 0.7;
+  margin-left: 2px;
+  transition: opacity 0.2s ease-in-out;
+}
+
+a[href*="salesforce.com/"]:hover::after,
+a[href*="lightning.force.com/"]:hover::after {
+  opacity: 1;
+}
+
+/* Reduce icon visibility on mobile for cleaner appearance */
+@media (max-width: 640px) {
+  a[href*="salesforce.com/"]::after,
+  a[href*="lightning.force.com/"]::after {
+    opacity: 0.5;
+  }
+}

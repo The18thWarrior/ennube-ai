@@ -9,7 +9,7 @@ import { getBaseUrl } from '../helper';
 import { getSalesforceCredentialsBySub, StoredSalesforceCredentials } from '@/lib/db/salesforce-storage';
 import { createDocReaderClient } from '@/lib/external';
 
-const MAX_BYTES = 3.5 * 1024 * 1024; // 3.5 MB
+const MAX_BYTES = 1 * 1024 * 1024; // 3.5 MB
 
 export const GetFileInputSchema = z.object({
   contentVersionId: z.string().min(1).describe('Salesforce ContentVersion id for the file'),
@@ -56,12 +56,13 @@ export const getFileTool = (subId: string) => {
         return match[1].replace(/UTF-8''/, '').replace(/"/g, '').trim();
       })();
       const contentType = res.headers.get('content-type') ?? undefined;
-
+      console.log('getFileTool - fetched file:', { fileName, contentType, byteLength: buffer.byteLength, bufferLength: buffer.toString('base64').length });
       const client = createDocReaderClient();
 
+      const base64 = buffer.toString('base64');
       // If small, send single request
-      if (buffer.byteLength <= MAX_BYTES) {
-        const base64 = buffer.toString('base64');
+      if (base64.length <= MAX_BYTES) {
+        console.log('getFileTool - sending single-shot extractDocx request to doc-reader');
         try {
           const result = await client.extractDocx({ base64, fileName, fileType: contentType });
           return result.text ?? result;
@@ -71,26 +72,33 @@ export const getFileTool = (subId: string) => {
       }
 
       // Otherwise, chunk and upload
-  const sessionId = `s_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,8)}`;
+      console.log('getFileTool - sending chunked upload to doc-reader');
+      const sessionId = `s_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,8)}`;
       const chunks: string[] = [];
-      for (let offset = 0; offset < buffer.byteLength; offset += MAX_BYTES) {
-        const slice = buffer.slice(offset, Math.min(offset + MAX_BYTES, buffer.byteLength));
-        chunks.push(Buffer.from(slice).toString('base64'));
+      // for (let offset = 0; offset < base64.length; offset += MAX_BYTES) {
+      //   const slice = buffer.slice(offset, Math.min(offset + MAX_BYTES, buffer.byteLength));
+      //   chunks.push(Buffer.from(slice).toString('base64'));
+      // }
+      // Split base64 data into chunks
+      for (let i = 0; i < base64.length; i += MAX_BYTES) {
+        chunks.push(base64.slice(i, i + MAX_BYTES))
       }
 
       try {
-        for (let i = 0; i < chunks.length; i++) {
-          await client.uploadChunk({
+        const chunkPromises = chunks.map((chunk, index) => {
+          console.log(`getFileTool - preparing chunk ${index + 1}/${chunks.length}`);
+          return client.uploadChunk({
             sessionId,
-            chunk: chunks[i],
-            chunkIndex: i,
+            chunk,
+            chunkIndex: index,
             totalChunks: chunks.length,
             fileName,
             fileType: contentType,
           });
-        }
-
+        });
+        await Promise.all(chunkPromises);
         const processed = await client.processChunks(sessionId);
+        console.log('getFileTool - chunked upload processing complete', processed);
         return processed.text ?? processed;
       } catch (err: any) {
         throw new Error(`doc-reader chunked upload failed: ${err?.message ?? String(err)}`);

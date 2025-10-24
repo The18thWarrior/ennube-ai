@@ -136,7 +136,7 @@ export const ToolOutput = ({
   return (
     <div className={cn("space-y-2 p-4", className)} {...props}>
       <h4 className="font-medium text-muted-foreground text-xs uppercase tracking-wide">
-        {showError ? "Error" : "Result"}
+        {showError ? "Error" : "" /*"Results"*/}
       </h4>
       <div
         className={cn(
