@@ -236,17 +236,20 @@ const ChatContainer = ({
                     style={{scrollbarColor: 'none'}}
                 >
                     <div className={[styles.messagesArea, ''].join(' ')}>
-                        {messages.map((msg, idx) => (
-                            <div
-                                key={idx}
-                                className={[
-                                    styles.messageRow,
-                                    msg.role === 'user' ? styles.userRow : styles.botRow,
-                                ].join(' ')}
-                            >
-                                {renderMessage(msg, idx, Agent, theme, user, updateThreadFromTool, user?.sub, selectedAvatar)}
-                            </div>
-                        ))}
+                        {messages.map((msg, idx) => {
+                            const isLastMessage = idx === messages.length - 1;  
+                            return (
+                              <div
+                                  key={idx}
+                                  className={[
+                                      styles.messageRow,
+                                      msg.role === 'user' ? styles.userRow : styles.botRow,
+                                  ].join(' ')}
+                              >
+                                  {renderMessage(msg, isLastMessage, Agent, theme, user, status, updateThreadFromTool, user?.sub, selectedAvatar)}
+                              </div>
+                            )
+                        })}
                         <div ref={messagesEndRef}></div>
                     </div>
                 </div>

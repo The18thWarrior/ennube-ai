@@ -29,7 +29,7 @@ export default function AccountPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh] p-6">
         <h1 className="text-2xl font-bold mb-4">Sign in to view your account</h1>
-        <Link href="/api/auth/signin">
+        <Link href="/api/login">
           <Button>Sign In</Button>
         </Link>
       </div>

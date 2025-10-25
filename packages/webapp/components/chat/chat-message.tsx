@@ -6,7 +6,7 @@ import Markdown from 'markdown-to-jsx'
 import ReactMarkdown from 'react-markdown'
 import { cn, getAgentImage } from '@/lib/utils';
 import { JsonRecord } from '../generalized-result';
-import { UIMessage, UIDataTypes, UIMessagePart, UITools, isToolUIPart } from 'ai';
+import { UIMessage, UIDataTypes, UIMessagePart, UITools, isToolUIPart, ChatStatus } from 'ai';
 import { nanoid } from 'nanoid';
 import { Button, Card, CardContent } from '../ui';
 import { UpdateDataReviewModal } from './tools/update-data-review-modal';
@@ -28,12 +28,12 @@ import { BulkDataLoadMappingType, DescribeResultType } from '@/lib/types';
 import { User } from '@auth0/nextjs-auth0/types';
 
 // Custom message rendering
-export const renderMessage = (msg: UIMessage, idx: number, agent: ReactNode, theme: 'dark' | 'light' | 'lavender', user: User | undefined | null, updateThreadFromTool: (updatedMessage: UIMessage, newMessage?: UIMessage) => void, userSub?: string, agentKey?: string) => {
+export const renderMessage = (msg: UIMessage, isLastMessage: boolean, agent: ReactNode, theme: 'dark' | 'light' | 'lavender', user: User | undefined | null, status: ChatStatus, updateThreadFromTool: (updatedMessage: UIMessage, newMessage?: UIMessage) => void, userSub?: string, agentKey?: string) => {
     // Default: render as text
-    return RenderHtmlComponent(DefaultMessageComponent(msg, theme), msg, theme, agent, user, updateThreadFromTool, userSub, agentKey);
+    return RenderHtmlComponent(DefaultMessageComponent(msg, theme), msg, theme, agent, user, updateThreadFromTool, isLastMessage, status, userSub, agentKey);
 };
 
-const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, theme: 'dark' | 'light' | 'lavender', agent: ReactNode, user: User | undefined | null, updateThreadFromTool: (updatedMessage: UIMessage, newMessage?: UIMessage) => void, userSub?: string, agentKey?: string) => (
+const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, theme: 'dark' | 'light' | 'lavender', agent: ReactNode, user: User | undefined | null, updateThreadFromTool: (updatedMessage: UIMessage, newMessage?: UIMessage) => void, isLastMessage: boolean, status: ChatStatus, userSub?: string, agentKey?: string) => (
     <div className={'flex items-start gap-2'}>
         {msg.role === 'assistant' ? 
             <div className="flex aspect-square size-12 items-center justify-center rounded-full overflow-hidden flex-shrink-0 mt-2 ">
@@ -49,10 +49,13 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, the
             >
                 <CardContent className="px-4 py-2 text-base">
                     {Component}
+                    {isLastMessage && status === 'streaming' && msg.role === 'assistant' && (
+                      <PlanningComponent level="info" message="Working on it" />
+                    )}
                     {/* {msg.parts && msg.parts.filter(part => part.type === 'data-planning' ).map((part) => (
                       <PlanningComponent key={nanoid()} level={(part as any).data?.level || 'info'} message={(part as any).data?.message || ''} />
                     ))} */}
-                    {msg.parts && msg.parts.filter(part => part.type === 'reasoning').map((part) => {
+                    {/* {msg.parts && msg.parts.filter(part => part.type === 'reasoning').map((part) => {
                         return <Reasoning
                             key={nanoid()}
                             className="w-full"
@@ -61,7 +64,7 @@ const RenderHtmlComponent = (Component : React.ReactElement, msg: UIMessage, the
                           <ReasoningTrigger />
                           <ReasoningContent>{part.text}</ReasoningContent>
                         </Reasoning>
-                    })}
+                    })} */}
                     {msg.parts && msg.parts.filter(part => isToolUIPart(part)).map((part) => (
                         <span
                             className={[
